@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/**
+ * Jamin Properties — design foundation.
+ *
+ * Palette is taken from the logo itself: the red mark, the gold corner fold and
+ * the "signature for Fortune" rule, and the near-black of BAZAAR. Earth and
+ * canopy tones carry the land / growth / heritage half of the brief without
+ * introducing a colour the logo does not already contain.
+ *
+ * The scales are golden-ratio based (φ = 1.618) rather than arbitrary, so type
+ * and rhythm stay proportional at every breakpoint.
+ */
+@theme {
+  /* ---- brand ---- */
+  --color-jamin-red: #e11b22;
+  --color-jamin-red-deep: #a81219;
+  --color-jamin-red-soft: #fdecec;
+  --color-jamin-gold: #eaa317;
+  --color-jamin-gold-light: #f5c869;
+  --color-jamin-gold-soft: #fdf5e6;
+
+  /* ---- ink ---- */
+  --color-ink: #17181c;
+  --color-ink-soft: #3d4048;
+  --color-ink-muted: #6b6f7a;
+  --color-ink-faint: #9aa0ab;
+
+  /* ---- surfaces (warm, not clinical grey) ---- */
+  --color-canvas: #fffdfa;
+  --color-canvas-alt: #faf7f2;
+  --color-canvas-sunken: #f2ede4;
+  --color-line: #e8e2d7;
+
+  /* ---- land / trust accents ---- */
+  --color-canopy: #1f5d4c;
+  --color-canopy-soft: #eaf3f0;
+  --color-earth: #8a6a45;
+
+  /* ---- golden-ratio type scale (φ = 1.618) ---- */
+  --text-micro: 0.618rem;
+  --text-tiny: 0.786rem;
+  --text-lg: 1.272rem;
+  --text-xl: 1.618rem;
+  --text-2xl: 2.058rem;
+  --text-3xl: 2.618rem;
+  --text-4xl: 4.236rem;
+  --text-5xl: 6.854rem;
+
+  /* ---- Fibonacci rhythm (φ in integers) ---- */
+  --spacing-phi1: 0.5rem;
+  --spacing-phi2: 0.8125rem;
+  --spacing-phi3: 1.3125rem;
+  --spacing-phi4: 2.125rem;
+  --spacing-phi5: 3.4375rem;
+  --spacing-phi6: 5.5625rem;
+  --spacing-phi7: 9rem;
+
+  --radius-card: 14px;
+
+  --shadow-lift: 0 1px 2px rgba(23, 24, 28, 0.04), 0 8px 24px -8px rgba(23, 24, 28, 0.1);
+  --shadow-raise: 0 2px 4px rgba(23, 24, 28, 0.05), 0 20px 48px -16px rgba(23, 24, 28, 0.18);
+  --shadow-hero: 0 40px 120px -40px rgba(23, 24, 28, 0.45);
+
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.08;
+  }
+  /* Never trap keyboard users just because the design is quiet. */
+  :focus-visible {
+    outline: 2px solid var(--color-jamin-red);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+@utility rule-gold {
+  /* Thin gold rule echoing the one under BAZAAR in the logo. */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-jamin-gold) 18%,
+    var(--color-jamin-gold) 82%,
+    transparent
+  );
+}
+
+@utility tracking-brand {
+  letter-spacing: 0.34em;
+}
+
+@utility rise {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: rise 0.9s var(--ease-silk) forwards;
+}
+
+@utility kenburns {
+  animation: kenburns 18s var(--ease-silk) forwards;
+}
+
+@keyframes rise {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1.14);
+  }
+}
+
+/* The brief asks for luxurious motion — which for anyone who gets motion sick
+   means no motion at all. Honour the OS setting rather than overriding it. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .rise {
+    opacity: 1;
+    transform: none;
+  }
+}
