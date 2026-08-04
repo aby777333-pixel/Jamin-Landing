@@ -1,0 +1,27 @@
+name: Deploy to Netlify
+
+# The Netlify GitHub App is not installed on this account, so there is no
+# webhook. Pushing to main fires Netlify's build hook instead, and Netlify
+# clones the repo with its deploy key and builds on Linux.
+#
+# Building on Linux is not incidental: @netlify/plugin-nextjs fails on Windows
+# with "Failed publishing static content", so local `netlify deploy --build`
+# from this machine cannot ship this site.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  trigger-netlify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fire Netlify build hook
+        env:
+          # Passed via env rather than inlined: Actions' secret masking
+          # interacts badly with surrounding shell syntax.
+          HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK }}
+        run: |
+          set -euo pipefail
+          URL="${HOOK_URL}?trigger_title=push%3A%20${GITHUB_SHA:0:7}"
+          curl --silent --show-error --fail -X POST "${URL}"
