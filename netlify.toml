@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Corepack's signature check has failed builds on this account before; pinning
+  # the Node major and disabling the integrity keys is the known-good setup.
+  NODE_VERSION = "22"
+  COREPACK_INTEGRITY_KEYS = "0"
+
+# Netlify's Next.js runtime provides SSR/ISR, which is what keeps admin edits
+# appearing on the site without a redeploy.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
