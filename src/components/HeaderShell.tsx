@@ -31,11 +31,15 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // A menu that survives navigation feels broken.
-  useEffect(() => {
+  // A menu that survives navigation feels broken. Adjusting during render on a
+  // changed value is React's own answer here — an effect would run a render
+  // later, so the old menu would be visible on the new page for a frame.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setOpen(false);
     setPanel(null);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

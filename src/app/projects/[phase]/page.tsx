@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Container, SectionLabel, EmptyState, ButtonLink } from "@/components/ui";
@@ -68,9 +69,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-        <a href="/projects" className="hover:text-jamin-red">
+        <Link href="/projects" className="hover:text-jamin-red">
           Projects
-        </a>
+        </Link>
         <span className="mx-2" aria-hidden="true">
           /
         </span>

@@ -28,8 +28,10 @@ export function Hero({ slides }: { slides: Slide[] }) {
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
 
+  // `n` is already the absolute target index, so the previous value is not
+  // needed — the updater form was left over and tripped the unused-arg lint.
   const go = useCallback(
-    (n: number) => setI((prev) => (n + slides.length) % slides.length),
+    (n: number) => setI(((n % slides.length) + slides.length) % slides.length),
     [slides.length],
   );
 
