@@ -62,11 +62,11 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
       </div>
 
       <div className="p-phi3">
-        <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em] text-jamin-gold">
+        <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em] text-jamin-gold-ink">
           {phaseLabel(p)}
           {p.plots_available ? (
             <>
-              <span className="text-line">·</span>
+              <span className="text-ink-faint">·</span>
               <span className="text-ink-faint">{p.plots_available} plots available</span>
             </>
           ) : null}

@@ -8,7 +8,7 @@ import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Projects by Stage — Ongoing, Upcoming, Future & Completed",
+  title: "Projects by Stage",
   description:
     "Every Jamin Properties development grouped by stage: ongoing layouts selling now, upcoming releases, future land, and completed projects already handed over.",
   alternates: { canonical: "/projects" },

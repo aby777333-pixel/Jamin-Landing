@@ -6,6 +6,7 @@ import { Container, SectionLabel, EmptyState, ButtonLink } from "@/components/ui
 import { getProperties } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
+import { seoTitle } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: PageProps<"/projects/[phase]"
   if (!isPhase(phase)) return {};
   const meta = PHASE_META[phase];
   return {
-    title: `${meta.label} Projects — DTCP-Approved Plots in Tamil Nadu`,
+    title: { absolute: seoTitle(`${meta.label} Jamin Projects in Tamil Nadu`) },
     description: meta.blurb,
     alternates: { canonical: `/projects/${phase}` },
     openGraph: {
@@ -103,11 +104,15 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
             }
           />
         ) : (
-          <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-            {items.map((p, i) => (
-              <PropertyCard key={p.id} p={p} priority={i < 3} />
-            ))}
-          </div>
+          <>
+            {/* Cards are h3; without this the outline jumps h1 → h3. */}
+            <h2 className="sr-only">{meta.label} developments</h2>
+            <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((p, i) => (
+                <PropertyCard key={p.id} p={p} priority={i < 3} />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </Container>

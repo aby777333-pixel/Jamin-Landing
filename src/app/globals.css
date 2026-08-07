@@ -19,12 +19,21 @@
   --color-jamin-gold: #eaa317;
   --color-jamin-gold-light: #f5c869;
   --color-jamin-gold-soft: #fdf5e6;
+  /* The logo gold is a FILL colour. As text it measures 2.12:1 on the canvas
+     and worse on gold-soft, so every gold word uses this darker cousin
+     instead — 5.29:1 on canvas, 4.95:1 on gold-soft. Rules, dots, borders and
+     backgrounds keep the bright original. */
+  --color-jamin-gold-ink: #8a6410;
 
-  /* ---- ink ---- */
+  /* ---- ink ----
+     The ramp was shifted one step darker after an audit: `faint` was #9aa0ab,
+     which is 2.59:1 against the canvas and fails WCAG AA on the caption and
+     metadata text it is used for. `muted` took its place at the darker end so
+     the visible hierarchy survives, and both now pass — 6.46:1 and 4.95:1. */
   --color-ink: #17181c;
   --color-ink-soft: #3d4048;
-  --color-ink-muted: #6b6f7a;
-  --color-ink-faint: #9aa0ab;
+  --color-ink-muted: #5a5d68;
+  --color-ink-faint: #6b6f7a;
 
   /* ---- surfaces (warm, not clinical grey) ---- */
   --color-canvas: #fffdfa;

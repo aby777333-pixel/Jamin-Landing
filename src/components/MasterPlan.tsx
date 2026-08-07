@@ -267,7 +267,7 @@ export function MasterPlan({
           <div className="rounded-card border border-line bg-canvas p-phi3 shadow-lift">
             <div className="flex flex-wrap items-start justify-between gap-phi2">
               <div>
-                <div className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+                <div className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                   Plot {selected.plot}
                   {selected.block ? ` · Block ${selected.block}` : ""}
                 </div>
@@ -331,9 +331,10 @@ export function MasterPlan({
 
           {plan.areaStatement?.length ? (
             <div>
-              <h4 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
+              {/* h3: this sits under the "The layout" h2, and h4 would skip a level. */}
+              <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
                 Area statement
-              </h4>
+              </h3>
               <ul className="mt-phi2 divide-y divide-line border-y border-line">
                 {plan.areaStatement.map((a) => (
                   <li key={a.label} className="flex items-baseline justify-between gap-4 py-2.5">

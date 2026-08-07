@@ -175,7 +175,7 @@ export function PropertiesMap({ items }: { items: Property[] }) {
                   on ? "border-ink bg-canvas" : "border-line bg-canvas-alt hover:border-ink-faint"
                 }`}
               >
-                <div className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold">
+                <div className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
                   {phaseLabel(p)}
                 </div>
                 <div className="mt-1 text-base text-ink">{p.title}</div>

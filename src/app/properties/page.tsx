@@ -8,7 +8,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: "Properties — DTCP-Approved Plots Across Tamil Nadu",
   description:
-    "Browse every Jamin Properties development: DTCP-approved residential plotted layouts in Salem, Erode, Tiruppur and Coimbatore, with plot availability, approvals and site photography.",
+    "Every Jamin development: DTCP-approved residential plots in Salem, Erode, Tiruppur and Coimbatore, with live plot availability.",
   alternates: { canonical: "/properties" },
 };
 

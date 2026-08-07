@@ -124,9 +124,12 @@ export async function SiteFooter() {
   );
 }
 
+/** h2, not h4. The footer sits on every page, and its column headings were
+ *  jumping the outline from h2 straight to h4 on pages whose deepest heading
+ *  was an h2 — flagged on /, /about, /contact and a property page. */
 function FooterHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h4 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">{children}</h4>
+    <h2 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">{children}</h2>
   );
 }
 

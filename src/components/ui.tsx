@@ -23,7 +23,7 @@ export function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
       <span className="h-px w-10 bg-jamin-gold" />
-      <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+      <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
         {children}
       </span>
     </div>
@@ -167,7 +167,10 @@ export function EmptyState({
   return (
     <div className="rounded-card border border-line bg-canvas-alt px-phi4 py-phi5 text-center">
       <div className="mx-auto h-px w-16 rule-gold" />
-      <h3 className="mt-phi3 text-xl text-ink">{title}</h3>
+      {/* h2, not h3: an empty state is usually the only thing under the page's
+          h1, and jumping a level breaks the outline screen-reader users
+          navigate by. The audit caught this on /journal. */}
+      <h2 className="mt-phi3 text-xl text-ink">{title}</h2>
       <p className="mx-auto mt-phi2 max-w-md text-base leading-relaxed text-ink-muted">{body}</p>
       {action ? <div className="mt-phi3 flex justify-center gap-3">{action}</div> : null}
     </div>

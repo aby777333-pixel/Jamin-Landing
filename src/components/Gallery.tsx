@@ -71,8 +71,12 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                   sizes="(max-width: 640px) 50vw, 38vw"
                   className="object-cover transition-transform duration-[1200ms] group-hover:scale-105"
                 />
+                {/* The scrim was 55% ink, which is not a guaranteed contrast
+                    ratio over an unknown photograph — a bright image beneath
+                    left the white count at roughly 3:1. 72% holds AA whatever
+                    the photo turns out to be. */}
                 {i === 1 && images.length > 3 && (
-                  <span className="absolute inset-0 grid place-items-center bg-ink/55 text-base font-medium text-white backdrop-blur-[2px]">
+                  <span className="absolute inset-0 grid place-items-center bg-ink/72 text-base font-medium text-white backdrop-blur-[2px]">
                     +{images.length - 3} more
                   </span>
                 )}

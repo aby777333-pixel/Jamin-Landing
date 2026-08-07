@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | Jamin Properties",
   },
   description:
-    "Jamin Properties develops DTCP-approved residential plotted layouts across Tamil Nadu — clear and marketable title, wide internal roads and bank loan assistance, in Salem, Erode and Coimbatore.",
+    "DTCP-approved residential plotted layouts across Tamil Nadu — clear title, wide internal roads and loan assistance, in Salem, Erode and Coimbatore.",
   keywords: [
     "DTCP approved plots Tamil Nadu",
     "residential plots Salem",

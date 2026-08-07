@@ -295,12 +295,17 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           <PropertiesMap items={results} />
         </div>
       ) : f.view === "list" ? (
+        <>
+        {/* The cards below are h3. Without this the outline jumps h1 → h3,
+            which is what a screen reader navigates by. Visually redundant
+            under the page title, so it is announced rather than shown. */}
+        <h2 className="sr-only">Developments</h2>
         <ul className="mt-phi5 divide-y divide-line border-y border-line">
           {results.map((p) => (
             <li key={p.id} className="flex flex-wrap items-center gap-phi3 py-phi3">
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold">
+                  <span className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
                     {phaseLabel(p)}
                   </span>
                   {approvalBadges(p).map((a) => (
@@ -336,10 +341,12 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             </li>
           ))}
         </ul>
+        </>
       ) : (
         <>
           {live.length > 0 && (
             <section className="mt-phi5">
+              <h2 className="sr-only">Developments currently selling</h2>
               <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
                 {live.map((p, i) => (
                   <div key={p.id} className="relative">

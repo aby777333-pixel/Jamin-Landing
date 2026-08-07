@@ -248,7 +248,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           ))}
           {facets.districts.length > 0 && (
             <>
-              <div className="pt-phi3 text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+              <div className="pt-phi3 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                 Locations
               </div>
               {facets.districts.map((f) => (

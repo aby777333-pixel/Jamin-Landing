@@ -76,7 +76,7 @@ export default async function HomePage() {
           <div>
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-jamin-gold" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                 Now selling
               </span>
             </div>
@@ -107,7 +107,7 @@ export default async function HomePage() {
           <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
             <div className="flex items-center gap-3">
               <span className="h-px w-10 bg-jamin-gold" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                 Track record
               </span>
             </div>

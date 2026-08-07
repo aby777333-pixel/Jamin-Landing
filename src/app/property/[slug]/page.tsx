@@ -10,6 +10,7 @@ import { SaveProperty } from "@/components/SaveProperty";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { DeskActions } from "@/components/DeskActions";
 import { SITE_URL } from "@/lib/supabase";
+import { seoDescription, seoTitle } from "@/lib/seo";
 import {
   approvalBadges,
   coverImage,
@@ -42,17 +43,26 @@ export async function generateMetadata({
   if (!p) return { title: "Property not found" };
 
   // The admin already writes SEO copy per property — reuse it rather than
-  // generating a second, competing description.
-  const title = p.seo?.title ?? `${p.title} — ${typeLabel(p)} in ${p.city ?? "Tamil Nadu"}`;
-  const description =
-    p.seo?.description ??
-    p.description?.slice(0, 300) ??
-    `${p.title}, ${locationLine(p)}. DTCP-approved plotted development by Jamin Properties.`;
+  // generating a second, competing description. Both sources get clamped: the
+  // audit found the admin's own descriptions at 187 and 191 characters and the
+  // body-text fallback at 263 and 300.
+  const adminTitle = p.seo?.title?.trim();
+  const title = seoTitle(
+    adminTitle || `${p.title} — Plots in ${p.district ?? p.city ?? "Tamil Nadu"}`,
+  );
+  const description = seoDescription(
+    p.seo?.description ||
+      p.description ||
+      `${p.title}, ${locationLine(p)}. DTCP-approved plotted development by Jamin Properties.`,
+  );
   const cover = coverImage(p);
   const url = `${SITE_URL}${propertyHref(p)}`;
 
   return {
-    title,
+    // Always absolute: every project title already begins "Jamin Garden",
+    // so the "| Jamin Properties" template would spend 19 of the 60 usable
+    // characters repeating the brand.
+    title: { absolute: title },
     description,
     alternates: { canonical: propertyHref(p) },
     openGraph: {
@@ -196,7 +206,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-2">
             {phaseLabel(p) && (
-              <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold">
+              <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
                 {phaseLabel(p)}
               </span>
             )}

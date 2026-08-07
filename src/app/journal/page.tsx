@@ -15,7 +15,7 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Jamin Journal — Land, Property and the Things Worth Knowing",
+  title: "Jamin Journal",
   description:
     "Guides and explainers from Jamin Properties: what to check before buying a plot in Tamil Nadu, what the approvals mean, and how the documents fit together.",
   alternates: { canonical: "/journal" },

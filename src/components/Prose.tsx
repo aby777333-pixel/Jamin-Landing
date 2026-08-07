@@ -207,7 +207,7 @@ export function Prose({ markdown }: { markdown: string }) {
               <ol key={i} className="space-y-2">
                 {b.items.map((it, j) => (
                   <li key={j} className="flex gap-3 text-lg leading-relaxed text-ink-soft">
-                    <span className="mt-0.5 shrink-0 text-base font-semibold text-jamin-gold tabular-nums">
+                    <span className="mt-0.5 shrink-0 text-base font-semibold text-jamin-gold-ink tabular-nums">
                       {j + 1}.
                     </span>
                     <span>{inline(it, `ol${i}-${j}`)}</span>

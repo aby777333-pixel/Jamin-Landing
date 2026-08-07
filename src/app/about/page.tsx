@@ -41,7 +41,7 @@ export default async function AboutPage() {
       <header className="max-w-2xl">
         <div className="flex items-center gap-3">
           <span className="h-px w-10 bg-jamin-gold" />
-          <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+          <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
             Who we are
           </span>
         </div>
