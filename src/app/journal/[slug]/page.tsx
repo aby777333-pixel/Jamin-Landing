@@ -1,0 +1,307 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound, permanentRedirect } from "next/navigation";
+import { Container, SectionLabel, Badge, ButtonLink } from "@/components/ui";
+import { Prose, extractHeadings } from "@/components/Prose";
+import { PropertyCard } from "@/components/PropertyCard";
+import {
+  KIND_LABEL,
+  getJournalPost,
+  getJournalPosts,
+  getJournalRedirect,
+  journalHref,
+  publishedLabel,
+  readingMinutes,
+  type JournalPost,
+} from "@/lib/journal";
+import { getProperties } from "@/lib/properties";
+import { SITE_URL } from "@/lib/supabase";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const posts = await getJournalPosts();
+  return posts.map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps<"/journal/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const p = await getJournalPost(slug);
+  if (!p) return { title: "Article not found" };
+
+  const title = p.seo?.title ?? p.title;
+  const description = p.seo?.description ?? p.excerpt ?? undefined;
+  const image = p.seo?.og_image ?? p.cover_url ?? undefined;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: p.seo?.canonical ?? journalHref(p) },
+    robots: p.seo?.noindex ? { index: false, follow: true } : undefined,
+    openGraph: {
+      type: "article",
+      url: `${SITE_URL}${journalHref(p)}`,
+      title,
+      description,
+      publishedTime: p.published_at ?? undefined,
+      modifiedTime: p.updated_at ?? undefined,
+      images: image ? [{ url: image, width: 1200, height: 630, alt: p.cover_alt ?? p.title }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: image ? [image] : undefined,
+    },
+  };
+}
+
+/** §170 — real fields only. No author or image is emitted if none exists. */
+function articleSchema(p: JournalPost) {
+  const schema: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: p.title,
+    description: p.seo?.description ?? p.excerpt ?? undefined,
+    url: `${SITE_URL}${journalHref(p)}`,
+    datePublished: p.published_at ?? undefined,
+    dateModified: p.updated_at ?? p.published_at ?? undefined,
+    image: p.cover_url ?? undefined,
+    publisher: {
+      "@type": "Organization",
+      name: "Jamin Properties",
+      url: SITE_URL,
+    },
+  };
+  if (p.blog_authors) {
+    schema.author = { "@type": "Person", name: p.blog_authors.name };
+  }
+  return schema;
+}
+
+/** §149 — FAQ structured data only when the article genuinely carries FAQs. */
+function faqSchema(p: JournalPost) {
+  if (!p.faqs?.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: p.faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+export default async function JournalArticle({ params }: PageProps<"/journal/[slug]">) {
+  const { slug } = await params;
+  const post = await getJournalPost(slug);
+
+  // §158 — a renamed article keeps its indexed address working.
+  if (!post) {
+    const to = await getJournalRedirect(slug);
+    if (to) permanentRedirect(`/journal/${to}`);
+    notFound();
+  }
+
+  const headings = extractHeadings(post.body ?? "");
+  const faq = faqSchema(post);
+
+  const [allPosts, allProperties] = await Promise.all([getJournalPosts(), getProperties()]);
+  const related = allProperties.filter((x) => post.related_property_ids?.includes(x.id));
+  const more = allPosts
+    .filter((x) => x.id !== post.id)
+    .filter((x) => !post.blog_categories || x.blog_categories?.slug === post.blog_categories.slug)
+    .slice(0, 3);
+
+  return (
+    <Container className="py-phi5">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema(post)) }}
+      />
+      {faq && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
+        />
+      )}
+
+      <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
+        <Link href="/journal" className="hover:text-jamin-red">
+          Jamin Journal
+        </Link>
+        {post.blog_categories && (
+          <>
+            <span className="px-2">/</span>
+            <Link
+              href={`/journal/category/${post.blog_categories.slug}`}
+              className="hover:text-jamin-red"
+            >
+              {post.blog_categories.name}
+            </Link>
+          </>
+        )}
+      </nav>
+
+      <article className="mt-phi3">
+        <header className="max-w-3xl">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge tone="gold">{KIND_LABEL[post.kind] ?? post.kind}</Badge>
+            <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+              {readingMinutes(post)} min read
+            </span>
+          </div>
+          <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{post.title}</h1>
+          {post.excerpt && (
+            <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">{post.excerpt}</p>
+          )}
+
+          {/* §134 — who wrote it, who checked it, and when. */}
+          <dl className="mt-phi3 flex flex-wrap gap-x-phi4 gap-y-2 border-y border-line py-phi2 text-tiny">
+            {post.blog_authors && (
+              <div>
+                <dt className="inline text-ink-faint">Written by </dt>
+                <dd className="inline text-ink">{post.blog_authors.name}</dd>
+              </div>
+            )}
+            {publishedLabel(post) && (
+              <div>
+                <dt className="inline text-ink-faint">Published </dt>
+                <dd className="inline text-ink">{publishedLabel(post)}</dd>
+              </div>
+            )}
+            {post.reviewed_at && (
+              <div>
+                <dt className="inline text-ink-faint">Information reviewed </dt>
+                <dd className="inline text-ink">
+                  {new Date(post.reviewed_at).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </dd>
+              </div>
+            )}
+          </dl>
+        </header>
+
+        {post.cover_url && (
+          <div className="relative mt-phi4 aspect-[2/1] overflow-hidden rounded-card border border-line bg-canvas-sunken">
+            <Image
+              src={post.cover_url}
+              alt={post.cover_alt ?? post.title}
+              fill
+              priority
+              sizes="(max-width: 1280px) 100vw, 1200px"
+              className="object-cover"
+            />
+          </div>
+        )}
+
+        <div className="mt-phi5 grid gap-phi5 lg:grid-cols-[1fr_16rem]">
+          {/* §142 — a comfortable measure, not a wall of text across a monitor */}
+          <div className="max-w-[68ch]">
+            <Prose markdown={post.body ?? ""} />
+
+            {post.faqs?.length > 0 && (
+              <section className="mt-phi5">
+                <h2 className="text-2xl text-ink">Common questions</h2>
+                <div className="mt-phi3 divide-y divide-line border-y border-line">
+                  {post.faqs.map((f, i) => (
+                    <details key={i} className="group py-phi2">
+                      <summary className="cursor-pointer text-lg text-ink">{f.q}</summary>
+                      <p className="mt-phi2 text-base leading-relaxed text-ink-soft">{f.a}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {post.disclaimer && (
+              <p className="mt-phi5 rounded-card border border-line bg-canvas-alt p-phi3 text-tiny leading-relaxed text-ink-muted">
+                {post.disclaimer}
+              </p>
+            )}
+
+            {/* §128 — the article hands the reader to real inventory. Nothing
+                about the property is copied into the body; it is read live, so
+                availability here can never contradict the property page. */}
+            {related.length > 0 && (
+              <section className="mt-phi6 border-t border-line pt-phi4">
+                <SectionLabel>Relevant right now</SectionLabel>
+                <h2 className="mt-phi2 text-2xl text-ink">Jamin developments this applies to</h2>
+                <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
+                  {related.map((r) => (
+                    <PropertyCard key={r.id} p={r} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <div className="mt-phi5 rounded-card border border-line bg-canvas-alt p-phi4">
+              <h2 className="text-xl text-ink">Still deciding?</h2>
+              <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+                Our desk will walk you through any of this against a specific plot — including the
+                documents you should ask to see.
+              </p>
+              <div className="mt-phi3 flex flex-wrap gap-2">
+                <ButtonLink href="/contact">Talk to Jamin</ButtonLink>
+                <ButtonLink href="/properties" variant="secondary">
+                  See what is available
+                </ButtonLink>
+              </div>
+            </div>
+          </div>
+
+          {/* §143 — sticky table of contents on desktop */}
+          {headings.length > 2 && (
+            <aside className="hidden lg:block">
+              <nav className="sticky top-28" aria-label="On this page">
+                <h2 className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
+                  On this page
+                </h2>
+                <ul className="mt-phi2 space-y-2 border-l border-line">
+                  {headings.map((h) => (
+                    <li key={h.id} className={h.level === 3 ? "pl-phi3" : "pl-phi2"}>
+                      <a
+                        href={`#${h.id}`}
+                        className="block text-base leading-snug text-ink-muted transition-colors hover:text-jamin-red"
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </aside>
+          )}
+        </div>
+      </article>
+
+      {more.length > 0 && (
+        <section className="mt-phi7 border-t border-line pt-phi5">
+          <h2 className="text-2xl text-ink">More like this</h2>
+          <ul className="mt-phi4 grid gap-phi3 sm:grid-cols-3">
+            {more.map((m) => (
+              <li key={m.id}>
+                <Link
+                  href={journalHref(m)}
+                  className="block rounded-card border border-line bg-canvas p-phi3 transition-colors hover:border-ink-faint"
+                >
+                  <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+                    {KIND_LABEL[m.kind] ?? m.kind}
+                  </span>
+                  <span className="mt-1 block text-lg text-ink">{m.title}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </Container>
+  );
+}

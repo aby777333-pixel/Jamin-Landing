@@ -1,0 +1,194 @@
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { Container, SectionLabel, EmptyState, ButtonLink, Badge } from "@/components/ui";
+import {
+  KIND_LABEL,
+  getJournalCategories,
+  getJournalPosts,
+  journalHref,
+  publishedLabel,
+  readingMinutes,
+  type JournalPost,
+} from "@/lib/journal";
+
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+  title: "Jamin Journal — Land, Property and the Things Worth Knowing",
+  description:
+    "Guides and explainers from Jamin Properties: what to check before buying a plot in Tamil Nadu, what the approvals mean, and how the documents fit together.",
+  alternates: { canonical: "/journal" },
+};
+
+/**
+ * §141 — an editorial landing page, not a grid of rectangles. The lead story
+ * takes the width; the rest reads as a magazine contents page.
+ */
+export default async function JournalPage() {
+  const [posts, categories] = await Promise.all([getJournalPosts(), getJournalCategories()]);
+
+  const featured = posts.find((p) => p.is_featured) ?? posts[0] ?? null;
+  const rest = posts.filter((p) => p.id !== featured?.id);
+  const used = new Set(posts.map((p) => p.blog_categories?.slug).filter(Boolean));
+
+  return (
+    <Container className="py-phi5">
+      <header className="max-w-2xl">
+        <SectionLabel>Jamin Journal</SectionLabel>
+        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">
+          Land, and the things worth knowing before you decide.
+        </h1>
+        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+          Buying land involves a set of documents and approvals most people meet only once. These
+          are our notes on them — written plainly, and kept current.
+        </p>
+      </header>
+
+      {posts.length === 0 ? (
+        <div className="mt-phi5">
+          <EmptyState
+            title="The first pieces are being written"
+            body="Jamin Journal opens shortly with guides on patta and chitta, what DTCP approval actually certifies, and a plot-buying checklist. Until then, the sales desk will answer any of it directly."
+            action={
+              <>
+                <ButtonLink href="/properties" variant="secondary">
+                  Browse properties
+                </ButtonLink>
+                <ButtonLink href="/contact">Ask the desk</ButtonLink>
+              </>
+            }
+          />
+        </div>
+      ) : (
+        <>
+          {/* categories that actually hold something */}
+          {categories.filter((c) => used.has(c.slug)).length > 1 && (
+            <nav className="mt-phi4 flex flex-wrap gap-2" aria-label="Journal categories">
+              {categories
+                .filter((c) => used.has(c.slug))
+                .map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/journal/category/${c.slug}`}
+                    className="rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
+                  >
+                    {c.name}
+                  </Link>
+                ))}
+            </nav>
+          )}
+
+          {featured && (
+            <section className="mt-phi5">
+              <LeadStory post={featured} />
+            </section>
+          )}
+
+          {rest.length > 0 && (
+            <section className="mt-phi6 border-t border-line pt-phi5">
+              <h2 className="text-2xl text-ink">More from the Journal</h2>
+              <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+                {rest.map((p) => (
+                  <ArticleCard key={p.id} post={p} />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
+      )}
+    </Container>
+  );
+}
+
+function LeadStory({ post }: { post: JournalPost }) {
+  return (
+    <Link href={journalHref(post)} className="group grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
+      <div className="relative aspect-[1.9/1] overflow-hidden rounded-card border border-line bg-canvas-sunken">
+        {post.cover_url ? (
+          <Image
+            src={post.cover_url}
+            alt={post.cover_alt ?? post.title}
+            fill
+            priority
+            sizes="(max-width: 1024px) 100vw, 60vw"
+            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+            style={{ transitionTimingFunction: "var(--ease-silk)" }}
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
+            Jamin Journal
+          </div>
+        )}
+      </div>
+      <div className="self-center">
+        <Meta post={post} />
+        <h2 className="mt-phi2 text-2xl text-ink transition-colors group-hover:text-jamin-red lg:text-3xl">
+          {post.title}
+        </h2>
+        {post.excerpt && (
+          <p className="mt-phi2 text-lg leading-relaxed text-ink-muted">{post.excerpt}</p>
+        )}
+        <span className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red">
+          Read the guide →
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function ArticleCard({ post }: { post: JournalPost }) {
+  return (
+    <Link
+      href={journalHref(post)}
+      className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
+      style={{ transitionTimingFunction: "var(--ease-silk)" }}
+    >
+      <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken">
+        {post.cover_url ? (
+          <Image
+            src={post.cover_url}
+            alt={post.cover_alt ?? post.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
+            Jamin Journal
+          </div>
+        )}
+      </div>
+      <div className="p-phi3">
+        <Meta post={post} />
+        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red">
+          {post.title}
+        </h3>
+        {post.excerpt && (
+          <p className="mt-1.5 line-clamp-2 text-base text-ink-muted">{post.excerpt}</p>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+function Meta({ post }: { post: JournalPost }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Badge tone="gold">{KIND_LABEL[post.kind] ?? post.kind}</Badge>
+      {post.blog_categories && (
+        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+          {post.blog_categories.name}
+        </span>
+      )}
+      <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+        {readingMinutes(post)} min read
+      </span>
+      {publishedLabel(post) && (
+        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+          {publishedLabel(post)}
+        </span>
+      )}
+    </div>
+  );
+}

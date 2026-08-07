@@ -135,6 +135,13 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             </div>
           )}
 
+          {facets.hasJournal && (
+            <Link href="/journal" className={trigger} onMouseEnter={() => setPanel(null)}>
+              Journal
+              <span className={underline} />
+            </Link>
+          )}
+
           <Link href="/about" className={trigger} onMouseEnter={() => setPanel(null)}>
             About
             <span className={underline} />
@@ -243,6 +250,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               ))}
             </>
           )}
+          {facets.hasJournal && <MobileLink href="/journal">Jamin Journal</MobileLink>}
           <MobileLink href="/about">About</MobileLink>
           <Link
             href="/contact"

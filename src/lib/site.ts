@@ -80,6 +80,9 @@ export type NavFacets = {
   phases: Facet[];
   districts: Facet[];
   totals: { developments: number; selling: number; plotsAvailable: number };
+  /** Jamin Journal is offered only once something is published in it — an
+   *  empty section in the menu is the dead end the owner's rule forbids. */
+  hasJournal: boolean;
 };
 
 /** One query, reused by the header, the footer and the projects index. */
@@ -90,7 +93,24 @@ export async function getNavFacets(): Promise<NavFacets> {
   } catch {
     // The shell must still render if Supabase is unreachable — a menu that
     // throws would take the whole site down with it.
-    return { phases: [], districts: [], totals: { developments: 0, selling: 0, plotsAvailable: 0 } };
+    return {
+      phases: [],
+      districts: [],
+      totals: { developments: 0, selling: 0, plotsAvailable: 0 },
+      hasJournal: false,
+    };
+  }
+
+  // RLS already limits this to published articles, so a non-zero count means
+  // there is genuinely something to read.
+  let hasJournal = false;
+  try {
+    const { count } = await supabase
+      .from("blog_posts")
+      .select("id", { count: "exact", head: true });
+    hasJournal = (count ?? 0) > 0;
+  } catch {
+    hasJournal = false;
   }
 
   const phases: Facet[] = PHASE_ORDER.map((k) => ({
@@ -118,6 +138,7 @@ export async function getNavFacets(): Promise<NavFacets> {
   return {
     phases,
     districts,
+    hasJournal,
     totals: {
       developments: all.length,
       selling: selling.length,

@@ -94,6 +94,7 @@ export async function SiteFooter() {
                   </a>
                 </li>
               )}
+              {facets.hasJournal && <FooterLink href="/journal">Jamin Journal</FooterLink>}
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>
               <li>

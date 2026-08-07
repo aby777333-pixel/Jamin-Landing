@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getJournalCategories, getJournalPosts, journalHref } from "@/lib/journal";
 import { getProperties, propertyHref } from "@/lib/properties";
 import { PHASE_ORDER } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
@@ -29,6 +30,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
+    // Journal. RLS only returns published articles, and the category route is
+    // built only for categories that hold one — so listing them here cannot
+    // put a 404 or an unpublished draft into the sitemap.
+    const [posts, cats] = await Promise.all([getJournalPosts(), getJournalCategories()]);
+    const usedCats = new Set(posts.map((p) => p.blog_categories?.slug).filter(Boolean));
+    const journal: MetadataRoute.Sitemap = posts.length
+      ? [
+          { url: `${SITE_URL}/journal`, changeFrequency: "weekly" as const, priority: 0.8 },
+          ...cats
+            .filter((c) => usedCats.has(c.slug))
+            .map((c) => ({
+              url: `${SITE_URL}/journal/category/${c.slug}`,
+              changeFrequency: "weekly" as const,
+              priority: 0.6,
+            })),
+          ...posts
+            .filter((p) => !p.seo?.noindex)
+            .map((p) => ({
+              url: `${SITE_URL}${journalHref(p)}`,
+              lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
+              changeFrequency: "monthly" as const,
+              priority: 0.7,
+            })),
+        ]
+      : [];
+
     return [
       ...statics,
       ...phases,
@@ -38,6 +65,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: "weekly" as const,
         priority: 0.8,
       })),
+      ...journal,
     ];
   } catch {
     // A database hiccup must not take the whole sitemap down.
