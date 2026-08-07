@@ -10,6 +10,7 @@ import { SaveProperty } from "@/components/SaveProperty";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
+import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { SITE_URL } from "@/lib/supabase";
 import { seoDescription, seoTitle } from "@/lib/seo";
 import {
@@ -172,7 +173,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   const nearby = p.nearby_places ?? [];
   const amenities = p.amenities ?? [];
   const utilities = p.utilities ?? [];
-  const documents = (p.documents ?? []).filter((d) => d.url);
+  // Brochure + sanctioned plan + every document, as one unbranded set.
+  const downloads = downloadsFor(p);
   const legal = Object.entries(p.legal ?? {}).filter(([, v]) => v);
   const investment = Object.entries(p.investment ?? {}).filter(([, v]) => v);
 
@@ -382,7 +384,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           ) : null}
 
           {/* ---- legal & documents (§15, §78) ---- */}
-          {(legal.length > 0 || documents.length > 0 || p.rera_number) && (
+          {(legal.length > 0 || downloads.length > 0 || p.rera_number) && (
             <Block
               id="legal"
               title="Approvals & documents"
@@ -407,24 +409,20 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 </dl>
               )}
 
-              {documents.length > 0 && (
-                <ul className="mt-phi3 space-y-2">
-                  {documents.map((d) => (
-                    <li key={d.url}>
-                      <a
-                        href={d.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-between gap-4 rounded-card border border-line bg-canvas px-phi3 py-3 transition-colors hover:border-ink-faint"
-                      >
-                        <span className="text-base text-ink">{d.label ?? "Document"}</span>
-                        <span className="shrink-0 text-tiny text-ink-faint">
-                          {d.size ? `${d.size} · ` : ""}Open
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
+              {/* Brochure, sanctioned plan and every document, downloadable
+                  straight from here — no form, no sign-in, and no promoter's
+                  contact page stapled to the file. */}
+              {downloads.length > 0 && (
+                <div className="mt-phi3">
+                  <DownloadList items={downloads} />
+                  <p className="mt-phi2 text-tiny text-ink-faint">
+                    Free to download — no details required.{" "}
+                    <Link href="/downloads" className="underline">
+                      Every development&rsquo;s papers
+                    </Link>
+                    .
+                  </p>
+                </div>
               )}
 
               <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">

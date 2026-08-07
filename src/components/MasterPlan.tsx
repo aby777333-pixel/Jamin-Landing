@@ -33,6 +33,10 @@ export function MasterPlan({
   const [zoomIx, setZoomIx] = useState(0);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  /** So focus can go back where it came from when the sheet closes. */
+  const openerRef = useRef<SVGGElement | null>(null);
 
   const geo = useMemo(() => plots.filter((p) => Array.isArray(p.poly) && p.poly.length >= 3), [plots]);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
@@ -41,14 +45,21 @@ export function MasterPlan({
 
   const pts = (poly: [number, number][]) => poly.map(([x, y]) => `${x},${y}`).join(" ");
 
-  // Escape closes the floater, and so does a click anywhere outside the plan.
+  // Escape closes the sheet, and so does a click outside both the plan and the
+  // sheet itself.
   useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelected(null);
     };
+    // ⚠️ The sheet is `fixed`, so it is NOT inside the plan's DOM subtree.
+    // Testing the plan alone would make every click inside the sheet count as
+    // "outside": it would unmount before mouseup and its own buttons would
+    // never fire. Both containers have to be in the test.
     const onDown = (e: MouseEvent) => {
-      if (frameRef.current && !frameRef.current.contains(e.target as Node)) setSelected(null);
+      const t = e.target as Node;
+      if (frameRef.current?.contains(t) || sheetRef.current?.contains(t)) return;
+      setSelected(null);
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onDown);
@@ -58,55 +69,12 @@ export function MasterPlan({
     };
   }, [selected]);
 
-  /**
-   * Where the floater goes.
-   *
-   * The plot's label point is in the drawing's own coordinate space and the SVG
-   * fills its wrapper with a viewBox, so the plot's position as a FRACTION of
-   * the wrapper is exactly `(x - vx) / vw`. Percentages therefore survive every
-   * zoom step and every screen width without measuring one pixel at runtime.
-   *
-   * ⚠️ Clipping is prevented by CSS `clamp()`, not by a rule of thumb. A first
-   * attempt hung the card off the anchor point and clipped the frame edge on 4
-   * of Edappadi's 27 plots and the top edge on 2 more. Pinning the card to a
-   * corner of the frame instead was worse: this frame is as tall as the drawing
-   * — around 2,400px — so "the corner" is a long way from the plot you clicked.
-   *
-   * So: anchored, but clamped between a gutter and (100% − the card's own size).
-   * That needs the card's size to be KNOWN, which is why it is a fixed 17rem
-   * wide and capped at 21rem tall with its own scroll. The vertical case
-   * anchors by `bottom` rather than translating, so the same clamp works in
-   * both directions.
-   */
-  const CARD_W = 17; // rem — must match the class below
-  // ⚠️ Keep the card SHORT. At 21rem it was half the height of Edappadi's
-  // 709px frame, so for any plot near the middle there was no room either
-  // above or below and the clamp dragged it back over the plot it described.
-  // 17rem is the card's natural height and still clears both ways for every
-  // plot in that layout — measured, not guessed.
-  const CARD_H = 17; // rem — the max-height cap, likewise
-  const GAP = 0.75; // rem of gutter, and of clearance from the plot
-
-  const anchor = useMemo(() => {
-    if (!selected?.at) return null;
-    const fx = ((selected.at[0] - vx) / vw) * 100;
-    const fy = ((selected.at[1] - vy) / vh) * 100;
-
-    // Clear the plot's own OUTLINE, not its label point. Anchoring off the
-    // centre put the card over the bottom half of every plot it described —
-    // the polygon's own bounding box is right there, so use it.
-    const ys = (selected.poly ?? []).map(([, y]) => y);
-    const topPct = ys.length ? ((Math.min(...ys) - vy) / vh) * 100 : fy;
-    const bottomPct = ys.length ? ((Math.max(...ys) - vy) / vh) * 100 : fy;
-
-    const clampCss = (pct: number) =>
-      `clamp(${GAP}rem, calc(${pct}% + ${GAP}rem), calc(100% - ${CARD_H + GAP}rem))`;
-    return {
-      left: `clamp(${GAP}rem, calc(${fx}% - ${CARD_W / 2}rem), calc(100% - ${CARD_W + GAP}rem))`,
-      // Below the plot in the top half of the plan, above it in the bottom half.
-      ...(fy < 50 ? { top: clampCss(bottomPct) } : { bottom: clampCss(100 - topPct) }),
-    };
-  }, [selected, vx, vy, vw, vh]);
+  // Send focus into the sheet when it opens and back to the plot when it goes,
+  // so a keyboard user is never stranded at the top of the document.
+  useEffect(() => {
+    if (selected) closeRef.current?.focus();
+    else openerRef.current?.focus();
+  }, [selected]);
 
   return (
     <div>
@@ -314,10 +282,14 @@ export function MasterPlan({
                   aria-label={`Plot ${p.plot}, ${s.label}${
                     plotArea(p) ? `, ${plotArea(p)}` : ""
                   }`}
-                  onClick={() => setSelected(active ? null : p)}
+                  onClick={(e) => {
+                    openerRef.current = e.currentTarget;
+                    setSelected(active ? null : p);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
+                      openerRef.current = e.currentTarget;
                       setSelected(active ? null : p);
                     }
                   }}
@@ -348,19 +320,43 @@ export function MasterPlan({
               );
             })}
           </svg>
-
-          {/* ---- the floater, anchored to its plot ---- */}
-          {selected && anchor && (
-            <div
-              className="glass absolute z-10 max-h-[17rem] w-[17rem] max-w-[calc(100%-1.5rem)] overflow-y-auto rounded-xl p-phi2"
-              style={{ ...anchor, animation: "reveal 0.3s var(--ease-silk) both" }}
-            >
-              <PlotFloater plot={selected} onClose={() => setSelected(null)} />
-            </div>
-          )}
         </div>
       </div>
       </div>
+
+      {/* ---- the plot sheet ----
+          A bottom sheet on a phone, a right-hand drawer from `sm` up. It is
+          `fixed`, so it is always fully visible however far down the drawing
+          you have scrolled and however deep you have zoomed — which an
+          anchored card on a 700px-tall plan can never be. It is also the shape
+          the Jamin Bazaar app already uses for the same record, so the two
+          products show a plot the same way. */}
+      {selected && (
+        <>
+          {/* Scrim on a phone only. On a wider screen the drawer sits beside
+              the plan and you want to keep seeing the plot you picked. */}
+          <div
+            className="fixed inset-0 z-40 bg-ink/40 sm:hidden"
+            aria-hidden="true"
+            onClick={() => setSelected(null)}
+          />
+          <div
+            ref={sheetRef}
+            role="dialog"
+            aria-label={`Plot ${selected.plot} details`}
+            className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-[1.5rem] border-t border-line bg-canvas shadow-raise sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-[1.5rem] sm:border-l sm:border-t-0"
+            style={{ animation: "reveal 0.35s var(--ease-silk) both" }}
+          >
+            <PlotSheet
+              plot={selected}
+              plan={plan}
+              title={title}
+              closeRef={closeRef}
+              onClose={() => setSelected(null)}
+            />
+          </div>
+        </>
+      )}
 
       {!selected && (
         <p className="mt-phi3 flex items-center gap-2 text-base text-ink-muted">
@@ -432,78 +428,162 @@ export function MasterPlan({
 }
 
 /** What a plot actually is, in the space a floating card allows. */
-function PlotFloater({ plot, onClose }: { plot: Plot; onClose: () => void }) {
+/**
+ * The whole plot record, laid out the way the Jamin Bazaar app lays it out —
+ * because a buyer who has seen one should recognise the other. Every row is
+ * read from the traced drawing; nothing here is computed or estimated.
+ */
+function PlotSheet({
+  plot,
+  plan,
+  title,
+  closeRef,
+  onClose,
+}: {
+  plot: Plot;
+  plan: PlotPlan;
+  title: string;
+  closeRef: React.RefObject<HTMLButtonElement | null>;
+  onClose: () => void;
+}) {
   const s = PLOT_STATUS[plotStatus(plot)];
-  const facts: [string, string][] = [];
-  if (plot.dim_m) facts.push(["Dimensions", `${plot.dim_m} m`]);
-  if (plot.facing) facts.push(["Facing", plot.facing]);
-  if (plot.road_m != null) facts.push(["Road width", `${plot.road_m} m`]);
-  if (plot.size_sqm != null) facts.push(["Extent", `${plot.size_sqm} sq m`]);
-
   const available = plotStatus(plot) === "available";
 
+  const record: [string, string][] = [["Plot number", plot.plot]];
+  if (plot.block) record.push(["Block", plot.block]);
+  if (plot.size_sqft != null)
+    record.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")} sq ft`]);
+  if (plot.size_sqm != null) record.push(["Area (m²)", `${plot.size_sqm} m²`]);
+  if (plot.dim_m) record.push(["Dimensions", `${plot.dim_m} m`]);
+  if (plot.facing) record.push(["Facing", plot.facing]);
+  if (plot.road_m != null) record.push(["Road width", `${plot.road_m.toFixed(2)} m`]);
+
+  const approval: [string, string][] = [];
+  if (plan.approvalNo) approval.push(["DTCP application", plan.approvalNo]);
+  if (plan.authority) approval.push(["Approving authority", plan.authority]);
+  if (plan.scale) approval.push(["Drawing scale", plan.scale]);
+  if (plan.surveyNos) approval.push(["Survey nos.", plan.surveyNos]);
+  if (plan.village)
+    approval.push(["Village / Taluk", [plan.village, plan.taluk].filter(Boolean).join(" / ")]);
+
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
-          Plot {plot.plot}
-          {plot.block ? ` · ${plot.block}` : ""}
-        </span>
-        <span
-          className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.08em]"
-          style={{ background: s.fill, color: s.text }}
-        >
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: s.stroke }} aria-hidden="true" />
-          {s.label}
-        </span>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={`Close plot ${plot.plot}`}
-          className="-mr-1 ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-tiny text-ink-faint transition-colors hover:bg-canvas-sunken hover:text-ink"
-        >
-          ✕
-        </button>
+    <div className="p-phi3 sm:p-phi4">
+      {/* the grab handle a bottom sheet is expected to have */}
+      <div
+        className="mx-auto mb-phi3 h-1 w-10 rounded-full bg-line sm:hidden"
+        aria-hidden="true"
+      />
+
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          {plot.block && (
+            <div className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+              Block {plot.block}
+            </div>
+          )}
+          <h3 className="mt-1 text-3xl text-ink">Plot {plot.plot}</h3>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em]"
+            style={{ background: s.fill, color: s.text }}
+          >
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: s.stroke }}
+              aria-hidden="true"
+            />
+            {s.label}
+          </span>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label={`Close plot ${plot.plot}`}
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line text-ink-faint transition-colors hover:border-ink/30 hover:text-ink"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
-      <div className="mt-1 text-xl leading-tight text-ink">
-        {plotArea(plot) ?? "Area on request"}
-      </div>
+      <p className="mt-phi2 text-lg text-ink-muted">Pricing on request</p>
 
-      {facts.length > 0 && (
-        <dl className="mt-phi2 grid grid-cols-2 gap-x-3 gap-y-1.5 border-t border-line pt-phi2">
-          {facts.map(([k, v]) => (
-            <div key={k}>
-              <dt className="text-micro uppercase tracking-[0.1em] text-ink-faint">{k}</dt>
-              <dd className="text-base leading-tight text-ink">{v}</dd>
+      <SheetSection label="Plot record">
+        <dl className="divide-y divide-line">
+          {record.map(([k, v]) => (
+            <div key={k} className="flex items-baseline justify-between gap-4 py-2.5">
+              <dt className="text-base text-ink-muted">{k}</dt>
+              <dd className="text-right text-base font-medium text-ink">{v}</dd>
             </div>
           ))}
         </dl>
+        {plot.facing && (
+          <p className="mt-phi2 text-tiny leading-relaxed text-ink-faint">
+            Facing is read from the plan and is not itself part of the DTCP approval.
+          </p>
+        )}
+      </SheetSection>
+
+      <SheetSection label="Cost">
+        {/* §74 — every plot in this database is unpriced today. Saying so is the
+            only honest option; an estimate on land somebody may actually buy
+            would be far worse than a blank. */}
+        <div className="rounded-card border border-line bg-canvas-alt p-phi3">
+          <p className="text-base font-medium text-ink">
+            Pricing for this layout is not published yet.
+          </p>
+          <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+            Every measurement above is confirmed against the sanctioned drawing. Talk to the sales
+            desk for the current rate and charges on plot {plot.plot}.
+          </p>
+        </div>
+
+        {/* A plot that is not available gets no booking button. There is
+            nothing to book and the answer would only be "that one is gone". */}
+        {available ? (
+          <a
+            href="#visit"
+            onClick={onClose}
+            className="mt-phi3 flex justify-center rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
+            style={{ transitionTimingFunction: "var(--ease-silk)" }}
+          >
+            Book a visit for plot {plot.plot}
+          </a>
+        ) : (
+          <p className="mt-phi3 rounded-card bg-canvas-sunken px-phi3 py-2.5 text-base text-ink-soft">
+            This plot is {s.label.toLowerCase()}. Ask the desk what else is open in {title}.
+          </p>
+        )}
+      </SheetSection>
+
+      {approval.length > 0 && (
+        <SheetSection label="Approval">
+          <dl className="divide-y divide-line">
+            {approval.map(([k, v]) => (
+              <div key={k} className="flex items-baseline justify-between gap-4 py-2.5">
+                <dt className="shrink-0 text-base text-ink-muted">{k}</dt>
+                <dd className="text-right text-base font-medium text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </SheetSection>
       )}
 
-      {/* §74 — every plot is unpriced in the database today. Saying so is the
-          only honest option; an estimate on land somebody may actually buy
-          would be far worse than a blank. */}
-      <p className="mt-phi2 text-micro leading-snug text-ink-muted">
-        Rate confirmed by the sales desk — we publish no estimates.
+      <p className="mt-phi4 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint">
+        Availability shown here is the state in our own records at the last update. The sales desk
+        confirms it at the time of booking.
       </p>
-
-      {/* A sold plot gets no enquiry button. There is nothing to enquire about
-          and the answer would only be "that one is gone". */}
-      {available ? (
-        <a
-          href="#visit"
-          onClick={onClose}
-          className="mt-phi2 flex justify-center rounded-full bg-jamin-red px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors duration-300 hover:bg-jamin-red-deep"
-        >
-          Ask about plot {plot.plot}
-        </a>
-      ) : (
-        <p className="mt-phi2 rounded-card bg-canvas-sunken px-2.5 py-1.5 text-micro text-ink-soft">
-          {s.label}. Ask the desk what else is open here.
-        </p>
-      )}
     </div>
+  );
+}
+
+function SheetSection({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <section className="mt-phi4">
+      <h4 className="text-micro font-semibold uppercase tracking-brand text-ink-faint">{label}</h4>
+      <div className="mt-phi2">{children}</div>
+    </section>
   );
 }
 

@@ -50,6 +50,7 @@ export async function SiteFooter() {
             <ul className="mt-phi2 space-y-3">
               <FooterLink href="/properties">All properties</FooterLink>
               <FooterLink href="/projects">Projects by stage</FooterLink>
+              <FooterLink href="/downloads">Brochures &amp; plans</FooterLink>
               {facets.phases.map((f) => (
                 <FooterLink key={f.key} href={f.href}>
                   {f.label}
