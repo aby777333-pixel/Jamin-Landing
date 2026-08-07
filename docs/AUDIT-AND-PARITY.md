@@ -42,8 +42,8 @@ Verified by reading its own files, not by assumption:
   `jamindar-voice` edge function.
 - `grep -ril supabase` across the whole project returns **nothing**.
 
-Adopting C would mean every real buyer, promoter and super-admin in
-`zhttps`-hosted `zmxqozvivdluuxvvcegs` — with their `JA######` member codes,
+Adopting C would mean every real buyer, promoter and super-admin in Supabase
+project `zmxqozvivdluuxvvcegs` — with their `JA######` member codes,
 `JA-P-####` partner codes, `JA-REF-#####` referral codes, KYC records,
 referral events, plot holds and commission ledger — **does not exist on the
 website**. They would have to register again, and promoter attribution and
