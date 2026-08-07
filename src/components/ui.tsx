@@ -1,0 +1,185 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+
+/**
+ * The shared primitives. §54 of the brief: one visual system, not forty pages
+ * each inventing their own. Every measurement here comes from the golden-ratio
+ * tokens in globals.css rather than from arbitrary pixel values.
+ */
+
+/** The single page gutter. Changing the site's measure happens here, once. */
+export function Container({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <div className={`mx-auto max-w-[1280px] px-5 lg:px-10 ${className}`}>{children}</div>;
+}
+
+/** The small gold-ruled eyebrow that opens every section. */
+export function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="h-px w-10 bg-jamin-gold" />
+      <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold">
+        {children}
+      </span>
+    </div>
+  );
+}
+
+export function SectionHead({
+  label,
+  title,
+  lead,
+  action,
+}: {
+  label?: string;
+  title: string;
+  lead?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-end justify-between gap-phi3">
+      <div className="max-w-2xl">
+        {label ? <SectionLabel>{label}</SectionLabel> : null}
+        <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">{title}</h2>
+        {lead ? (
+          <p className="mt-phi2 text-lg leading-relaxed text-ink-muted">{lead}</p>
+        ) : null}
+      </div>
+      {action}
+    </div>
+  );
+}
+
+type BadgeTone = "neutral" | "gold" | "canopy" | "red";
+const BADGE_TONE: Record<BadgeTone, string> = {
+  neutral: "bg-canvas-sunken text-ink-soft",
+  gold: "bg-jamin-gold-soft text-earth",
+  canopy: "bg-canopy-soft text-canopy",
+  red: "bg-jamin-red-soft text-jamin-red-deep",
+};
+
+export function Badge({
+  children,
+  tone = "neutral",
+}: {
+  children: ReactNode;
+  tone?: BadgeTone;
+}) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] ${BADGE_TONE[tone]}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+type ButtonVariant = "primary" | "secondary" | "quiet";
+const BUTTON_VARIANT: Record<ButtonVariant, string> = {
+  // §85: one primary action per view. Primary is the only filled red control.
+  primary:
+    "bg-jamin-red text-white shadow-lift hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise",
+  secondary: "border border-line bg-canvas text-ink hover:border-ink-faint hover:bg-canvas-alt",
+  quiet: "text-ink-soft hover:text-jamin-red",
+};
+
+export function ButtonLink({
+  href,
+  children,
+  variant = "primary",
+  className = "",
+  ...rest
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: ButtonVariant;
+  className?: string;
+} & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
+  const base =
+    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] transition-all duration-300";
+  // An external link must not go through the client router.
+  if (/^https?:/.test(href)) {
+    return (
+      <a
+        href={href}
+        className={`${base} ${BUTTON_VARIANT[variant]} ${className}`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={`${base} ${BUTTON_VARIANT[variant]} ${className}`} {...rest}>
+      {children}
+    </Link>
+  );
+}
+
+/* ---------- states (§62 / §63 / §64) ---------- */
+
+/** Skeletons, not a spinner over the whole page. Shapes match what loads. */
+export function Skeleton({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`animate-pulse rounded-md bg-canvas-sunken ${className}`}
+      aria-hidden="true"
+    />
+  );
+}
+
+export function CardSkeletonGrid({ count = 3 }: { count?: number }) {
+  return (
+    <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="overflow-hidden rounded-card border border-line bg-canvas">
+          <Skeleton className="aspect-[4/3] rounded-none" />
+          <div className="space-y-3 p-phi3">
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-3 w-1/2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * §64: an empty state earns its place by offering the next move. "No results"
+ * on its own is a dead end, so this always takes an action.
+ */
+export function EmptyState({
+  title,
+  body,
+  action,
+}: {
+  title: string;
+  body: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="rounded-card border border-line bg-canvas-alt px-phi4 py-phi5 text-center">
+      <div className="mx-auto h-px w-16 rule-gold" />
+      <h3 className="mt-phi3 text-xl text-ink">{title}</h3>
+      <p className="mx-auto mt-phi2 max-w-md text-base leading-relaxed text-ink-muted">{body}</p>
+      {action ? <div className="mt-phi3 flex justify-center gap-3">{action}</div> : null}
+    </div>
+  );
+}
+
+/** A single figure with its caption. Only ever fed by a real count. */
+export function Stat({ value, label }: { value: string | number; label: string }) {
+  return (
+    <div>
+      <div className="text-2xl text-ink lg:text-3xl">{value}</div>
+      <div className="mt-1 text-tiny uppercase tracking-[0.14em] text-ink-faint">{label}</div>
+    </div>
+  );
+}
