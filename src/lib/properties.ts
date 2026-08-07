@@ -10,6 +10,50 @@ import { supabase } from "./supabase";
  */
 export type NearbyPlace = { name?: string; category?: string; distance?: string };
 export type PropertySeo = { title?: string; description?: string };
+export type PropertyDoc = { url?: string; label?: string; size?: string };
+
+/**
+ * One plot in `plot_layout`. Shapes verified against both live cases:
+ * Edappadi carries the traced geometry (`poly`, `at`, `block`, `dim_m`,
+ * `road_m`, `size_sqm`) that the app's PlotPlan draws; Shastri Nagar carries
+ * only the schedule (`plot`, `facing`, `status`, `size_sqft`). Everything past
+ * the first four fields is therefore optional, and the UI picks its rendering
+ * from what is present rather than from the property.
+ */
+export type Plot = {
+  plot: string;
+  status?: string;
+  facing?: string;
+  size_sqft?: number;
+  size_sqm?: number;
+  block?: string;
+  dim_m?: string;
+  road_m?: number;
+  poly?: [number, number][];
+  at?: [number, number];
+  clipped?: boolean;
+  price?: number | null;
+};
+
+/** The DTCP drawing itself, when it has been traced (`plot_plan`). */
+export type PlotPlan = {
+  viewBox?: [number, number, number, number];
+  boundary?: [number, number][];
+  roads?: { band: [number, number, number, number]; label?: string; widthM?: number }[];
+  existingRoad?: { quad: [number, number][]; label?: string; widthM?: number };
+  osr?: { polygon?: [number, number][]; rect?: number[]; label?: string; areaSqm?: number };
+  dimensions?: { from: [number, number]; to: [number, number]; label?: string }[];
+  areaStatement?: { label: string; areaSqm?: number; percent?: number }[];
+  notes?: string[];
+  scale?: string;
+  approvalNo?: string;
+  authority?: string;
+  village?: string;
+  taluk?: string;
+  surveyNos?: string;
+  totalPlots?: number;
+  metresPerUnit?: number;
+};
 
 export type Property = {
   id: string;
@@ -52,6 +96,27 @@ export type Property = {
   updated_at: string | null;
 };
 
+/**
+ * The extra columns only the detail page needs.
+ *
+ * Kept off the list query on purpose: Edappadi's `plot_plan` and its 27 traced
+ * polygons are several kilobytes, and a listing page that pulled them for every
+ * row would pay that cost on the homepage, /properties, /projects and the
+ * sitemap for data none of them render.
+ */
+export type PropertyDetail = Property & {
+  plot_layout: Plot[] | null;
+  plot_plan: PlotPlan | null;
+  documents: PropertyDoc[] | null;
+  legal: Record<string, string> | null;
+  investment: Record<string, string> | null;
+  utilities: string[] | null;
+  street_view_url: string | null;
+  google_earth_url: string | null;
+  road_frontage: string | null;
+  before_images: string[] | null;
+};
+
 /** Every column the public site is allowed to read. Listed explicitly so a new
  *  admin-only column can never leak onto the website by accident. */
 const PUBLIC_COLUMNS = [
@@ -62,6 +127,14 @@ const PUBLIC_COLUMNS = [
   "amenities", "approvals", "nearby_places", "brochure_url", "brochure_cover_url",
   "master_plan_url", "virtual_tour_url", "rera_number", "is_featured", "seo",
   "created_at", "updated_at",
+].join(",");
+
+/** Everything the list needs, plus the heavy per-plot and document payloads.
+ *  Still an allow-list, so a new admin-only column cannot leak by accident. */
+const DETAIL_COLUMNS = [
+  PUBLIC_COLUMNS,
+  "plot_layout", "plot_plan", "documents", "legal", "investment", "utilities",
+  "street_view_url", "google_earth_url", "road_frontage", "before_images",
 ].join(",");
 
 /** Udumalaipet has a NULL slug and Edappadi's is a leftover working title, so a
@@ -87,24 +160,63 @@ export async function getProperties(): Promise<Property[]> {
   return (data ?? []) as unknown as Property[];
 }
 
-export async function getProperty(slugOrId: string): Promise<Property | null> {
+export async function getProperty(slugOrId: string): Promise<PropertyDetail | null> {
   // Try slug first; fall back to id so NULL-slug rows stay reachable.
   const bySlug = await supabase
     .from("properties")
-    .select(PUBLIC_COLUMNS)
+    .select(DETAIL_COLUMNS)
     .eq("slug", slugOrId)
     .maybeSingle();
-  if (bySlug.data) return bySlug.data as unknown as Property;
+  if (bySlug.data) return bySlug.data as unknown as PropertyDetail;
 
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
   if (!isUuid) return null;
 
   const byId = await supabase
     .from("properties")
-    .select(PUBLIC_COLUMNS)
+    .select(DETAIL_COLUMNS)
     .eq("id", slugOrId)
     .maybeSingle();
-  return (byId.data as unknown as Property) ?? null;
+  return (byId.data as unknown as PropertyDetail) ?? null;
+}
+
+/* ---------- plots ---------- */
+
+export type PlotStatus = "available" | "reserved" | "booked" | "sold" | "blocked";
+
+/** Live values today are `available` and `reserved`; the rest are the states the
+ *  app's own admin can set, so the key is ready for them rather than falling
+ *  through to an unlabelled grey. */
+export const PLOT_STATUS: Record<PlotStatus, { label: string; fill: string; stroke: string; text: string }> = {
+  available: { label: "Available", fill: "#E4F6EC", stroke: "#0C8046", text: "#0C8046" },
+  reserved: { label: "Reserved", fill: "#FDF5E6", stroke: "#B4831C", text: "#8A6A45" },
+  booked: { label: "Booked", fill: "#FDECEC", stroke: "#A81219", text: "#A81219" },
+  sold: { label: "Sold", fill: "#F2EDE4", stroke: "#6B6F7A", text: "#6B6F7A" },
+  blocked: { label: "Not released", fill: "#F2EDE4", stroke: "#9AA0AB", text: "#6B6F7A" },
+};
+
+export function plotStatus(p: Plot): PlotStatus {
+  const s = (p.status ?? "available").toLowerCase();
+  return (s in PLOT_STATUS ? s : "available") as PlotStatus;
+}
+
+/** Only the statuses actually present, so the key never promises a colour the
+ *  drawing does not use — the exact complaint the app's own plan key drew. */
+export function plotStatusKey(plots: Plot[]): { status: PlotStatus; count: number }[] {
+  const seen = new Map<PlotStatus, number>();
+  for (const p of plots) {
+    const s = plotStatus(p);
+    seen.set(s, (seen.get(s) ?? 0) + 1);
+  }
+  return [...seen.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([status, count]) => ({ status, count }));
+}
+
+export function plotArea(p: Plot): string | null {
+  if (p.size_sqft) return `${Math.round(p.size_sqft).toLocaleString("en-IN")} sq ft`;
+  if (p.size_sqm) return `${p.size_sqm} sq m`;
+  return null;
 }
 
 /* ---------- presentation helpers ---------- */

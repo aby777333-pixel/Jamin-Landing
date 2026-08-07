@@ -3,6 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/Gallery";
 import { PropertyCard } from "@/components/PropertyCard";
+import { MasterPlan } from "@/components/MasterPlan";
+import { PlotSchedule } from "@/components/PlotSchedule";
+import { SiteMap } from "@/components/SiteMap";
 import { SITE_URL } from "@/lib/supabase";
 import {
   approvalBadges,
@@ -14,9 +17,10 @@ import {
   isSellable,
   locationLine,
   phaseLabel,
+  plotStatus,
   propertyHref,
   typeLabel,
-  type Property,
+  type PropertyDetail,
 } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -75,7 +79,35 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function buildSchema(p: Property) {
+/** Section wrapper so every block on this long page shares one rhythm. */
+function Block({
+  id,
+  title,
+  lead,
+  children,
+}: {
+  id: string;
+  title: string;
+  lead?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="mt-phi5 scroll-mt-28">
+      <h2 className="text-2xl text-ink">{title}</h2>
+      {lead ? <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">{lead}</p> : null}
+      <div className="mt-phi3">{children}</div>
+    </section>
+  );
+}
+
+/** Turn `dtcp_approval_no` into `DTCP approval no`, without a lookup table that
+ *  would silently drop any key the admin adds later. */
+function humanKey(k: string) {
+  const s = k.replace(/_/g, " ").trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function buildSchema(p: PropertyDetail) {
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Residence",
@@ -93,7 +125,21 @@ function buildSchema(p: Property) {
   if (p.lat != null && p.lng != null) {
     schema.geo = { "@type": "GeoCoordinates", latitude: p.lat, longitude: p.lng };
   }
+  // §46 — only fields the content actually supports. No price is published, so
+  // no Offer is emitted; a fabricated one would be a rich-snippet lie.
   return schema;
+}
+
+function buildBreadcrumbs(p: PropertyDetail) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      { "@type": "ListItem", position: 2, name: "Properties", item: `${SITE_URL}/properties` },
+      { "@type": "ListItem", position: 3, name: p.title, item: `${SITE_URL}${propertyHref(p)}` },
+    ],
+  };
 }
 
 export default async function PropertyPage({ params }: PageProps<"/property/[slug]">) {
@@ -108,6 +154,14 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   const sellable = isSellable(p);
   const nearby = p.nearby_places ?? [];
   const amenities = p.amenities ?? [];
+  const utilities = p.utilities ?? [];
+  const documents = (p.documents ?? []).filter((d) => d.url);
+  const legal = Object.entries(p.legal ?? {}).filter(([, v]) => v);
+  const investment = Object.entries(p.investment ?? {}).filter(([, v]) => v);
+
+  const plots = p.plot_layout ?? [];
+  const hasGeometry = !!p.plot_plan?.viewBox && plots.some((x) => Array.isArray(x.poly));
+  const availablePlots = plots.filter((x) => plotStatus(x) === "available").length;
 
   const all = await getProperties();
   const related = all.filter((x) => x.id !== p.id && isSellable(x)).slice(0, 3);
@@ -118,8 +172,11 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSchema(p)) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbs(p)) }}
+      />
 
-      {/* breadcrumbs — required by the brief and good for indexing */}
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
         <Link href="/" className="hover:text-jamin-red">
           Home
@@ -185,10 +242,44 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </section>
           )}
 
+          {/* ---- the layout: interactive where the plan was traced, a live
+                 schedule where it was not ---- */}
+          {plots.length > 0 && (
+            <Block
+              id="layout"
+              title="The layout"
+              lead={
+                hasGeometry
+                  ? `${plots.length} plots on the sanctioned plan${
+                      availablePlots ? `, ${availablePlots} available today` : ""
+                    }. Every plot is drawn from the approved drawing, and its state here is the state in our own records.`
+                  : `${plots.length} plots in the approved schedule${
+                      availablePlots ? `, ${availablePlots} available today` : ""
+                    }.`
+              }
+            >
+              {hasGeometry ? (
+                <MasterPlan plots={plots} plan={p.plot_plan!} title={p.title} />
+              ) : (
+                <PlotSchedule plots={plots} />
+              )}
+
+              {p.master_plan_url && (
+                <a
+                  href={p.master_plan_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+                >
+                  View the scanned master plan →
+                </a>
+              )}
+            </Block>
+          )}
+
           {amenities.length > 0 && (
-            <section className="mt-phi5">
-              <h2 className="text-2xl text-ink">Amenities</h2>
-              <ul className="mt-phi3 grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
+            <Block id="amenities" title="Amenities">
+              <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
                 {amenities.map((a) => (
                   <li key={a} className="flex items-start gap-2.5 text-base text-ink-soft">
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-jamin-gold" />
@@ -196,45 +287,148 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   </li>
                 ))}
               </ul>
-            </section>
+            </Block>
           )}
 
-          {nearby.length > 0 && (
-            <section className="mt-phi5">
-              <h2 className="text-2xl text-ink">What&rsquo;s nearby</h2>
-              <ul className="mt-phi3 divide-y divide-line border-y border-line">
-                {nearby.map((n, i) => (
-                  <li key={i} className="flex items-center justify-between gap-4 py-3">
-                    <div>
-                      <div className="text-base text-ink">{n.name}</div>
-                      {n.category && <div className="text-tiny text-ink-faint">{n.category}</div>}
-                    </div>
-                    {n.distance && (
-                      <div className="shrink-0 text-base font-medium text-jamin-red">
-                        {n.distance}
-                      </div>
-                    )}
+          {utilities.length > 0 && (
+            <Block id="utilities" title="Services on site">
+              <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
+                {utilities.map((u) => (
+                  <li key={u} className="flex items-start gap-2.5 text-base text-ink-soft">
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-canopy" />
+                    {u}
                   </li>
                 ))}
               </ul>
-            </section>
+            </Block>
+          )}
+
+          {/* ---- location ---- */}
+          {(p.lat != null && p.lng != null) || nearby.length > 0 ? (
+            <Block id="location" title="Where it is">
+              {p.lat != null && p.lng != null && (
+                <SiteMap
+                  lat={Number(p.lat)}
+                  lng={Number(p.lng)}
+                  title={p.title}
+                  gmapsUrl={p.gmaps_url}
+                  streetViewUrl={p.street_view_url}
+                  earthUrl={p.google_earth_url}
+                />
+              )}
+
+              {nearby.length > 0 && (
+                <>
+                  <h3 className="mt-phi4 text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
+                    What&rsquo;s nearby
+                  </h3>
+                  <ul className="mt-phi2 divide-y divide-line border-y border-line">
+                    {nearby.map((n, i) => (
+                      <li key={i} className="flex items-center justify-between gap-4 py-3">
+                        <div>
+                          <div className="text-base text-ink">{n.name}</div>
+                          {n.category && (
+                            <div className="text-tiny text-ink-faint">{n.category}</div>
+                          )}
+                        </div>
+                        {n.distance && (
+                          <div className="shrink-0 text-base font-medium text-jamin-red">
+                            {n.distance}
+                          </div>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </Block>
+          ) : null}
+
+          {/* ---- legal & documents (§15, §78) ---- */}
+          {(legal.length > 0 || documents.length > 0 || p.rera_number) && (
+            <Block
+              id="legal"
+              title="Approvals & documents"
+              lead="What has been sanctioned, and the paperwork behind it."
+            >
+              {(legal.length > 0 || p.rera_number) && (
+                <dl className="divide-y divide-line border-y border-line">
+                  {p.rera_number && (
+                    <div className="flex flex-wrap items-baseline justify-between gap-3 py-3">
+                      <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">RERA</dt>
+                      <dd className="text-base text-ink">{p.rera_number}</dd>
+                    </div>
+                  )}
+                  {legal.map(([k, v]) => (
+                    <div key={k} className="flex flex-wrap items-baseline justify-between gap-3 py-3">
+                      <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">
+                        {humanKey(k)}
+                      </dt>
+                      <dd className="max-w-md text-right text-base text-ink">{String(v)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+
+              {documents.length > 0 && (
+                <ul className="mt-phi3 space-y-2">
+                  {documents.map((d) => (
+                    <li key={d.url}>
+                      <a
+                        href={d.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between gap-4 rounded-card border border-line bg-canvas px-phi3 py-3 transition-colors hover:border-ink-faint"
+                      >
+                        <span className="text-base text-ink">{d.label ?? "Document"}</span>
+                        <span className="shrink-0 text-tiny text-ink-faint">
+                          {d.size ? `${d.size} · ` : ""}Open
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
+                Approval details are published as recorded in the sanctioned documents. Verify the
+                current position with the issuing authority before you commit to a purchase.
+              </p>
+            </Block>
+          )}
+
+          {investment.length > 0 && sellable && (
+            <Block id="investment" title="Why this location">
+              <dl className="divide-y divide-line border-y border-line">
+                {investment.map(([k, v]) => (
+                  <div key={k} className="py-3">
+                    <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">
+                      {humanKey(k)}
+                    </dt>
+                    <dd className="mt-1 text-base leading-relaxed text-ink-soft">{String(v)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Block>
           )}
 
           {videos.length > 0 && (
-            <section className="mt-phi5">
-              <h2 className="text-2xl text-ink">Video walkthrough</h2>
-              <div className="mt-phi3 grid gap-phi3 sm:grid-cols-2">
+            <Block id="video" title="Video walkthrough">
+              <div className="grid gap-phi3 sm:grid-cols-2">
                 {videos.map((v) => (
+                  /* §68 — never autoplay, and never load the media until asked. */
                   <video
                     key={v}
                     src={v}
                     controls
-                    preload="metadata"
+                    preload="none"
+                    playsInline
+                    poster={coverImage(p) ?? undefined}
                     className="w-full rounded-card border border-line bg-ink"
                   />
                 ))}
               </div>
-            </section>
+            </Block>
           )}
         </div>
 
@@ -254,6 +448,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   }
                 />
               )}
+              {p.road_frontage && <Stat label="Road frontage" value={p.road_frontage} />}
               {p.rera_number && <Stat label="RERA" value={p.rera_number} />}
             </dl>
 
@@ -276,26 +471,24 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 </a>
               )}
 
-              {p.gmaps_url && (
+              {plots.length > 0 && (
                 <a
-                  href={p.gmaps_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="#layout"
                   className="block rounded-full border border-ink/15 px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition hover:border-ink/40"
                 >
-                  Open in Maps
+                  See the plot layout
                 </a>
               )}
             </div>
 
-            {p.master_plan_url && (
+            {p.virtual_tour_url && (
               <a
-                href={p.master_plan_url}
+                href={p.virtual_tour_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-phi3 block border-t border-line pt-phi2 text-tiny font-medium text-jamin-red hover:opacity-70"
               >
-                View master plan →
+                Take the 360° tour →
               </a>
             )}
           </div>
