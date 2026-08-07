@@ -187,12 +187,17 @@ export type PlotStatus = "available" | "reserved" | "booked" | "sold" | "blocked
 /** Live values today are `available` and `reserved`; the rest are the states the
  *  app's own admin can set, so the key is ready for them rather than falling
  *  through to an unlabelled grey. */
+/* ⚠️ `text` is measured against `fill`, not against the page. It is the colour
+   of the plot number printed INSIDE the polygon and of the legend chip's own
+   label, so both sit on the tint rather than on white. Two were failing there:
+   #0C8046 on #E4F6EC is 4.46:1 and #6B6F7A on #F2EDE4 is 4.31:1. The strokes
+   keep the brighter tones — an outline is not text and carries no ratio. */
 export const PLOT_STATUS: Record<PlotStatus, { label: string; fill: string; stroke: string; text: string }> = {
-  available: { label: "Available", fill: "#E4F6EC", stroke: "#0C8046", text: "#0C8046" },
-  reserved: { label: "Reserved", fill: "#FDF5E6", stroke: "#B4831C", text: "#8A6A45" },
-  booked: { label: "Booked", fill: "#FDECEC", stroke: "#A81219", text: "#A81219" },
-  sold: { label: "Sold", fill: "#F2EDE4", stroke: "#6B6F7A", text: "#6B6F7A" },
-  blocked: { label: "Not released", fill: "#F2EDE4", stroke: "#9AA0AB", text: "#6B6F7A" },
+  available: { label: "Available", fill: "#E4F6EC", stroke: "#0C8046", text: "#1F5D4C" }, // 6.83:1
+  reserved: { label: "Reserved", fill: "#FDF5E6", stroke: "#B4831C", text: "#8A6A45" }, // 4.61:1
+  booked: { label: "Booked", fill: "#FDECEC", stroke: "#A81219", text: "#A81219" }, // 6.65:1
+  sold: { label: "Sold", fill: "#F2EDE4", stroke: "#6B6F7A", text: "#55585F" }, // 6.11:1
+  blocked: { label: "Not released", fill: "#F2EDE4", stroke: "#9AA0AB", text: "#55585F" }, // 6.11:1
 };
 
 export function plotStatus(p: Plot): PlotStatus {

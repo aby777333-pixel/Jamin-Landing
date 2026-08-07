@@ -107,6 +107,9 @@ function Block({
 }) {
   return (
     <section id={id} className="mt-phi5 scroll-mt-28">
+      {/* A short gold rule opens each block. On a page this long the sections
+          otherwise run into one another as an undifferentiated column of text. */}
+      <span className="mb-phi2 block h-px w-12 rule-gold" aria-hidden="true" />
       <h2 className="text-2xl text-ink">{title}</h2>
       {lead ? <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">{lead}</p> : null}
       <div className="mt-phi3">{children}</div>
@@ -347,19 +350,28 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   <h3 className="mt-phi4 text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
                     What&rsquo;s nearby
                   </h3>
-                  <ul className="mt-phi2 divide-y divide-line border-y border-line">
+                  <ul className="mt-phi2 grid gap-2 sm:grid-cols-2">
                     {nearby.map((n, i) => (
-                      <li key={i} className="flex items-center justify-between gap-4 py-3">
-                        <div>
-                          <div className="text-base text-ink">{n.name}</div>
+                      /* ⚠️ min-w-0 on the grid ITEM, not just on the text
+                         inside it. A grid item's default `min-width: auto` is
+                         its content's minimum, so the longest place name set
+                         this list's min-content to 373px and pushed the whole
+                         page 18px wider than the phone. `truncate` on a child
+                         cannot save you from that. */
+                      <li
+                        key={i}
+                        className="flex min-w-0 items-center justify-between gap-3 rounded-card border border-line bg-canvas px-phi2 py-2.5"
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate text-base text-ink">{n.name}</div>
                           {n.category && (
-                            <div className="text-tiny text-ink-faint">{n.category}</div>
+                            <div className="truncate text-tiny text-ink-faint">{n.category}</div>
                           )}
                         </div>
                         {n.distance && (
-                          <div className="shrink-0 text-base font-medium text-jamin-red-deep">
+                          <span className="shrink-0 rounded-full bg-canopy-soft px-2.5 py-1 text-tiny font-medium text-canopy">
                             {n.distance}
-                          </div>
+                          </span>
                         )}
                       </li>
                     ))}
