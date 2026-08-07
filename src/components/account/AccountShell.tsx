@@ -11,6 +11,7 @@ const BUYER_NAV = [
   { href: "/account", label: "Overview" },
   { href: "/account/shortlist", label: "Shortlist" },
   { href: "/account/visits", label: "Site visits" },
+  { href: "/account/assistant", label: "Ask Jamindar" },
 ];
 
 /** Offered only to partners — a menu entry that leads to "partners only" is
