@@ -5,11 +5,21 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { Container, SectionLabel, Skeleton } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
+import { isPartner } from "@/lib/partner";
 
-const NAV = [
+const BUYER_NAV = [
   { href: "/account", label: "Overview" },
   { href: "/account/shortlist", label: "Shortlist" },
   { href: "/account/visits", label: "Site visits" },
+];
+
+/** Offered only to partners — a menu entry that leads to "partners only" is
+ *  the dead control the owner's standing rule forbids. */
+const PARTNER_NAV = [
+  { href: "/account/partner", label: "Partner desk" },
+  { href: "/account/partner/leads", label: "Leads" },
+  { href: "/account/partner/network", label: "Network" },
+  { href: "/account/partner/card", label: "Digital card" },
 ];
 
 /**
@@ -69,7 +79,7 @@ export function AccountShell({ title, children }: { title: string; children: Rea
 
       <div className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
         <nav aria-label="Account" className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
-          {NAV.map((n) => {
+          {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : [])].map((n) => {
             const on = pathname === n.href;
             return (
               <Link
