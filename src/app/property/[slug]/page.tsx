@@ -7,6 +7,8 @@ import { MasterPlan } from "@/components/MasterPlan";
 import { PlotSchedule } from "@/components/PlotSchedule";
 import { SiteMap } from "@/components/SiteMap";
 import { SaveProperty } from "@/components/SaveProperty";
+import { EnquiryForm } from "@/components/EnquiryForm";
+import { DeskActions } from "@/components/DeskActions";
 import { SITE_URL } from "@/lib/supabase";
 import {
   approvalBadges,
@@ -454,12 +456,14 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </dl>
 
             <div className="mt-phi3 space-y-2.5">
-              <Link
-                href="/contact"
+              {/* Straight to the form on this page, not off to /contact where
+                  the project they were reading gets lost. */}
+              <a
+                href="#enquire"
                 className="block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
               >
                 Book a site visit
-              </Link>
+              </a>
 
               {p.brochure_url && (
                 <a
@@ -498,6 +502,30 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           </div>
         </aside>
       </div>
+
+      {/* §39 — the conversion block sits after the read, where somebody who has
+          just gone through the plan and the approvals is most interested. */}
+      <section
+        id="enquire"
+        className="mt-phi6 scroll-mt-28 rounded-card border border-line bg-canvas-alt p-phi4"
+      >
+        <h2 className="text-2xl text-ink">Ask about {p.title}</h2>
+        <p className="mt-phi2 max-w-xl text-base leading-relaxed text-ink-muted">
+          Two fields and we will call you back — plot availability, the current rate, or a date to
+          walk the site.
+        </p>
+        <div className="mt-phi3 grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
+          <EnquiryForm propertyId={p.id} propertyTitle={p.title} />
+          <div>
+            <h3 className="text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
+              Or reach us now
+            </h3>
+            <div className="mt-phi2">
+              <DeskActions context={p.title} url={`${SITE_URL}${propertyHref(p)}`} />
+            </div>
+          </div>
+        </div>
+      </section>
 
       {related.length > 0 && (
         <section className="mt-phi7 border-t border-line pt-phi5">
