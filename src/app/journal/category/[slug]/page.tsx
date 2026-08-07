@@ -63,7 +63,7 @@ export default async function JournalCategoryPage({
   return (
     <Container className="py-phi5">
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-        <Link href="/journal" className="hover:text-jamin-red">
+        <Link href="/journal" className="hover:text-jamin-red-deep">
           Jamin Journal
         </Link>
         <span className="px-2">/</span>
@@ -129,7 +129,7 @@ export default async function JournalCategoryPage({
                   </span>
                 )}
               </div>
-              <h2 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red">
+              <h2 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
                 {p.title}
               </h2>
               {p.excerpt && (

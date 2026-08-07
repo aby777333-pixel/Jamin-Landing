@@ -198,11 +198,11 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative mx-auto max-w-[1280px] px-5 pb-phi4 pt-phi3 lg:px-10">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-            <Link href="/" className="hover:text-jamin-red">
+            <Link href="/" className="hover:text-jamin-red-deep">
               Home
             </Link>
             <span className="px-2">/</span>
-            <Link href="/properties" className="hover:text-jamin-red">
+            <Link href="/properties" className="hover:text-jamin-red-deep">
               Properties
             </Link>
             <span className="px-2">/</span>
@@ -293,7 +293,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   href={p.master_plan_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+                  className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
                 >
                   View the scanned master plan →
                 </a>
@@ -356,7 +356,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                           )}
                         </div>
                         {n.distance && (
-                          <div className="shrink-0 text-base font-medium text-jamin-red">
+                          <div className="shrink-0 text-base font-medium text-jamin-red-deep">
                             {n.distance}
                           </div>
                         )}
@@ -515,7 +515,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 href={p.virtual_tour_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-phi3 block border-t border-line pt-phi2 text-tiny font-medium text-jamin-red hover:opacity-70"
+                className="mt-phi3 block border-t border-line pt-phi2 text-tiny font-medium text-jamin-red-deep hover:opacity-70"
               >
                 Take the 360° tour →
               </a>

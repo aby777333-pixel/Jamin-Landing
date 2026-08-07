@@ -21,7 +21,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
   return (
     <Link
       href={propertyHref(p)}
-      className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
+      className="group block overflow-hidden rounded-xl border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1.5 hover:border-line-red hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
       {/* 1.618:1 — the same ratio the rest of the page is built on */}
@@ -33,7 +33,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             fill
             priority={priority}
             sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+            className="object-cover transition-transform duration-[1400ms] group-hover:scale-[1.07]"
             style={{ transitionTimingFunction: "var(--ease-silk)" }}
           />
         ) : (
@@ -72,7 +72,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           ) : null}
         </div>
 
-        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red">
+        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
           {p.title}
         </h3>
 
@@ -80,10 +80,15 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
 
         <div className="mt-phi3 flex items-end justify-between border-t border-line pt-phi2">
           <div>
-            <div className="text-lg font-semibold text-ink">{formatPrice(p)}</div>
+            <div className="text-lg text-ink">{formatPrice(p)}</div>
             {area && <div className="text-tiny text-ink-faint">{area}</div>}
           </div>
-          <span className="text-tiny font-medium text-jamin-red opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          {/* Slides in rather than blinking on — the movement is what reads as
+              considered; opacity alone reads as a flicker. */}
+          <span
+            className="translate-x-1 text-tiny font-medium text-jamin-red-deep opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100"
+            style={{ transitionTimingFunction: "var(--ease-silk)" }}
+          >
             View details →
           </span>
         </div>

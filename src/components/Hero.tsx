@@ -1,20 +1,22 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
 
 /**
- * The homepage hero.
+ * The homepage hero — one cinematic frame, no carousel.
  *
- * Same split construction as PageHero — words on the canvas, render bleeding
- * off the right — but it rotates through the brand artwork and carries the
- * live project strip beneath it.
+ * The rotation is gone deliberately. A hero that swaps under a reader is a
+ * gimmick: it costs four large downloads, it moves while somebody is reading,
+ * and it forces every headline to be generic enough to sit over any of the
+ * four. One decisive image, chosen because it shows what Jamin actually sells —
+ * plotted land, formed roads, houses going up on it — carries far more than
+ * four that show nothing in particular.
  *
- * The rotation is art only. The headline does not change with it, because a
- * headline that swaps under a reader mid-sentence is a gimmick, and because
- * these renders are conceptual: pairing a project name with one would imply the
- * picture shows that project, which it does not.
+ * That also makes this a SERVER component again. There is no state left, so
+ * the whole hero ships as HTML with no JavaScript behind it, which is where the
+ * LCP win comes from on a page that is meant to feel instant.
+ *
+ * Type sits on a measured gradient rather than the raw photograph, so white
+ * copy holds AA at any crop.
  */
 export type Slide = {
   image: string;
@@ -24,146 +26,92 @@ export type Slide = {
   href: string;
 };
 
-const ART = [
-  { id: "05", w: 1823 },
-  { id: "09", w: 1672 },
-  { id: "10", w: 1672 },
-  { id: "07", w: 1672 },
-] as const;
+/** hero-03 — plotted layout at golden hour: the road, the plot boundaries and
+ *  the first houses. The one frame in the set that is literally the product. */
+const ART = { id: "03", w: 1720 };
 
 export function Hero({ slides }: { slides: Slide[] }) {
-  const [i, setI] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  const go = useCallback((n: number) => setI(((n % ART.length) + ART.length) % ART.length), []);
-
-  useEffect(() => {
-    if (paused) return;
-    // Honour the OS setting rather than overriding it (§87).
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setInterval(() => setI((n) => (n + 1) % ART.length), 6500);
-    return () => clearInterval(t);
-  }, [paused]);
-
   return (
-    <section
-      className="relative overflow-hidden border-b border-line bg-canvas"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-    >
-      <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
-
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[60%] lg:block" aria-hidden="true">
-        {ART.map((a, n) => (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            key={a.id}
-            src={`/hero/hero-${a.id}-${a.w}.webp`}
-            srcSet={`/hero/hero-${a.id}-768.webp 768w, /hero/hero-${a.id}-1280.webp 1280w, /hero/hero-${a.id}-${a.w}.webp ${a.w}w`}
-            sizes="60vw"
-            alt=""
-            fetchPriority={n === 0 ? "high" : "auto"}
-            loading={n === 0 ? "eager" : "lazy"}
-            decoding="async"
-            className="hero-fade absolute inset-0 h-full w-full object-cover object-left transition-opacity duration-[1400ms]"
-            style={{ opacity: i === n ? 1 : 0, transitionTimingFunction: "var(--ease-silk)" }}
-          />
-        ))}
+    <section className="relative isolate overflow-hidden bg-charcoal">
+      <div className="absolute inset-0">
+        <Image
+          src={`/hero/hero-${ART.id}-${ART.w}.webp`}
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="veil absolute inset-0" />
       </div>
 
-      <div className="relative mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10 lg:py-phi7">
-        <div className="max-w-[36rem] lg:max-w-[40rem]">
+      <div className="relative mx-auto flex min-h-[clamp(30rem,78vh,44rem)] max-w-[1280px] flex-col justify-end px-5 pb-phi5 pt-phi7 lg:px-10 lg:pb-phi6">
+        <div className="max-w-3xl reveal">
           <div className="flex items-center gap-3">
-            <span className="h-px w-12 rule-red" />
-            <span className="text-micro font-semibold uppercase tracking-brand text-jamin-red">
+            <span className="h-px w-12 bg-white/50" />
+            <span className="text-micro font-medium uppercase tracking-brand text-white/85">
               DTCP-approved plots · Tamil Nadu
             </span>
           </div>
 
-          <h1 className="mt-phi3 text-5xl text-ink">
-            Buy land you can
-            <br />
-            build on.
+          <h1 className="mt-phi3 text-5xl text-white">
+            Land you can build on,
+            <br className="hidden sm:block" /> with nothing left to check.
           </h1>
 
-          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
-            Jamin Properties develops DTCP-approved residential plots across Erode, Salem, Tiruppur
-            and Coimbatore — sanctioned layouts, clear and marketable title, formed roads and water
-            to every plot. See the approved plan and the plot you are buying before you decide.
+          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-white/80">
+            Residential plots in sanctioned layouts across Erode, Salem, Tiruppur and Coimbatore —
+            clear and marketable title, roads and water formed to the approved plan, and the plot
+            schedule published before you visit.
           </p>
 
           <div className="mt-phi4 flex flex-wrap gap-3">
             <Link
               href="/properties"
-              className="rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
+              className="rounded-full bg-white px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-canvas"
+              style={{ transitionTimingFunction: "var(--ease-silk)" }}
             >
               See available plots
             </Link>
             <Link
               href="/contact"
-              className="rounded-full border border-ink/15 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-colors hover:border-ink/45"
+              className="glass-dark rounded-full px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
+              style={{ transitionTimingFunction: "var(--ease-silk)" }}
             >
               Book a site visit
             </Link>
           </div>
-
-          {/* dots — art only, so they are decorative controls, labelled anyway */}
-          <div className="mt-phi5 hidden items-center gap-2 lg:flex">
-            {ART.map((a, n) => (
-              <button
-                key={a.id}
-                onClick={() => go(n)}
-                aria-label={`Show brand image ${n + 1} of ${ART.length}`}
-                aria-pressed={i === n}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  i === n ? "w-8 bg-jamin-red" : "w-3 bg-ink/20 hover:bg-ink/40"
-                }`}
-              />
-            ))}
-          </div>
         </div>
-      </div>
 
-      <div className="relative h-52 w-full sm:h-64 lg:hidden">
-        <Image
-          src={`/hero/hero-${ART[i].id}-1280.webp`}
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="100vw"
-          priority
-          className="object-cover object-right"
-        />
-      </div>
-
-      {/* live inventory strip — real projects, directly under the promise */}
-      {slides.length > 0 && (
-        <div className="relative border-t border-line bg-canvas-alt/70 backdrop-blur">
-          <div className="mx-auto flex max-w-[1280px] gap-phi3 overflow-x-auto px-5 py-phi3 lg:px-10">
-            {slides.map((s) => (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="group flex min-w-[15rem] shrink-0 items-center gap-3"
-              >
-                <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-canvas-sunken">
-                  <Image src={s.image} alt="" fill sizes="64px" className="object-cover" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-micro uppercase tracking-[0.14em] text-jamin-red">
-                    {s.eyebrow}
+        {/* Live inventory as a floating glass rail — the one place glass earns
+            its keep here, because it has to sit over a photograph. */}
+        {slides.length > 0 && (
+          <div className="glass mt-phi5 rounded-xl p-2">
+            <div className="flex gap-1 overflow-x-auto">
+              {slides.map((s) => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="group flex min-w-[14rem] shrink-0 items-center gap-3 rounded-[18px] p-2 transition-colors duration-300 hover:bg-canvas/70"
+                >
+                  <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-canvas-sunken">
+                    <Image src={s.image} alt="" fill sizes="64px" className="object-cover" />
                   </span>
-                  <span className="block truncate text-base text-ink transition-colors group-hover:text-jamin-red">
-                    {s.title}
+                  <span className="min-w-0">
+                    <span className="block text-micro uppercase tracking-[0.14em] text-jamin-red-deep">
+                      {s.eyebrow}
+                    </span>
+                    <span className="block truncate text-base text-ink transition-colors group-hover:text-jamin-red-deep">
+                      {s.title}
+                    </span>
                   </span>
-                </span>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </section>
   );
 }

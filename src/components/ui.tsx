@@ -81,11 +81,17 @@ export function Badge({
 
 type ButtonVariant = "primary" | "secondary" | "quiet";
 const BUTTON_VARIANT: Record<ButtonVariant, string> = {
-  // §85: one primary action per view. Primary is the only filled red control.
+  // §85: one primary action per view. Primary is the only filled red control —
+  // which is exactly what "red as an accent" means: it appears once, on the
+  // single thing you want pressed, and nowhere else on the page.
   primary:
     "bg-jamin-red text-white shadow-lift hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise",
-  secondary: "border border-line bg-canvas text-ink hover:border-ink-faint hover:bg-canvas-alt",
-  quiet: "text-ink-soft hover:text-jamin-red",
+  // Secondary is charcoal-ruled rather than grey-ruled: on the warm ivory
+  // ground a neutral grey outline goes muddy, where ink at low opacity stays
+  // crisp and reads as considered.
+  secondary:
+    "border border-ink/15 bg-canvas/70 text-ink backdrop-blur-sm hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas",
+  quiet: "text-ink-soft hover:text-jamin-red-deep",
 };
 
 export function ButtonLink({
@@ -101,7 +107,7 @@ export function ButtonLink({
   className?: string;
 } & Omit<React.ComponentProps<typeof Link>, "href" | "className" | "children">) {
   const base =
-    "inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] transition-all duration-300";
+    "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] transition-all duration-500 [transition-timing-function:var(--ease-silk)]";
   // An external link must not go through the client router.
   if (/^https?:/.test(href)) {
     return (
@@ -165,7 +171,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="rounded-card border border-line bg-canvas-alt px-phi4 py-phi5 text-center">
+    <div className="rounded-xl border border-line bg-canvas-alt px-phi4 py-phi6 text-center">
       <div className="mx-auto h-px w-16 rule-gold" />
       {/* h2, not h3: an empty state is usually the only thing under the page's
           h1, and jumping a level breaks the outline screen-reader users
@@ -181,7 +187,7 @@ export function EmptyState({
 export function Stat({ value, label }: { value: string | number; label: string }) {
   return (
     <div>
-      <div className="text-2xl text-ink lg:text-3xl">{value}</div>
+      <div className="text-2xl font-light tracking-tight text-ink lg:text-3xl">{value}</div>
       <div className="mt-1 text-tiny uppercase tracking-[0.14em] text-ink-faint">{label}</div>
     </div>
   );

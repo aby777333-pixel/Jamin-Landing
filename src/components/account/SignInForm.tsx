@@ -174,7 +174,7 @@ export function SignInForm({ next }: { next: string }) {
                 type="button"
                 disabled={seconds > 0 || busy}
                 onClick={() => onSend()}
-                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red disabled:text-ink-faint"
+                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep disabled:text-ink-faint"
               >
                 {seconds > 0 ? `Resend in ${seconds}s` : "Resend code"}
               </button>

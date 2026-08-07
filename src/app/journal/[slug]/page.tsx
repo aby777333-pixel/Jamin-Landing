@@ -131,7 +131,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
       )}
 
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-        <Link href="/journal" className="hover:text-jamin-red">
+        <Link href="/journal" className="hover:text-jamin-red-deep">
           Jamin Journal
         </Link>
         {post.blog_categories && (
@@ -139,7 +139,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
             <span className="px-2">/</span>
             <Link
               href={`/journal/category/${post.blog_categories.slug}`}
-              className="hover:text-jamin-red"
+              className="hover:text-jamin-red-deep"
             >
               {post.blog_categories.name}
             </Link>
@@ -269,7 +269,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
                     <li key={h.id} className={h.level === 3 ? "pl-phi3" : "pl-phi2"}>
                       <a
                         href={`#${h.id}`}
-                        className="block text-base leading-snug text-ink-muted transition-colors hover:text-jamin-red"
+                        className="block text-base leading-snug text-ink-muted transition-colors hover:text-jamin-red-deep"
                       >
                         {h.text}
                       </a>

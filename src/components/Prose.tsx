@@ -76,7 +76,7 @@ function inline(text: string, keyPrefix: string): ReactNode[] {
     if (link) {
       const href = safeHref(link[2]);
       if (!href) return <span key={key}>{link[1]}</span>;
-      const cls = "text-jamin-red underline underline-offset-2 hover:opacity-70";
+      const cls = "text-jamin-red-deep underline underline-offset-2 hover:opacity-70";
       return href.startsWith("/") ? (
         <Link key={key} href={href} className={cls}>
           {link[1]}

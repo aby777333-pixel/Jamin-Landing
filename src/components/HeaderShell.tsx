@@ -21,7 +21,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<null | "projects" | "locations">(null);
   const pathname = usePathname();
-  const navRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   const panelId = useId();
 
   useEffect(() => {
@@ -53,8 +53,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setPanel(null);
     };
+    // ⚠️ Must test the whole HEADER, not the nav bar. When this checked the
+    // inner bar, a mousedown on a link inside the mega panel counted as
+    // "outside", the panel unmounted before mouseup, and the click never
+    // landed — the dropdown links were unclickable.
     const onClick = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) setPanel(null);
+      if (headerRef.current && !headerRef.current.contains(e.target as Node)) setPanel(null);
     };
     document.addEventListener("keydown", onKey);
     document.addEventListener("mousedown", onClick);
@@ -73,19 +77,29 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
     "absolute -bottom-1.5 left-0 h-px w-0 bg-jamin-gold transition-all duration-500 group-hover:w-full";
 
   return (
+    /* ⚠️ The mouse-leave lives on the HEADER, not on the nav bar inside it.
+       It used to sit on the inner bar while the mega panel rendered outside
+       that element — so the moment the cursor moved down from a trigger
+       towards the panel it left the hover region, the panel closed, and the
+       dropdown was effectively unusable with a mouse. Both the triggers and
+       the panel now share one hover region, which is the whole header. */
     <header
+      ref={headerRef}
+      onMouseLeave={() => setPanel(null)}
+      /* Flat on the page at rest, frosted the moment it starts overlapping
+         content. The header sits in normal flow, so at scroll 0 it is over the
+         page's own canvas and needs no treatment at all — the glass (and its
+         shadow) would just be decoration. Once scrolled it is genuinely over
+         the content, including the dark cinematic heroes, and then it earns
+         the frost. */
       className={`sticky top-0 z-40 transition-all duration-500 ${
         solid || panel
-          ? "border-b border-line bg-canvas/90 backdrop-blur-xl"
+          ? "glass border-b border-line/70"
           : "border-b border-transparent bg-transparent"
       }`}
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      <div
-        ref={navRef}
-        className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10"
-        onMouseLeave={() => setPanel(null)}
-      >
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10">
         <Link href="/" className="flex items-center" aria-label="Jamin Bazaar — home">
           <Image
             src="/logo.png"
@@ -184,7 +198,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
 
       {/* ---- mega panels (desktop) ---- */}
       {panel === "projects" && (
-        <MegaPanel id={`${panelId}-projects`} onLeave={() => setPanel(null)}>
+        <MegaPanel id={`${panelId}-projects`}>
           <PanelIntro
             title="By stage"
             body="Every Jamin development, grouped by where it is in its life — from land secured to keys handed over."
@@ -194,12 +208,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <ul className="grid flex-1 gap-2 sm:grid-cols-2">
             {facets.phases.map((f) => (
               <li key={f.key}>
-                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-colors hover:bg-canvas-alt">
+                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1">
                   <span className="flex items-baseline justify-between gap-3">
-                    <span className="text-base font-medium text-ink group-hover:text-jamin-red">
+                    <span className="text-base font-medium text-ink group-hover:text-jamin-red-deep">
                       {f.label}
                     </span>
-                    <span className="text-tiny text-ink-faint">{f.count}</span>
+                    <span className="text-tiny text-ink-muted">{f.count}</span>
                   </span>
                 </Link>
               </li>
@@ -209,7 +223,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
       )}
 
       {panel === "locations" && (
-        <MegaPanel id={`${panelId}-locations`} onLeave={() => setPanel(null)}>
+        <MegaPanel id={`${panelId}-locations`}>
           <PanelIntro
             title="Where we build"
             body="Jamin develops across Tamil Nadu. These are the districts with land on the books today."
@@ -219,12 +233,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <ul className="grid flex-1 gap-2 sm:grid-cols-2">
             {facets.districts.map((f) => (
               <li key={f.key}>
-                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-colors hover:bg-canvas-alt">
+                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1">
                   <span className="flex items-baseline justify-between gap-3">
-                    <span className="text-base font-medium text-ink group-hover:text-jamin-red">
+                    <span className="text-base font-medium text-ink group-hover:text-jamin-red-deep">
                       {f.label}
                     </span>
-                    <span className="text-tiny text-ink-faint">{f.count}</span>
+                    <span className="text-tiny text-ink-muted">{f.count}</span>
                   </span>
                 </Link>
               </li>
@@ -285,22 +299,13 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
-function MegaPanel({
-  id,
-  children,
-  onLeave,
-}: {
-  id: string;
-  children: React.ReactNode;
-  onLeave: () => void;
-}) {
+function MegaPanel({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <div
-      id={id}
-      onMouseLeave={onLeave}
-      className="hidden border-t border-line bg-canvas/95 backdrop-blur-xl lg:block"
-    >
-      <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi4">{children}</div>
+    /* No onMouseLeave here: the header owns the hover region now, so leaving
+       the panel downward closes it and moving between trigger and panel does
+       not. Keeping a second handler here would reintroduce the flicker. */
+    <div id={id} className="hidden border-t border-line/70 glass lg:block">
+      <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi5">{children}</div>
     </div>
   );
 }
@@ -322,7 +327,7 @@ function PanelIntro({
       <p className="mt-phi2 text-base leading-relaxed text-ink-muted">{body}</p>
       <Link
         href={href}
-        className="mt-phi3 inline-flex items-center gap-2 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+        className="mt-phi3 inline-flex items-center gap-2 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
       >
         {cta}
         <span aria-hidden="true">→</span>

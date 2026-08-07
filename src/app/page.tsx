@@ -133,7 +133,7 @@ export default async function HomePage() {
           </div>
           <Link
             href="/properties"
-            className="text-tiny font-semibold uppercase tracking-[0.14em] text-jamin-red transition-opacity hover:opacity-70"
+            className="text-tiny font-semibold uppercase tracking-[0.14em] text-jamin-red-deep transition-opacity hover:opacity-70"
           >
             All properties →
           </Link>

@@ -122,13 +122,13 @@ function LeadStory({ post }: { post: JournalPost }) {
       </div>
       <div className="self-center">
         <Meta post={post} />
-        <h2 className="mt-phi2 text-2xl text-ink transition-colors group-hover:text-jamin-red lg:text-3xl">
+        <h2 className="mt-phi2 text-2xl text-ink transition-colors group-hover:text-jamin-red-deep lg:text-3xl">
           {post.title}
         </h2>
         {post.excerpt && (
           <p className="mt-phi2 text-lg leading-relaxed text-ink-muted">{post.excerpt}</p>
         )}
-        <span className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red">
+        <span className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep">
           Read the guide →
         </span>
       </div>
@@ -160,7 +160,7 @@ function ArticleCard({ post }: { post: JournalPost }) {
       </div>
       <div className="p-phi3">
         <Meta post={post} />
-        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red">
+        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
           {post.title}
         </h3>
         {post.excerpt && (

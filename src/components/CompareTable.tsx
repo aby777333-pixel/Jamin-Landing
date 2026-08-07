@@ -133,14 +133,14 @@ export function CompareTable({ all }: { all: Property[] }) {
               </div>
               <Link
                 href={propertyHref(p)}
-                className="mt-phi2 block text-lg text-ink hover:text-jamin-red"
+                className="mt-phi2 block text-lg text-ink hover:text-jamin-red-deep"
               >
                 {p.title}
               </Link>
               <button
                 type="button"
                 onClick={() => write(ids.filter((x) => x !== p.id))}
-                className="mt-1 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red"
+                className="mt-1 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep"
               >
                 Remove
               </button>
@@ -173,7 +173,7 @@ export function CompareTable({ all }: { all: Property[] }) {
           <button
             type="button"
             onClick={() => setShowSame((v) => !v)}
-            className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+            className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
           >
             {showSame ? "Hide identical rows" : "Show identical rows"}
           </button>

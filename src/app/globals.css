@@ -42,13 +42,15 @@
      images ended in a visible rectangle, on this they dissolve into the page.
      Luminance barely moved (0.984 → 0.988), so every contrast ratio fixed in
      the accessibility pass still holds. */
-  --color-canvas: #ffffff;
-  /* Nudged lighter: brand red as small text measured 4.48:1 on the previous
-     #f7f7f8 — a hair under AA. At this value it clears 4.60:1 and the tint is
-     still clearly distinct from the white canvas. */
-  --color-canvas-alt: #fafafb;
-  --color-canvas-sunken: #eeeef1;
-  --color-line: #e4e4e8;
+  --color-canvas: #fdfcf9;        /* warm white */
+  --color-canvas-alt: #f8f5ef;    /* ivory */
+  --color-canvas-sunken: #efe9de;  /* champagne */
+  --color-line: #e7e0d4;
+  /* Deep, quiet surfaces for the cinematic sections. */
+  --color-charcoal: #1a1a1c;
+  --color-graphite: #34353a;
+  --color-burgundy: #6e1420;
+  --color-terracotta: #b4674f;
   /* Hairline red, the same line-work as the renders. Structure, never text. */
   --color-line-red: #f6cfd0;
 
@@ -80,7 +82,22 @@
   --spacing-phi6: 5.5625rem;
   --spacing-phi7: 9rem;
 
-  --radius-card: 14px;
+  --radius-card: 18px;
+  --radius-xl: 26px;
+
+  /* Frosted surfaces. Deliberately restrained — glass is used where it helps
+     a panel sit over imagery, never as decoration on a plain background.
+     ⚠️ The tint is 0.90, not the 0.72 it started at, and that is a contrast
+     decision. A frosted panel's effective background is whatever happens to be
+     behind it, so the darker the photograph the darker the panel — at 0.72 the
+     header and the hero's inventory rail measured rgb(191) over the charcoal
+     hero, which drops small red text to 4.05:1 and fails AA. At 0.90 the
+     backdrop can only move between rgb(228) and rgb(253) whatever the image
+     does, which keeps every ratio on the panel knowable. The blur and the
+     saturation, not the transparency, are what make it read as glass. */
+  --glass-tint: rgba(253, 252, 249, 0.9);
+  --glass-tint-dark: rgba(26, 26, 28, 0.42);
+  --glass-edge: rgba(255, 255, 255, 0.55);
 
   --shadow-lift: 0 1px 2px rgba(23, 24, 28, 0.04), 0 8px 24px -8px rgba(23, 24, 28, 0.1);
   --shadow-raise: 0 2px 4px rgba(23, 24, 28, 0.05), 0 20px 48px -16px rgba(23, 24, 28, 0.18);
@@ -100,23 +117,25 @@
     color: var(--color-ink);
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
-  /* The display face is now reserved for h1 and h2 — the sizes it was chosen
-     for. h3 and h4 drop to the UI face, which is the current editorial
-     convention and reads far better at subhead sizes than a high-contrast
-     serif does. */
+  /* One typeface. The brief asks for Inter throughout, so the hierarchy is
+     carried by weight, scale, tracking and space rather than by contrast
+     between two families — which is the harder discipline and the reason a
+     magazine page reads as calm rather than busy.
+     Display sizes go LIGHTER, not heavier: at 3rem+ a 300 weight with tight
+     tracking reads expensive, where a bold reads like a banner. */
   h1,
   h2 {
-    font-family: var(--font-display), ui-serif, Georgia, serif;
-    font-weight: 400;
-    letter-spacing: -0.022em;
-    line-height: 1.02;
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: -0.032em;
+    line-height: 1.04;
   }
   h3,
   h4 {
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.011em;
-    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: -0.014em;
+    line-height: 1.22;
   }
   /* Never trap keyboard users just because the design is quiet. */
   :focus-visible {
@@ -168,6 +187,62 @@
      over the text. */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
   mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
+}
+
+@utility glass {
+  background: var(--glass-tint);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: 0 1px 1px rgba(26, 26, 28, 0.03), 0 18px 50px -24px rgba(26, 26, 28, 0.28);
+}
+
+@utility glass-dark {
+  background: var(--glass-tint-dark);
+  backdrop-filter: blur(26px) saturate(130%);
+  -webkit-backdrop-filter: blur(26px) saturate(130%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+@utility veil {
+  /* The scrim that lets white type sit on a photograph and stay legible at any
+     crop. Two gradients, because the copy is anchored bottom-left and a single
+     left-to-right wash is not enough on its own: hero-01 and hero-02 are bright
+     skies, and a horizontal-only veil leaves the lead paragraph at about 4:1.
+     Stacked, the darkest point is the bottom-left corner where the words are
+     (≈0.89 combined, so white clears AA even over pure white) while the top
+     right stays almost untouched and the photograph still reads as a
+     photograph. Measured against the worst case, not eyeballed. */
+  background:
+    linear-gradient(
+      to top,
+      rgba(16, 14, 12, 0.8) 0%,
+      rgba(16, 14, 12, 0.45) 25%,
+      rgba(16, 14, 12, 0) 75%
+    ),
+    linear-gradient(
+      100deg,
+      rgba(16, 14, 12, 0.55) 0%,
+      rgba(16, 14, 12, 0.34) 40%,
+      rgba(16, 14, 12, 0) 78%
+    );
+}
+
+@utility reveal {
+  animation: reveal 1s var(--ease-silk) both;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
 
 @utility rise {

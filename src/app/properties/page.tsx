@@ -21,7 +21,9 @@ export default async function PropertiesPage() {
   return (
     <>
       <PageHero
-        art={3}
+        art={2}
+        tone="cinematic"
+        size="tall"
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
         lead={

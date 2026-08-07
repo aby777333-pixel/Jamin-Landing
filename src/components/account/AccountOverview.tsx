@@ -121,7 +121,7 @@ function Tile({ label, value, href, cta }: { label: string; value: string; href:
       <div className="mt-1 text-3xl text-ink">{value}</div>
       <Link
         href={href}
-        className="mt-phi2 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+        className="mt-phi2 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
       >
         {cta} →
       </Link>

@@ -1,25 +1,14 @@
 import type { Metadata } from "next";
-import { Instrument_Serif, Inter } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SITE_URL } from "@/lib/supabase";
 
-/** Display face carries the luxury register; Inter is the app's own body face,
- *  so the website and the phone app read as one brand. `display: swap` keeps
- *  text painting immediately rather than blocking on the font. */
-/** Instrument Serif replaced Playfair Display in the 2026 art direction.
- *  Playfair reads as traditional luxury; this is the contemporary editorial
- *  register the renders call for — tighter, higher contrast, and built to be
- *  set very large. One weight only, which is the point: it is a display face,
- *  and Inter does all the work below h2. */
-const display = Instrument_Serif({
-  subsets: ["latin"],
-  weight: ["400"],
-  style: ["normal", "italic"],
-  variable: "--font-display",
-  display: "swap",
-});
+/** One typeface, as the brief asks. Inter carries display and UI both; the
+ *  hierarchy comes from weight and scale rather than from a second family.
+ *  Loading one variable font instead of two also removes a render-blocking
+ *  request, which is where a "premium" site usually loses its speed. */
 const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
@@ -77,7 +66,7 @@ const orgSchema = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-IN" className={`${display.variable} ${body.variable} h-full antialiased`}>
+    <html lang="en-IN" className={`${body.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <script
           type="application/ld+json"

@@ -67,7 +67,7 @@ export async function SiteFooter() {
             <ul className="mt-phi2 space-y-3">
               {tel && (
                 <li>
-                  <a href={tel} className="text-base text-ink-muted transition-colors hover:text-jamin-red">
+                  <a href={tel} className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep">
                     {desk.mobile}
                   </a>
                 </li>
@@ -78,7 +78,7 @@ export async function SiteFooter() {
                     href={wa}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-ink-muted transition-colors hover:text-jamin-red"
+                    className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
                   >
                     WhatsApp
                   </a>
@@ -88,7 +88,7 @@ export async function SiteFooter() {
                 <li>
                   <a
                     href={`mailto:${desk.email}`}
-                    className="break-all text-base text-ink-muted transition-colors hover:text-jamin-red"
+                    className="break-all text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
                   >
                     {desk.email}
                   </a>
@@ -102,7 +102,7 @@ export async function SiteFooter() {
                   href="https://merry-begonia-4c3cd1.netlify.app/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-base text-ink-muted transition-colors hover:text-jamin-red"
+                  className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
                 >
                   Jamin Bazaar app
                 </a>
@@ -136,7 +136,7 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-base text-ink-muted transition-colors hover:text-jamin-red">
+      <Link href={href} className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep">
         {children}
       </Link>
     </li>

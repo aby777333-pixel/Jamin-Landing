@@ -154,7 +154,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <button
               type="button"
               onClick={() => set({ q: "" })}
-              className="shrink-0 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red"
+              className="shrink-0 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep"
             >
               Clear
             </button>
@@ -242,7 +242,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 <button
                   type="button"
                   onClick={() => set({ q: "", district: null, phase: null })}
-                  className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+                  className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
                 >
                   Clear filters
                 </button>
@@ -319,7 +319,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                     </span>
                   )}
                 </div>
-                <Link href={propertyHref(p)} className="mt-1 block text-xl text-ink hover:text-jamin-red">
+                <Link href={propertyHref(p)} className="mt-1 block text-xl text-ink hover:text-jamin-red-deep">
                   {p.title}
                 </Link>
                 <p className="mt-0.5 text-base text-ink-muted">{summaryLine(p)}</p>
@@ -408,7 +408,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <button
               type="button"
               onClick={() => set({ compare: [] })}
-              className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red"
+              className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep"
             >
               Clear
             </button>

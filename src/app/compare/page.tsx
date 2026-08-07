@@ -27,7 +27,7 @@ export default async function ComparePage() {
   return (
     <>
       <PageHero
-        art={7}
+        art={6}
         eyebrow="Side by side"
         title="Compare Jamin developments"
         lead="Two or three at a time. Rows where the projects agree are hidden, so what is left on the page is what actually separates them."

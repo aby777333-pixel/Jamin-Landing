@@ -56,7 +56,7 @@ export default async function ProjectsPage() {
               </div>
               <Link
                 href={`/projects/${g.phase}`}
-                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red"
+                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
               >
                 View {g.meta.label.toLowerCase()} →
               </Link>

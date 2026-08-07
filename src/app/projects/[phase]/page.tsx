@@ -67,7 +67,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // One image per stage, so the four pages are visually distinct rather than
   // four copies of the same header.
   const ART_BY_PHASE: Record<string, HeroArt> = {
-    ongoing: 4, current: 9, future: 7, completed: 1,
+    ongoing: 4, current: 7, future: 8, completed: 10,
   };
 
   return (
@@ -90,7 +90,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
       />
       <Container className="py-phi5">
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-        <Link href="/projects" className="hover:text-jamin-red">
+        <Link href="/projects" className="hover:text-jamin-red-deep">
           Projects
         </Link>
         <span className="mx-2" aria-hidden="true">
