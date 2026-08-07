@@ -95,12 +95,18 @@ export function Hero({ slides }: { slides: Slide[] }) {
             its keep here, because it has to sit over a photograph. */}
         {slides.length > 0 && (
           <div className="glass mt-phi4 rounded-xl p-1.5">
-            <div className="flex gap-1 overflow-x-auto">
+            {/* The items SHARE the rail rather than queueing at its left edge:
+                `flex-1` from `sm` up divides the full width between however
+                many developments are selling, so three of them read as three
+                equal choices instead of a short row with dead space beside it.
+                Below `sm` they keep their minimum width and the rail scrolls,
+                because squeezing three cards into 375px reads as nothing. */}
+            <div className="flex gap-1 overflow-x-auto sm:overflow-x-visible">
               {slides.map((s) => (
                 <Link
                   key={s.href}
                   href={s.href}
-                  className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] p-1.5 transition-colors duration-300 hover:bg-canvas/70"
+                  className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] p-1.5 transition-colors duration-300 hover:bg-canvas/70 sm:min-w-0 sm:flex-1 sm:shrink"
                 >
                   <span className="relative h-10 w-14 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
                     <Image src={s.image} alt="" fill sizes="56px" className="object-cover" />
