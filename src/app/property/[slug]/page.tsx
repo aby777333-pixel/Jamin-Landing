@@ -180,7 +180,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   const related = all.filter((x) => x.id !== p.id && isSellable(x)).slice(0, 3);
 
   return (
-    <article className="mx-auto max-w-[1280px] px-5 py-phi4 lg:px-10">
+    <article>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSchema(p)) }}
@@ -190,57 +190,68 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbs(p)) }}
       />
 
-      <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
-        <Link href="/" className="hover:text-jamin-red">
-          Home
-        </Link>
-        <span className="px-2">/</span>
-        <Link href="/properties" className="hover:text-jamin-red">
-          Properties
-        </Link>
-        <span className="px-2">/</span>
-        <span className="text-ink-soft">{p.title}</span>
-      </nav>
+      {/* This page's hero is the project's OWN photography, not the brand
+          renders every other page opens with. A real picture of the land beats
+          a conceptual one, and putting a render here would imply it shows this
+          development — which it does not. */}
+      <section className="relative overflow-hidden border-b border-line bg-canvas">
+        <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div className="relative mx-auto max-w-[1280px] px-5 pb-phi4 pt-phi3 lg:px-10">
+          <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
+            <Link href="/" className="hover:text-jamin-red">
+              Home
+            </Link>
+            <span className="px-2">/</span>
+            <Link href="/properties" className="hover:text-jamin-red">
+              Properties
+            </Link>
+            <span className="px-2">/</span>
+            <span className="text-ink-soft">{p.title}</span>
+          </nav>
 
-      <header className="mt-phi3 flex flex-wrap items-start justify-between gap-phi3">
-        <div className="max-w-2xl">
-          <div className="flex flex-wrap items-center gap-2">
-            {phaseLabel(p) && (
-              <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
-                {phaseLabel(p)}
-              </span>
-            )}
-            {approvals.map((a) => (
-              <span
-                key={a}
-                className="rounded-full bg-canopy-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-canopy"
-              >
-                {a} Approved
-              </span>
-            ))}
-            {!sellable && (
-              <span className="rounded-full bg-ink px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white">
-                {p.status === "sold" ? "Sold Out" : p.status}
-              </span>
-            )}
+          <header className="mt-phi3 flex flex-wrap items-end justify-between gap-phi3">
+            <div className="max-w-2xl">
+              <div className="flex flex-wrap items-center gap-2">
+                {phaseLabel(p) && (
+                  <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
+                    {phaseLabel(p)}
+                  </span>
+                )}
+                {approvals.map((a) => (
+                  <span
+                    key={a}
+                    className="rounded-full bg-canopy-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-canopy"
+                  >
+                    {a} Approved
+                  </span>
+                ))}
+                {!sellable && (
+                  <span className="rounded-full bg-ink px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white">
+                    {p.status === "sold" ? "Sold Out" : p.status}
+                  </span>
+                )}
+              </div>
+              <h1 className="mt-phi3 text-4xl text-ink">{p.title}</h1>
+              <p className="mt-phi2 text-lg text-ink-muted">{locationLine(p)}</p>
+            </div>
+
+            <div className="text-right">
+              <div className="text-2xl text-ink">{formatPrice(p)}</div>
+              {p.price == null && (
+                <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
+                  Our sales desk confirms the current rate — we don&rsquo;t publish estimates.
+                </p>
+              )}
+            </div>
+          </header>
+
+          <div className="mt-phi4">
+            <Gallery images={images} title={p.title} />
           </div>
-          <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{p.title}</h1>
-          <p className="mt-phi2 text-lg text-ink-muted">{locationLine(p)}</p>
         </div>
+      </section>
 
-        <div className="text-right">
-          <div className="text-2xl text-ink">{formatPrice(p)}</div>
-          {p.price == null && (
-            <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
-              Our sales desk confirms the current rate — we don&rsquo;t publish estimates.
-            </p>
-          )}
-        </div>
-      </header>
-
-      <div className="mt-phi4">
-        <Gallery images={images} title={p.title} />
-      </div>
+      <div className="mx-auto max-w-[1280px] px-5 pb-phi4 lg:px-10">
 
       <div className="mt-phi5 grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
         <div>
@@ -547,6 +558,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           </div>
         </section>
       )}
+      </div>
     </article>
   );
 }

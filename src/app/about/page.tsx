@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageHero } from "@/components/PageHero";
+import { Container } from "@/components/ui";
 import { getProperties, isSellable } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -37,24 +39,14 @@ export default async function AboutPage() {
   const plots = all.reduce((n, p) => n + (p.plots_total ?? 0), 0);
 
   return (
-    <div className="mx-auto max-w-[1280px] px-5 py-phi5 lg:px-10">
-      <header className="max-w-2xl">
-        <div className="flex items-center gap-3">
-          <span className="h-px w-10 bg-jamin-gold" />
-          <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
-            Who we are
-          </span>
-        </div>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">
-          Land, sold the way it should be.
-        </h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          Jamin Properties plans and delivers DTCP-approved residential plotted developments across
-          Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to
-          build and to investors who intend to hold, and we would rather say
-          &ldquo;not published yet&rdquo; than quote a number we cannot stand behind.
-        </p>
-      </header>
+    <>
+      <PageHero
+        art={1}
+        eyebrow="Who we are"
+        title="Land, sold the way it should be."
+        lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
+      />
+      <Container className="py-phi5">
 
       {/* figures computed from the live database, never hand-typed */}
       <section className="mt-phi5 grid gap-phi3 border-y border-line py-phi4 sm:grid-cols-3">
@@ -89,6 +81,7 @@ export default async function AboutPage() {
           See our developments
         </Link>
       </section>
-    </div>
+      </Container>
+    </>
   );
 }

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Container, SectionLabel, EmptyState, ButtonLink, Badge } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
+import { Container, EmptyState, ButtonLink, Badge } from "@/components/ui";
 import {
   KIND_LABEL,
   getJournalCategories,
@@ -33,17 +34,14 @@ export default async function JournalPage() {
   const used = new Set(posts.map((p) => p.blog_categories?.slug).filter(Boolean));
 
   return (
-    <Container className="py-phi5">
-      <header className="max-w-2xl">
-        <SectionLabel>Jamin Journal</SectionLabel>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">
-          Land, and the things worth knowing before you decide.
-        </h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          Buying land involves a set of documents and approvals most people meet only once. These
-          are our notes on them — written plainly, and kept current.
-        </p>
-      </header>
+    <>
+      <PageHero
+        art={9}
+        eyebrow="Jamin Journal"
+        title="Land, and the things worth knowing before you decide."
+        lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."
+      />
+      <Container className="py-phi5">
 
       {posts.length === 0 ? (
         <div className="mt-phi5">
@@ -97,7 +95,8 @@ export default async function JournalPage() {
           )}
         </>
       )}
-    </Container>
+      </Container>
+    </>
   );
 }
 

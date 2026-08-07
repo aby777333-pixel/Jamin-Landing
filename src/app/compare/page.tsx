@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Container, SectionLabel } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
+import { Container } from "@/components/ui";
 import { CompareTable } from "@/components/CompareTable";
 import { getProperties } from "@/lib/properties";
 
@@ -24,17 +25,16 @@ export default async function ComparePage() {
   const all = await getProperties();
 
   return (
-    <Container className="py-phi5">
-      <header className="max-w-2xl">
-        <SectionLabel>Side by side</SectionLabel>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">Compare developments</h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          Two or three at a time. Rows where the projects agree are hidden, so what is left on the
-          page is what actually separates them.
-        </p>
-      </header>
-
-      <CompareTable all={all} />
-    </Container>
+    <>
+      <PageHero
+        art={7}
+        eyebrow="Side by side"
+        title="Compare Jamin developments"
+        lead="Two or three at a time. Rows where the projects agree are hidden, so what is left on the page is what actually separates them."
+      />
+      <Container className="py-phi5">
+        <CompareTable all={all} />
+      </Container>
+    </>
   );
 }

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
-import { Container, SectionLabel, EmptyState, ButtonLink } from "@/components/ui";
+import { PageHero, type HeroArt } from "@/components/PageHero";
+import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { getProperties } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
@@ -63,12 +64,31 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
     ],
   };
 
+  // One image per stage, so the four pages are visually distinct rather than
+  // four copies of the same header.
+  const ART_BY_PHASE: Record<string, HeroArt> = {
+    ongoing: 4, current: 9, future: 7, completed: 1,
+  };
+
   return (
-    <Container className="py-phi5">
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      <PageHero
+        art={ART_BY_PHASE[phase] ?? 5}
+        eyebrow={`${meta.label} projects`}
+        title={`${meta.label} Jamin developments`}
+        lead={meta.blurb}
+        meta={
+          <>
+            {items.length} development{items.length === 1 ? "" : "s"}
+            {plots > 0 ? ` · ${plots} plot${plots === 1 ? "" : "s"} available` : ""}
+          </>
+        }
+      />
+      <Container className="py-phi5">
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
         <Link href="/projects" className="hover:text-jamin-red">
           Projects
@@ -79,17 +99,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         <span className="text-ink-soft">{meta.label}</span>
       </nav>
 
-      <header className="mt-phi3 max-w-2xl">
-        <SectionLabel>{meta.label}</SectionLabel>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{meta.label} projects</h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">{meta.blurb}</p>
-        <p className="mt-phi2 text-base text-ink-faint">
-          {items.length} development{items.length === 1 ? "" : "s"}
-          {plots > 0 ? ` · ${plots} plot${plots === 1 ? "" : "s"} available` : ""}
-        </p>
-      </header>
-
-      <div className="mt-phi5">
+      <div className="mt-phi4">
         {items.length === 0 ? (
           <EmptyState
             title={`No ${meta.label.toLowerCase()} projects right now`}
@@ -115,6 +125,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           </>
         )}
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

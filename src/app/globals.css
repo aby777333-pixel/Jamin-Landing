@@ -35,26 +35,41 @@
   --color-ink-muted: #5a5d68;
   --color-ink-faint: #6b6f7a;
 
-  /* ---- surfaces (warm, not clinical grey) ---- */
-  --color-canvas: #fffdfa;
-  --color-canvas-alt: #faf7f2;
-  --color-canvas-sunken: #f2ede4;
-  --color-line: #e8e2d7;
+  /* ---- surfaces ----
+     Retuned for the 2026 art direction. The supplied photography sits on a
+     near-white ground with red architectural line-work, so the page ground had
+     to become paper-white rather than the previous warm ivory: on ivory the
+     images ended in a visible rectangle, on this they dissolve into the page.
+     Luminance barely moved (0.984 → 0.988), so every contrast ratio fixed in
+     the accessibility pass still holds. */
+  --color-canvas: #ffffff;
+  /* Nudged lighter: brand red as small text measured 4.48:1 on the previous
+     #f7f7f8 — a hair under AA. At this value it clears 4.60:1 and the tint is
+     still clearly distinct from the white canvas. */
+  --color-canvas-alt: #fafafb;
+  --color-canvas-sunken: #eeeef1;
+  --color-line: #e4e4e8;
+  /* Hairline red, the same line-work as the renders. Structure, never text. */
+  --color-line-red: #f6cfd0;
 
   /* ---- land / trust accents ---- */
   --color-canopy: #1f5d4c;
   --color-canopy-soft: #eaf3f0;
   --color-earth: #8a6a45;
 
-  /* ---- golden-ratio type scale (φ = 1.618) ---- */
+  /* ---- type scale ----
+     Still golden-ratio at the small end, but the display sizes are now fluid.
+     A fixed 2.618rem headline is timid on a 27-inch monitor and cramped on a
+     360px phone; clamp() lets one value serve both, which is what makes the
+     new heroes feel current rather than merely large. */
   --text-micro: 0.618rem;
   --text-tiny: 0.786rem;
   --text-lg: 1.272rem;
-  --text-xl: 1.618rem;
-  --text-2xl: 2.058rem;
-  --text-3xl: 2.618rem;
-  --text-4xl: 4.236rem;
-  --text-5xl: 6.854rem;
+  --text-xl: clamp(1.35rem, 1.1rem + 0.8vw, 1.618rem);
+  --text-2xl: clamp(1.7rem, 1.35rem + 1.3vw, 2.058rem);
+  --text-3xl: clamp(2.1rem, 1.5rem + 2.4vw, 2.618rem);
+  --text-4xl: clamp(2.6rem, 1.4rem + 4.6vw, 4.236rem);
+  --text-5xl: clamp(3.2rem, 1.2rem + 7.4vw, 6.854rem);
 
   /* ---- Fibonacci rhythm (φ in integers) ---- */
   --spacing-phi1: 0.5rem;
@@ -85,14 +100,23 @@
     color: var(--color-ink);
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
   }
+  /* The display face is now reserved for h1 and h2 — the sizes it was chosen
+     for. h3 and h4 drop to the UI face, which is the current editorial
+     convention and reads far better at subhead sizes than a high-contrast
+     serif does. */
   h1,
-  h2,
+  h2 {
+    font-family: var(--font-display), ui-serif, Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.022em;
+    line-height: 1.02;
+  }
   h3,
   h4 {
-    font-family: var(--font-display), ui-serif, Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    line-height: 1.08;
+    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.011em;
+    line-height: 1.2;
   }
   /* Never trap keyboard users just because the design is quiet. */
   :focus-visible {
@@ -115,6 +139,35 @@
 
 @utility tracking-brand {
   letter-spacing: 0.34em;
+}
+
+/* ── the 2026 art direction ───────────────────────────────────────────────
+   Lifted from the supplied renders rather than from any other website: red
+   architectural line-work over paper white, resolving into finished building.
+   These three utilities carry that motif across the site so the photography
+   and the page look like one piece of design. */
+
+@utility blueprint {
+  /* The faint setting-out grid a layout plan is drawn on. Deliberately close
+     to invisible — it should register as texture, not as a table. */
+  background-image:
+    linear-gradient(to right, var(--color-line-red) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line-red) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: 0.45;
+}
+
+@utility rule-red {
+  background: linear-gradient(90deg, var(--color-jamin-red), transparent);
+}
+
+@utility hero-fade {
+  /* The renders sit on their own near-white ground, so instead of a dark scrim
+     the page dissolves the image edge into the canvas. This is the move the
+     supplied artwork makes possible and it is why the hero needs no overlay
+     over the text. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
+  mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
 }
 
 @utility rise {

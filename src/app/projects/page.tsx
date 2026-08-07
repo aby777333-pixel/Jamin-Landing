@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PropertyCard } from "@/components/PropertyCard";
-import { Container, SectionLabel, EmptyState, ButtonLink } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
+import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { getProperties } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 
@@ -28,15 +29,14 @@ export default async function ProjectsPage() {
   })).filter((g) => g.items.length > 0);
 
   return (
-    <Container className="py-phi5">
-      <header className="max-w-2xl">
-        <SectionLabel>Our developments</SectionLabel>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">Projects by stage</h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          Land moves through stages, and what you can do at each one differs. This is every Jamin
-          development arranged along that line — from land secured to keys handed over.
-        </p>
-      </header>
+    <>
+      <PageHero
+        art={5}
+        eyebrow="Plotted developments"
+        title="Every Jamin project, by stage"
+        lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."
+      />
+      <Container className="py-phi5">
 
       {groups.length === 0 ? (
         <div className="mt-phi5">
@@ -69,7 +69,8 @@ export default async function ProjectsPage() {
           </section>
         ))
       )}
-    </Container>
+      </Container>
+    </>
   );
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -8,9 +8,15 @@ import { SITE_URL } from "@/lib/supabase";
 /** Display face carries the luxury register; Inter is the app's own body face,
  *  so the website and the phone app read as one brand. `display: swap` keeps
  *  text painting immediately rather than blocking on the font. */
-const display = Playfair_Display({
+/** Instrument Serif replaced Playfair Display in the 2026 art direction.
+ *  Playfair reads as traditional luxury; this is the contemporary editorial
+ *  register the renders call for — tighter, higher contrast, and built to be
+ *  set very large. One weight only, which is the point: it is a display face,
+ *  and Inter does all the work below h2. */
+const display = Instrument_Serif({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
+  style: ["normal", "italic"],
   variable: "--font-display",
   display: "swap",
 });

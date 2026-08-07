@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Container, SectionLabel } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
+import { Container } from "@/components/ui";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { DeskActions } from "@/components/DeskActions";
 import { getProperties, isSellable, locationLine } from "@/lib/properties";
@@ -19,15 +20,16 @@ export default async function ContactPage() {
   const live = all.filter(isSellable);
 
   return (
-    <Container className="py-phi5">
+    <>
+      <PageHero
+        art={10}
+        eyebrow="Talk to Jamin"
+        title="Book a site visit"
+        lead="Walk the layout, see the approvals and stand on the plot before you decide. Visits are arranged at your convenience and carry no obligation."
+      />
+      <Container className="py-phi5">
       <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
         <div>
-          <SectionLabel>Get in touch</SectionLabel>
-          <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">Book a site visit</h1>
-          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
-            Walk the layout, see the approvals and stand on the plot before you decide. Visits are
-            arranged at your convenience and carry no obligation.
-          </p>
 
           {/* The enquiry lands in the same leads queue the app and the V-Card
               feed, with the referring promoter attached — one pipeline, not a
@@ -76,6 +78,7 @@ export default async function ContactPage() {
           </div>
         </aside>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

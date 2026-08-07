@@ -2,142 +2,168 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+/**
+ * The homepage hero.
+ *
+ * Same split construction as PageHero — words on the canvas, render bleeding
+ * off the right — but it rotates through the brand artwork and carries the
+ * live project strip beneath it.
+ *
+ * The rotation is art only. The headline does not change with it, because a
+ * headline that swaps under a reader mid-sentence is a gimmick, and because
+ * these renders are conceptual: pairing a project name with one would imply the
+ * picture shows that project, which it does not.
+ */
 export type Slide = {
   image: string;
   eyebrow: string;
   title: string;
-  blurb: string;
+  blurb: string | null;
   href: string;
 };
 
-const INTERVAL = 6500;
+const ART = [
+  { id: "05", w: 1823 },
+  { id: "09", w: 1672 },
+  { id: "10", w: 1672 },
+  { id: "07", w: 1672 },
+] as const;
 
-/**
- * Full-bleed cinematic carousel.
- *
- * Slides are passed in from the server, sourced from real project photography
- * in Supabase — nothing here is hard-coded, so when the admin adds a project or
- * swaps a photo the hero follows without a code change. The structure already
- * accepts an unlimited number of slides, which is what the CMS-driven hero will
- * feed it later.
- */
 export function Hero({ slides }: { slides: Slide[] }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
-  const touchX = useRef<number | null>(null);
 
-  // `n` is already the absolute target index, so the previous value is not
-  // needed — the updater form was left over and tripped the unused-arg lint.
-  const go = useCallback(
-    (n: number) => setI(((n % slides.length) + slides.length) % slides.length),
-    [slides.length],
-  );
+  const go = useCallback((n: number) => setI(((n % ART.length) + ART.length) % ART.length), []);
 
   useEffect(() => {
-    if (paused || slides.length < 2) return;
-    // Autoplay is a convenience, never a trap: it pauses on hover/focus and is
-    // disabled outright for visitors who asked for reduced motion.
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = setTimeout(() => go(i + 1), INTERVAL);
-    return () => clearTimeout(t);
-  }, [i, paused, go, slides.length]);
-
-  if (slides.length === 0) return null;
+    if (paused) return;
+    // Honour the OS setting rather than overriding it (§87).
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(() => setI((n) => (n + 1) % ART.length), 6500);
+    return () => clearInterval(t);
+  }, [paused]);
 
   return (
     <section
-      className="relative h-[86svh] min-h-[560px] w-full overflow-hidden bg-ink"
+      className="relative overflow-hidden border-b border-line bg-canvas"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
-      onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
-      onTouchEnd={(e) => {
-        if (touchX.current == null) return;
-        const dx = e.changedTouches[0].clientX - touchX.current;
-        if (Math.abs(dx) > 48) go(i + (dx < 0 ? 1 : -1));
-        touchX.current = null;
-      }}
-      aria-roledescription="carousel"
-      aria-label="Featured Jamin developments"
     >
-      {slides.map((s, idx) => (
-        <div
-          key={s.image}
-          className="absolute inset-0 transition-opacity duration-[1400ms]"
-          style={{
-            opacity: idx === i ? 1 : 0,
-            transitionTimingFunction: "var(--ease-silk)",
-          }}
-          aria-hidden={idx !== i}
-        >
-          <Image
-            src={s.image}
-            alt=""
-            fill
-            priority={idx === 0}
-            sizes="100vw"
-            className={`object-cover ${idx === i ? "kenburns" : ""}`}
-          />
-          {/* Two-stop scrim: the headline must stay legible over any photo. */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/45 to-ink/25" />
-        </div>
-      ))}
+      <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      <div className="relative mx-auto flex h-full max-w-[1280px] flex-col justify-end px-5 pb-phi6 lg:px-10">
-        <div key={i} className="max-w-3xl">
-          <div className="rise rise-1 flex items-center gap-3">
-            <span className="h-px w-10 bg-jamin-gold" />
-            <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-light">
-              {slides[i].eyebrow}
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[60%] lg:block" aria-hidden="true">
+        {ART.map((a, n) => (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            key={a.id}
+            src={`/hero/hero-${a.id}-${a.w}.webp`}
+            srcSet={`/hero/hero-${a.id}-768.webp 768w, /hero/hero-${a.id}-1280.webp 1280w, /hero/hero-${a.id}-${a.w}.webp ${a.w}w`}
+            sizes="60vw"
+            alt=""
+            fetchPriority={n === 0 ? "high" : "auto"}
+            loading={n === 0 ? "eager" : "lazy"}
+            decoding="async"
+            className="hero-fade absolute inset-0 h-full w-full object-cover object-left transition-opacity duration-[1400ms]"
+            style={{ opacity: i === n ? 1 : 0, transitionTimingFunction: "var(--ease-silk)" }}
+          />
+        ))}
+      </div>
+
+      <div className="relative mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10 lg:py-phi7">
+        <div className="max-w-[36rem] lg:max-w-[40rem]">
+          <div className="flex items-center gap-3">
+            <span className="h-px w-12 rule-red" />
+            <span className="text-micro font-semibold uppercase tracking-brand text-jamin-red">
+              DTCP-approved plots · Tamil Nadu
             </span>
           </div>
 
-          <h1 className="rise rise-2 mt-phi3 text-3xl text-white lg:text-4xl">{slides[i].title}</h1>
+          <h1 className="mt-phi3 text-5xl text-ink">
+            Buy land you can
+            <br />
+            build on.
+          </h1>
 
-          <p className="rise rise-3 mt-phi3 max-w-xl text-lg leading-relaxed text-white/80">
-            {slides[i].blurb}
+          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
+            Jamin Properties develops DTCP-approved residential plots across Erode, Salem, Tiruppur
+            and Coimbatore — sanctioned layouts, clear and marketable title, formed roads and water
+            to every plot. See the approved plan and the plot you are buying before you decide.
           </p>
 
-          <div className="rise rise-4 mt-phi4 flex flex-wrap items-center gap-4">
-            <Link
-              href={slides[i].href}
-              className="rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-raise transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
-            >
-              Explore this project
-            </Link>
+          <div className="mt-phi4 flex flex-wrap gap-3">
             <Link
               href="/properties"
-              className="rounded-full border border-white/35 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm transition-all duration-300 hover:border-white hover:bg-white/10"
+              className="rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
             >
-              All properties
+              See available plots
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-full border border-ink/15 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-colors hover:border-ink/45"
+            >
+              Book a site visit
             </Link>
           </div>
-        </div>
 
-        {slides.length > 1 && (
-          <div className="mt-phi5 flex items-center gap-3">
-            {slides.map((s, idx) => (
+          {/* dots — art only, so they are decorative controls, labelled anyway */}
+          <div className="mt-phi5 hidden items-center gap-2 lg:flex">
+            {ART.map((a, n) => (
               <button
-                key={s.image}
-                onClick={() => go(idx)}
-                aria-label={`Go to slide ${idx + 1}: ${s.title}`}
-                aria-current={idx === i}
-                className="group py-2"
-              >
-                <span
-                  className={`block h-0.5 transition-all duration-700 ${
-                    idx === i ? "w-14 bg-jamin-gold" : "w-7 bg-white/40 group-hover:bg-white/70"
-                  }`}
-                  style={{ transitionTimingFunction: "var(--ease-silk)" }}
-                />
-              </button>
+                key={a.id}
+                onClick={() => go(n)}
+                aria-label={`Show brand image ${n + 1} of ${ART.length}`}
+                aria-pressed={i === n}
+                className={`h-1.5 rounded-full transition-all duration-500 ${
+                  i === n ? "w-8 bg-jamin-red" : "w-3 bg-ink/20 hover:bg-ink/40"
+                }`}
+              />
             ))}
           </div>
-        )}
+        </div>
       </div>
+
+      <div className="relative h-52 w-full sm:h-64 lg:hidden">
+        <Image
+          src={`/hero/hero-${ART[i].id}-1280.webp`}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="100vw"
+          priority
+          className="object-cover object-right"
+        />
+      </div>
+
+      {/* live inventory strip — real projects, directly under the promise */}
+      {slides.length > 0 && (
+        <div className="relative border-t border-line bg-canvas-alt/70 backdrop-blur">
+          <div className="mx-auto flex max-w-[1280px] gap-phi3 overflow-x-auto px-5 py-phi3 lg:px-10">
+            {slides.map((s) => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="group flex min-w-[15rem] shrink-0 items-center gap-3"
+              >
+                <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-canvas-sunken">
+                  <Image src={s.image} alt="" fill sizes="64px" className="object-cover" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-micro uppercase tracking-[0.14em] text-jamin-red">
+                    {s.eyebrow}
+                  </span>
+                  <span className="block truncate text-base text-ink transition-colors group-hover:text-jamin-red">
+                    {s.title}
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

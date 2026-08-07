@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
-import { Container, SectionLabel } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
+import { Container } from "@/components/ui";
 import { getProperties, isSellable } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -18,20 +19,25 @@ export default async function PropertiesPage() {
   const totalPlots = live.reduce((n, p) => n + (p.plots_available ?? 0), 0);
 
   return (
-    <Container className="py-phi5">
-      <header className="max-w-2xl">
-        <SectionLabel>Our developments</SectionLabel>
-        <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">Properties</h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          {live.length} development{live.length === 1 ? "" : "s"} currently selling
-          {totalPlots > 0 ? `, with ${totalPlots} plots available` : ""}. Every layout is
-          DTCP-approved with clear and marketable title.
-        </p>
-      </header>
+    <>
+      <PageHero
+        art={3}
+        eyebrow="Residential plots for sale"
+        title="Plots in approved layouts across Tamil Nadu"
+        lead={
+          <>
+            {live.length} development{live.length === 1 ? "" : "s"} selling now
+            {totalPlots > 0 ? `, ${totalPlots} plots available` : ""}. Every layout is DTCP
+            approved with clear and marketable title, formed roads and water to each plot.
+          </>
+        }
+      />
+      <Container className="py-phi5">
 
       {/* The full list is rendered server-side; the filters narrow it after
           hydration, so the static HTML a crawler receives is complete. */}
-      <PropertyExplorer all={all} />
-    </Container>
+        <PropertyExplorer all={all} />
+      </Container>
+    </>
   );
 }
