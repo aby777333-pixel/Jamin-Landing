@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
 import { EnquiryForm } from "@/components/EnquiryForm";
+import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
 import { getProperties, isSellable, locationLine } from "@/lib/properties";
 import { getDeskContact } from "@/lib/site";
@@ -31,11 +32,32 @@ export default async function ContactPage() {
       <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
         <div>
 
-          {/* The enquiry lands in the same leads queue the app and the V-Card
-              feed, with the referring promoter attached — one pipeline, not a
-              second one the desk would have to reconcile. */}
-          <div className="mt-phi4 rounded-card border border-line bg-canvas-alt p-phi4">
-            <h2 className="text-xl text-ink">Tell us what you are after</h2>
+          {/* The booking writes a real site_visits row with a reference and a
+              slot, AND the matching lead — one pipeline, not a second one the
+              desk would have to reconcile. */}
+          {live.length > 0 && (
+            <div className="rounded-xl border border-line bg-canvas p-phi4 shadow-lift">
+              <h2 className="text-2xl text-ink">Pick a day to walk the land</h2>
+              <p className="mt-phi2 max-w-xl text-base leading-relaxed text-ink-muted">
+                Choose a development, a date and a time that suits you. You will get a reference
+                straight away, and a call from our desk to confirm it.
+              </p>
+              <div className="mt-phi4">
+                <VisitBooking
+                  properties={live.map((p) => ({
+                    id: p.id,
+                    title: p.title,
+                    place: locationLine(p),
+                  }))}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Not everybody wants to commit to a date. §39: never make the only
+              path the heaviest one. */}
+          <div className="mt-phi4 rounded-xl border border-line bg-canvas-alt p-phi4">
+            <h2 className="text-xl text-ink">Not ready for a date? Just ask.</h2>
             <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
               Two fields is all we need to call you back. Everything else is optional.
             </p>

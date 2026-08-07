@@ -8,6 +8,7 @@ import { PlotSchedule } from "@/components/PlotSchedule";
 import { SiteMap } from "@/components/SiteMap";
 import { SaveProperty } from "@/components/SaveProperty";
 import { EnquiryForm } from "@/components/EnquiryForm";
+import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
 import { SITE_URL } from "@/lib/supabase";
 import { seoDescription, seoTitle } from "@/lib/seo";
@@ -477,14 +478,27 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </dl>
 
             <div className="mt-phi3 space-y-2.5">
-              {/* Straight to the form on this page, not off to /contact where
-                  the project they were reading gets lost. */}
-              <a
-                href="#enquire"
-                className="block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
-              >
-                Book a site visit
-              </a>
+              {/* Straight to the booking on this page, not off to /contact where
+                  the project they were reading gets lost.
+                  ⚠️ A sold-out development gets no booking control at all. There
+                  is nothing to walk somebody around and nothing they could buy
+                  at the end of it, so the offer would be a waste of their
+                  Saturday. `website_book_visit` refuses it server-side too. */}
+              {sellable ? (
+                <a
+                  href="#visit"
+                  className="block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
+                >
+                  Book a site visit
+                </a>
+              ) : (
+                <Link
+                  href="/properties"
+                  className="block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
+                >
+                  See what is selling
+                </Link>
+              )}
 
               {p.brochure_url && (
                 <a
@@ -525,28 +539,88 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       </div>
 
       {/* §39 — the conversion block sits after the read, where somebody who has
-          just gone through the plan and the approvals is most interested. */}
-      <section
-        id="enquire"
-        className="mt-phi6 scroll-mt-28 rounded-card border border-line bg-canvas-alt p-phi4"
-      >
-        <h2 className="text-2xl text-ink">Ask about {p.title}</h2>
-        <p className="mt-phi2 max-w-xl text-base leading-relaxed text-ink-muted">
-          Two fields and we will call you back — plot availability, the current rate, or a date to
-          walk the site.
-        </p>
-        <div className="mt-phi3 grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
-          <EnquiryForm propertyId={p.id} propertyTitle={p.title} />
-          <div>
-            <h3 className="text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
-              Or reach us now
-            </h3>
-            <div className="mt-phi2">
-              <DeskActions context={p.title} url={`${SITE_URL}${propertyHref(p)}`} />
+          just gone through the plan and the approvals is most interested.
+
+          ⚠️ Which block appears is decided by `sellable`, and the two are
+          mutually exclusive. Offering an enquiry form on a development that is
+          sold out generates a lead the desk can only disappoint; the honest
+          answer is to say so and point at the stock that is still selling. */}
+      {sellable ? (
+        <>
+          <section
+            id="visit"
+            className="mt-phi6 scroll-mt-28 rounded-xl border border-line bg-canvas p-phi4 shadow-lift lg:p-phi5"
+          >
+            <div className="max-w-xl">
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+                No obligation
+              </span>
+              <h2 className="mt-phi2 text-2xl text-ink">Walk {p.title} yourself</h2>
+              <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+                Stand on the plot, see the roads and the approvals, and ask everything at once. Pick
+                a day and a time and you will have a reference straight away.
+              </p>
+            </div>
+            <div className="mt-phi4 grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
+              <VisitBooking
+                properties={[]}
+                fixedProperty={{ id: p.id, title: p.title, place: locationLine(p) }}
+              />
+              <div className="lg:border-l lg:border-line lg:pl-phi4">
+                <h3 className="text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
+                  Rather just ask?
+                </h3>
+                <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+                  Plot availability, the current rate, or anything in the documents.
+                </p>
+                <div className="mt-phi3">
+                  <EnquiryForm propertyId={p.id} propertyTitle={p.title} compact />
+                </div>
+                <h3 className="mt-phi4 border-t border-line pt-phi3 text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
+                  Or reach us now
+                </h3>
+                <div className="mt-phi2">
+                  <DeskActions context={p.title} url={`${SITE_URL}${propertyHref(p)}`} />
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        <section
+          id="enquire"
+          className="mt-phi6 scroll-mt-28 overflow-hidden rounded-xl border border-line bg-charcoal"
+        >
+          <div className="p-phi4 lg:p-phi5">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-micro font-semibold uppercase tracking-[0.14em] text-white/80">
+              {p.status === "sold" ? "Fully sold" : String(p.status)}
+            </span>
+            <h2 className="mt-phi3 max-w-2xl text-2xl text-white">
+              {p.title} has sold out.
+            </h2>
+            <p className="mt-phi3 max-w-2xl text-base leading-relaxed text-white/75">
+              Every plot here is gone, so there is nothing for us to show you on site and no
+              enquiry worth taking. We have left the layout, the approvals and the documents on
+              this page because they are the clearest picture of how a Jamin development is
+              planned — and the next one is planned the same way.
+            </p>
+            <div className="mt-phi4 flex flex-wrap gap-3">
+              <Link
+                href="/properties"
+                className="rounded-full bg-white px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-canvas"
+              >
+                See what is selling
+              </Link>
+              <Link
+                href="/contact"
+                className="glass-dark rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
+              >
+                Tell us what you are after
+              </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {related.length > 0 && (
         <section className="mt-phi7 border-t border-line pt-phi5">

@@ -23,7 +23,14 @@ export async function SiteFooter() {
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>
-            <Image src="/logo.png" alt="Jamin Bazaar" width={200} height={73} className="h-11 w-auto" />
+            <Image
+              src="/logo-full.png"
+              alt="Jamin Bazaar"
+              width={793}
+              height={312}
+              sizes="150px"
+              className="h-14 w-auto"
+            />
             <p className="mt-phi3 max-w-sm text-base leading-relaxed text-ink-muted">
               DTCP-approved residential plotted developments across Tamil Nadu — planned for
               families who intend to build, and for investors who intend to hold.

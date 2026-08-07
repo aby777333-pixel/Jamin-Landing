@@ -46,7 +46,11 @@ export function Hero({ slides }: { slides: Slide[] }) {
         <div className="veil absolute inset-0" />
       </div>
 
-      <div className="relative mx-auto flex min-h-[clamp(30rem,78vh,44rem)] max-w-[1280px] flex-col justify-end px-5 pb-phi5 pt-phi7 lg:px-10 lg:pb-phi6">
+      {/* 62vh, not 78. A hero that fills the whole viewport hides the fact that
+          there is a site under it — the reader has to scroll before anything
+          proves the page continues. Capped at 34rem so it stays a band on a
+          large monitor rather than growing with the screen. */}
+      <div className="relative mx-auto flex min-h-[clamp(23rem,58vh,32rem)] max-w-[1280px] flex-col justify-end px-5 pb-phi4 pt-phi5 lg:px-10">
         <div className="max-w-3xl reveal">
           <div className="flex items-center gap-3">
             <span className="h-px w-12 bg-white/50" />
@@ -55,12 +59,15 @@ export function Hero({ slides }: { slides: Slide[] }) {
             </span>
           </div>
 
-          <h1 className="mt-phi3 text-5xl text-white">
+          {/* 4xl, not 5xl. The 5xl step tops out at 6.854rem, which on a laptop
+              put the headline at 110px and left room for nothing else on the
+              first screen. */}
+          <h1 className="mt-phi3 text-4xl text-white">
             Land you can build on,
             <br className="hidden sm:block" /> with nothing left to check.
           </h1>
 
-          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-white/80">
+          <p className="mt-phi3 max-w-2xl text-lg leading-relaxed text-white/85">
             Residential plots in sanctioned layouts across Erode, Salem, Tiruppur and Coimbatore —
             clear and marketable title, roads and water formed to the approved plan, and the plot
             schedule published before you visit.
@@ -87,16 +94,16 @@ export function Hero({ slides }: { slides: Slide[] }) {
         {/* Live inventory as a floating glass rail — the one place glass earns
             its keep here, because it has to sit over a photograph. */}
         {slides.length > 0 && (
-          <div className="glass mt-phi5 rounded-xl p-2">
+          <div className="glass mt-phi4 rounded-xl p-1.5">
             <div className="flex gap-1 overflow-x-auto">
               {slides.map((s) => (
                 <Link
                   key={s.href}
                   href={s.href}
-                  className="group flex min-w-[14rem] shrink-0 items-center gap-3 rounded-[18px] p-2 transition-colors duration-300 hover:bg-canvas/70"
+                  className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] p-1.5 transition-colors duration-300 hover:bg-canvas/70"
                 >
-                  <span className="relative h-12 w-16 shrink-0 overflow-hidden rounded-xl bg-canvas-sunken">
-                    <Image src={s.image} alt="" fill sizes="64px" className="object-cover" />
+                  <span className="relative h-10 w-14 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
+                    <Image src={s.image} alt="" fill sizes="56px" className="object-cover" />
                   </span>
                   <span className="min-w-0">
                     <span className="block text-micro uppercase tracking-[0.14em] text-jamin-red-deep">

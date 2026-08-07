@@ -101,13 +101,20 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
     >
       <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10">
         <Link href="/" className="flex items-center" aria-label="Jamin Bazaar — home">
+          {/* The full lockup — mark, wordmark and the "signature for Fortune"
+              rule. logo.png is the square app mark on its own and belongs on an
+              icon, not in a header, where it reads as a favicon that wandered
+              onto the page. */}
           <Image
-            src="/logo.png"
+            src="/logo-full.png"
             alt="Jamin Bazaar"
-            width={200}
-            height={73}
+            width={793}
+            height={312}
             priority
-            className="h-9 w-auto lg:h-11"
+            /* Without `sizes` Next falls back to 1x/2x density candidates off
+               the `width` prop and fetched a 1920px rendition for a 122px box. */
+            sizes="(max-width: 1024px) 108px, 130px"
+            className="h-10 w-auto lg:h-12"
           />
         </Link>
 
