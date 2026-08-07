@@ -147,6 +147,14 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             <span className={underline} />
           </Link>
 
+          {/* A plain link, not a session-aware control: the header renders on
+              every statically prerendered page, and giving it auth state would
+              pull a client session into the whole public tree. */}
+          <Link href="/account" className={trigger} onMouseEnter={() => setPanel(null)}>
+            Account
+            <span className={underline} />
+          </Link>
+
           <Link
             href="/contact"
             className="rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
@@ -252,6 +260,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           )}
           {facets.hasJournal && <MobileLink href="/journal">Jamin Journal</MobileLink>}
           <MobileLink href="/about">About</MobileLink>
+          <MobileLink href="/account">Account</MobileLink>
           <Link
             href="/contact"
             className="mt-6 block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white"

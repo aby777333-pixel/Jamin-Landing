@@ -6,6 +6,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { MasterPlan } from "@/components/MasterPlan";
 import { PlotSchedule } from "@/components/PlotSchedule";
 import { SiteMap } from "@/components/SiteMap";
+import { SaveProperty } from "@/components/SaveProperty";
 import { SITE_URL } from "@/lib/supabase";
 import {
   approvalBadges,
@@ -479,6 +480,9 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   See the plot layout
                 </a>
               )}
+
+              {/* A small client island on an otherwise static page. */}
+              <SaveProperty propertyId={p.id} />
             </div>
 
             {p.virtual_tour_url && (
