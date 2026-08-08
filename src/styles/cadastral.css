@@ -118,6 +118,70 @@ body > footer {
 }
 
 /**
+ * THE CORNER FOLD — the dog-ear from the logo mark, made structural.
+ *
+ * At rest a small gold triangle sits in the top-right. On hover it peels: the
+ * fold grows and a hairline crease shadow appears beneath it, so it reads as
+ * paper lifting rather than a triangle scaling.
+ *
+ * ⚠️ That crease is the ONLY gradient permitted anywhere in this system, and
+ * only because it is a physical shadow at 16%. Everything else is flat ink.
+ */
+.cd-fold {
+  position: relative;
+}
+.cd-fold::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: var(--fold-size) solid var(--jamin-gold-mark);
+  border-left: var(--fold-size) solid transparent;
+  transition: border-width var(--dur-base) var(--ease-press);
+  pointer-events: none;
+}
+.cd-fold::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--fold-size);
+  height: var(--fold-size);
+  background: linear-gradient(225deg, rgba(23, 24, 28, 0.16) 0%, transparent 55%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-press);
+  pointer-events: none;
+}
+/* `focus-within` as well as hover — every hover-revealed thing on this site has
+   to be reachable from a keyboard. */
+.cd-fold:hover::after,
+.cd-fold:focus-within::after {
+  border-top-width: calc(var(--fold-size) * 1.5);
+  border-left-width: calc(var(--fold-size) * 1.5);
+}
+.cd-fold:hover::before,
+.cd-fold:focus-within::before {
+  opacity: 1;
+}
+
+/*
+ * Registration / crop marks belong here too, but NOT as `::before` / `::after`
+ * on the card: the fold already owns both, and stacking the two selectors on
+ * one element silently deletes the fold — which is exactly what happened the
+ * first time this was written. They arrive in phase 2 as `RegistrationFrame`,
+ * a component with its own element to draw into.
+ */
+
+/** The drawing plate: paper, a hairline edge, and the setting-out grid behind. */
+.cd-plate {
+  position: relative;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-line);
+}
+
+/**
  * ⚠️ Non-negotiable. Every effect in this layer must arrive at its final state
  * immediately when the reader has asked for less motion — finished and static,
  * never broken or half-drawn.

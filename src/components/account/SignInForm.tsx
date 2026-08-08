@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Container, SectionLabel } from "@/components/ui";
+import { SectionLabel } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { sendOtp, verifyOtp } from "@/lib/supabase-browser";
 
@@ -93,12 +93,23 @@ export function SignInForm({ next }: { next: string }) {
     }
   }
 
+  /* A phone number and a one-time code are identifiers, so they set in the
+     ledger column: tabular figures keep the digits on a fixed pitch as they are
+     typed, instead of the field visibly breathing on every 1. */
   const field =
-    "w-full rounded-card border border-line bg-canvas px-phi3 py-3 text-lg text-ink outline-none focus:border-ink-faint";
+    "ledger w-full rounded-card border border-line bg-canvas px-phi3 py-3 text-lg text-ink outline-none transition-colors focus:border-jamin-gold";
 
+  /**
+   * Presentation only — every handler above is untouched. The page owns the
+   * layout now, so this renders the plate contents rather than its own
+   * Container; a small card centred in an empty viewport was the whole problem.
+   */
   return (
-    <Container className="py-phi6">
-      <div className="mx-auto max-w-md">
+    <div className="cd-plate cd-fold overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+      <div>
+        {/* A document header, because that is what this is: a form that opens
+            a record. The rule is the one under BAZAAR in the logo. */}
+        <span className="mb-phi3 block h-px w-16 rule-gold" aria-hidden="true" />
         <SectionLabel>Your Jamin account</SectionLabel>
         <h1 className="mt-phi2 text-3xl text-ink">
           {step === "mobile" ? "Sign in with your mobile" : "Enter your code"}
@@ -189,15 +200,14 @@ export function SignInForm({ next }: { next: string }) {
           </p>
         )}
 
-        <p className="mt-phi4 text-tiny leading-relaxed text-ink-faint">
-          Signing in lets you keep a shortlist and see your site visits. We only use your number to
-          reach you about property you have asked about. Read our{" "}
-          <Link href="/contact" className="underline">
+        <p className="mt-phi4 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint">
+          We only use your number to reach you about property you have asked about. Read our{" "}
+          <Link href="/contact" className="underline underline-offset-2 hover:text-ink">
             contact page
           </Link>{" "}
           if you would rather just talk to someone.
         </p>
       </div>
-    </Container>
+    </div>
   );
 }
