@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Heading } from "@/components/Prose";
 
 /**
@@ -15,11 +15,39 @@ import type { Heading } from "@/components/Prose";
  * you scroll. Reading it off scroll position instead gives one unambiguous
  * answer at any offset, and it also works while scrolling upward.
  *
- * The handler is passive and rAF-throttled — this runs on every scroll event of
- * a very long page.
+ * The handler is passive and throttled — this runs on every scroll event of a
+ * very long page. See the note on the throttle: it is on the clock, not on
+ * `requestAnimationFrame`.
  */
 export function TableOfContents({ headings }: { headings: Heading[] }) {
   const [active, setActive] = useState<string | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  /**
+   * Keep the current entry visible inside the list's OWN scroller.
+   *
+   * ⚠️ Deliberately not `scrollIntoView`. On a long guide this list is taller
+   * than the viewport and scrolls independently, and `scrollIntoView` walks up
+   * every scrollable ancestor — so following the reader would yank the article
+   * itself. Setting `scrollTop` moves only this box.
+   *
+   * It also only acts when the entry is actually out of view, so a reader who
+   * has scrolled the list by hand is not fought for control of it.
+   */
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list || !active) return;
+    const el = list.querySelector<HTMLElement>(`[data-toc="${CSS.escape(active)}"]`);
+    if (!el) return;
+
+    const pad = 24;
+    const top = el.offsetTop - list.offsetTop;
+    const bottom = top + el.offsetHeight;
+    if (top < list.scrollTop + pad) list.scrollTop = Math.max(0, top - pad);
+    else if (bottom > list.scrollTop + list.clientHeight - pad) {
+      list.scrollTop = bottom - list.clientHeight + pad;
+    }
+  }, [active]);
 
   useEffect(() => {
     if (!headings.length) return;
@@ -83,14 +111,26 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
   }, [headings]);
 
   return (
-    <nav className="sticky top-28" aria-label="On this page">
-      <h2 className="ledger-label">On this page</h2>
-      <ul className="mt-phi2 space-y-2 border-l border-line">
+    /* ⚠️ The list scrolls itself, the page does not scroll it.
+       A long guide can produce forty entries — taller than the viewport — and a
+       plain `sticky` block simply clips them: the last sections were
+       unreachable because the list ran past the bottom of the screen with
+       nowhere to go. `max-h` plus its own overflow gives it a scroller bounded
+       by the viewport minus the sticky header, and `overscroll-contain` stops a
+       flick that reaches the end of this list from carrying on into the
+       article behind it. */
+    <nav className="sticky top-28 flex max-h-[calc(100vh-9rem)] flex-col" aria-label="On this page">
+      <h2 className="ledger-label shrink-0">On this page</h2>
+      <ul
+        ref={listRef}
+        className="cd-noscroll mt-phi2 min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain border-l border-line"
+      >
         {headings.map((h) => {
           const on = active === h.id;
           return (
             <li
               key={h.id}
+              data-toc={h.id}
               className={`${h.level === 3 ? "pl-phi3" : "pl-phi2"} ${
                 on ? "-ml-px border-l-2 border-jamin-gold" : ""
               }`}
