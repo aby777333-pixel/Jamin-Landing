@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { SignInForm } from "@/components/account/SignInForm";
 import { Container } from "@/components/ui";
 import { getNavFacets } from "@/lib/site";
+import { LedgerCount } from "@/components/cadastral/LedgerCount";
 
 export const revalidate = 3600;
 
@@ -90,8 +91,8 @@ export default async function SignInPage() {
                   {stats.map((s) => (
                     <div key={s.label} className="min-w-0">
                       <dt className="text-tiny text-ink-faint">{s.label}</dt>
-                      <dd className="ledger mt-0.5 text-2xl text-ink">
-                        {s.value.toLocaleString("en-IN")}
+                      <dd className="mt-0.5 text-2xl text-ink">
+                        <LedgerCount value={s.value} />
                       </dd>
                     </div>
                   ))}

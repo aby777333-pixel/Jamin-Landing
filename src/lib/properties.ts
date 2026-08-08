@@ -84,6 +84,9 @@ export type Property = {
   drone_videos: string[] | null;
   amenities: string[] | null;
   approvals: Record<string, boolean> | null;
+  /** Printed on the sanctioned plan, so it is public record — the whole point
+   *  of publishing it is that a buyer can check it against the DTCP file. */
+  survey_number: string | null;
   nearby_places: NearbyPlace[] | null;
   brochure_url: string | null;
   brochure_cover_url: string | null;
@@ -125,7 +128,7 @@ const PUBLIC_COLUMNS = [
   "plots_total", "plots_available", "city", "district", "state", "locality",
   "location_text", "lat", "lng", "gmaps_url", "images", "videos", "drone_videos",
   "amenities", "approvals", "nearby_places", "brochure_url", "brochure_cover_url",
-  "master_plan_url", "virtual_tour_url", "rera_number", "is_featured", "seo",
+  "master_plan_url", "virtual_tour_url", "rera_number", "survey_number", "is_featured", "seo",
   "created_at", "updated_at",
 ].join(",");
 

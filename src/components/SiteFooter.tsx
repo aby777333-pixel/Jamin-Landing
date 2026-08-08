@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
+import { LedgerCount } from "@/components/cadastral/LedgerCount";
 
 /**
  * §59 — the footer is a discovery layer, and §75 — its contact details must be
@@ -51,8 +52,8 @@ export async function SiteFooter() {
                   .filter((s) => s.value > 0)
                   .map((s) => (
                     <div key={s.label} className="min-w-0 border-t border-line pt-phi2">
-                      <dd className="ledger text-2xl leading-none text-ink">
-                        {s.value.toLocaleString("en-IN")}
+                      <dd className="text-2xl leading-none text-ink">
+                        <LedgerCount value={s.value} />
                       </dd>
                       <dt className="ledger-label mt-1.5 block">{s.label}</dt>
                     </div>

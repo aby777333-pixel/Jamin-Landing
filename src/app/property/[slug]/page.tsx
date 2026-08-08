@@ -11,6 +11,8 @@ import { EnquiryForm } from "@/components/EnquiryForm";
 import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
+import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
+import { SurveyReveal } from "@/components/cadastral/SurveyReveal";
 import { SITE_URL } from "@/lib/supabase";
 import { seoDescription, seoTitle } from "@/lib/seo";
 import {
@@ -108,10 +110,12 @@ function Block({
 }) {
   return (
     <section id={id} className="mt-phi5 scroll-mt-28">
-      {/* A short gold rule opens each block. On a page this long the sections
-          otherwise run into one another as an undifferentiated column of text. */}
-      <span className="mb-phi2 block h-px w-12 rule-gold" aria-hidden="true" />
-      <h2 className="text-2xl text-ink">{title}</h2>
+      {/* The gold rule now rules ITSELF across, the way a guide line is drawn
+          before the words — see SurveyReveal. On a page this long the sections
+          otherwise run into one another as an undifferentiated column. */}
+      <SurveyReveal className="mb-phi3">
+        <h2 className="text-2xl text-ink">{title}</h2>
+      </SurveyReveal>
       {lead ? <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">{lead}</p> : null}
       <div className="mt-phi3">{children}</div>
     </section>
@@ -258,6 +262,12 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               )}
             </div>
           </header>
+
+          {/* The facts of record, as a document header. Renders only the fields
+              that exist — see the component. */}
+          <div className="mt-phi4 -mx-phi3 lg:-mx-phi4">
+            <ApprovalStrip p={p} />
+          </div>
 
           <div className="mt-phi4">
             <Gallery images={images} title={p.title} />

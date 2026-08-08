@@ -287,6 +287,75 @@ body > footer {
 }
 
 /**
+ * THE SURVEY REVEAL — the guide line a draughtsman rules before drawing.
+ *
+ * ⚠️ The rule animates `scaleX`, not `width`. Animating width would lay the
+ * element out on every frame; a transform never touches layout, so this cannot
+ * shift the page — the CLS gate in the brief is not negotiable.
+ *
+ * The body's box is full-size from the first frame too: it moves on `opacity`
+ * and `translateY` only, so the heading below never jumps as it arrives.
+ */
+.cd-reveal {
+  position: relative;
+  display: block;
+}
+
+/**
+ * ⚠️ THE DEFAULT IS FINISHED, NOT HIDDEN.
+ *
+ * Nothing here hides anything until `is-armed` is added, and that class only
+ * arrives from JavaScript that has already established an observer can run and
+ * the reader has not asked for less motion. So no-JS, reduced-motion, a
+ * background tab and a stalled observer all land on visible text — the failure
+ * mode of the obvious approach (hide first, reveal on scroll) is a page of
+ * invisible headings, which is far worse than no animation.
+ */
+.cd-reveal__rule {
+  position: absolute;
+  left: 0;
+  bottom: -10px;
+  height: 1px;
+  width: 100%;
+  transform-origin: left center;
+  background: var(--rule-gold);
+}
+.cd-reveal.is-armed .cd-reveal__rule {
+  transform: scaleX(0);
+  transition: transform var(--dur-draw) var(--ease-draft) var(--cd-delay, 0ms);
+}
+.cd-reveal.is-armed.is-on .cd-reveal__rule {
+  transform: scaleX(1);
+}
+
+.cd-reveal__body {
+  display: block;
+}
+.cd-reveal.is-armed .cd-reveal__body {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity var(--dur-base) var(--ease-draft) calc(var(--cd-delay, 0ms) + 260ms),
+    transform var(--dur-base) var(--ease-draft) calc(var(--cd-delay, 0ms) + 260ms);
+}
+.cd-reveal.is-armed.is-on .cd-reveal__body {
+  opacity: 1;
+  transform: none;
+}
+
+/** A scroller with no visible scrollbar. The approval strip is a document
+ *  header, and a grey bar drawn under it would read as chrome rather than
+ *  paper. The overflow itself stays, so it is still reachable by touch,
+ *  trackpad and keyboard. */
+.cd-noscroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.cd-noscroll::-webkit-scrollbar {
+  display: none;
+}
+
+/**
  * EDITORIAL — long-form articles read as authored, not pasted.
  *
  * The Journal now carries 50KB guides. Without any of this a 21-step piece
