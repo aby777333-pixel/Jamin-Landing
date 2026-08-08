@@ -6,11 +6,16 @@ import { Badge, EmptyState, ButtonLink, Skeleton } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { browserClient } from "@/lib/supabase-browser";
 
+/** Mirrors `public.site_visits`. `preferred_date` is what the buyer asked for;
+ *  `scheduled_at` is what the desk actually confirmed, so a confirmed visit has
+ *  both and they can differ. Reading a column that does not exist fails the
+ *  whole select, which is how this screen once showed a raw Postgres error. */
 type Visit = {
   id: string;
   status: string;
-  visit_date: string | null;
-  slot: string | null;
+  preferred_date: string | null;
+  scheduled_at: string | null;
+  slot_label: string | null;
   cancel_reason: string | null;
   created_at: string;
   property: { title: string | null } | null;
@@ -41,7 +46,9 @@ export function VisitsView() {
     let alive = true;
     browserClient()
       .from("site_visits")
-      .select("id, status, visit_date, slot, cancel_reason, created_at, property:properties(title)")
+      .select(
+        "id, status, preferred_date, scheduled_at, slot_label, cancel_reason, created_at, property:properties(title)",
+      )
       .eq("buyer_id", uid)
       .order("created_at", { ascending: false })
       .then(({ data, error }) => {
@@ -54,15 +61,23 @@ export function VisitsView() {
     };
   }, [uid]);
 
-  const when = (v: Visit) =>
-    v.visit_date
-      ? new Date(v.visit_date).toLocaleDateString("en-IN", {
-          weekday: "short",
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })
-      : "Date to be confirmed";
+  /** Pinned to IST, like the booking calendar. A `date` column parses as UTC
+   *  midnight, so formatting it in the reader's own zone would show an NRI
+   *  buyer the day before the one the desk wrote down. */
+  const day = (iso: string) =>
+    new Date(iso).toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "Asia/Kolkata",
+    });
+
+  const when = (v: Visit) => {
+    if (v.scheduled_at) return day(v.scheduled_at);
+    if (v.preferred_date) return `${day(v.preferred_date)} — requested`;
+    return "Date to be confirmed";
+  };
 
   return (
     <AccountShell title="Site visits">
@@ -91,7 +106,7 @@ export function VisitsView() {
                 <div className="text-lg text-ink">{v.property?.title ?? "Jamin development"}</div>
                 <div className="mt-1 text-base text-ink-muted">
                   {when(v)}
-                  {v.slot ? ` · ${v.slot}` : ""}
+                  {v.slot_label ? ` · ${v.slot_label}` : ""}
                 </div>
                 {v.status === "cancelled" && v.cancel_reason && (
                   <div className="mt-1 text-tiny text-ink-faint">{v.cancel_reason}</div>

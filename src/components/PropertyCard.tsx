@@ -19,13 +19,18 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
   const sellable = isSellable(p);
 
   return (
+    /* `h-full` + column flex is what keeps a row of cards level. A grid item
+       stretches to the tallest in its row, but a `block` child does not follow
+       it, so a two-line title used to leave one card's base floating above its
+       neighbours'. */
     <Link
       href={propertyHref(p)}
-      className="group block overflow-hidden rounded-xl border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1.5 hover:border-line-red hover:shadow-raise"
+      className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1.5 hover:border-line-red hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      {/* 1.618:1 — the same ratio the rest of the page is built on */}
-      <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken">
+      {/* 1.618:1 — the same ratio the rest of the page is built on. `shrink-0`
+          so the flex column cannot squash the ratio out of it. */}
+      <div className="relative aspect-[1.618/1] shrink-0 overflow-hidden bg-canvas-sunken">
         {cover ? (
           <Image
             src={cover}
@@ -61,22 +66,27 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
         </div>
       </div>
 
-      <div className="p-phi3">
-        <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em] text-jamin-gold-ink">
-          {phaseLabel(p)}
-          {p.plots_available ? (
-            <>
-              <span className="text-ink-faint">·</span>
-              <span className="text-ink-faint">{p.plots_available} plots available</span>
-            </>
-          ) : null}
+      <div className="flex flex-1 flex-col p-phi3">
+        {/* The variable-length half. `flex-1` absorbs the difference between a
+            one-line and a two-line title so the price rail below always lands
+            at the same height across the row. */}
+        <div className="flex-1">
+          <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em] text-jamin-gold-ink">
+            {phaseLabel(p)}
+            {p.plots_available ? (
+              <>
+                <span className="text-ink-faint">·</span>
+                <span className="text-ink-faint">{p.plots_available} plots available</span>
+              </>
+            ) : null}
+          </div>
+
+          <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
+            {p.title}
+          </h3>
+
+          <p className="mt-1.5 line-clamp-1 text-base text-ink-muted">{locationLine(p)}</p>
         </div>
-
-        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
-          {p.title}
-        </h3>
-
-        <p className="mt-1.5 line-clamp-1 text-base text-ink-muted">{locationLine(p)}</p>
 
         <div className="mt-phi3 flex items-end justify-between border-t border-line pt-phi2">
           <div>

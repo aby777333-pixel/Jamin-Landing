@@ -66,7 +66,18 @@ const orgSchema = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en-IN" className={`${body.variable} h-full antialiased`}>
+    /* `data-scroll-behavior="smooth"` is not decorative. globals.css sets
+       `scroll-behavior: smooth` so in-page anchors glide, and Next only
+       suspends that during a route change when this attribute is present
+       (`disableSmoothScrollDuringRouteTransition`). Without it the router's
+       scroll-to-top animates, the destination's images land mid-flight and
+       change the document height, and the animation stops wherever it got to —
+       which is why "See what is selling" used to open half a screen down. */
+    <html
+      lang="en-IN"
+      data-scroll-behavior="smooth"
+      className={`${body.variable} h-full antialiased`}
+    >
       <body className="flex min-h-full flex-col">
         <script
           type="application/ld+json"

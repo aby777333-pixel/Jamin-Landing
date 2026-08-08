@@ -186,7 +186,9 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
       </div>
 
       {/* ---- facets + view switch ---- */}
-      <div className="mt-phi3 flex flex-col gap-phi2 border-y border-line py-phi3">
+      {/* `border-t` only. The bottom rule sat a hair above the first card and
+          read as a second divider stacked on the section's own spacing. */}
+      <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3">
         {districts.length > 1 && (
           <div className="flex flex-wrap items-center gap-2">
             <span className="mr-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
@@ -349,7 +351,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
               <h2 className="sr-only">Developments currently selling</h2>
               <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
                 {live.map((p, i) => (
-                  <div key={p.id} className="relative">
+                  /* `flex` so the card inside stretches to the row height the
+                     grid gives this wrapper — without it the compare button's
+                     positioning context is full height but the card is not. */
+                  <div key={p.id} className="relative flex">
                     <PropertyCard p={p} priority={i < 3} />
                     <div className="absolute right-3 top-3 z-10">
                       <CompareToggle
