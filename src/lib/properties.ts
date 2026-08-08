@@ -277,3 +277,15 @@ export function approvalBadges(p: Property): string[] {
 export function coverImage(p: Property): string | null {
   return p.images?.[0] ?? p.brochure_cover_url ?? null;
 }
+
+/**
+ * A photograph deliberately NOT the card cover.
+ *
+ * Any page that opens with a project photograph and then lists projects as
+ * cards below would otherwise show the same frame twice — once full-bleed and
+ * once in the grid. Reaching past the first image avoids that without needing
+ * to know what else the page renders.
+ */
+export function secondaryImage(p: Property): string | null {
+  return p.images?.[1] ?? null;
+}

@@ -47,6 +47,7 @@ export function PageHero({
   title,
   lead,
   art,
+  photo,
   actions,
   meta,
   priority = true,
@@ -57,6 +58,18 @@ export function PageHero({
   title: ReactNode;
   lead?: ReactNode;
   art: HeroArt;
+  /**
+   * A real photograph, used instead of the brand render.
+   *
+   * Only ten renders were supplied and there are eleven pages that open with a
+   * hero, so one page had to give. `/projects/completed` is the right one to
+   * take a photograph: it is the only page whose subject genuinely IS a
+   * delivered Jamin project, so per public/hero/README.md real photography is
+   * what belongs there anyway — the renders are brand imagery and must never be
+   * presented as a project. Passing a photo also releases hero-10 back to
+   * /contact, which is how every remaining page ends up with its own image.
+   */
+  photo?: { src: string; alt: string };
   actions?: ReactNode;
   /** Small factual line under the copy — counts, never claims. */
   meta?: ReactNode;
@@ -64,16 +77,20 @@ export function PageHero({
   size?: "standard" | "tall";
   tone?: "paper" | "cinematic";
 }) {
-  const { src, srcSet } = artSrc(art);
+  const artwork = artSrc(art);
+  const src = photo?.src ?? artwork.src;
+  const srcSet = photo ? undefined : artwork.srcSet;
 
   if (tone === "cinematic") {
     return (
       <section className="relative isolate overflow-hidden bg-charcoal">
         <div className="absolute inset-0">
+          {/* A render is decoration and stays out of the accessibility tree; a
+              photograph of a real project is content and gets a real alt. */}
           <Image
             src={src}
-            alt=""
-            aria-hidden="true"
+            alt={photo?.alt ?? ""}
+            aria-hidden={photo ? undefined : "true"}
             fill
             priority={priority}
             sizes="100vw"
@@ -85,11 +102,15 @@ export function PageHero({
         <Container
           className={`relative flex flex-col justify-end ${
             size === "tall"
-              ? "min-h-[clamp(26rem,64vh,38rem)] pb-phi5 pt-phi7"
-              : "min-h-[clamp(20rem,48vh,30rem)] pb-phi4 pt-phi6"
+              ? "min-h-[clamp(26rem,64vh,38rem)] pb-phi6 pt-phi7"
+              : "min-h-[clamp(20rem,48vh,30rem)] pb-phi5 pt-phi6"
           }`}
         >
-          <div className="max-w-[42rem] rise">
+          {/* The measure opens up on a wide screen. At 42rem a headline like
+              "Plots in approved layouts across Tamil Nadu" broke to three lines
+              and left "Nadu" alone on the last one, with 880px of empty hero
+              beside it. */}
+          <div className="max-w-[42rem] rise xl:max-w-[46rem]">
             {eyebrow && (
               <div className="flex items-center gap-3">
                 <span className="h-px w-12 bg-white/50" />
@@ -98,9 +119,13 @@ export function PageHero({
                 </span>
               </div>
             )}
-            <h1 className="mt-phi3 text-4xl text-white">{title}</h1>
+            {/* `text-balance` evens the line lengths instead of filling each one
+                to the measure and orphaning whatever is left over. */}
+            <h1 className="mt-phi3 text-balance text-4xl text-white">{title}</h1>
             {lead && (
-              <div className="mt-phi3 max-w-xl text-lg leading-relaxed text-white/80">{lead}</div>
+              <div className="mt-phi3 max-w-xl text-pretty text-lg leading-relaxed text-white/80">
+                {lead}
+              </div>
             )}
             {meta && (
               <div className="glass-dark mt-phi3 inline-flex rounded-full px-4 py-1.5 text-tiny text-white/85">
@@ -149,9 +174,9 @@ export function PageHero({
               </span>
             </div>
           )}
-          <h1 className="mt-phi3 text-4xl text-ink">{title}</h1>
+          <h1 className="mt-phi3 text-balance text-4xl text-ink">{title}</h1>
           {lead && (
-            <div className="mt-phi3 text-lg leading-relaxed text-ink-muted">{lead}</div>
+            <div className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-muted">{lead}</div>
           )}
           {meta && (
             <div className="glass mt-phi3 inline-flex rounded-full px-4 py-1.5 text-tiny text-ink-soft">

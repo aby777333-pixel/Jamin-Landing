@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { Jamindar } from "@/components/Jamindar";
 import { SITE_URL } from "@/lib/supabase";
 
 /** One typeface, as the brief asks. Inter carries display and UI both; the
@@ -94,6 +95,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
         </main>
         <SiteFooter />
+        {/* Public since 2026-08-08 — safe only because the anonymous rate
+            limiter is live and verified. See components/JamindarDock.tsx. */}
+        <Jamindar />
       </body>
     </html>
   );

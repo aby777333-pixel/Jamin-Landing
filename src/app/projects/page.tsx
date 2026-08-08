@@ -3,7 +3,7 @@ import Link from "next/link";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PageHero } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
-import { getProperties } from "@/lib/properties";
+import { getProperties, secondaryImage } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -28,10 +28,22 @@ export default async function ProjectsPage() {
     items: all.filter((p) => p.project_phase === phase),
   })).filter((g) => g.items.length > 0);
 
+  // hero-05 stays on the homepage, where it is the literal illustration of
+  // "from sanctioned drawing to a plot you stand on" and cannot be swapped for
+  // a photograph without losing the point. This page is an index of real
+  // projects, so a real project carries it — the second photograph, because the
+  // first is the card cover in the grid below.
+  const showcase = all.find((p) => secondaryImage(p));
+  const photo = showcase
+    ? { src: secondaryImage(showcase)!, alt: `${showcase.title}, a Jamin development` }
+    : undefined;
+
   return (
     <>
       <PageHero
         art={5}
+        photo={photo}
+        tone={photo ? "cinematic" : "paper"}
         eyebrow="Plotted developments"
         title="Every Jamin project, by stage"
         lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."

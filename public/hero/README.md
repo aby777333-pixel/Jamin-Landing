@@ -34,15 +34,42 @@ the page's ivory and `hero-fade` dissolves the image's left edge into it.
 
 ## Current assignments
 
+**One image per page — no render appears twice.** Corrected 2026-08-08: hero-09
+was on both /journal and /downloads, and hero-10 on both /contact and
+/projects/completed, while hero-07 sat unused on a page that is never built.
+
 | id | source | native | widths generated | subject | used on |
 |---|---|---|---|---|---|
 | hero-01 | jamin img1.png | 1850x850 | 1850, 1280, 768 | villa at sunset, distant skyline | /about (cinematic) |
 | hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | /properties (cinematic) |
 | hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | homepage (cinematic) |
 | hero-04 | jamin img4.png | 1717x916 | 1717, 1280, 768 | street of houses in mist | /projects/ongoing |
-| hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | /projects |
+| hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | homepage, "How a Jamin plot happens" |
 | hero-06 | jamin img 6.png | 1672x941 | 1672, 1280, 768 | dart in a target between blocks | /compare |
-| hero-07 | jamin img 7.png | 1672x941 | 1672, 1280, 768 | skyline, half drawn half built | /projects/current |
+| hero-07 | jamin img 7.png | 1672x941 | 1672, 1280, 768 | skyline, half drawn half built | /downloads |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
-| hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact, /projects/completed |
+| hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
+
+**Three surfaces deliberately use no render at all**, which is what makes the
+one-image-per-page arithmetic work — and is what the "brand imagery only" rule
+above asks for on pages whose subject is a real project:
+
+| surface | image | why not a render |
+|---|---|---|
+| /projects | 2nd photo of a development | index of real projects; hero-05 is needed on the homepage, where it literally illustrates "from sanctioned drawing to a plot you stand on" |
+| /projects/completed | 2nd photo of the delivered project | its subject IS a delivered project |
+| homepage closing band | 2nd photo of the delivered project | was hero-02, which is the /properties hero — the same frame twice in one visit |
+
+⚠️ Always the **second** photograph, never `images[0]`. The first is the card
+cover, and each of these pages also lists that project as a card, so using the
+cover would put the same frame in the hero and the grid below it.
+
+## ⚠️ There is no spare image
+
+Ten renders, and after the correction above all ten are in use. Two consequences:
+
+- `/projects/current` ("Upcoming") has no property in it, so the page is never
+  built. Move one into that stage and its hero falls back to hero-05 and doubles
+  with /projects. **That stage needs an eleventh render before it is used.**
+- Any new page that opens with a `PageHero` needs new artwork, not a reused id.

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
-import { getProperties } from "@/lib/properties";
+import { getProperties, secondaryImage } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
 import { seoTitle } from "@/lib/seo";
@@ -64,11 +64,25 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
     ],
   };
 
-  // One image per stage, so the four pages are visually distinct rather than
-  // four copies of the same header.
-  const ART_BY_PHASE: Record<string, HeroArt> = {
-    ongoing: 4, current: 7, future: 8, completed: 10,
-  };
+  // One image per stage, so the pages are visually distinct rather than copies
+  // of the same header. `completed` is deliberately absent: it opens with a
+  // photograph of a delivered project instead, which is both truer to its
+  // subject and what releases hero-10 back to /contact.
+  //
+  // ⚠️ Ten renders were supplied and all ten are now spoken for. `current`
+  // ("Upcoming" in the app) has no property in it today, so its page is not
+  // built. Move a property into that stage and it will fall back to hero-05 and
+  // double with /projects — that stage needs an eleventh image first.
+  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 4, future: 8 };
+
+  // The SECOND photograph, not the cover: the same project is carded in the
+  // grid directly below this hero, and the cover is what that card shows. Falls
+  // back to the render if there is no photograph at all, so a thin record
+  // degrades to the old header rather than to an empty hero.
+  const delivered = phase === "completed" ? items.find((p) => secondaryImage(p)) : undefined;
+  const photo = delivered
+    ? { src: secondaryImage(delivered)!, alt: `${delivered.title}, a completed Jamin development` }
+    : undefined;
 
   return (
     <>
@@ -78,6 +92,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
       />
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
+        photo={photo}
+        tone={photo ? "cinematic" : "paper"}
+        size={photo ? "tall" : "standard"}
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}

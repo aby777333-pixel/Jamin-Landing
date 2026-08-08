@@ -11,6 +11,7 @@ import {
   locationLine,
   phaseLabel,
   propertyHref,
+  secondaryImage,
   type Property,
 } from "@/lib/properties";
 import { getNavFacets } from "@/lib/site";
@@ -94,6 +95,14 @@ export default async function HomePage() {
   const live = all.filter(isSellable);
   const completed = all.filter((p) => !isSellable(p));
   const districts = facets.districts.map((d) => d.label);
+
+  // See the closing band below. Falls back to the render if the delivered
+  // project has no second photograph, so the panel is never empty.
+  const closingPhoto =
+    all
+      .filter((p) => p.project_phase === "completed")
+      .map(secondaryImage)
+      .find(Boolean) ?? "/hero/hero-02-1920.webp";
 
   return (
     <>
@@ -279,9 +288,16 @@ export default async function HomePage() {
         <div className="relative isolate overflow-hidden rounded-xl bg-charcoal">
           {/* A photograph rather than a flat black panel. The copy sits in the
               bottom-left, which is the corner `veil` makes darkest, so white
-              type holds AA whatever the picture is doing behind it. */}
+              type holds AA whatever the picture is doing behind it.
+
+              This was hero-02, which is also the /properties hero — the same
+              distinctive frame twice in one visit. Real land suits "walk the
+              land" better anyway. The delivered project's SECOND photograph:
+              its first is the cover on its own card further up this page, and
+              also opens /projects/completed. Still uncaptioned, so it claims to
+              be nothing. */}
           <Image
-            src="/hero/hero-02-1920.webp"
+            src={closingPhoto}
             alt=""
             aria-hidden="true"
             fill

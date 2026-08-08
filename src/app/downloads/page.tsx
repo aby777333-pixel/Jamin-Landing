@@ -41,7 +41,7 @@ export default async function DownloadsPage() {
   return (
     <>
       <PageHero
-        art={9}
+        art={7}
         eyebrow="Brochures & plans"
         title="Read the paperwork before you talk to anyone."
         lead="Every brochure, sanctioned layout plan and approval document we publish, in one place. No form to fill in, no sign-in, and no agent's card attached to the file."

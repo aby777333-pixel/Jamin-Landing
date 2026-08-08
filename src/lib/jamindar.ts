@@ -42,6 +42,17 @@ export const JAMINDAR_LANGUAGES = [
   { code: "ml-IN", label: "മലയാളം" },
 ] as const;
 
+/** Carries the server's own wording plus whether this was the rate limiter, so
+ *  the UI can present a throttle as guidance rather than as a failure. */
+export class JamindarError extends Error {
+  rateLimited: boolean;
+  constructor(message: string, rateLimited = false) {
+    super(message);
+    this.name = "JamindarError";
+    this.rateLimited = rateLimited;
+  }
+}
+
 export async function jamindarChat(
   messages: ChatMsg[],
   opts: { language?: string; conversationId?: string; propertyContext?: string } = {},
@@ -57,8 +68,21 @@ export async function jamindarChat(
       propertyContext: opts.propertyContext,
     },
   });
-  if (error) throw new Error(error.message);
-  const res = data as JamindarReply & { error?: string };
-  if (res?.error) throw new Error(res.error);
+
+  // ⚠️ supabase-js treats any non-2xx as `error` and leaves `data` null, so the
+  // body has to be read off the thrown Response or the anonymous rate limiter's
+  // 429 would surface as "Edge Function returned a non-2xx status code". The
+  // limiter already writes a human sentence server-side; show that, not this.
+  if (error) {
+    const res = (error as { context?: Response }).context;
+    if (res && typeof res.json === "function") {
+      const body = await res.json().catch(() => null);
+      if (body?.error) throw new JamindarError(body.error, body.rateLimited === true);
+    }
+    throw new JamindarError(error.message);
+  }
+
+  const res = data as JamindarReply & { error?: string; rateLimited?: boolean };
+  if (res?.error) throw new JamindarError(res.error, res.rateLimited === true);
   return { reply: res?.reply ?? "", mentioned: res?.mentioned ?? [] };
 }
