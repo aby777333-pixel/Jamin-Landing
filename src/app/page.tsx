@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
   coverImage,
   getProperties,
@@ -63,25 +64,25 @@ const ASSURANCES = [
   {
     k: "DTCP approved",
     d: "Every Jamin layout is sanctioned by the Directorate of Town and Country Planning. We publish the approval number and the sanctioned plan on each project page.",
-    icon: "▦",
+    icon: "stamp" as const,
     tint: "bg-jamin-gold-soft text-jamin-gold-ink",
   },
   {
     k: "Clear, marketable title",
     d: "Title and encumbrance are checked before a single plot is offered, and the documents are on the page for you to read.",
-    icon: "✓",
+    icon: "deed" as const,
     tint: "bg-canopy-soft text-canopy",
   },
   {
     k: "Roads, water, drains",
     d: "Internal roads formed to the sanctioned width, common water to every plot, storm-water drains and street lighting by the promoter.",
-    icon: "⌁",
+    icon: "junction" as const,
     tint: "bg-jamin-red-soft text-jamin-red-deep",
   },
   {
     k: "Loan assistance",
     d: "Plot purchase loans arranged with leading banks for eligible buyers on approved layouts.",
-    icon: "₹",
+    icon: "ledger" as const,
     // Burgundy, not earth. Earth measures 4.11:1 on champagne and fails AA even
     // for a glyph; burgundy is 9.7:1 and is the deeper tone the palette already
     // carries for exactly this kind of accent.
@@ -141,11 +142,12 @@ export default async function HomePage() {
                 className="flex gap-phi2 rounded-card border border-line/70 bg-canvas p-phi2 transition-all duration-500 hover:-translate-y-0.5 hover:border-line hover:shadow-lift"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
+                {/* Drawn, not typed — see components/cadastral/SurveyIcon. */}
                 <span
                   aria-hidden="true"
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] text-base ${a.tint}`}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] ${a.tint}`}
                 >
-                  {a.icon}
+                  <SurveyIcon name={a.icon} className="h-[22px] w-[22px]" />
                 </span>
                 <div>
                   <dt className="text-base font-semibold text-ink">{a.k}</dt>

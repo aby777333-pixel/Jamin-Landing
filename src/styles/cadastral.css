@@ -287,6 +287,62 @@ body > footer {
 }
 
 /**
+ * EDITORIAL — long-form articles read as authored, not pasted.
+ *
+ * The Journal now carries 50KB guides. Without any of this a 21-step piece
+ * arrives as one undifferentiated grey column and the reader has no way to see
+ * its shape, which is the same complaint as the lost formatting, only from the
+ * other side.
+ */
+
+/** The opening paragraph carries more weight, the way a standfirst does. */
+.cd-lead {
+  font-size: var(--text-xl);
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+
+/**
+ * Numbered section rules. The counter is CSS, not markup, so it renumbers
+ * itself when the owner adds or moves a heading and can never disagree with
+ * what is on the page.
+ */
+.cd-article {
+  counter-reset: cd-section;
+}
+.cd-article .cd-h2 {
+  counter-increment: cd-section;
+}
+.cd-article .cd-h2::before {
+  content: counter(cd-section, decimal-leading-zero);
+  display: block;
+  margin-bottom: 0.35rem;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: var(--color-jamin-gold-ink);
+}
+
+/** A quote set as a quote: gold rule, larger measure, and the mark itself
+ *  hung in the margin rather than indenting the text away from the column. */
+.cd-quote {
+  position: relative;
+  padding-left: 1.35rem;
+  border-left: 2px solid var(--color-jamin-gold);
+}
+.cd-quote::before {
+  content: "\\201C";
+  position: absolute;
+  left: 0.35rem;
+  top: -0.35rem;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--color-jamin-gold);
+  opacity: 0.45;
+}
+
+/**
  * ⚠️ Non-negotiable. Every effect in this layer must arrive at its final state
  * immediately when the reader has asked for less motion — finished and static,
  * never broken or half-drawn.

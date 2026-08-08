@@ -194,14 +194,23 @@ function parse(md: string): Block[] {
 export function Prose({ markdown }: { markdown: string }) {
   const blocks = parse(markdown);
 
+  /** The first paragraph of the piece, so it can be set as the standfirst. Only
+   *  when it genuinely opens the article — a paragraph that follows a heading
+   *  is body copy, not an opening. */
+  const leadIndex = blocks.findIndex((b) => b.t === "p");
+  const isLead = (i: number) => i === leadIndex && blocks.slice(0, i).every((b) => b.t === "p");
+
   return (
-    <div className="space-y-phi3">
+    <div className="cd-article space-y-phi3">
       {blocks.map((b, i) => {
         switch (b.t) {
           case "h": {
             const id = headingSlug(b.text);
             return b.level === 2 ? (
-              <h2 id={id} key={i} className="scroll-mt-28 pt-phi2 text-2xl text-ink">
+              /* `cd-h2` drives the CSS section counter — see cadastral.css. The
+                 number is generated, so it renumbers itself when a heading is
+                 added or moved and cannot drift out of step with the page. */
+              <h2 id={id} key={i} className="cd-h2 scroll-mt-28 pt-phi3 text-2xl text-ink">
                 {inline(b.text, `h${i}`)}
               </h2>
             ) : (
@@ -212,7 +221,12 @@ export function Prose({ markdown }: { markdown: string }) {
           }
           case "p":
             return (
-              <p key={i} className="text-lg leading-relaxed text-ink-soft">
+              <p
+                key={i}
+                className={
+                  isLead(i) ? "cd-lead" : "text-lg leading-relaxed text-ink-soft"
+                }
+              >
                 {inline(b.text, `p${i}`)}
               </p>
             );
@@ -242,10 +256,7 @@ export function Prose({ markdown }: { markdown: string }) {
             );
           case "quote":
             return (
-              <blockquote
-                key={i}
-                className="border-l-2 border-jamin-gold pl-phi3 text-lg leading-relaxed text-ink-muted"
-              >
+              <blockquote key={i} className="cd-quote my-phi3 text-xl leading-relaxed text-ink">
                 {inline(b.text, `q${i}`)}
               </blockquote>
             );
