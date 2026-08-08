@@ -116,25 +116,31 @@ export default async function JournalPage() {
 
 function LeadStory({ post }: { post: JournalPost }) {
   return (
-    <Link href={journalHref(post)} className="group grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
-      <div className="relative aspect-[1.9/1] overflow-hidden rounded-card border border-line bg-canvas-sunken">
+    <Link
+      href={journalHref(post)}
+      className="group grid items-center gap-phi4 lg:grid-cols-[1.618fr_1fr]"
+    >
+      {/* ⚠️ The LEAD story alone gets the image's own ratio.
+          A cover is frequently a designed infographic, and on the lead it is
+          doing the selling — forcing it into a 1.9:1 box cropped the title off
+          the top and the strip off the bottom, so the one image a reader
+          actually looks at was the one arriving incomplete. The small cards
+          below keep `object-cover`, because there the job is a tidy grid and
+          the whole picture is a click away. */}
+      <div className="overflow-hidden rounded-card border border-line bg-canvas-sunken">
         {post.cover_url ? (
           <Image
             src={post.cover_url}
             alt={post.cover_alt ?? post.title}
-            fill
+            width={1200}
+            height={630}
             priority
-            sizes="(max-width: 1024px) 100vw, 60vw"
-            /* `cover` here, `contain` nowhere. On a card the job is to fill the
-               tile — letterboxed bars either side of a tall infographic read as
-               a broken image, and the grid loses its rhythm. Nothing is lost by
-               cropping at this size: the article page shows the same cover
-               whole, and it opens into the zoom viewer. */
-            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+            sizes="(max-width: 1024px) 100vw, 62vw"
+            className="h-auto w-full transition-transform duration-[1200ms] group-hover:scale-[1.02]"
             style={{ transitionTimingFunction: "var(--ease-silk)" }}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
+          <div className="flex aspect-[1.9/1] items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
             Jamin Journal
           </div>
         )}

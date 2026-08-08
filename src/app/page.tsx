@@ -111,19 +111,19 @@ export default async function HomePage() {
 
       {/* ---- what we are, in plain search terms ---- */}
       <Container className="py-phi6">
-        <div className="grid items-start gap-phi4 lg:grid-cols-[1.618fr_1fr]">
+        <div className="grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
           {/* On the page's own canvas this block was a slab of text with nothing
               holding it. The card is ivory on warm white — a step of luminance,
               not a colour — with the gold hairline the rest of the system opens
               a section with. Subtle enough that it reads as paper, not as a
               callout box. */}
-          <div className="rounded-xl border border-line bg-canvas-alt p-phi4 lg:p-phi5">
+          <div className="flex h-full flex-col rounded-xl border border-line bg-canvas-alt p-phi4 lg:p-phi5">
             <span className="mb-phi3 block h-px w-16 rule-gold" aria-hidden="true" />
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
-            <h2 className="mt-phi3 max-w-2xl text-3xl text-ink">
+            <h2 className="mt-phi3 max-w-2xl text-2xl text-ink">
               Land is the one purchase where the paperwork matters more than the pitch.
             </h2>
-            <div className="mt-phi3 max-w-2xl space-y-phi2 text-lg leading-relaxed text-ink-soft">
+            <div className="mt-phi3 max-w-2xl space-y-phi2 text-base leading-relaxed text-ink-soft">
               <p>
                 Jamin Properties plans and sells residential plots in approved layouts across{" "}
                 {districts.length > 1
@@ -141,7 +141,10 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <dl className="grid content-start gap-phi2">
+          {/* `content-between` so the four tiles distribute across the row rather
+              than stacking at the top and leaving the column visibly short
+              beside the card. */}
+          <dl className="grid h-full content-between gap-phi2">
             {ASSURANCES.map((a) => (
               <div
                 key={a.k}
