@@ -39,6 +39,8 @@ export function ZoomableImage({
   const [scale, setScale] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
+  /** Whether the pointer travelled between down and up — see the click handler. */
+  const moved = useRef(false);
   /* The cursor depends on whether a drag is in progress, and a ref cannot be
      read during render — so the fact of dragging is state even though the
      coordinates stay in the ref, where they belong. */
@@ -152,6 +154,7 @@ export function ZoomableImage({
             style={{ cursor: scale > 1 ? (dragging ? "grabbing" : "grab") : "zoom-in" }}
             onWheel={(e) => zoom(scale + (e.deltaY < 0 ? STEP : -STEP))}
             onPointerDown={(e) => {
+              moved.current = false;
               if (scale <= 1) return;
               drag.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
               setDragging(true);
@@ -160,6 +163,12 @@ export function ZoomableImage({
             onPointerMove={(e) => {
               const d = drag.current;
               if (!d) return;
+              // A few pixels of travel while pressing is a drag, not a click.
+              // Without this threshold, panning the image and releasing over
+              // the surround would be read as "clicked outside" and close it.
+              if (Math.abs(e.clientX - d.x) > 4 || Math.abs(e.clientY - d.y) > 4) {
+                moved.current = true;
+              }
               setPan({ x: d.px + (e.clientX - d.x), y: d.py + (e.clientY - d.y) });
             }}
             onPointerUp={() => {
@@ -169,6 +178,13 @@ export function ZoomableImage({
             onPointerCancel={() => {
               drag.current = null;
               setDragging(false);
+            }}
+            /* Clicking the surround closes, which is what everyone tries before
+               reaching for Escape. The image itself is excluded so a mis-click
+               while reading does not dismiss the thing being read. */
+            onClick={(e) => {
+              if (moved.current) return;
+              if ((e.target as HTMLElement).tagName !== "IMG") close();
             }}
             onDoubleClick={() => zoom(scale > 1 ? 1 : 2)}
           >
@@ -186,7 +202,8 @@ export function ZoomableImage({
           </div>
 
           <p className="shrink-0 px-phi3 pb-phi2 text-center text-micro text-white/50">
-            Scroll or use + and &minus; to zoom &middot; drag to move &middot; Esc to close
+            Scroll or use + and &minus; to zoom &middot; drag to move &middot; click outside or press
+            Esc to close
           </p>
         </div>
       )}

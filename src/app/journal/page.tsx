@@ -125,10 +125,12 @@ function LeadStory({ post }: { post: JournalPost }) {
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 60vw"
-            /* `contain`, not `cover`. The card slot keeps its ratio so the grid
-               stays even, but a cover is often an infographic and cropping one
-               cuts the content out of it. */
-            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+            /* `cover` here, `contain` nowhere. On a card the job is to fill the
+               tile — letterboxed bars either side of a tall infographic read as
+               a broken image, and the grid loses its rhythm. Nothing is lost by
+               cropping at this size: the article page shows the same cover
+               whole, and it opens into the zoom viewer. */
+            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
             style={{ transitionTimingFunction: "var(--ease-silk)" }}
           />
         ) : (
@@ -167,7 +169,7 @@ function ArticleCard({ post }: { post: JournalPost }) {
             alt={post.cover_alt ?? post.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
