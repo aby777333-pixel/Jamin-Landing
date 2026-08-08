@@ -13,7 +13,8 @@ import {
 } from "@/lib/journal";
 import { SITE_URL } from "@/lib/supabase";
 
-export const revalidate = 3600;
+/** 60s — see the note in journal/page.tsx. */
+export const revalidate = 60;
 
 /**
  * §50 / §169 — only categories that actually hold a published article become

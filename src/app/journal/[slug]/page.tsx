@@ -18,7 +18,9 @@ import {
 import { getProperties } from "@/lib/properties";
 import { SITE_URL } from "@/lib/supabase";
 
-export const revalidate = 3600;
+/** 60s — see the note in journal/page.tsx. An edited article should not need a
+ *  redeploy to appear. */
+export const revalidate = 60;
 
 export async function generateStaticParams() {
   const posts = await getJournalPosts();
@@ -190,16 +192,20 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
         </header>
 
         {post.cover_url && (
-          <div className="relative mt-phi4 aspect-[2/1] overflow-hidden rounded-card border border-line bg-canvas-sunken">
-            <Image
-              src={post.cover_url}
-              alt={post.cover_alt ?? post.title}
-              fill
-              priority
-              sizes="(max-width: 1280px) 100vw, 1200px"
-              className="object-cover"
-            />
-          </div>
+          /* No fixed ratio. A cover is often a designed banner with type set
+             into it, and forcing 2:1 with `object-cover` cropped that type off
+             — a 2.86:1 artwork lost a third of its width. width/height only
+             reserve a ratio until the file lands; `h-auto` then hands the real
+             one back, so whatever is uploaded is shown whole. */
+          <Image
+            src={post.cover_url}
+            alt={post.cover_alt ?? post.title}
+            width={1200}
+            height={600}
+            priority
+            sizes="(max-width: 1280px) 100vw, 1200px"
+            className="mt-phi4 h-auto w-full rounded-card border border-line bg-canvas-sunken"
+          />
         )}
 
         <div className="mt-phi5 grid gap-phi5 lg:grid-cols-[1fr_16rem]">

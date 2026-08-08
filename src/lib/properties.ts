@@ -229,9 +229,17 @@ export function plotArea(p: Plot): string | null {
 /** Indian-format price, or an honest "on request".
  *  ⚠️ Every plot is currently unpriced in the database. Inventing or estimating
  *  a figure for land someone may actually buy would be far worse than saying
- *  the rate is not published yet. */
+ *  the rate is not published yet.
+ *
+ *  ⚠️ "On request" is only honest where there is something to request. A
+ *  sold-out project showing it sends a reader to the desk to ask the rate of
+ *  stock that does not exist, which wastes their time and the desk's. What the
+ *  price slot should say about a delivered project is that it is gone. */
 export function formatPrice(p: Property): string {
-  if (p.price == null || Number(p.price) <= 0) return "Price on request";
+  if (p.price == null || Number(p.price) <= 0) {
+    if (isSellable(p)) return "Price on request";
+    return p.status === "sold" ? "Sold out" : "Not for sale";
+  }
   const n = Number(p.price);
   if (n >= 1e7) return `₹${(n / 1e7).toFixed(2).replace(/\.00$/, "")} Cr`;
   if (n >= 1e5) return `₹${(n / 1e5).toFixed(2).replace(/\.00$/, "")} L`;

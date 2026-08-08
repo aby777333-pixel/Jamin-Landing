@@ -243,9 +243,17 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
 
             <div className="text-right">
               <div className="text-2xl text-ink">{formatPrice(p)}</div>
-              {p.price == null && (
+              {/* Only where there is something left to price. On a delivered
+                  project this line invited an enquiry about stock that is
+                  gone. */}
+              {p.price == null && isSellable(p) && (
                 <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
                   Our sales desk confirms the current rate — we don&rsquo;t publish estimates.
+                </p>
+              )}
+              {p.price == null && !isSellable(p) && (
+                <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
+                  Every plot here is handed over. Ask us what is selling now.
                 </p>
               )}
             </div>

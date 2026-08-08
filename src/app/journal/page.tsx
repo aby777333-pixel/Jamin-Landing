@@ -13,7 +13,11 @@ import {
   type JournalPost,
 } from "@/lib/journal";
 
-export const revalidate = 3600;
+/** 60s, not the site-wide hour. The Journal is the one section edited daily,
+ *  and an hour between pressing Publish and seeing the article reads as the
+ *  publish having failed — it sent the owner back to redeploy three times in a
+ *  single afternoon. Property records change far less often and keep the hour. */
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Jamin Journal",

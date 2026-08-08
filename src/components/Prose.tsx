@@ -39,10 +39,12 @@ export type Heading = { level: 2 | 3; text: string; id: string };
 export function extractHeadings(md: string): Heading[] {
   const out: Heading[] = [];
   for (const line of (md ?? "").split("\n")) {
-    const m = /^(#{2,3})\s+(.*)$/.exec(line.trim());
+    const m = /^(#{1,4})\s+(.*)$/.exec(line.trim());
     if (!m) continue;
     const text = m[2].trim();
-    out.push({ level: m[1].length === 2 ? 2 : 3, text, id: headingSlug(text) });
+    // Must mirror parse() exactly or the contents list points at ids that the
+    // headings never got.
+    out.push({ level: m[1].length >= 3 ? 3 : 2, text, id: headingSlug(text) });
   }
   return out;
 }
@@ -151,11 +153,15 @@ function parse(md: string): Block[] {
         continue;
       }
     }
-    const h = /^(#{2,3})\s+(.*)$/.exec(line);
+    // `#` is accepted and rendered as an h2. A pasted document usually opens
+    // with its own title as H1, and the page already renders the article title
+    // as the one h1 — emitting a second would break the outline a screen reader
+    // navigates by. Demoting is better than dropping it to plain text.
+    const h = /^(#{1,4})\s+(.*)$/.exec(line);
     if (h) {
       flushPara();
       flushList();
-      blocks.push({ t: "h", level: h[1].length === 2 ? 2 : 3, text: h[2].trim() });
+      blocks.push({ t: "h", level: h[1].length >= 3 ? 3 : 2, text: h[2].trim() });
       continue;
     }
     const q = /^>\s?(.*)$/.exec(line);

@@ -119,6 +119,14 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+          {/* The wordmark has always linked home and carries an aria-label
+              saying so, but a tester on the sign-in page could not find a way
+              back — a convention only helps the people who already know it. */}
+          <Link href="/" className={trigger}>
+            Home
+            <span className={underline} />
+          </Link>
+
           <Link href="/properties" className={trigger}>
             Properties
             <span className={underline} />
@@ -260,6 +268,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-line bg-canvas px-5 pb-8 pt-2 lg:hidden"
           aria-label="Primary mobile"
         >
+          <MobileLink href="/">Home</MobileLink>
           <MobileLink href="/properties">Properties</MobileLink>
           <MobileLink href="/projects">Projects</MobileLink>
           {facets.phases.map((f) => (
