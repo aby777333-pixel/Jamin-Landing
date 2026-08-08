@@ -26,9 +26,20 @@ export type Slide = {
   href: string;
 };
 
-/** hero-03 — plotted layout at golden hour: the road, the plot boundaries and
- *  the first houses. The one frame in the set that is literally the product. */
-const ART = { id: "03", w: 1720 };
+/**
+ * hero-13 — an aerial of a marked plot in open green country: fields, tree
+ * lines, formed roads and the houses already built along them.
+ *
+ * It replaces hero-03, which was a golden-hour render that read hazy and beige
+ * behind the copy. This is the greener frame and the truer one: what Jamin
+ * sells is land in a place, seen from above, which is exactly how a buyer looks
+ * at a layout plan.
+ *
+ * ⚠️ Brighter than what it replaces, and the copy is white. The veil is
+ * measured, not assumed — see the contrast note in globals.css and the figures
+ * recorded in public/hero/README.md for this frame.
+ */
+const ART = { id: "13", w: 1672 };
 
 export function Hero({ slides }: { slides: Slide[] }) {
   return (

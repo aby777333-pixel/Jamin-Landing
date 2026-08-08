@@ -42,14 +42,14 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 |---|---|---|---|---|---|
 | hero-01 | jamin img1.png | 1850x850 | 1850, 1280, 768 | villa at sunset, distant skyline | /about (cinematic) |
 | hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | /properties (cinematic) |
-| hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | homepage (cinematic) |
+| hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | **unassigned — spare** |
 | hero-04 | jamin img4.png | 1717x916 | 1717, 1280, 768 | street of houses in mist | /projects/ongoing |
 | hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | homepage, "How a Jamin plot happens" |
 | hero-06 | jamin img 6.png | 1672x941 | 1672, 1280, 768 | dart in a target between blocks | /compare |
 | hero-07 | jamin img 7.png | 1672x941 | 1672, 1280, 768 | skyline, half drawn half built | /downloads |
 | hero-11 | jamin img13.png | 1720x914 | 1720, 1280, 768 | golden key over hillside villas | /projects/current |
 | hero-12 | jamin img 15.png | 1672x941 | 1672, 1280, 768 | plot with a wireframe house and a NOW dial | /account/sign-in |
-| hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red location pin | **unassigned — spare** |
+| hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red pin, green fields | homepage (cinematic) |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
@@ -77,6 +77,22 @@ here before: eleven hero surfaces against ten images.
   have fallen back to hero-05, doubling with /projects, the moment a property
   was moved into it. It is now covered before it is ever used.
 - **hero-12 → /account/sign-in**, which a bug report called visually empty.
-- **hero-13 is spare.** The first genuine spare this set has had. Any new page
-  that opens with a `PageHero` should take it rather than reuse an id — and
-  once it is gone, new artwork is needed again.
+- **hero-13 → the homepage**, swapped in on request for a greener opening frame.
+  It is also the truer one: an aerial of a marked plot in open country is how a
+  buyer actually looks at a layout.
+- **hero-03 is now the spare** — the golden-hour render it replaced. Any new
+  page that opens with a `PageHero` should take that rather than reuse an id.
+
+### ⚠️ On measuring the veil against a new frame
+
+Before swapping the homepage frame, hero-13 was compared with hero-03 by
+compositing both through a canvas with the veil's two gradients and reading the
+95th-percentile background luminance under the h1 and the lead. They came out
+equivalent — h1 1.21 vs 1.11, lead 2.37 vs 2.37 — which is the useful result:
+the new frame carries the same risk as the audited one already in place.
+
+**Those absolute figures are NOT a contrast audit.** The reconstruction does not
+reproduce the ≈0.89 combined alpha recorded in globals.css, most likely because
+the 100deg gradient is approximated as an axis-aligned one. Treat this method as
+a COMPARISON between frames only. A real audit has to measure the composited
+page, not a model of it.
