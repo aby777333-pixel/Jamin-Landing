@@ -111,8 +111,14 @@ export default async function HomePage() {
 
       {/* ---- what we are, in plain search terms ---- */}
       <Container className="py-phi6">
-        <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
-          <div>
+        <div className="grid items-start gap-phi4 lg:grid-cols-[1.618fr_1fr]">
+          {/* On the page's own canvas this block was a slab of text with nothing
+              holding it. The card is ivory on warm white — a step of luminance,
+              not a colour — with the gold hairline the rest of the system opens
+              a section with. Subtle enough that it reads as paper, not as a
+              callout box. */}
+          <div className="rounded-xl border border-line bg-canvas-alt p-phi4 lg:p-phi5">
+            <span className="mb-phi3 block h-px w-16 rule-gold" aria-hidden="true" />
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
             <h2 className="mt-phi3 max-w-2xl text-3xl text-ink">
               Land is the one purchase where the paperwork matters more than the pitch.
@@ -286,7 +292,12 @@ export default async function HomePage() {
       )}
 
       {/* ---- closing ---- */}
-      <Container className="pb-phi7">
+      {/* ⚠️ No bottom padding here. The footer already carries `mt-phi7`, and this
+          container carried `pb-phi7` as well — 9rem on top of 9rem, which put
+          roughly 288px of empty canvas between the closing band and the footer
+          and read as the page having ended early. The footer's own margin is
+          the separation. */}
+      <Container>
         <div className="relative isolate overflow-hidden rounded-xl bg-charcoal">
           {/* A photograph rather than a flat black panel. The copy sits in the
               bottom-left, which is the corner `veil` makes darkest, so white
