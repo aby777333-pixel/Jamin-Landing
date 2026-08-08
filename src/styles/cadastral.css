@@ -182,6 +182,111 @@ body > footer {
 }
 
 /**
+ * ⚠️ ON THE ANTI-BRIEF'S BAN ON FROSTED GLASS — kept, deliberately.
+ *
+ * The ban targets glassmorphism as decoration: frosted panels floating on a
+ * plain ground because they look modern. Audited every use on this site and
+ * there is not one of those. All eight sit over imagery — the header over the
+ * hero, the hero's inventory rail, the PageHero meta pill, the map's place
+ * label, the closing CTAs — which is the case where a translucent panel is
+ * doing real work, letting the picture continue behind the words instead of
+ * punching a hole in it.
+ *
+ * It also cannot be removed for free: globals.css records that `--glass-tint`
+ * was raised from 0.72 to 0.90 because small red text on the header measured
+ * 4.05:1 over the dark hero and failed AA. Replacing glass with a solid panel
+ * means re-solving that, and the current answer is measured.
+ *
+ * The rule going forward is the brief's intent rather than its letter: glass
+ * only where a panel overlaps an image. Never on the page's own canvas.
+ */
+
+/**
+ * ONE PHOTO GRADE, EVERYWHERE.
+ *
+ * Land photography is the hardest genre there is — flat light, brown ground,
+ * nothing in the frame — and this set comes from several different phones. A
+ * single grade across all of it buys more perceived quality than any individual
+ * effect in this system, because it makes mismatched sources look like one
+ * commissioned shoot. Deliberately subtle: this should read as a house look,
+ * never as a filter.
+ */
+.cd-photo img {
+  filter: saturate(0.88) contrast(1.06) brightness(1.02) sepia(0.06);
+  transition:
+    filter var(--dur-base) var(--ease-draft),
+    transform 900ms var(--ease-draft);
+}
+.cd-photo:hover img,
+.cd-photo:focus-within img {
+  filter: saturate(0.96) contrast(1.08) brightness(1.03) sepia(0.03);
+}
+
+/**
+ * DIMENSION TICKS — the annotation on an FMB sketch.
+ *
+ * An extension line with arrow terminators draws in along the top and left
+ * edges on hover, carrying the real extent and plot count. The single most
+ * distinctive interaction on the site.
+ */
+.cd-dim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease-draft);
+}
+.cd-card:hover .cd-dim,
+.cd-card:focus-within .cd-dim {
+  opacity: 1;
+}
+
+.cd-dim__ext,
+.cd-dim__line {
+  stroke: var(--color-jamin-gold);
+  stroke-width: 0.9;
+  /* The SVG is stretched with preserveAspectRatio="none", so without this the
+     horizontal and vertical rules would print at visibly different weights. */
+  vector-effect: non-scaling-stroke;
+}
+.cd-dim__line--h {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  transition: stroke-dashoffset 520ms var(--ease-draft);
+}
+.cd-dim__line--v {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  transition: stroke-dashoffset 520ms var(--ease-draft) 80ms;
+}
+.cd-card:hover .cd-dim__line--h,
+.cd-card:focus-within .cd-dim__line--h,
+.cd-card:hover .cd-dim__line--v,
+.cd-card:focus-within .cd-dim__line--v {
+  stroke-dashoffset: 0;
+}
+
+/** The labels are real text, not SVG text, so they stay crisp at 10px and are
+ *  never scaled by the stretched viewBox. Gold INK, not gold: #eaa317 at this
+ *  size measures about 2.1:1 and fails AA outright. */
+.cd-dim__label {
+  position: absolute;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  color: var(--color-jamin-gold-ink);
+  opacity: 0;
+  transition: opacity 260ms var(--ease-draft) 300ms;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.cd-card:hover .cd-dim__label,
+.cd-card:focus-within .cd-dim__label {
+  opacity: 1;
+}
+
+/**
  * ⚠️ Non-negotiable. Every effect in this layer must arrive at its final state
  * immediately when the reader has asked for less motion — finished and static,
  * never broken or half-drawn.

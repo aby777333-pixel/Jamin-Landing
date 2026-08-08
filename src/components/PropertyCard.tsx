@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { AvailabilityChip } from "@/components/cadastral/AvailabilityChip";
+import { DimensionOverlay } from "@/components/cadastral/DimensionOverlay";
 import {
   approvalBadges,
   coverImage,
@@ -23,14 +25,23 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
        stretches to the tallest in its row, but a `block` child does not follow
        it, so a two-line title used to leave one card's base floating above its
        neighbours'. */
+    /* `cd-card` is the hook the dimension ticks hang off; `cd-fold` is the
+       dog-ear from the logo; `cd-photo` is the house grade. Not `overflow-hidden`
+       any more — the left-hand dimension label sits just outside the edge, and
+       clipping is what would hide it. */
     <Link
       href={propertyHref(p)}
-      className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1.5 hover:border-line-red hover:shadow-raise"
+      className="cd-card cd-fold cd-photo group flex h-full w-full flex-col rounded-xl border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1.5 hover:border-line-red hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
+      <DimensionOverlay
+        top={area}
+        left={p.plots_total ? `${p.plots_total} plot${p.plots_total === 1 ? "" : "s"}` : null}
+      />
+
       {/* 1.618:1 — the same ratio the rest of the page is built on. `shrink-0`
           so the flex column cannot squash the ratio out of it. */}
-      <div className="relative aspect-[1.618/1] shrink-0 overflow-hidden bg-canvas-sunken">
+      <div className="relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
         {cover ? (
           <Image
             src={cover}
@@ -88,6 +99,13 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           </h3>
 
           <p className="mt-1.5 line-clamp-1 text-base text-ink-muted">{locationLine(p)}</p>
+
+          {/* Only where the record carries both counts — see the component. */}
+          {sellable && (
+            <div className="mt-phi2">
+              <AvailabilityChip total={p.plots_total} available={p.plots_available} />
+            </div>
+          )}
         </div>
 
         <div className="mt-phi3 flex items-end justify-between border-t border-line pt-phi2">
