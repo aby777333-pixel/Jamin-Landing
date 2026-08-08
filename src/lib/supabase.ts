@@ -45,10 +45,24 @@ if (!url || !key) {
  * rebuild put them straight back into the output.
  *
  * And because the site is statically generated, unpublishing something in the
- * admin console reaches the public site on the next revalidation — within the
- * hour — or immediately with a cache-cleared redeploy.
+ * admin console reaches the public site on the next revalidation — or
+ * immediately with a cache-cleared redeploy.
+ *
+ * ⚠️ THIS NUMBER MUST NEVER EXCEED THE SHORTEST `revalidate` IN THE APP.
+ *
+ * It was 3600 while the Journal routes declared 60, and the result looked
+ * exactly like a broken save: an uploaded cover was in the database, the page
+ * dutifully regenerated every 60s — `Cache-Status: "Next.js"; hit; fwd=stale`
+ * then `hit` — and still rendered the placeholder, because each regeneration
+ * re-read the same hour-old cached response. The page was fresh; the data
+ * underneath it was not.
+ *
+ * 60 is therefore the floor for the whole site, not a Journal setting. Pages
+ * that declare an hour still only regenerate hourly — this only governs how old
+ * the data may be *when* they do, so the cost is a few more reads, not more
+ * renders.
  */
-const REVALIDATE_SECONDS = 3600;
+const REVALIDATE_SECONDS = 60;
 
 export const supabase = createClient(url, key, {
   auth: { persistSession: false },
