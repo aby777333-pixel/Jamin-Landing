@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useQueryString } from "@/lib/url-state";
 import { useEffect, useId, useRef, useState } from "react";
 import type { NavFacets } from "@/lib/site";
 
@@ -34,9 +35,24 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   // A menu that survives navigation feels broken. Adjusting during render on a
   // changed value is React's own answer here — an effect would run a render
   // later, so the old menu would be visible on the new page for a frame.
-  const [lastPath, setLastPath] = useState(pathname);
-  if (pathname !== lastPath) {
-    setLastPath(pathname);
+  /**
+   * ⚠️ Keyed on pathname AND query, not pathname alone.
+   *
+   * Every Locations entry points at `/properties?district=…`, so picking a
+   * second district from an already-filtered page changes only the query — the
+   * pathname is identical, this comparison never fired, and the menu stayed
+   * open over the page it had just navigated. The first pick appeared to work
+   * only because it arrived from a different route.
+   *
+   * `useQueryString` rather than `useSearchParams` for the reason recorded in
+   * lib/url-state: reading search params here would push the header out of the
+   * static prerender and hand a crawler a Suspense fallback instead of the nav.
+   */
+  const search = useQueryString();
+  const location = pathname + search;
+  const [lastLocation, setLastLocation] = useState(location);
+  if (location !== lastLocation) {
+    setLastLocation(location);
     setOpen(false);
     setPanel(null);
   }

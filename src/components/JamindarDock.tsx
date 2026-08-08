@@ -125,13 +125,59 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
     };
   }, []);
 
+  /**
+   * ⚠️ Setting `utterance.lang` is a REQUEST, not an instruction.
+   *
+   * If no voice for that language is installed the browser quietly falls back
+   * to its default and reads Telugu text aloud in an English voice — which is
+   * worse than silence, because the reply on screen is correct and only the
+   * audio lies. So the voice is chosen explicitly: exact locale first
+   * ("te-IN"), then any voice for the same language ("te"), and if the device
+   * genuinely has none, nothing is spoken and the reader is told why rather
+   * than being read to in the wrong language.
+   */
   const say = useCallback(
     (text: string) => {
       if (!speak || typeof window === "undefined" || !("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = language;
-      window.speechSynthesis.speak(u);
+      const synth = window.speechSynthesis;
+      synth.cancel();
+
+      const base = language.split("-")[0].toLowerCase();
+      const norm = (l: string) => l.replace("_", "-").toLowerCase();
+      const pick = (voices: SpeechSynthesisVoice[]) =>
+        voices.find((v) => norm(v.lang) === norm(language)) ??
+        voices.find((v) => norm(v.lang).split("-")[0] === base);
+
+      const speakWith = (voices: SpeechSynthesisVoice[]) => {
+        const match = pick(voices);
+        if (!match) {
+          const label = JAMINDAR_LANGUAGES.find((l) => l.code === language)?.label ?? "matching";
+          setError({
+            text: `This device has no ${label} voice installed, so the answer is not read aloud. The reply above is still in ${label}.`,
+            throttled: false,
+          });
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(text);
+        u.voice = match;
+        u.lang = match.lang;
+        synth.speak(u);
+      };
+
+      // ⚠️ Chrome populates the voice list asynchronously, so the first call
+      // after a page load returns []. Reporting "no voice installed" off that
+      // empty list would be wrong on a device that has one — wait for
+      // `voiceschanged` once instead.
+      const voices = synth.getVoices();
+      if (voices.length) {
+        speakWith(voices);
+        return;
+      }
+      const onVoices = () => {
+        synth.removeEventListener("voiceschanged", onVoices);
+        speakWith(synth.getVoices());
+      };
+      synth.addEventListener("voiceschanged", onVoices);
     },
     [speak, language],
   );

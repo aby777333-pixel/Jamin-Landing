@@ -36,12 +36,28 @@ export async function SiteFooter() {
               families who intend to build, and for investors who intend to hold.
             </p>
             <div className="mt-phi3 h-px w-24 rule-gold" />
+            {/* Was one tiny grey sentence — "4 developments · 43 plots
+                available" — set at the same weight as a caption, so the only
+                hard numbers on the page were also the least visible thing on
+                it. As a ledger block the figures lead and the labels support,
+                and tabular figures hold the columns on a common pitch. */}
             {facets.totals.developments > 0 && (
-              <p className="mt-phi3 text-tiny text-ink-faint">
-                {facets.totals.developments} development
-                {facets.totals.developments === 1 ? "" : "s"} · {facets.totals.plotsAvailable} plot
-                {facets.totals.plotsAvailable === 1 ? "" : "s"} available
-              </p>
+              <dl className="mt-phi3 grid max-w-sm grid-cols-3 gap-phi2">
+                {[
+                  { label: "Developments", value: facets.totals.developments },
+                  { label: "Plots available", value: facets.totals.plotsAvailable },
+                  { label: "Districts", value: facets.districts.length },
+                ]
+                  .filter((s) => s.value > 0)
+                  .map((s) => (
+                    <div key={s.label} className="min-w-0 border-t border-line pt-phi2">
+                      <dd className="ledger text-2xl leading-none text-ink">
+                        {s.value.toLocaleString("en-IN")}
+                      </dd>
+                      <dt className="ledger-label mt-1.5 block">{s.label}</dt>
+                    </div>
+                  ))}
+              </dl>
             )}
           </div>
 

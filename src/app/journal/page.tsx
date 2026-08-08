@@ -73,9 +73,19 @@ export default async function JournalPage() {
                   <Link
                     key={c.slug}
                     href={`/journal/category/${c.slug}`}
-                    className="rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
+                    /* These read as static labels: no arrow, no colour, nothing
+                       that says a category can be opened. A gold hairline and a
+                       chevron give the affordance without turning the row into
+                       a set of buttons. */
+                    className="group inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-jamin-red-deep transition-colors hover:border-jamin-gold hover:bg-jamin-gold-soft"
                   >
                     {c.name}
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-0.5"
+                    >
+                      &rarr;
+                    </span>
                   </Link>
                 ))}
             </nav>
@@ -115,7 +125,10 @@ function LeadStory({ post }: { post: JournalPost }) {
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 60vw"
-            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+            /* `contain`, not `cover`. The card slot keeps its ratio so the grid
+               stays even, but a cover is often an infographic and cropping one
+               cuts the content out of it. */
+            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.04]"
             style={{ transitionTimingFunction: "var(--ease-silk)" }}
           />
         ) : (
@@ -154,7 +167,7 @@ function ArticleCard({ post }: { post: JournalPost }) {
             alt={post.cover_alt ?? post.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.06]"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">

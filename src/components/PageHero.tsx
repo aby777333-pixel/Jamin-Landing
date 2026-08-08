@@ -147,14 +147,15 @@ export function PageHero({
       {/* the render, bleeding off the right edge and dissolving into the page */}
       <div
         className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block"
-        aria-hidden="true"
+        aria-hidden={photo ? undefined : "true"}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
           srcSet={srcSet}
           sizes="58vw"
-          alt=""
+          /* A render is decoration; a photograph of a real project is content. */
+          alt={photo?.alt ?? ""}
           fetchPriority={priority ? "high" : "auto"}
           loading={priority ? "eager" : "lazy"}
           decoding="async"

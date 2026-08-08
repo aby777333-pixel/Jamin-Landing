@@ -235,7 +235,12 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        {/* `justify-between` on a wrapping row is what produced the zig-zag on a
+            phone: with the count and the view switch on one line the switch was
+            pushed to the far edge, and once it wrapped it left a ragged gap
+            beside it. Stacked below `sm`, both sides align to the same left
+            edge as the chips above them. */}
+        <div className="flex flex-col gap-phi2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             {active && (
               <>
@@ -254,7 +259,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             )}
           </div>
 
-          <div className="flex items-center rounded-full border border-line bg-canvas p-1">
+          <div className="flex items-center self-start rounded-full border border-line bg-canvas p-1 sm:self-auto">
             {(["grid", "list", "map"] as const).map((v) => (
               <button
                 key={v}
@@ -306,7 +311,13 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         <h2 className="sr-only">Developments</h2>
         <ul className="mt-phi5 divide-y divide-line border-y border-line">
           {results.map((p) => (
-            <li key={p.id} className="flex flex-wrap items-center gap-phi3 py-phi3">
+            /* Stacked on a phone. Wrapping a right-aligned price block under a
+               left-aligned title is what made every row look differently
+               aligned depending on how long its title happened to be. */
+            <li
+              key={p.id}
+              className="flex flex-col gap-phi2 py-phi3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-phi3"
+            >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
@@ -333,7 +344,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   </p>
                 )}
               </div>
-              <div className="text-right">
+              <div className="flex items-baseline gap-3 sm:block sm:text-right">
                 <div className="ledger text-base text-ink">{formatPrice(p)}</div>
                 {formatArea(p) && (
                   <div className="ledger text-tiny text-ink-faint">{formatArea(p)}</div>

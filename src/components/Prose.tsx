@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ZoomableImage } from "@/components/cadastral/ZoomableImage";
 
 /**
  * A deliberately small Markdown renderer.
@@ -250,18 +250,16 @@ export function Prose({ markdown }: { markdown: string }) {
               </blockquote>
             );
           case "img":
-            // Uploaded by the editor, so the dimensions are unknown. The
-            // width/height pair only sets the ratio the browser reserves before
-            // the file arrives; `h-auto` hands the real aspect back afterwards.
+            // Every image in an article body is zoomable, for the same reason
+            // the cover is: a plan, a rate table or a checklist pasted into a
+            // guide is unreadable at column width. Applies to whatever is
+            // uploaded next without anyone remembering to opt in.
             return (
-              <Image
+              <ZoomableImage
                 key={i}
                 src={b.src}
                 alt={b.alt}
-                width={1280}
-                height={720}
                 sizes="(max-width: 768px) 100vw, 720px"
-                className="h-auto w-full rounded-xl border border-line"
               />
             );
           case "hr":

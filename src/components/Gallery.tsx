@@ -94,7 +94,15 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
           aria-label={`${title} gallery`}
           onClick={() => setOpen(null)}
         >
-          <div className="relative h-full w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+          {/* A constant stage. Filling the whole overlay meant a landscape shot
+              sat as a thin centred band and a portrait one nearly filled the
+              screen, so moving between them read as the layout jumping. The box
+              is now fixed and the picture is centred inside it — every image is
+              shown whole, in the same frame. */}
+          <div
+            className="relative aspect-[1.618/1] w-full max-w-6xl overflow-hidden rounded-card bg-white/[0.04] sm:h-full sm:max-h-[82vh] sm:aspect-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Image
               src={images[open]}
               alt={`${title} — image ${open + 1} of ${images.length}`}
@@ -106,7 +114,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
 
           <button
             onClick={() => setOpen(null)}
-            className="absolute right-5 top-5 rounded-full border border-white/25 px-4 py-2 text-tiny uppercase tracking-[0.12em] text-white transition hover:bg-white/10"
+            className="absolute right-4 top-4 rounded-full border border-white/30 bg-ink/70 px-4 py-2 text-tiny uppercase tracking-[0.12em] text-white backdrop-blur transition hover:bg-ink/90"
           >
             Close
           </button>
@@ -118,7 +126,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                   e.stopPropagation();
                   move(-1);
                 }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full border border-white/25 px-4 py-3 text-white transition hover:bg-white/10"
+                className="absolute left-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-ink/70 text-xl text-white backdrop-blur transition hover:bg-ink/90 sm:left-4"
                 aria-label="Previous image"
               >
                 ←
@@ -128,12 +136,12 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                   e.stopPropagation();
                   move(1);
                 }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full border border-white/25 px-4 py-3 text-white transition hover:bg-white/10"
+                className="absolute right-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-ink/70 text-xl text-white backdrop-blur transition hover:bg-ink/90 sm:right-4"
                 aria-label="Next image"
               >
                 →
               </button>
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-tiny text-white/70">
+              <div className="ledger absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-ink/70 px-3 py-1 text-tiny text-white/85 backdrop-blur">
                 {open + 1} / {images.length}
               </div>
             </>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { locationLine, phaseLabel, propertyHref, type Property } from "@/lib/properties";
 
 /**
@@ -26,8 +26,60 @@ const latToY = (lat: number, z: number) => {
   return ((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2) * 2 ** z;
 };
 
+/** Room for the pin graphic and its label, so a marker on the edge of the
+ *  bounding box is not half off the frame. */
+const PIN_INSET = 56;
+
 export function PropertiesMap({ items }: { items: Property[] }) {
   const [active, setActive] = useState<string | null>(null);
+
+  /**
+   * ⚠️ The zoom has to be fitted to the FRAME, not to the tile plane.
+   *
+   * It used to be chosen so every pin fell inside the 5x3 tile grid — 1280x768
+   * px. The frame that is actually visible crops that plane, and on a phone it
+   * is about 335x251, so a zoom that "fitted" could leave a quarter of the pins
+   * outside the window. It looked correct on a laptop purely because the frame
+   * there is close to the plane's own size. Measuring the real box is the only
+   * thing that makes the fit true at every width.
+   */
+  const frameRef = useRef<HTMLDivElement>(null);
+  const [frame, setFrame] = useState<{ w: number; h: number } | null>(null);
+
+  useEffect(() => {
+    const el = frameRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const r = el.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+      setFrame((prev) =>
+        prev && Math.abs(prev.w - r.width) < 1 && Math.abs(prev.h - r.height) < 1
+          ? prev
+          : { w: r.width, h: r.height },
+      );
+    };
+
+    // ⚠️ Three ways in, because one is not reliable enough.
+    //
+    // `ResizeObserver` is the right instrument but it is delivered through the
+    // rendering pipeline, so it does not fire while the page is not producing
+    // frames — a background tab, or a preview pane that is not on screen. On
+    // its own the map would then keep the fallback zoom until something forced
+    // a resize. The timeout seeds the first measurement regardless, and the
+    // window listener covers orientation changes on devices where the observer
+    // is throttled.
+    const t = setTimeout(measure, 0);
+    window.addEventListener("resize", measure, { passive: true });
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", measure);
+      ro?.disconnect();
+    };
+  }, []);
 
   const pinned = useMemo(
     () => items.filter((p) => p.lat != null && p.lng != null),
@@ -41,18 +93,21 @@ export function PropertiesMap({ items }: { items: Property[] }) {
     const centreLat = (Math.min(...lats) + Math.max(...lats)) / 2;
     const centreLng = (Math.min(...lngs) + Math.max(...lngs)) / 2;
 
-    // Largest zoom at which every pin still fits inside the capped grid, with
-    // a tile of breathing room on each side.
+    // Until the frame has been measured, fall back to the tile plane so the
+    // server render and the first paint still produce a usable map.
+    const availW = Math.max(120, (frame?.w ?? (COLS - 1.4) * TILE) - PIN_INSET * 2);
+    const availH = Math.max(120, (frame?.h ?? (ROWS - 1.2) * TILE) - PIN_INSET * 2);
+
     let z = MAX_Z;
     for (; z > MIN_Z; z--) {
       const xs = lngs.map((l) => lngToX(l, z) * TILE);
       const ys = lats.map((l) => latToY(l, z) * TILE);
       const w = Math.max(...xs) - Math.min(...xs);
       const h = Math.max(...ys) - Math.min(...ys);
-      if (w <= (COLS - 1.4) * TILE && h <= (ROWS - 1.2) * TILE) break;
+      if (w <= availW && h <= availH) break;
     }
     return { z, centreLat, centreLng };
-  }, [pinned]);
+  }, [pinned, frame]);
 
   if (!view) {
     return (
@@ -93,7 +148,10 @@ export function PropertiesMap({ items }: { items: Property[] }) {
 
   return (
     <div className="grid gap-phi3 lg:grid-cols-[1.618fr_1fr]">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10]">
+      <div
+        ref={frameRef}
+        className="relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10]"
+      >
         <div
           className="absolute left-1/2 top-1/2"
           style={{

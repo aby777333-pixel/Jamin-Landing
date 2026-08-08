@@ -90,11 +90,16 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {/* ⚠️ Same tone and size for every stage.
+          Giving `completed` a photograph earlier also flipped it to
+          `cinematic`, which moved its heading ON TO the image while Ongoing and
+          Future kept theirs above it — three sibling pages with three different
+          content structures. The photograph was the point; the tone change was
+          an accident of how it was wired. `paper` keeps the hierarchy identical
+          across the section, and the photograph still replaces the render. */}
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
         photo={photo}
-        tone={photo ? "cinematic" : "paper"}
-        size={photo ? "tall" : "standard"}
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}
