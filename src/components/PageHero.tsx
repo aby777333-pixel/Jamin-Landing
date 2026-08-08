@@ -26,12 +26,15 @@ import { Container } from "./ui";
  * They may carry a page as brand imagery and must never be captioned as a
  * development or placed on a property card. See public/hero/README.md.
  */
-export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
   1: 1850, 2: 1920, 3: 1720, 4: 1717, 5: 1823,
   6: 1672, 7: 1672, 8: 1672, 9: 1672, 10: 1672,
+  // Supplied 2026-08-08. 11 ends the shortfall recorded in hero/README.md —
+  // there were eleven hero surfaces and ten renders.
+  11: 1720, 12: 1672, 13: 1672,
 };
 
 function artSrc(n: HeroArt) {

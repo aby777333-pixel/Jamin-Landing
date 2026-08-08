@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { JAMINDAR_LANGUAGES, JamindarError, jamindarChat, type ChatMsg } from "@/lib/jamindar";
+import {
+  JAMINDAR_LANGUAGES,
+  JamindarError,
+  jamindarChat,
+  jamindarSpeak,
+  type ChatMsg,
+} from "@/lib/jamindar";
 
 /**
  * Jamindar, in front of the paywall of signing in (§30).
@@ -39,18 +45,34 @@ const SUGGESTIONS = [
 
 /* ---------- browser speech, typed just enough ---------- */
 
-type SpeechResultEvent = {
-  results: ArrayLike<ArrayLike<{ transcript: string }>>;
-};
+type SpeechAlt = { transcript: string };
+type SpeechResult = ArrayLike<SpeechAlt> & { isFinal?: boolean };
+type SpeechResultEvent = { resultIndex?: number; results: ArrayLike<SpeechResult> };
+type SpeechErrorEvent = { error?: string };
 type Recognition = {
   lang: string;
   interimResults: boolean;
   continuous: boolean;
+  maxAlternatives?: number;
   start: () => void;
   stop: () => void;
+  abort?: () => void;
   onresult: ((e: SpeechResultEvent) => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((e: SpeechErrorEvent) => void) | null;
   onend: (() => void) | null;
+};
+
+/** What went wrong, in words a reader can act on. Silence plus a button that
+ *  turned red is the worst possible feedback. */
+const MIC_ERROR: Record<string, string> = {
+  "not-allowed":
+    "Microphone access is blocked. Allow it for this site in your browser settings, then tap the mic again.",
+  "service-not-allowed":
+    "Microphone access is blocked. Allow it for this site in your browser settings, then tap the mic again.",
+  "audio-capture": "No microphone was found on this device.",
+  network: "Speech recognition needs a connection and could not reach the service.",
+  "no-speech": "Nothing was heard. Tap the mic and speak again.",
+  aborted: "",
 };
 type RecognitionCtor = new () => Recognition;
 
@@ -95,6 +117,8 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
   const inputRef = useRef<HTMLInputElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const recRef = useRef<Recognition | null>(null);
+  /** Reused so a second answer replaces the first rather than talking over it. */
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ block: "end" });
@@ -121,6 +145,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+      audioRef.current?.pause();
       recRef.current?.stop();
     };
   }, []);
@@ -150,18 +175,26 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
 
       const speakWith = (voices: SpeechSynthesisVoice[]) => {
         const match = pick(voices);
-        if (!match) {
-          const label = JAMINDAR_LANGUAGES.find((l) => l.code === language)?.label ?? "matching";
-          setError({
-            text: `This device has no ${label} voice installed, so the answer is not read aloud. The reply above is still in ${label}.`,
-            throttled: false,
-          });
+        if (match) {
+          const u = new SpeechSynthesisUtterance(text);
+          u.voice = match;
+          u.lang = match.lang;
+          synth.speak(u);
           return;
         }
-        const u = new SpeechSynthesisUtterance(text);
-        u.voice = match;
-        u.lang = match.lang;
-        synth.speak(u);
+        // ⚠️ No local voice for this language, so fall back to the server.
+        // This is the one path that spends money — see `jamindarSpeak`. Most
+        // devices ship English and Hindi, so Tamil, Telugu, Kannada and
+        // Malayalam are where it actually fires. Failing quietly is right for a
+        // decorative feature: the reply is already on screen in the language
+        // that was asked for.
+        void jamindarSpeak(text, language).then((url) => {
+          if (!url) return;
+          const audio = audioRef.current ?? new Audio();
+          audioRef.current = audio;
+          audio.src = url;
+          void audio.play().catch(() => {});
+        });
       };
 
       // ⚠️ Chrome populates the voice list asynchronously, so the first call
@@ -223,16 +256,47 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
     const rec = new Ctor();
     recRef.current = rec;
     rec.lang = language;
-    rec.interimResults = false;
+    /* ⚠️ Interim results ON. Without them the field stays empty for the whole
+       utterance and the only feedback is a button that changed colour — which
+       is indistinguishable from the microphone not working at all. */
+    rec.interimResults = true;
     rec.continuous = false;
+    rec.maxAlternatives = 1;
+
+    let finalText = "";
     rec.onresult = (e) => {
-      const said = e.results?.[0]?.[0]?.transcript;
+      let interim = "";
+      const results = e.results ?? [];
+      for (let i = 0; i < results.length; i++) {
+        const r = results[i];
+        const t = r?.[0]?.transcript ?? "";
+        if (r?.isFinal) finalText += t;
+        else interim += t;
+      }
+      // Show it landing, word by word.
+      setInput((finalText + interim).trim());
+    };
+    rec.onerror = (e) => {
+      setListening(false);
+      const msg = MIC_ERROR[e?.error ?? ""] ?? "The microphone could not be started.";
+      if (msg) setError({ text: msg, throttled: false });
+    };
+    /* Send on `onend` rather than on the first result: recognition ends when
+       the speaker stops, and sending mid-sentence truncated the question. */
+    rec.onend = () => {
+      setListening(false);
+      const said = finalText.trim();
       if (said) void send(said);
     };
-    rec.onerror = () => setListening(false);
-    rec.onend = () => setListening(false);
+
+    setError(null);
     setListening(true);
-    rec.start();
+    try {
+      rec.start();
+    } catch {
+      // Chrome throws if start() is called while already running.
+      setListening(false);
+    }
   }
 
   const byId = (id: string) => properties.find((p) => p.id === id);
@@ -245,7 +309,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="jamindar-panel"
-        className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-raise transition-transform duration-300 hover:-translate-y-0.5 print:hidden"
+        className={`fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-raise transition-transform duration-300 hover:-translate-y-0.5 print:hidden ${open ? "hidden sm:inline-flex" : ""}`}
         style={{ transitionTimingFunction: "var(--ease-silk)" }}
       >
         <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">
@@ -268,7 +332,14 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
           role="dialog"
           aria-modal="false"
           aria-label="Ask Jamindar"
-          className="fixed inset-x-3 bottom-24 z-40 flex max-h-[min(34rem,70vh)] flex-col overflow-hidden rounded-xl border border-line bg-canvas shadow-raise sm:inset-x-auto sm:right-5 sm:w-[26rem] print:hidden"
+          /* ⚠️ Full screen on a phone, a panel from `sm` up.
+             A floating panel is fine until the on-screen keyboard opens: the
+             viewport halves, the panel is squeezed, and the language chips end
+             up above the scroll. Taking the whole screen means the keyboard
+             takes space from the message list and nothing else. `dvh`, not
+             `vh`, because `vh` on iOS is the height WITHOUT the browser chrome
+             and the composer ends up under it. */
+          className="fixed inset-0 z-40 flex h-[100dvh] w-full flex-col overflow-hidden border-line bg-canvas print:hidden sm:inset-x-auto sm:inset-y-auto sm:bottom-24 sm:right-5 sm:h-auto sm:max-h-[min(34rem,70vh)] sm:w-[26rem] sm:rounded-xl sm:border sm:shadow-raise"
         >
           <header className="shrink-0 border-b border-line px-phi3 py-phi2">
             <div className="flex items-center justify-between gap-3">

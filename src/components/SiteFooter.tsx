@@ -122,16 +122,9 @@ export async function SiteFooter() {
               {facets.hasJournal && <FooterLink href="/journal">Jamin Journal</FooterLink>}
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>
-              <li>
-                <a
-                  href="https://merry-begonia-4c3cd1.netlify.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
-                >
-                  Jamin Bazaar app
-                </a>
-              </li>
+              {/* ⚠️ The app link is withdrawn until the Play Store listing is
+                  live. Sending a buyer to a raw Netlify URL and calling it "the
+                  app" is not the first impression the store page will make. */}
             </ul>
           </div>
         </div>

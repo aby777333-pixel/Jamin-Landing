@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AccountShell } from "./AccountShell";
 import { Badge, EmptyState, ButtonLink, Skeleton } from "@/components/ui";
@@ -120,15 +121,10 @@ export function VisitsView() {
 
       <p className="mt-phi4 text-tiny leading-relaxed text-ink-muted">
         A requested visit is not yet a confirmed appointment — our desk calls to agree the time.
-        Book, reschedule or cancel in the{" "}
-        <a
-          href="https://merry-begonia-4c3cd1.netlify.app/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          Jamin Bazaar app
-        </a>
+        To reschedule or cancel, reply to that call or{" "}
+        <Link href="/contact" className="underline underline-offset-2 hover:text-ink">
+          talk to the desk
+        </Link>
         .
       </p>
     </AccountShell>

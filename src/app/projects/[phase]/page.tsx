@@ -69,11 +69,10 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // photograph of a delivered project instead, which is both truer to its
   // subject and what releases hero-10 back to /contact.
   //
-  // ⚠️ Ten renders were supplied and all ten are now spoken for. `current`
-  // ("Upcoming" in the app) has no property in it today, so its page is not
-  // built. Move a property into that stage and it will fall back to hero-05 and
-  // double with /projects — that stage needs an eleventh image first.
-  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 4, future: 8 };
+  // `current` ("Upcoming" in the app) now has hero-11, supplied 2026-08-08.
+  // It previously had none, and the page would have fallen back to hero-05 and
+  // doubled with /projects the moment a property was moved into that stage.
+  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 4, current: 11, future: 8 };
 
   // The SECOND photograph, not the cover: the same project is carded in the
   // grid directly below this hero, and the cover is what that card shows. Falls

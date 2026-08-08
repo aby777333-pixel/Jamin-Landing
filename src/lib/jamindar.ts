@@ -53,6 +53,31 @@ export class JamindarError extends Error {
   }
 }
 
+/**
+ * Server-side speech, for languages the device cannot speak itself.
+ *
+ * ⚠️ THIS COSTS MONEY. It calls Sarvam's paid TTS through the edge function,
+ * which the browser's own `speechSynthesis` never does. It is used ONLY as a
+ * fallback: most devices have an English and a Hindi voice, so the common path
+ * stays free, and it is the anonymous rate limiter that makes exposing it on a
+ * public page safe at all.
+ *
+ * Returns a playable data URL, or null if the service gave nothing back —
+ * silence is better than an exception on a decorative feature.
+ */
+export async function jamindarSpeak(text: string, language: string): Promise<string | null> {
+  const { data, error } = await browserClient().functions.invoke("jamindar-voice", {
+    body: { action: "tts", text, language },
+  });
+  if (error) return null;
+
+  // Sarvam returns `audios: [base64]`; tolerate a singular field too rather
+  // than depending on one shape of a response we do not control.
+  const res = data as { audios?: string[]; audio?: string } | null;
+  const b64 = res?.audios?.[0] ?? res?.audio;
+  return b64 ? `data:audio/wav;base64,${b64}` : null;
+}
+
 export async function jamindarChat(
   messages: ChatMsg[],
   opts: { language?: string; conversationId?: string; propertyContext?: string } = {},

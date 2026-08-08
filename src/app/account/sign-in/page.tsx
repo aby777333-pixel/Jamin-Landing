@@ -60,8 +60,8 @@ export default async function SignInPage() {
       {/* The sheet the plate is drawn on. */}
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      <Container className="relative py-phi6 lg:py-phi7">
-        <div className="grid items-start gap-phi5 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-phi6">
+      <Container className="relative py-phi5 lg:py-phi6">
+        <div className="grid items-start gap-phi4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-phi5">
           {/* `next` deliberately is NOT read from the query string. An open
               redirect on a sign-in page is a phishing primitive, and the only
               place a buyer needs to land afterwards is their own account. */}
@@ -69,11 +69,11 @@ export default async function SignInPage() {
             <SignInForm next="/account" />
           </Suspense>
 
-          <aside className="lg:pt-phi4">
+          <aside className="lg:pt-phi2">
             <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
             <h2 className="text-2xl text-ink">What an account is for</h2>
 
-            <dl className="mt-phi4 space-y-phi3">
+            <dl className="mt-phi3 space-y-phi2">
               {REASONS.map((r) => (
                 <div key={r.title} className="border-t border-line pt-phi3">
                   <dt className="text-lg text-ink">{r.title}</dt>
@@ -85,7 +85,7 @@ export default async function SignInPage() {
             {/* The document footer: what the catalogue actually contains, in the
                 ledger column so the figures sit on a common pitch. */}
             {stats.length > 0 && (
-              <div className="mt-phi5 rounded-card border border-line bg-canvas p-phi3">
+              <div className="mt-phi4 rounded-card border border-line bg-canvas p-phi3">
                 <div className="ledger-label">On the books today</div>
                 <dl className="mt-phi2 grid grid-cols-2 gap-phi3 sm:grid-cols-4 lg:grid-cols-2">
                   {stats.map((s) => (
@@ -99,6 +99,22 @@ export default async function SignInPage() {
                 </dl>
               </div>
             )}
+
+            {/* hero-12. The report called this page empty, and a render here
+                fills it with something on-brand rather than with padding. */}
+            <div className="mt-phi4 overflow-hidden rounded-card border border-line bg-canvas-alt">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero/hero-12-1280.webp"
+                srcSet="/hero/hero-12-768.webp 768w, /hero/hero-12-1280.webp 1280w"
+                sizes="(max-width: 1024px) 100vw, 34vw"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="h-auto w-full"
+              />
+            </div>
 
             <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
               No password is ever set or stored. Signing in mints a one-time credential that is

@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { Container, SectionLabel, Badge, ButtonLink } from "@/components/ui";
 import { Prose, extractHeadings } from "@/components/Prose";
 import { ZoomableImage } from "@/components/cadastral/ZoomableImage";
+import { TableOfContents } from "@/components/cadastral/TableOfContents";
 import { PropertyCard } from "@/components/PropertyCard";
 import {
   KIND_LABEL,
@@ -196,10 +197,16 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
              a 21-step checklist in 10px type — which at column width is
              decoration rather than something a buyer can read. */
           <div className="mt-phi4">
+            {/* ⚠️ Capped. An uncropped 2000x2800 infographic ran for two full
+                screens before the article even began, so the reader met the
+                picture instead of the piece. The cap is on the IMAGE, not the
+                container, so nothing is cropped — it is scaled down, and the
+                viewer is where it gets read at full size. */}
             <ZoomableImage
               src={post.cover_url}
               alt={post.cover_alt ?? post.title}
               priority
+              imageClassName="max-h-[70vh] w-auto mx-auto"
             />
           </div>
         )}
@@ -262,23 +269,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
           {/* §143 — sticky table of contents on desktop */}
           {headings.length > 2 && (
             <aside className="hidden lg:block">
-              <nav className="sticky top-28" aria-label="On this page">
-                <h2 className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
-                  On this page
-                </h2>
-                <ul className="mt-phi2 space-y-2 border-l border-line">
-                  {headings.map((h) => (
-                    <li key={h.id} className={h.level === 3 ? "pl-phi3" : "pl-phi2"}>
-                      <a
-                        href={`#${h.id}`}
-                        className="block text-base leading-snug text-ink-muted transition-colors hover:text-jamin-red-deep"
-                      >
-                        {h.text}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <TableOfContents headings={headings} />
             </aside>
           )}
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
@@ -27,12 +28,16 @@ export function ZoomableImage({
   alt,
   priority = false,
   className = "",
+  imageClassName = "",
   sizes = "(max-width: 1280px) 100vw, 1200px",
 }: {
   src: string;
   alt: string;
   priority?: boolean;
   className?: string;
+  /** Applied to the inline <img> only — used to cap a very tall cover so it
+   *  does not fill the screen before the article starts. */
+  imageClassName?: string;
   sizes?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -41,11 +46,20 @@ export function ZoomableImage({
   const drag = useRef<{ x: number; y: number; px: number; py: number } | null>(null);
   /** Whether the pointer travelled between down and up — see the click handler. */
   const moved = useRef(false);
+  /** The portal target only exists in the browser. */
+  const [mounted, setMounted] = useState(false);
   /* The cursor depends on whether a drag is in progress, and a ref cannot be
      read during render — so the fact of dragging is state even though the
      coordinates stay in the ref, where they belong. */
   const [dragging, setDragging] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    // In a callback, not the effect body, to stay clear of the cascading-render
+    // rule the rest of this codebase follows.
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
 
   const reset = useCallback(() => {
     setScale(1);
@@ -100,7 +114,7 @@ export function ZoomableImage({
           height={600}
           priority={priority}
           sizes={sizes}
-          className="h-auto w-full"
+          className={`h-auto w-full ${imageClassName}`}
         />
         <span
           aria-hidden="true"
@@ -114,8 +128,10 @@ export function ZoomableImage({
         </span>
       </button>
 
-      {open && (
-        <div
+      {open &&
+        mounted &&
+        createPortal(
+          <div
           role="dialog"
           aria-modal="true"
           aria-label={alt}
@@ -205,8 +221,9 @@ export function ZoomableImage({
             Scroll or use + and &minus; to zoom &middot; drag to move &middot; click outside or press
             Esc to close
           </p>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

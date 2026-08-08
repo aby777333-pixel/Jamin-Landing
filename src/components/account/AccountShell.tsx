@@ -79,7 +79,16 @@ export function AccountShell({ title, children }: { title: string; children: Rea
       </header>
 
       <div className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
-        <nav aria-label="Account" className="flex gap-2 overflow-x-auto lg:flex-col lg:overflow-visible">
+        {/* ⚠️ `sticky` needs `self-start`. A grid item stretches to the row by
+            default, so the nav was as tall as the article beside it and had no
+            room left to stick within — it scrolled away and took the whole
+            account menu with it.
+            `overscroll-contain` on the mobile scroller stops a horizontal flick
+            from turning into a page scroll. */}
+        <nav
+          aria-label="Account"
+          className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain lg:sticky lg:top-24 lg:z-10 lg:flex-col lg:self-start lg:overflow-visible"
+        >
           {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : [])].map((n) => {
             const on = pathname === n.href;
             return (
@@ -87,6 +96,19 @@ export function AccountShell({ title, children }: { title: string; children: Rea
                 key={n.href}
                 href={n.href}
                 aria-current={on ? "page" : undefined}
+                /* ⚠️ Next scrolls the focused element into view on navigation,
+                   which yanked this horizontal strip back to the start every
+                   time a tab was chosen. The strip keeps its own position and
+                   the page still lands at the top, which is what `scroll` on the
+                   Link governs — not this. */
+                onClick={(e) => {
+                  const strip = e.currentTarget.parentElement;
+                  if (!strip) return;
+                  const left = strip.scrollLeft;
+                  requestAnimationFrame(() => {
+                    strip.scrollLeft = left;
+                  });
+                }}
                 className={`shrink-0 rounded-card px-phi3 py-2.5 text-base transition-colors ${
                   on ? "bg-ink text-canvas" : "text-ink-soft hover:bg-canvas-alt hover:text-ink"
                 }`}

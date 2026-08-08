@@ -54,11 +54,11 @@ export function PartnerDashboard() {
       <AccountShell title="Partner">
         <EmptyState
           title="You are not registered as a Jamin partner"
-          body="Partners share verified projects, bring buyers and earn on completed sales. Joining takes a minute in the Jamin Bazaar app — the role is granted straight away, and the Verified badge follows once KYC is approved."
+          body="Partners share verified projects, bring buyers and earn on completed sales. Joining takes a minute in the Talk to the desk — the role is granted straight away, and the Verified badge follows once KYC is approved."
           action={
             <>
               <a
-                href="https://merry-begonia-4c3cd1.netlify.app/"
+                href="/contact"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white"
@@ -160,12 +160,12 @@ export function PartnerDashboard() {
       <p className="mt-phi4 text-tiny leading-relaxed text-ink-muted">
         Withdrawals, KYC and the full income ledger are in the{" "}
         <a
-          href="https://merry-begonia-4c3cd1.netlify.app/"
+          href="/contact"
           target="_blank"
           rel="noopener noreferrer"
           className="underline"
         >
-          Jamin Bazaar app
+          Talk to the desk
         </a>
         . These figures are read from the same records, so the two always agree.
       </p>

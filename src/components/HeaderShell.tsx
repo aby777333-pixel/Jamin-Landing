@@ -48,6 +48,14 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
    * lib/url-state: reading search params here would push the header out of the
    * static prerender and hand a crawler a Suspense fallback instead of the nav.
    */
+  /** Which top-level section the reader is in. Prefix-matched, so
+   *  /property/x lights PROPERTIES and /journal/y lights JOURNAL — the article
+   *  is still the Journal, and an active state that vanishes one level down is
+   *  worse than none. */
+  const section = (href: string) =>
+    href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/");
+  const onProperties = section("/properties") || pathname.startsWith("/property");
+
   const search = useQueryString();
   const location = pathname + search;
   const [lastLocation, setLastLocation] = useState(location);
@@ -89,8 +97,13 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
 
   const trigger =
     "group relative inline-flex items-center gap-1.5 text-tiny font-medium uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink";
+  /* `scaleX`, not `width`: a transform never touches layout, and it lets the
+     active page hold the rule open instead of only appearing on hover. */
   const underline =
-    "absolute -bottom-1.5 left-0 h-px w-0 bg-jamin-gold transition-all duration-500 group-hover:w-full";
+    "absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-jamin-gold transition-transform duration-500 group-hover:scale-x-100";
+  /** The rule for the section the reader is actually in, in the ink gold so it
+   *  reads as a state rather than a lingering hover. */
+  const activeRule = "scale-x-100 bg-jamin-gold-ink";
 
   return (
     /* ⚠️ The mouse-leave lives on the HEADER, not on the nav bar inside it.
@@ -138,14 +151,18 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           {/* The wordmark has always linked home and carries an aria-label
               saying so, but a tester on the sign-in page could not find a way
               back — a convention only helps the people who already know it. */}
-          <Link href="/" className={trigger}>
+          <Link href="/" className={trigger} aria-current={section("/") ? "page" : undefined}>
             Home
-            <span className={underline} />
+            <span className={`${underline} ${section("/") ? activeRule : ""}`} />
           </Link>
 
-          <Link href="/properties" className={trigger}>
+          <Link
+            href="/properties"
+            className={trigger}
+            aria-current={onProperties ? "page" : undefined}
+          >
             Properties
-            <span className={underline} />
+            <span className={`${underline} ${onProperties ? activeRule : ""}`} />
           </Link>
 
           {hasProjects && (
@@ -175,29 +192,46 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               >
                 Locations
                 <Chevron open={panel === "locations"} />
-                <span className={underline} />
+                <span
+                  className={`${underline} ${pathname.startsWith("/projects") ? activeRule : ""}`}
+                />
               </button>
             </div>
           )}
 
           {facets.hasJournal && (
-            <Link href="/journal" className={trigger} onMouseEnter={() => setPanel(null)}>
+            <Link
+              href="/journal"
+              className={trigger}
+              onMouseEnter={() => setPanel(null)}
+              aria-current={section("/journal") ? "page" : undefined}
+            >
               Journal
-              <span className={underline} />
+              <span className={`${underline} ${section("/journal") ? activeRule : ""}`} />
             </Link>
           )}
 
-          <Link href="/about" className={trigger} onMouseEnter={() => setPanel(null)}>
+          <Link
+            href="/about"
+            className={trigger}
+            onMouseEnter={() => setPanel(null)}
+            aria-current={section("/about") ? "page" : undefined}
+          >
             About
-            <span className={underline} />
+            <span className={`${underline} ${section("/about") ? activeRule : ""}`} />
           </Link>
 
           {/* A plain link, not a session-aware control: the header renders on
               every statically prerendered page, and giving it auth state would
               pull a client session into the whole public tree. */}
-          <Link href="/account" className={trigger} onMouseEnter={() => setPanel(null)}>
+          <Link
+            href="/account"
+            className={trigger}
+            onMouseEnter={() => setPanel(null)}
+            aria-current={section("/account") ? "page" : undefined}
+          >
             Account
-            <span className={underline} />
+            <span className={`${underline} ${section("/account") ? activeRule : ""}`} />
           </Link>
 
           <Link

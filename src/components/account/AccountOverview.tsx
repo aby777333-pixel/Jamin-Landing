@@ -83,10 +83,10 @@ export function AccountOverview() {
           </div>
         </dl>
         <p className="mt-phi3 text-tiny leading-relaxed text-ink-muted">
-          Your details, KYC documents and referral records live in the Jamin Bazaar app. This page
+          Your details, KYC documents and referral records live in the Talk to the desk. This page
           reads them; it does not change them.{" "}
           <a
-            href="https://merry-begonia-4c3cd1.netlify.app/"
+            href="/contact"
             target="_blank"
             rel="noopener noreferrer"
             className="underline"
