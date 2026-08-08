@@ -125,12 +125,17 @@ export function journalHref(p: Pick<JournalPost, "slug">) {
   return `/journal/${p.slug}`;
 }
 
+/** ⚠️ Pinned to IST, like every other date on the site. `published_at` is a
+ *  timestamptz, so formatting it in the reader's own zone made an article
+ *  published at 00:29 IST show as the previous day — and the console, which
+ *  works in IST, then disagreed with the site about when it went out. */
 export function publishedLabel(p: JournalPost): string | null {
   if (!p.published_at) return null;
   return new Date(p.published_at).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Asia/Kolkata",
   });
 }
 
