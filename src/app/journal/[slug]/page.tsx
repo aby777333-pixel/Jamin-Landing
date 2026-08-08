@@ -154,7 +154,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone="gold">{KIND_LABEL[post.kind] ?? post.kind}</Badge>
             <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-              {readingMinutes(post)} min read
+              <span className="ledger">{readingMinutes(post)}</span> min read
             </span>
           </div>
           <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{post.title}</h1>
@@ -173,7 +173,7 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
             {publishedLabel(post) && (
               <div>
                 <dt className="inline text-ink-faint">Published </dt>
-                <dd className="inline text-ink">{publishedLabel(post)}</dd>
+                <dd className="ledger inline text-ink">{publishedLabel(post)}</dd>
               </div>
             )}
             {post.reviewed_at && (

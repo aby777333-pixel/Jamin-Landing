@@ -204,7 +204,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   onClick={() => set({ district: on ? null : d })}
                   className={chip(on)}
                 >
-                  {d} <span className={on ? "text-canvas/60" : "text-ink-faint"}>{n}</span>
+                  {d}{" "}
+                  <span className={`ledger ${on ? "text-canvas/60" : "text-ink-faint"}`}>{n}</span>
                 </button>
               );
             })}
@@ -227,7 +228,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   className={chip(on)}
                 >
                   {PHASE_META[k].label}{" "}
-                  <span className={on ? "text-canvas/60" : "text-ink-faint"}>{n}</span>
+                  <span className={`ledger ${on ? "text-canvas/60" : "text-ink-faint"}`}>{n}</span>
                 </button>
               );
             })}
@@ -239,7 +240,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             {active && (
               <>
                 <span className="text-tiny text-ink-muted">
-                  {results.length} of {all.length} shown
+                  <span className="ledger">{results.length}</span> of{" "}
+                  <span className="ledger">{all.length}</span> shown
                 </span>
                 <button
                   type="button"
@@ -332,8 +334,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 )}
               </div>
               <div className="text-right">
-                <div className="text-base text-ink">{formatPrice(p)}</div>
-                {formatArea(p) && <div className="text-tiny text-ink-faint">{formatArea(p)}</div>}
+                <div className="ledger text-base text-ink">{formatPrice(p)}</div>
+                {formatArea(p) && (
+                  <div className="ledger text-tiny text-ink-faint">{formatArea(p)}</div>
+                )}
               </div>
               <CompareToggle
                 on={compared.includes(p.id)}

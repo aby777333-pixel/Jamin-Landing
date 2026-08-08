@@ -1,0 +1,133 @@
+/**
+ * CADASTRAL — the land-record layer.
+ *
+ * Everything here derives from survey craft: hairlines, dimension ticks, the
+ * approval stamp, the ledger column, paper. Loaded AFTER globals.css, and
+ * deliberately additive — it introduces nothing that replaces an audited
+ * decision already made in globals.css.
+ *
+ * Three places where this file departs from the brief, each on purpose:
+ *
+ * 1. ⚠️ ONE TYPEFACE. The brief asks for Fraunces display, TT Norms UI and IBM
+ *    Plex Mono for the ledger. The house rule is Inter and nothing else, so all
+ *    three map to Inter. The ledger effect survives intact because it never
+ *    actually needed a monospace face — what it needs is figures of equal width
+ *    that line up in a column, and Inter ships genuine tabular figures. See
+ *    `.ledger`. Three font families would also have cost three network requests
+ *    against a 12KB budget.
+ *
+ * 2. ⚠️ GOLD TEXT USES THE AUDITED GOLD. The brief sets 10px dimension labels in
+ *    #C8971B, which measures about 2.6:1 on paper and fails WCAG AA outright at
+ *    that size. globals.css already solved this: bright gold is a FILL, and
+ *    `--color-jamin-gold-ink` (#8a6410, 5.29:1) is the text cousin. Strokes,
+ *    rules and ticks keep the bright original, exactly as the brief intends.
+ *
+ * 3. The palette maps onto the existing tokens rather than shadowing them with
+ *    near-identical hexes. Two sources of truth for "red" is how a site ends up
+ *    with two reds.
+ */
+
+:root {
+  /* Brand marks — RESERVED for the logo and the seal. */
+  --jamin-red-mark: #fd0001;
+  --jamin-gold-mark: #fbbc15;
+
+  /* Survey geometry */
+  --hairline: 0.5px;
+  --tick: 6px;
+  --grid-unit: 24px;
+  --fold-size: 30px;
+
+  /* Motion. Instruments move at constant speed; paper settles. */
+  --ease-draft: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-press: cubic-bezier(0.34, 0.8, 0.4, 1);
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-draw: 900ms;
+  --dur-slow: 1400ms;
+
+  /* Rules, in the ink the audit approved. */
+  --rule-hair: rgba(23, 24, 28, 0.1);
+  --rule-strong: rgba(23, 24, 28, 0.18);
+  --rule-gold: rgba(234, 163, 23, 0.38);
+}
+
+/**
+ * THE LEDGER COLUMN — the highest-credibility-per-byte rule in the system.
+ *
+ * Every number and every identifier on the site: plot counts, extents, prices,
+ * survey and approval numbers, dates, phone numbers, distances.
+ *
+ * `tabular-nums` is the whole trick. Inter's proportional figures are set to
+ * look even in a sentence, which means a 1 is narrower than a 0 and a counting
+ * number visibly jitters as it changes. Tabular figures are all one width, so a
+ * column of extents lines up on the decimal and a count-up animation does not
+ * reflow the row it sits in. `slashed-zero` is what a register does to keep 0
+ * and O apart on a document people are asked to trust.
+ */
+.ledger {
+  font-variant-numeric: tabular-nums slashed-zero;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  letter-spacing: -0.01em;
+}
+
+/** A ledger label: the small caps-tracked heading above a figure. */
+.ledger-label {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+/**
+ * PAPER GRAIN — one fixed turbulence layer for the whole document.
+ *
+ * Rendered once in the root layout, never per section: an feTurbulence filter
+ * is expensive and repeating it per card is how a site loses its scroll
+ * performance. `multiply` at 3.5% is enough to take the flatness off a pure
+ * white ground without ever being visible as texture.
+ *
+ * ⚠️ 3.5% IS A CONTRAST CEILING, NOT A TASTE SETTING. Multiply darkens the
+ * ground under the type, so it spends contrast headroom. Measured through a
+ * canvas composite (Tailwind 4 emits `oklab()` and string-parsing it lies):
+ * the worst case on the site — 12.58px `ink-faint` metadata — goes 4.90:1 to
+ * 4.73:1. Still over AA's 4.5, but the margin drops from 0.40 to 0.23. Raising
+ * this value pushes that text under the line, and globals.css records that the
+ * ink ramp was already darkened once to fix exactly this.
+ */
+.cd-grain {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.035;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: multiply;
+}
+
+/* The grain sits at z-index 1, so the page has to be lifted over it or the
+   texture washes across the type. Only `main` and `footer` — the header is
+   `sticky` and giving it `position: relative` here would silently unstick it,
+   and it already carries a z-index well above this layer. */
+body > main,
+body > footer {
+  position: relative;
+  z-index: 2;
+}
+
+/**
+ * ⚠️ Non-negotiable. Every effect in this layer must arrive at its final state
+ * immediately when the reader has asked for less motion — finished and static,
+ * never broken or half-drawn.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

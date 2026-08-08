@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+/* After globals: the cadastral layer adds to the foundation, it never
+   overrides an audited decision made there. */
+import "@/styles/cadastral.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Jamindar } from "@/components/Jamindar";
+import { PaperGrain } from "@/components/cadastral/PaperGrain";
 import { SITE_URL } from "@/lib/supabase";
 
 /** One typeface, as the brief asks. Inter carries display and UI both; the
@@ -80,6 +84,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* Once for the document. Never per section — see the component. */}
+        <PaperGrain />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}

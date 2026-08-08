@@ -242,7 +242,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </div>
 
             <div className="text-right">
-              <div className="text-2xl text-ink">{formatPrice(p)}</div>
+              <div className="ledger text-2xl text-ink">{formatPrice(p)}</div>
               {/* Only where there is something left to price. On a delivered
                   project this line invited an enquiry about stock that is
                   gone. */}

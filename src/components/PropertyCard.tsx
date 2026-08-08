@@ -76,7 +76,9 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             {p.plots_available ? (
               <>
                 <span className="text-ink-faint">·</span>
-                <span className="text-ink-faint">{p.plots_available} plots available</span>
+                <span className="text-ink-faint">
+                  <span className="ledger">{p.plots_available}</span> plots available
+                </span>
               </>
             ) : null}
           </div>
@@ -90,8 +92,8 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
 
         <div className="mt-phi3 flex items-end justify-between border-t border-line pt-phi2">
           <div>
-            <div className="text-lg text-ink">{formatPrice(p)}</div>
-            {area && <div className="text-tiny text-ink-faint">{area}</div>}
+            <div className="ledger text-lg text-ink">{formatPrice(p)}</div>
+            {area && <div className="ledger text-tiny text-ink-faint">{area}</div>}
           </div>
           {/* Slides in rather than blinking on — the movement is what reads as
               considered; opacity alone reads as a flicker. */}

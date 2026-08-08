@@ -22,7 +22,7 @@ const MAX = 3;
 
 /** Every row the table can show. `same` collapses a row when the projects
  *  agree on it, which is what stops this becoming an unreadable spreadsheet. */
-type Row = { label: string; value: (p: Property) => string };
+type Row = { label: string; value: (p: Property) => string; ledger?: boolean };
 
 const ROWS: Row[] = [
   { label: "Location", value: (p) => locationLine(p) || "—" },
@@ -30,8 +30,10 @@ const ROWS: Row[] = [
   { label: "Stage", value: (p) => phaseLabel(p) ?? "—" },
   { label: "Type", value: (p) => typeLabel(p) || "—" },
   { label: "Availability", value: (p) => (isSellable(p) ? "Selling" : p.status === "sold" ? "Sold out" : (p.status ?? "—")) },
-  { label: "Price", value: (p) => formatPrice(p) },
-  { label: "Total extent", value: (p) => formatArea(p) ?? "—" },
+  /* Extents and prices are the two rows a reader scans down rather than across,
+     so they are the rows tabular figures actually earn their keep on. */
+  { label: "Price", value: (p) => formatPrice(p), ledger: true },
+  { label: "Total extent", value: (p) => formatArea(p) ?? "—", ledger: true },
   {
     label: "Plots",
     value: (p) =>
@@ -155,7 +157,12 @@ export function CompareTable({ all }: { all: Property[] }) {
           <div key={r.label} className="grid gap-phi3 py-phi2" style={{ gridTemplateColumns: template }}>
             <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">{r.label}</dt>
             {r.values.map((v, i) => (
-              <dd key={i} className={`text-base ${r.same ? "text-ink-muted" : "text-ink"}`}>
+              <dd
+                key={i}
+                className={`text-base ${r.ledger ? "ledger" : ""} ${
+                  r.same ? "text-ink-muted" : "text-ink"
+                }`}
+              >
                 {v}
               </dd>
             ))}

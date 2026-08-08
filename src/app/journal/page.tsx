@@ -185,7 +185,7 @@ function Meta({ post }: { post: JournalPost }) {
         </span>
       )}
       <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-        {readingMinutes(post)} min read
+        <span className="ledger">{readingMinutes(post)}</span> min read
       </span>
       {publishedLabel(post) && (
         <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
