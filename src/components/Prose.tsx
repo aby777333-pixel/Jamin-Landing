@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -15,8 +16,12 @@ import type { ReactNode } from "react";
  *     same slugs — generating both from one function is how they stay in step.
  *
  * Supported: ## / ### headings, paragraphs, - and 1. lists, > quotes, ---,
- * **bold**, *italic*, `code` and [links](…). Anything else renders as plain
- * text, which is the safe failure.
+ * **bold**, *italic*, `code`, [links](…) and a standalone ![image](…). Anything
+ * else renders as plain text, which is the safe failure.
+ *
+ * Images and links both go through `safeHref`, so an author cannot introduce a
+ * `javascript:` or `data:` URL through the body — the same reason this file
+ * builds React elements rather than HTML.
  */
 
 export function headingSlug(text: string): string {
@@ -97,6 +102,7 @@ type Block =
   | { t: "ul"; items: string[] }
   | { t: "ol"; items: string[] }
   | { t: "quote"; text: string }
+  | { t: "img"; src: string; alt: string }
   | { t: "hr" };
 
 function parse(md: string): Block[] {
@@ -131,6 +137,19 @@ function parse(md: string): Block[] {
       flushList();
       blocks.push({ t: "hr" });
       continue;
+    }
+    // An image on its own line becomes a block, which is how the admin console
+    // appends one. Checked before the link rule below, since `![a](b)` also
+    // matches a link once the leading `!` is ignored.
+    const img = /^!\[([^\]]*)\]\((\S+)\)$/.exec(line);
+    if (img) {
+      const src = safeHref(img[2]);
+      if (src) {
+        flushPara();
+        flushList();
+        blocks.push({ t: "img", src, alt: img[1].trim() });
+        continue;
+      }
     }
     const h = /^(#{2,3})\s+(.*)$/.exec(line);
     if (h) {
@@ -223,6 +242,21 @@ export function Prose({ markdown }: { markdown: string }) {
               >
                 {inline(b.text, `q${i}`)}
               </blockquote>
+            );
+          case "img":
+            // Uploaded by the editor, so the dimensions are unknown. The
+            // width/height pair only sets the ratio the browser reserves before
+            // the file arrives; `h-auto` hands the real aspect back afterwards.
+            return (
+              <Image
+                key={i}
+                src={b.src}
+                alt={b.alt}
+                width={1280}
+                height={720}
+                sizes="(max-width: 768px) 100vw, 720px"
+                className="h-auto w-full rounded-xl border border-line"
+              />
             );
           case "hr":
             return <hr key={i} className="border-line" />;
