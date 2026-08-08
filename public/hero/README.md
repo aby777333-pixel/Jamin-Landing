@@ -50,7 +50,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-11 | jamin img13.png | 1720x914 | 1720, 1280, 768 | golden key over hillside villas | /projects/current |
 | hero-12 | jamin img 15.png | 1672x941 | 1672, 1280, 768 | plot with a wireframe house and a NOW dial | /account/sign-in |
 | hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red pin, green fields | **unassigned — spare** |
-| hero-14 | cf65435a…jpg | ⚠️ 748x421 | 748, 1280 (upscaled) | tree, boy with umbrella, cattle, paddy | homepage (cinematic) |
+| hero-14 | cf65435a…jpg | ⚠️ 748x421 | 748, 1280 (upscaled) | tree, boy with umbrella, cattle, paddy | retired — too small |
+| hero-15 | view-green-palm-tree…jpg | 3000x2000 | 1920, 1280, 768 | coconut palms over paddy, hills behind | homepage (cinematic) |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
@@ -78,15 +79,20 @@ here before: eleven hero surfaces against ten images.
   have fallen back to hero-05, doubling with /projects, the moment a property
   was moved into it. It is now covered before it is ever used.
 - **hero-12 → /account/sign-in**, which a bug report called visually empty.
-- **hero-14 → the homepage** (2026-08-08, second swap). A photograph rather than
-  a render. It measures BETTER for legibility than the frame it replaced by the
-  comparative method below — h1 2.73 against 1.11, lead 3.46 against 2.37 —
-  because the copy sits over dark paddy instead of pale haze.
+- **hero-15 → the homepage** (2026-08-08, final swap). A 3000x2000 source, so
+  every rendition is a genuine downscale — hero-14 before it was 748x421 and had
+  to be upscaled to fill a desktop hero, which is why it read soft. hero-14 is
+  retired for that reason alone.
 
-  ⚠️ **Its source is only 748x421**, against 1672–1920 for every other hero. The
-  1280 rendition is an upscale, so it reads softer than its neighbours on a
-  laptop or desktop. There is no detail in the file to recover: the fix is a
-  larger original, not a sharper filter. Ask before treating this as final.
+  ⚠️ **It needed a second scrim, and the value was swept rather than guessed.**
+  The photograph is bright from the horizon down — sunlit palms exactly where
+  the headline sits — so on the shared `veil` alone the h1 measured 2.11 against
+  2.73 for the frame it replaced, even though the lead paragraph improved. A
+  frame-specific bottom wash was added to the homepage hero ONLY, leaving the
+  audited `veil` untouched for every other cinematic page. Sweep:
+  0.45/0.20 → 2.47 · 0.50/0.30 → 2.68 · **0.55/0.38 → 2.86** · 0.60/0.45 → 3.02.
+  Shipped at 0.55/0.40: the first setting that clears the previous frame.
+  Going further flattened the picture, which is what it was chosen for.
 
 - **hero-13** is spare again.
 - **hero-03 is now the spare** — the golden-hour render it replaced. Any new

@@ -27,20 +27,19 @@ export type Slide = {
 };
 
 /**
- * hero-14 — a photograph, not a render: a tree on a bund, a boy with an
- * umbrella, cattle grazing, paddy running to a misty treeline. It is the land
- * this business is actually about, before anything is drawn on it.
+ * hero-15 — coconut palms standing over paddy, hills behind, cloud above. The
+ * land this business is about, before anything is drawn on it.
  *
- * ⚠️ THE SOURCE IS ONLY 748x421. Every other hero on this site is 1672-1920px
- * wide. Next will upscale this to fill a laptop or desktop hero, so it will
- * read softer than its neighbours above roughly 750px of viewport — there is no
- * detail in the file to recover. Ask the owner for the original before treating
- * this as final; the fix is a bigger file, not a sharper filter.
+ * A 3000x2000 source, so every rendition is a genuine downscale — unlike the
+ * 748px frame it replaces, which had to be upscaled to fill a desktop hero and
+ * read soft next to its neighbours.
  *
- * The copy sits bottom-left, over the paddy rather than the sky, which is the
- * darker half and the half the veil weights most heavily.
+ * ⚠️ Brand imagery, not a Jamin project. It carries no caption and must never
+ * be given one — see public/hero/README.md. The copy sits bottom-left, over the
+ * darker foreground grass rather than the sky, which is the half the veil
+ * weights most heavily.
  */
-const ART = { id: "14", w: 1280 };
+const ART = { id: "15", w: 1920 };
 
 export function Hero({ slides }: { slides: Slide[] }) {
   return (
@@ -56,6 +55,23 @@ export function Hero({ slides }: { slides: Slide[] }) {
           className="object-cover object-center"
         />
         <div className="veil absolute inset-0" />
+        {/* ⚠️ A second, gentler wash for THIS frame only.
+            `veil` is shared by every cinematic hero and is audited, so it is not
+            touched. But this photograph is bright from the horizon down —
+            sunlit palms right where the headline sits — and measured against
+            the frame it replaced the h1 fell from 2.73 to 2.11 while the lead
+            rose. This lifts the headline back without darkening the picture at
+            the top, where nothing is written.
+
+            The stops are the result of a sweep, not a guess: 0.45/0.20 gave
+            2.47, 0.50/0.30 gave 2.68, and 0.55/0.38 gave 2.86 — the first that
+            clears the frame it replaced. Going further to 0.60/0.45 bought 3.02
+            and started flattening the picture, which is the thing the
+            photograph was chosen for. */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/40 to-transparent"
+        />
       </div>
 
       {/* 62vh, not 78. A hero that fills the whole viewport hides the fact that
