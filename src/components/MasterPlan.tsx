@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
+import { useCanAnimate, useInView } from "@/hooks/useInView";
 
 /**
  * The interactive DTCP layout (§16).
@@ -30,6 +31,38 @@ export function MasterPlan({
   title: string;
 }) {
   const [selected, setSelected] = useState<Plot | null>(null);
+  /**
+   * Phase 5 — the plan rules itself in on arrival.
+   *
+   * ⚠️ `armed` gates the hiding, not the showing: unarmed, the CSS leaves every
+   * shape at its finished state, so no-JS, reduced motion and a tab producing
+   * no frames all get the complete drawing. This is the sanctioned layout of a
+   * plot someone is being asked to buy — it is the last thing on the site that
+   * may depend on an animation to become visible.
+   */
+  const { ref: drawRef, inView: drawn } = useInView<HTMLDivElement>();
+  const armed = useCanAnimate();
+  /**
+   * ⚠️ THE SEQUENCE HANDS THE PLAN BACK.
+   *
+   * `animation-fill-mode: both` is what holds each shape hidden through its
+   * delay, and it is also what would strand the whole drawing on its FIRST
+   * frame in any context where animations never actually run — a background
+   * tab, an off-screen pane. Measured exactly that: every shape sat at opacity
+   * 0 with the sequence supposedly playing.
+   *
+   * So the animation classes are removed once the sequence has had time to
+   * finish. In a browser that ran it, the shapes are already at their end state
+   * and dropping the animation changes nothing visible. In one that did not,
+   * the element falls back to its ordinary styles — which is the complete plan.
+   * Either way this drawing cannot end up invisible.
+   */
+  const [drawDone, setDrawDone] = useState(false);
+  useEffect(() => {
+    if (!drawn || !armed) return;
+    const t = setTimeout(() => setDrawDone(true), 2600);
+    return () => clearTimeout(t);
+  }, [drawn, armed]);
   const [zoomIx, setZoomIx] = useState(0);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
@@ -143,9 +176,9 @@ export function MasterPlan({
       {/* the drawing — scrollable at zoom, so a phone can pan it. The floater
           overlays this wrapper rather than the scroller, so it stays put while
           the plan pans underneath. */}
-      <div ref={frameRef} className="mt-phi3">
+      <div ref={frameRef} className={`cd-plan mt-phi3 ${armed && !drawDone ? "is-armed" : ""} ${drawn && !drawDone ? "is-on" : ""}`}>
       <div className="overflow-auto rounded-xl border border-line bg-canvas-alt shadow-lift">
-        <div className="relative" style={{ width: `${zoom * 100}%` }}>
+        <div ref={drawRef} className="relative" style={{ width: `${zoom * 100}%` }}>
           <svg
             viewBox={`${vx} ${vy} ${vw} ${vh}`}
             className="block h-auto w-full"
@@ -159,6 +192,10 @@ export function MasterPlan({
                 fill="#FFFDFA"
                 stroke="#17181C"
                 strokeWidth={1.2}
+                /* `pathLength` normalises the dash maths so a polygon and a
+                   rect draw at the same rate without measuring perimeters. */
+                pathLength={1}
+                className="cd-plan__boundary"
               />
             )}
 
@@ -166,7 +203,7 @@ export function MasterPlan({
             {(plan.roads ?? []).map((r, i) => {
               const [x1, y1, x2, y2] = r.band;
               return (
-                <g key={`road-${i}`}>
+                <g key={`road-${i}`} className="cd-plan__road">
                   <rect
                     x={Math.min(x1, x2)}
                     y={Math.min(y1, y2)}
@@ -265,7 +302,7 @@ export function MasterPlan({
             ))}
 
             {/* plots */}
-            {geo.map((p) => {
+            {geo.map((p, i) => {
               const st = plotStatus(p);
               const s = PLOT_STATUS[st];
               const dimmed = onlyAvailable && st !== "available";
@@ -295,13 +332,17 @@ export function MasterPlan({
                   }}
                   className="cursor-pointer outline-none [&:focus-visible>polygon]:stroke-[2.5] [&:focus-visible>polygon]:stroke-jamin-red"
                   opacity={dimmed ? 0.25 : 1}
+                  /* Capped at 40 so a large layout still finishes drawing in
+                     about the same time as a small one. */
+                  style={{ "--i": Math.min(i, 40) } as React.CSSProperties}
                 >
                   <polygon
                     points={pts(p.poly!)}
+                    pathLength={1}
                     fill={active ? "#FDECEC" : s.fill}
                     stroke={active ? "#E11B22" : s.stroke}
                     strokeWidth={active ? 2.2 : 0.8}
-                    className="transition-all duration-200"
+                    className="cd-plan__plot transition-all duration-200"
                   />
                   {p.at && (
                     <text
@@ -312,6 +353,7 @@ export function MasterPlan({
                       fontWeight={700}
                       fill={active ? "#A81219" : s.text}
                       pointerEvents="none"
+                      className="cd-plan__num"
                     >
                       {p.plot}
                     </text>

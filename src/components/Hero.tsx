@@ -27,19 +27,20 @@ export type Slide = {
 };
 
 /**
- * hero-13 — an aerial of a marked plot in open green country: fields, tree
- * lines, formed roads and the houses already built along them.
+ * hero-14 — a photograph, not a render: a tree on a bund, a boy with an
+ * umbrella, cattle grazing, paddy running to a misty treeline. It is the land
+ * this business is actually about, before anything is drawn on it.
  *
- * It replaces hero-03, which was a golden-hour render that read hazy and beige
- * behind the copy. This is the greener frame and the truer one: what Jamin
- * sells is land in a place, seen from above, which is exactly how a buyer looks
- * at a layout plan.
+ * ⚠️ THE SOURCE IS ONLY 748x421. Every other hero on this site is 1672-1920px
+ * wide. Next will upscale this to fill a laptop or desktop hero, so it will
+ * read softer than its neighbours above roughly 750px of viewport — there is no
+ * detail in the file to recover. Ask the owner for the original before treating
+ * this as final; the fix is a bigger file, not a sharper filter.
  *
- * ⚠️ Brighter than what it replaces, and the copy is white. The veil is
- * measured, not assumed — see the contrast note in globals.css and the figures
- * recorded in public/hero/README.md for this frame.
+ * The copy sits bottom-left, over the paddy rather than the sky, which is the
+ * darker half and the half the veil weights most heavily.
  */
-const ART = { id: "13", w: 1672 };
+const ART = { id: "14", w: 1280 };
 
 export function Hero({ slides }: { slides: Slide[] }) {
   return (

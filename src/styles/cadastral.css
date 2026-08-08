@@ -343,6 +343,82 @@ body > footer {
   transform: none;
 }
 
+/**
+ * PHASE 5 — THE PLAN DRAWS ITSELF.
+ *
+ * The sanctioned layout arrives the way a draughtsman lays one out: the site
+ * boundary is ruled first, then the roads, then the plot subdivisions, then the
+ * numbers are written in. Roughly 1.6s end to end, 900ms on a phone.
+ *
+ * ⚠️ Applied to the EXISTING MasterPlan rather than a second component. That one
+ * already draws the traced geometry from `plot_plan` — a duplicate would mean
+ * two things on the site claiming to be the sanctioned plan, and only one of
+ * them wired to the record the admin console edits.
+ *
+ * ⚠️ KEYFRAMES, NOT TRANSITIONS, and that is a correctness decision rather than
+ * a stylistic one. A transition can leave an element parked at its start value
+ * if it is interrupted or never runs — measured exactly that here, with the
+ * boundary, the roads and the plot numbers stuck invisible while the plots
+ * themselves had snapped to their end state. An animation with `fill-mode:
+ * both` always ends on its last frame, and the reduced-motion block that forces
+ * `animation-duration: 0.01ms` lands on that same frame instead of nothing.
+ * This drawing shows a buyer the plot they are being asked to pay for; it is
+ * not allowed to be invisible.
+ *
+ * `pathLength="1"` on every stroked shape normalises the dash maths, so a
+ * polygon and a rect draw at the same rate without anyone measuring a perimeter.
+ */
+@keyframes cd-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes cd-ink {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes cd-fill {
+  from { fill-opacity: 0; }
+  to { fill-opacity: 1; }
+}
+
+.cd-plan.is-armed.is-on .cd-plan__boundary {
+  stroke-dasharray: 1;
+  animation: cd-draw 700ms var(--ease-draft) both;
+}
+.cd-plan.is-armed.is-on .cd-plan__road {
+  animation: cd-ink 500ms var(--ease-draft) 400ms both;
+}
+.cd-plan.is-armed.is-on .cd-plan__plot {
+  stroke-dasharray: 1;
+  animation:
+    cd-draw 600ms var(--ease-draft) calc(700ms + var(--i, 0) * 12ms) both,
+    cd-fill 400ms linear calc(1100ms + var(--i, 0) * 12ms) both;
+}
+.cd-plan.is-armed.is-on .cd-plan__num {
+  animation: cd-ink 300ms var(--ease-draft) calc(1300ms + var(--i, 0) * 8ms) both;
+}
+.cd-plan.is-armed.is-on .cd-plan__furniture {
+  animation: cd-ink 400ms var(--ease-draft) 1450ms both;
+}
+
+/* A phone gets the same sequence at roughly half the length — the brief's
+   900ms — because a long draw on a small screen reads as the page being slow. */
+@media (max-width: 767px) {
+  .cd-plan.is-armed.is-on .cd-plan__boundary { animation-duration: 420ms; }
+  .cd-plan.is-armed.is-on .cd-plan__road { animation: cd-ink 280ms var(--ease-draft) 220ms both; }
+  .cd-plan.is-armed.is-on .cd-plan__plot {
+    animation:
+      cd-draw 340ms var(--ease-draft) calc(400ms + var(--i, 0) * 6ms) both,
+      cd-fill 240ms linear calc(620ms + var(--i, 0) * 6ms) both;
+  }
+  .cd-plan.is-armed.is-on .cd-plan__num {
+    animation: cd-ink 200ms var(--ease-draft) calc(740ms + var(--i, 0) * 4ms) both;
+  }
+  .cd-plan.is-armed.is-on .cd-plan__furniture {
+    animation: cd-ink 240ms var(--ease-draft) 820ms both;
+  }
+}
+
 /** A scroller with no visible scrollbar. The approval strip is a document
  *  header, and a grey bar drawn under it would read as chrome rather than
  *  paper. The overflow itself stays, so it is still reachable by touch,

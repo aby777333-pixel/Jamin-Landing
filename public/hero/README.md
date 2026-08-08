@@ -49,7 +49,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-07 | jamin img 7.png | 1672x941 | 1672, 1280, 768 | skyline, half drawn half built | /downloads |
 | hero-11 | jamin img13.png | 1720x914 | 1720, 1280, 768 | golden key over hillside villas | /projects/current |
 | hero-12 | jamin img 15.png | 1672x941 | 1672, 1280, 768 | plot with a wireframe house and a NOW dial | /account/sign-in |
-| hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red pin, green fields | homepage (cinematic) |
+| hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red pin, green fields | **unassigned — spare** |
+| hero-14 | cf65435a…jpg | ⚠️ 748x421 | 748, 1280 (upscaled) | tree, boy with umbrella, cattle, paddy | homepage (cinematic) |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
@@ -77,9 +78,17 @@ here before: eleven hero surfaces against ten images.
   have fallen back to hero-05, doubling with /projects, the moment a property
   was moved into it. It is now covered before it is ever used.
 - **hero-12 → /account/sign-in**, which a bug report called visually empty.
-- **hero-13 → the homepage**, swapped in on request for a greener opening frame.
-  It is also the truer one: an aerial of a marked plot in open country is how a
-  buyer actually looks at a layout.
+- **hero-14 → the homepage** (2026-08-08, second swap). A photograph rather than
+  a render. It measures BETTER for legibility than the frame it replaced by the
+  comparative method below — h1 2.73 against 1.11, lead 3.46 against 2.37 —
+  because the copy sits over dark paddy instead of pale haze.
+
+  ⚠️ **Its source is only 748x421**, against 1672–1920 for every other hero. The
+  1280 rendition is an upscale, so it reads softer than its neighbours on a
+  laptop or desktop. There is no detail in the file to recover: the fix is a
+  larger original, not a sharper filter. Ask before treating this as final.
+
+- **hero-13** is spare again.
 - **hero-03 is now the spare** — the golden-hour render it replaced. Any new
   page that opens with a `PageHero` should take that rather than reuse an id.
 
