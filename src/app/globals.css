@@ -31,7 +31,17 @@
      under the 4.5 a small uppercase label needs. This pales it until it clears
      — 4.63:1 there, and better on every other frame — while still reading as
      gold rather than as off-white. Swept, not picked. */
-  --color-jamin-gold-pale: #f9dca6;
+  /* ⚠️ Paled twice now, and both times because a new frame arrived rather than
+     because anyone changed the design. It started as `gold-light` (#f5c869),
+     went to #f9dca6 when hero-18 came to /journal, and went here when hero-23
+     replaced it — that frame is bright enough under the plate that #f9dca6
+     measured 4.31, under AA. At #fbe6bd the worst cinematic frame reads 4.67,
+     and the other two improve with it (hero-17 6.60, hero-19 5.71).
+
+     This is the dark plate's version of the rule written on `gilt-light`:
+     move the TEXT, not the plate. There the fix is a darker gold, here it is a
+     paler one, and in both cases the plate stays as see-through as it was. */
+  --color-jamin-gold-pale: #fbe6bd;
   /* Deeper again, for gold words on the LIGHT `gilt-light` plate. This exists
      to buy transparency: the plate's alpha is set by whichever text on it has
      the least contrast, and that was always the gold caption. Swapping

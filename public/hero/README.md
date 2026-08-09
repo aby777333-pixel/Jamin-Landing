@@ -56,7 +56,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-15 | view-green-palm-tree…jpg | 3000x2000 | 1920, 1280, 768 | coconut palms over paddy, hills behind | **spare** — was the homepage until 2026-08-09 |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | **spare** — was /journal until 2026-08-09 |
-| hero-18 | ChatGPT Image Aug 9 2026 01_30_24 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | boy copying a palm-leaf manuscript at sunset, gopurams behind | /journal (cinematic) |
+| hero-18 | ChatGPT Image Aug 9 2026 01_30_24 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | boy copying a palm-leaf manuscript at sunset, gopurams behind | **spare** — was /journal for part of 2026-08-09 |
+| hero-23 | ChatGPT Image Aug 9 2026 08_18_56 PM.png | 1706x922 (**no trim**) | 1706, 1280, 768 | villas, a plotted layout with a map pin, apartment towers under construction, red and gold arcs | /journal (cinematic) |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | **spare** — was /contact until 2026-08-09 |
 | hero-21 | ChatGPT Image Aug 9 2026 07_21_02 PM.png | 1790x879 (**no trim**) | 1790, 1280, 768 | a layout mid-build at sunset, workers and a tractor, **JAMIN BAZAAR on the gate** | /contact (paper) |
 | hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | **spare** — was the homepage for part of 2026-08-09 |
@@ -330,6 +331,29 @@ larger-on-top padding left the homepage card 49px low (109 above, 60 below).
 The padding is now inverted — more room BELOW than above — which lands the card
 a touch above the geometric centre, where the optical centre of a block of type
 actually is. Measured after: 88 above, 81 below.
+
+## hero-23 → /journal (2026-08-09), and the gold gets paler again
+
+No trim: graphic arcs and dot grids, but no baked words. No Jamin mark either,
+so the provenance risk is the ordinary one rather than hero-19's or hero-21's.
+
+⚠️ It shows **villas, a plotted layout and apartment towers in one frame**, and
+that is deliberate rather than off-brand. The Journal's most-read piece compares
+exactly those three. The towers are the section's SUBJECT, not a claim that the
+company builds them — do not "correct" them out.
+
+⚠️ **It moved `--color-jamin-gold-pale` a second time, from #f9dca6 to
+#fbe6bd.** The eyebrow measured 4.31 on this frame — under AA — where it read
+4.61 on hero-18, on the same plate with the same copy. The frame changed; the
+number moved. At #fbe6bd the worst cinematic frame reads 4.67 and the other two
+improve with it (hero-17 6.60, hero-19 5.71).
+
+That is now the fourth time a frame swap has broken a contrast figure. **The
+pattern is worth naming: a plate's contrast is a property of the PAIR — plate
+and picture — never of the plate alone.** The response each time has been to
+move the text, not the plate: darker gold on `gilt-light`, paler gold on
+`gilt`. Both keep the plate as see-through as it was, which is the thing the
+reader was promised.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

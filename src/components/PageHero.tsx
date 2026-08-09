@@ -27,7 +27,7 @@ import { Container } from "./ui";
  * development or placed on a property card. See public/hero/README.md.
  */
 export type HeroArt =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21;
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -50,6 +50,10 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // ⚠️ 21 also names itself, and goes further: it shows a layout mid-build,
   // with workers, a tractor and a house going up. The same rule binds.
   21: 1790,
+  // 23 carries no Jamin mark, so the provenance risk is the ordinary one. It
+  // does show villas, plots AND apartment towers in one frame, which is the
+  // Journal's subject rather than the company's — see hero/README.md.
+  23: 1706,
 };
 
 function artSrc(n: HeroArt) {

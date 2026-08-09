@@ -39,16 +39,19 @@ export default async function JournalPage() {
 
   return (
     <>
-      {/* ⚠️ `cinematic`, where this page was `paper` until 2026-08-09. The tone
-          is a property of the artwork, not of the page: hero-09 was a graphic
-          render on near-white and had to keep its words off the image, while
-          hero-18 is a golden-hour photograph with real tonal range, which is
-          the case `veil` exists for. Measured against the audited cinematic
-          frames in the same box, it is the safer of them under the headline —
-          5.75 against hero-01's 3.47 and hero-02's 3.65 — so it needs no
-          frame-specific wash and the shared veil is untouched. */}
+      {/* `cinematic` — the tone is a property of the artwork, not of the page.
+          hero-09 was a graphic render on near-white and had to keep its words
+          off the image; hero-23 is a photograph with real tonal range, which is
+          the case `veil` and the `gilt` plate exist for.
+
+          hero-23 also happens to be the only frame in the set that shows what
+          this section is actually about: villas, a plotted layout and apartment
+          towers in one view. The Journal's most-read piece compares exactly
+          those three. ⚠️ Which is why the towers are not a mistake here and
+          must not be "corrected" — they are the Journal's subject, not a claim
+          that the company builds them. */}
       <PageHero
-        art={18}
+        art={23}
         tone="cinematic"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
