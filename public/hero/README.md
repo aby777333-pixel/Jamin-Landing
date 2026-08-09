@@ -57,7 +57,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | **spare** — was /journal until 2026-08-09 |
 | hero-18 | ChatGPT Image Aug 9 2026 01_30_24 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | boy copying a palm-leaf manuscript at sunset, gopurams behind | /journal (cinematic) |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
-| hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | homepage |
+| hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | **spare** — was the homepage for part of 2026-08-09 |
+| hero-20 | ChatGPT Image Aug 9 2026 07_05_34 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | the same gateway drawn wider, **JAMIN BAZAAR on the arch**, sun behind the hills | homepage |
 | hero-17 | ChatGPT Image Aug 9 2026 01_21_48 PM.png | 1672x941 → **trimmed to 1672x745** | 1672, 1280, 768 | formed road between planted plots, palms and hills, red sweep at right | /properties (cinematic) |
 
 ## ⚠️ hero-16 is TRIMMED, not just resized (2026-08-09)
@@ -213,6 +214,44 @@ which looks backwards until you remember the banner is 3.3:1 and content-sized:
 a narrow plate makes tall copy, and height is taken off the SIDES. At `lg` the
 plate pushed the banner to 764px and cropped it to 56% of its width, losing the
 red sweep. At 42rem it is back to 66%.
+
+## hero-20 → homepage, and what a frame swap costs downstream (2026-08-09)
+
+Same family as hero-16, same trim line: cut at **y=600**, above the strip
+(starts 608) and the category icons (start 618). It also carries **JAMIN BAZAAR
+on the arch**, so the provenance warning written for hero-19 applies here too.
+
+⚠️ **It moved `gilt-light` from 0.90 to 0.94, and that is the lesson.** hero-16
+put the plate on the artwork's own white panel; hero-20 puts it on open paddy
+and a stone gatepost. Same plate, same copy, darker backdrop — gold-ink fell
+from 4.62 to **4.40**, under AA, purely because the picture changed. 0.92
+clears by 0.06, which is no margin in a model that is a comparison rather than
+an audit; 0.94 gives 4.72 here and 4.86 on the old frame. **Re-sweep this
+whenever the homepage artwork changes.** A plate's contrast is a property of
+the pair, not of the plate.
+
+The cost is honest: at 0.94 it is nearer opaque than the translucent card it
+began as. The lever that buys translucency back is shorter hero copy — a
+smaller plate would clear the gatepost, sit wholly on light paddy, and pass at
+a much lower alpha.
+
+## One column, and why the rail's bleed had to go (2026-08-09)
+
+The hero briefly had **three** left edges: the inventory rail at 99, the plate
+and the header logo at 112, the headline at 147. Each was individually
+defensible and together they were a mess.
+
+The rail's `-mx-[13px]` was correct when the copy lay bare on the artwork — it
+put the first thumbnail on the same column as the headline. The `gilt` plates
+then moved every headline 35px inside their own padding and quietly invalidated
+it. The bleed is gone: **every card edge in every hero now starts at the
+container's content edge**, the same place the logo above and the body copy
+below start.
+
+Contents are then inset by each card's own padding — 6px in a rail, 35px in a
+plate. Aligning the CONTENTS instead would require those paddings to be equal,
+which means a chunky rail or a cramped plate. If a plate's padding changes,
+nothing has to be recalculated; that is the point of choosing the edge.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

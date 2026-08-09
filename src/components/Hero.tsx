@@ -23,17 +23,16 @@ export type Slide = {
 };
 
 /**
- * hero-16 — the branded gateway banner supplied 2026-08-09. A temple-form arch
- * over a formed road lined with palms, on a warm near-white ground that sweeps
- * into the brand red at the right.
+ * hero-20 — the branded gateway banner supplied 2026-08-09, replacing hero-16
+ * the same day. The same composition drawn wider and calmer: the arch now
+ * carries JAMIN BAZAAR, the sun has dropped behind the hills, and the left
+ * third is open paddy under haze instead of near-white paper.
  *
- * ⚠️ This frame changed the hero's TREATMENT, not just its pixels, and the two
- * cannot be separated. Everything before it was photographic and dark enough to
- * carry white type across a full bleed (`veil`). This one is near-white down
- * the whole left third — the exact band the copy occupies — so white type had
- * nothing to sit on. The words are therefore ink on the artwork's own paper,
- * which is the composition the artwork was drawn for: it is a banner with an
- * empty left panel, and that panel is where the headline goes.
+ * ⚠️ The words are INK on the artwork, not white over a scrim, and that is a
+ * property of this family of frames rather than a style choice. They are light
+ * down the whole left third — the exact band the copy occupies — so white type
+ * has nothing to sit on. What guarantees the copy now is the `gilt-light`
+ * plate it sits in; there is no canvas wash on this hero any more.
  *
  * ⚠️ The renditions are TRIMMED from the supplied file, not merely resized. The
  * original is 1983x793 and bakes in a white strip reading "DTCP Approved ·
@@ -41,9 +40,10 @@ export type Slide = {
  * ("Villa Plots", "Farm Lands"). Those are pixels: not selectable, not
  * translated, invisible to a screen reader, and they do not reflow — and two of
  * the categories are not sold here while "Best Value" is a claim this site makes
- * nowhere else. The asset is cut at y=600, above both, which also frees the
- * bottom of the frame for the inventory rail — the one thing in this hero that
- * is true, current and clickable.
+ * nowhere else. The asset is cut at y=600, above both — the strip starts at 608
+ * and the category icons at 618, so the same line that served hero-16 serves
+ * this one. It also frees the bottom of the frame for the inventory rail, the
+ * one thing in this hero that is true, current and clickable.
  *
  * ⚠️ The trimmed frame is 3.3:1, so how much of it survives is decided by how
  * TALL this section is, not by any crop setting: `object-cover` scales to the
@@ -56,7 +56,7 @@ export type Slide = {
  * Brand imagery, not a photograph of a Jamin project — it carries no caption and
  * must never be given one. See public/hero/README.md.
  */
-const ART = { id: "16", w: 1983 };
+const ART = { id: "20", w: 1983 };
 
 export function Hero({ slides }: { slides: Slide[] }) {
   return (
@@ -200,19 +200,24 @@ export function Hero({ slides }: { slides: Slide[] }) {
           keeps it reading as part of the hero rather than as the next section. */}
       {slides.length > 0 && (
         <div className="relative mx-auto max-w-[1280px] px-5 pb-phi5 lg:px-10">
-          {/* ⚠️ `-mx-[13px]` is arithmetic, not a nudge. Aligning the CARD with
-              the container left the thing a reader actually sees — the first
-              thumbnail — 13px right of the headline and the buttons above it,
-              because the card's own chrome insets it: 1px of glass border, 6px
-              of card padding, 6px of item padding. Bleeding the card out by
-              exactly that sum puts the thumbnail on the text column at 112 and,
-              because the same chrome insets the far end, drops the last label
-              back onto the container's right edge at 1312. Change any of those
-              three paddings and this number has to change with it.
+          {/* ⚠️ The `lg:-mx-[13px]` bleed this carried is GONE, and its removal
+              is the alignment fix, not a revert.
 
-              Only from `lg`, where the gutter is 40px. Below that it is 20px and
-              a 13px bleed would leave the card 7px from the screen edge. */}
-          <div className="glass mt-phi3 rounded-xl p-1.5 lg:-mx-[13px] min-[1400px]:-mt-phi3">
+              The bleed was right when the copy lay bare on the artwork: the
+              headline started at the container edge, and pulling the rail out by
+              its own chrome (1px border + 6px card + 6px item) put the first
+              thumbnail on that same column. Then the `gilt-light` plate arrived
+              and moved the headline 35px inside its own padding, which left the
+              hero with THREE left edges — rail card 99, plate and header logo
+              112, headline 147.
+
+              One column wins and it is the container's: every card edge in this
+              hero now starts where the logo above it and the body copy below it
+              start. Contents are then inset by each card's own padding, 6px for
+              a rail and 35px for a plate, which is what padding is. Aligning the
+              CONTENTS instead would require those two paddings to be equal —
+              a chunky rail or a cramped plate. */}
+          <div className="glass mt-phi3 rounded-xl p-1.5 min-[1400px]:-mt-phi3">
             {/* The items SHARE the rail rather than queueing at its left edge:
                 `flex-1` from `sm` up divides the full width between however
                 many developments are selling, so three of them read as three

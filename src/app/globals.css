@@ -276,15 +276,26 @@
    because the page under it is already warm white; what reads is the gold
    hairline. */
 @utility gilt-light {
-  /* ⚠️ 0.90, and it converged on the same number `--glass-tint` did, for the
-     same reason recorded there: a frosted panel's effective background is
-     whatever is behind it. 0.72 was tried first and looks identical over ivory,
-     but on the homepage the plate's bottom corner reaches the roadway, and
-     there it measured gold-ink at 3.64 and ink-muted at 4.45 — both under AA.
-     The sweep: 0.72 → 3.64 · 0.80 → 4.06 · 0.86 → 4.39 · 0.90 → 4.62, the
-     first that clears. Blur and the gold edge make it read as a plate; the
-     opacity is not what makes it beautiful, it is what makes it legible. */
-  background: rgba(253, 252, 249, 0.9);
+  /* ⚠️ A frosted panel's effective background is whatever is behind it — the
+     same lesson `--glass-tint` records. Over ivory any value looks identical;
+     what sets this number is the homepage, where the plate lies on artwork.
+
+     It has now been swept twice, against two different frames, and the frame
+     moved it. On hero-16 the plate lay on the artwork's own white panel and
+     0.90 was the first pass (gold-ink 4.62; 0.72 gave 3.64). hero-20 replaced
+     it the same day with a darker left third — open paddy and a stone gatepost
+     where the white panel used to be — and at 0.90 gold-ink fell to 4.40, under
+     AA. 0.92 clears it by 0.06, which is no margin at all in a model that is
+     avowedly a comparison rather than an audit. 0.94 gives 4.72 on the new
+     frame and 4.86 on the old one.
+
+     ⚠️ So this is nearer opaque than the "translucent card" it started as, and
+     that is a real cost, not a rounding. The blur and the gold edge still read
+     as a plate. The lever that would buy translucency back is SHORTER hero
+     copy: a smaller plate that clears the gatepost would sit entirely on light
+     paddy, and a much lower alpha would pass there. Re-sweep whenever the
+     homepage artwork changes — do not assume this number travels. */
+  background: rgba(253, 252, 249, 0.94);
   backdrop-filter: blur(14px) saturate(130%);
   -webkit-backdrop-filter: blur(14px) saturate(130%);
   border: 1px solid rgba(138, 100, 16, 0.26);
