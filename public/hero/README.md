@@ -53,7 +53,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-14 | cf65435a…jpg | ⚠️ 748x421 | 748, 1280 (upscaled) | tree, boy with umbrella, cattle, paddy | retired — too small |
 | hero-15 | view-green-palm-tree…jpg | 3000x2000 | 1920, 1280, 768 | coconut palms over paddy, hills behind | **spare** — was the homepage until 2026-08-09 |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
-| hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
+| hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | **spare** — was /journal until 2026-08-09 |
+| hero-18 | ChatGPT Image Aug 9 2026 01_30_24 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | boy copying a palm-leaf manuscript at sunset, gopurams behind | /journal (cinematic) |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
 | hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | homepage |
 | hero-17 | ChatGPT Image Aug 9 2026 01_21_48 PM.png | 1672x941 → **trimmed to 1672x745** | 1672, 1280, 768 | formed road between planted plots, palms and hills, red sweep at right | /properties (cinematic) |
@@ -107,6 +108,35 @@ two gradients and read the brightest 5% of the backdrop under each zone. It is
 10.01 against 8.89. That is why it needs no frame-specific wash, unlike hero-15
 on the homepage, which needed one swept. Those are relative figures; a real
 audit has to measure the composited page.
+
+## hero-18 → /journal (2026-08-09) — and the page changed tone with it
+
+Not a banner: a plain photograph with no baked type, so its renditions are
+straight downscales. It is the first frame supplied this way, which is worth
+noticing — do not assume the trim rule applies to everything the owner sends.
+
+⚠️ **/journal moved from `paper` to `cinematic`**, which is the two-families
+rule doing its job rather than an inconsistency. hero-09 was a graphic render
+on near-white and had to keep the words off the image; hero-18 is golden hour
+with real tonal range, which is the case `veil` exists for. Laying a photograph
+like this on the ivory instead would waste it.
+
+Measured against the audited cinematic frames in the real /journal box
+(1425x559 at 1440), by the comparison method at the end of this file:
+
+| zone | hero-01 | hero-02 | hero-18 |
+|---|---|---|---|
+| eyebrow | 3.43 | 2.99 | **2.74** |
+| h1 | 2.65 | 2.57 | 2.57 |
+| lead | 6.61 | 8.89 | **11.73** |
+
+Equal to hero-02 under the headline and far better under the lead, so it ships
+on the shared veil with no frame-specific wash. ⚠️ The eyebrow is the one zone
+where it is the weakest of the three. That line sits about 21% down a 559px
+hero, and the vertical wash is already at zero by 25% from the bottom, so only
+the horizontal one reaches it — and this frame has bright sky exactly there.
+If the eyebrow ever has to hold more than a short label on this page, that is
+the number to re-measure first.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

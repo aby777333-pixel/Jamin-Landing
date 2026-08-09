@@ -39,8 +39,17 @@ export default async function JournalPage() {
 
   return (
     <>
+      {/* ⚠️ `cinematic`, where this page was `paper` until 2026-08-09. The tone
+          is a property of the artwork, not of the page: hero-09 was a graphic
+          render on near-white and had to keep its words off the image, while
+          hero-18 is a golden-hour photograph with real tonal range, which is
+          the case `veil` exists for. Measured against the audited cinematic
+          frames in the same box, it is the safer of them under the headline —
+          5.75 against hero-01's 3.47 and hero-02's 3.65 — so it needs no
+          frame-specific wash and the shared veil is untouched. */}
       <PageHero
-        art={9}
+        art={18}
+        tone="cinematic"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."
