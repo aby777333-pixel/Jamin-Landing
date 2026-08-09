@@ -16,13 +16,50 @@ import { ZoomableImage } from "@/components/cadastral/ZoomableImage";
  *     same slugs — generating both from one function is how they stay in step.
  *
  * Supported: ## / ### headings, paragraphs, - and 1. lists, > quotes, ---,
- * **bold**, *italic*, `code`, [links](…) and a standalone ![image](…). Anything
- * else renders as plain text, which is the safe failure.
+ * **bold**, *italic*, `code`, [links](…), a standalone ![image](…), GFM pipe
+ * TABLES, and a standalone link to a document, which becomes a download card.
+ * Anything else renders as plain text, which is the safe failure.
  *
- * Images and links both go through `safeHref`, so an author cannot introduce a
- * `javascript:` or `data:` URL through the body — the same reason this file
- * builds React elements rather than HTML.
+ * ⚠️ Tables were added 2026-08-09 because an author had already tried to write
+ * one and, finding it unsupported, flattened it into em-dashed prose —
+ * "Move in — ❌ No, you must build first — ✅ Usually immediate…" — which is
+ * unreadable as a comparison and worthless to a screen reader, since nothing
+ * ties a value to its column. A renderer that silently degrades a table is
+ * worse than one that refuses it, because the damage lands on the reader
+ * rather than the author.
+ *
+ * Images, links and downloads all go through `safeHref`, so an author cannot
+ * introduce a `javascript:` or `data:` URL through the body — the same reason
+ * this file builds React elements rather than HTML.
  */
+
+/**
+ * Extensions that get the download-card treatment when a link stands alone on
+ * its own line. Deliberately a closed list of document types: anything else is
+ * a normal inline link, so a stray URL on its own line does not turn into a
+ * card that implies "downloadable file" when it is a web page.
+ */
+const DOC_EXT = /\.(pdf|docx?|xlsx?|csv|pptx?|zip|dwg|kml|kmz)(\?|#|$)/i;
+
+const DOC_LABEL: Record<string, string> = {
+  pdf: "PDF",
+  doc: "Word",
+  docx: "Word",
+  xls: "Spreadsheet",
+  xlsx: "Spreadsheet",
+  csv: "CSV",
+  ppt: "Slides",
+  pptx: "Slides",
+  zip: "Archive",
+  dwg: "CAD drawing",
+  kml: "Map data",
+  kmz: "Map data",
+};
+
+function docKind(href: string): string {
+  const m = /\.([a-z0-9]+)(?:\?|#|$)/i.exec(href);
+  return DOC_LABEL[(m?.[1] ?? "").toLowerCase()] ?? "File";
+}
 
 export function headingSlug(text: string): string {
   return text
@@ -105,7 +142,24 @@ type Block =
   | { t: "ol"; items: string[] }
   | { t: "quote"; text: string }
   | { t: "img"; src: string; alt: string }
+  | { t: "doc"; href: string; label: string; kind: string }
+  | { t: "table"; head: string[]; rows: string[][] }
   | { t: "hr" };
+
+/** `| a | b |` → ["a", "b"]. Leading and trailing pipes are optional. */
+function splitRow(line: string): string[] {
+  return line
+    .replace(/^\s*\|/, "")
+    .replace(/\|\s*$/, "")
+    .split("|")
+    .map((c) => c.trim());
+}
+
+/** The `|---|:--:|` line that makes the row above it a header. */
+function isDivider(line: string): boolean {
+  const cells = splitRow(line);
+  return cells.length > 0 && cells.every((c) => /^:?-{1,}:?$/.test(c));
+}
 
 function parse(md: string): Block[] {
   const blocks: Block[] = [];
@@ -126,8 +180,8 @@ function parse(md: string): Block[] {
     }
   };
 
-  for (const raw of lines) {
-    const line = raw.trim();
+  for (let li = 0; li < lines.length; li++) {
+    const line = lines[li].trim();
 
     if (!line) {
       flushPara();
@@ -171,6 +225,42 @@ function parse(md: string): Block[] {
       blocks.push({ t: "quote", text: q[1].trim() });
       continue;
     }
+    // A GFM pipe table: a row, then a `|---|` divider, then body rows. Requires
+    // the divider, so a sentence that merely contains a pipe is left alone.
+    if (line.includes("|") && li + 1 < lines.length && isDivider(lines[li + 1].trim())) {
+      const head = splitRow(line);
+      const rows: string[][] = [];
+      let j = li + 2;
+      for (; j < lines.length; j++) {
+        const r = lines[j].trim();
+        if (!r || !r.includes("|")) break;
+        const cells = splitRow(r);
+        // Ragged rows are padded rather than dropped. A missing trailing cell is
+        // the commonest thing a hand-written table gets wrong, and losing the
+        // row loses the comparison the table exists to make.
+        while (cells.length < head.length) cells.push("");
+        rows.push(cells.slice(0, head.length));
+      }
+      flushPara();
+      flushList();
+      blocks.push({ t: "table", head, rows });
+      li = j - 1;
+      continue;
+    }
+
+    // A document link alone on its line becomes a download card. Checked before
+    // the list rules so an author can put one between two paragraphs.
+    const doc = /^\[([^\]]+)\]\((\S+)\)$/.exec(line);
+    if (doc && DOC_EXT.test(doc[2])) {
+      const href = safeHref(doc[2]);
+      if (href) {
+        flushPara();
+        flushList();
+        blocks.push({ t: "doc", href, label: doc[1].trim(), kind: docKind(href) });
+        continue;
+      }
+    }
+
     const ul = /^[-*]\s+(.*)$/.exec(line);
     const ol = /^\d+[.)]\s+(.*)$/.exec(line);
     if (ul || ol) {
@@ -272,6 +362,81 @@ export function Prose({ markdown }: { markdown: string }) {
                 alt={b.alt}
                 sizes="(max-width: 768px) 100vw, 720px"
               />
+            );
+          case "table":
+            return (
+              /* ⚠️ The scroller is the point, not a nicety. A three-column
+                 comparison cannot fit a 375px screen, and the alternatives are
+                 both worse: shrink the type until it is unreadable, or let the
+                 table push the page wider and break every other section's
+                 layout. It scrolls inside its own box so nothing outside it
+                 moves. `tabular-nums` keeps figures in columns. */
+              <div key={i} className="-mx-5 overflow-x-auto px-5 sm:mx-0 sm:px-0">
+                <table className="w-full min-w-[34rem] border-collapse text-left tabular-nums">
+                  {b.head.length > 0 && (
+                    <thead>
+                      <tr>
+                        {b.head.map((c, j) => (
+                          <th
+                            key={j}
+                            scope="col"
+                            className="border-b border-jamin-gold/45 py-phi2 pr-phi3 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink last:pr-0"
+                          >
+                            {inline(c, `th${i}-${j}`)}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                  )}
+                  <tbody>
+                    {b.rows.map((row, r) => (
+                      <tr key={r} className="align-top">
+                        {row.map((c, j) => (
+                          /* The first cell of each row is the row's own header —
+                             that is what lets a screen reader read "Move in,
+                             Plot, no you must build first" instead of three
+                             unattached values. It is the whole reason the
+                             flattened prose version had to go. */
+                          <td
+                            key={j}
+                            {...(j === 0 ? { scope: "row" as const } : {})}
+                            className={`border-b border-line py-phi2 pr-phi3 leading-relaxed last:pr-0 ${
+                              j === 0 ? "font-semibold text-ink" : "text-ink-soft"
+                            }`}
+                          >
+                            {inline(c, `td${i}-${r}-${j}`)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          case "doc":
+            return (
+              <a
+                key={i}
+                href={b.href}
+                download
+                className="group flex items-center gap-phi2 rounded-card border border-line bg-canvas-alt p-phi2 no-underline transition-colors duration-300 hover:border-jamin-gold/60"
+              >
+                <span
+                  aria-hidden="true"
+                  className="grid h-11 w-11 shrink-0 place-items-center rounded-[12px] bg-jamin-gold-soft text-jamin-gold-ink"
+                >
+                  ▤
+                </span>
+                <span className="min-w-0">
+                  <span className="block truncate text-base font-semibold text-ink group-hover:text-jamin-red-deep">
+                    {b.label}
+                  </span>
+                  {/* The kind is spelled out rather than left to the icon: a
+                      reader deciding whether to tap a link on mobile data wants
+                      to know it is a PDF before it starts downloading. */}
+                  <span className="block text-tiny text-ink-muted">{b.kind} · download</span>
+                </span>
+              </a>
             );
           case "hr":
             return <hr key={i} className="border-line" />;

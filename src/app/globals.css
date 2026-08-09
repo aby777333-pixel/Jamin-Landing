@@ -32,6 +32,14 @@
      — 4.63:1 there, and better on every other frame — while still reading as
      gold rather than as off-white. Swept, not picked. */
   --color-jamin-gold-pale: #f9dca6;
+  /* Deeper again, for gold words on the LIGHT `gilt-light` plate. This exists
+     to buy transparency: the plate's alpha is set by whichever text on it has
+     the least contrast, and that was always the gold caption. Swapping
+     gold-ink for this — and the hero lead from ink-muted to ink-soft — let the
+     plate go from 0.94 to 0.74 while still clearing AA. Still gold on the page
+     (13.4:1 on canvas), just enough darker to stop being the binding
+     constraint. */
+  --color-jamin-gold-deep: #6b4e0c;
 
   /* ---- ink ----
      The ramp was shifted one step darker after an audit: `faint` was #9aa0ab,
@@ -280,22 +288,25 @@
      same lesson `--glass-tint` records. Over ivory any value looks identical;
      what sets this number is the homepage, where the plate lies on artwork.
 
-     It has now been swept twice, against two different frames, and the frame
-     moved it. On hero-16 the plate lay on the artwork's own white panel and
-     0.90 was the first pass (gold-ink 4.62; 0.72 gave 3.64). hero-20 replaced
-     it the same day with a darker left third — open paddy and a stone gatepost
-     where the white panel used to be — and at 0.90 gold-ink fell to 4.40, under
-     AA. 0.92 clears it by 0.06, which is no margin at all in a model that is
-     avowedly a comparison rather than an audit. 0.94 gives 4.72 on the new
-     frame and 4.86 on the old one.
+     ⚠️ 0.74, down from 0.94, and HOW it got there is the reusable part. A
+     plate's alpha is not a taste setting — it is set by whichever text on it
+     has the LEAST contrast, and every sweep so far was pinned by one thing: the
+     gold caption. Rather than keep darkening the plate to rescue a single line,
+     the line moved. The caption took `jamin-gold-deep` and the hero lead went
+     from `ink-muted` to `ink-soft`. With those two, measured on the homepage's
+     own worst case (hero-20 behind the plate, 1425x736 at 1440):
 
-     ⚠️ So this is nearer opaque than the "translucent card" it started as, and
-     that is a real cost, not a rounding. The blur and the gold edge still read
-     as a plate. The lever that would buy translucency back is SHORTER hero
-     copy: a smaller plate that clears the gatepost would sit entirely on light
-     paddy, and a much lower alpha would pass there. Re-sweep whenever the
-     homepage artwork changes — do not assume this number travels. */
-  background: rgba(253, 252, 249, 0.94);
+       0.62 → gold 3.54 · 0.68 → 4.05 · 0.74 → 4.60 · 0.80 → 5.20
+
+     0.74 is the first that clears, and it shows about a quarter of the picture
+     through where 0.94 showed a sixteenth.
+
+     ⚠️ If a future frame pushes this back up, darken the TEXT before darkening
+     the plate. The plate is the thing the reader was promised they could see
+     through; the text colour is not. And re-sweep on every homepage artwork
+     change — hero-16 passed at 0.90 where hero-20 needed 0.94, on the same
+     plate with the same copy, purely because the picture behind it changed. */
+  background: rgba(253, 252, 249, 0.74);
   backdrop-filter: blur(14px) saturate(130%);
   -webkit-backdrop-filter: blur(14px) saturate(130%);
   border: 1px solid rgba(138, 100, 16, 0.26);

@@ -26,7 +26,8 @@ import { Container } from "./ui";
  * They may carry a page as brand imagery and must never be captioned as a
  * development or placed on a property card. See public/hero/README.md.
  */
-export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19;
+export type HeroArt =
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -46,6 +47,9 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // finished layout. It is still a render, so the no-caption rule binds harder
   // here than anywhere else in the set — see public/hero/README.md.
   19: 1672,
+  // ⚠️ 21 also names itself, and goes further: it shows a layout mid-build,
+  // with workers, a tractor and a house going up. The same rule binds.
+  21: 1790,
 };
 
 function artSrc(n: HeroArt) {
@@ -198,14 +202,16 @@ export function PageHero({
           {eyebrow && (
             <div className="flex items-center gap-3">
               <span className="h-px w-12 rule-gold" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+              {/* `gold-deep`, not `gold-ink` — this line sets the plate's
+                  opacity. See the sweep recorded in `gilt-light`. */}
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-deep">
                 {eyebrow}
               </span>
             </div>
           )}
           <h1 className="mt-phi3 text-balance text-4xl text-ink">{title}</h1>
           {lead && (
-            <div className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-muted">{lead}</div>
+            <div className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">{lead}</div>
           )}
           {meta && (
             <div className="glass mt-phi3 inline-flex rounded-full px-4 py-1.5 text-tiny text-ink-soft">

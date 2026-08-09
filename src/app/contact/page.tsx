@@ -23,7 +23,11 @@ export default async function ContactPage() {
   return (
     <>
       <PageHero
-        art={10}
+        /* ⚠️ hero-21 names itself — JAMIN BAZAAR on the gate — and shows a
+           layout mid-build, with workers, a tractor and a house going up. It is
+           a render. The no-caption rule in public/hero/README.md binds here as
+           it does on /about: no caption, no location, no project name. */
+        art={21}
         eyebrow="Talk to Jamin"
         title="Book a site visit"
         lead="Walk the layout, see the approvals and stand on the plot before you decide. Visits are arranged at your convenience and carry no obligation."

@@ -56,7 +56,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | **spare** — was /journal until 2026-08-09 |
 | hero-18 | ChatGPT Image Aug 9 2026 01_30_24 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | boy copying a palm-leaf manuscript at sunset, gopurams behind | /journal (cinematic) |
-| hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
+| hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | **spare** — was /contact until 2026-08-09 |
+| hero-21 | ChatGPT Image Aug 9 2026 07_21_02 PM.png | 1790x879 (**no trim**) | 1790, 1280, 768 | a layout mid-build at sunset, workers and a tractor, **JAMIN BAZAAR on the gate** | /contact (paper) |
 | hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | **spare** — was the homepage for part of 2026-08-09 |
 | hero-20 | ChatGPT Image Aug 9 2026 07_05_34 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | the same gateway drawn wider, **JAMIN BAZAAR on the arch**, sun behind the hills | homepage |
 | hero-17 | ChatGPT Image Aug 9 2026 01_21_48 PM.png | 1672x941 → **trimmed to 1672x745** | 1672, 1280, 768 | formed road between planted plots, palms and hills, red sweep at right | /properties (cinematic) |
@@ -252,6 +253,41 @@ Contents are then inset by each card's own padding — 6px in a rail, 35px in a
 plate. Aligning the CONTENTS instead would require those paddings to be equal,
 which means a chunky rail or a cramped plate. If a plate's padding changes,
 nothing has to be recalculated; that is the point of choosing the edge.
+
+## 🚨 hero-21 → /contact (2026-08-09) — the strongest provenance case yet
+
+No trim; it has no baked strip. But it goes further than hero-19 did. hero-19
+showed a finished gate; this shows a layout **mid-build** — surveyors' pegs,
+a water tractor, a house at slab level, workers planting the avenue — under a
+gate reading **JAMIN BAZAAR**. It is not a photograph of a Jamin site. It is a
+render, and it is drawn to look exactly like documentary evidence of work in
+progress.
+
+Everything written for hero-19 applies, harder: `alt=""`, `aria-hidden`, no
+caption, no location, no project name, never on a property card or in a project
+gallery, and never on /projects/completed or /projects/ongoing, where the
+subject genuinely is a real site and real photography is required. On /contact
+it sits behind "Book a site visit", which is the page where a reader is closest
+to acting on what they think they are seeing.
+
+## Transparency is bought with text colour, not with the plate (2026-08-09)
+
+`gilt-light` went 0.94 → **0.74** without failing anything, and the method
+generalises. A plate's alpha is set by whichever text on it has the LEAST
+contrast; here that was always the gold caption, one short line. Rather than
+darken the whole plate to rescue it, the line moved: caption to
+`jamin-gold-deep`, hero lead from `ink-muted` to `ink-soft`. Swept on the
+homepage's worst case (hero-20 behind the plate, 1425x736 at 1440):
+
+    0.62 → gold 3.54 · 0.68 → 4.05 · 0.74 → 4.60 · 0.80 → 5.20
+
+⚠️ **Darken the text before darkening the plate.** The plate is the thing the
+reader was promised they could see through.
+
+⚠️ The homepage hero was also raised to `clamp(30rem,82vh,46rem)` on request —
+736px at 1440, up from 656. On a 3.3:1 banner that costs picture WIDTH, because
+`object-cover` sizes to the box height: 66% → **59%**. Lower this first if the
+red sweep has to come back into frame.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

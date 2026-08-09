@@ -132,7 +132,13 @@ export function Hero({ slides }: { slides: Slide[] }) {
             there is a site under it. Capped at 30rem, which on this frame is a
             second constraint as well as a taste one: every extra pixel of height
             is taken off the sides of the banner. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-end px-5 pb-phi4 pt-phi5 lg:px-10 min-[1400px]:min-h-[clamp(22rem,54vh,30rem)]">
+        {/* ⚠️ Raised 2026-08-09 on request, from clamp(22rem,54vh,30rem). It is
+            a real trade, not a free one: this banner is 3.3:1 and `object-cover`
+            sizes it to the box HEIGHT, so a taller hero shows LESS of the
+            picture's width — 66% before, 59% now. What it buys is a bigger arch
+            and more room around the plate. If the red sweep ever has to come
+            back into frame, this number is the first thing to lower. */}
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-end px-5 pb-phi4 pt-phi5 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
@@ -149,7 +155,9 @@ export function Hero({ slides }: { slides: Slide[] }) {
           <div className="gilt-light reveal max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
             <div className="flex items-center gap-3">
               <span className="h-px w-12 rule-gold" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+              {/* `gold-deep`, not `gold-ink`. This one line was what pinned the
+                  plate's opacity — see the sweep in `gilt-light`. */}
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-deep">
                 DTCP-approved plots · Tamil Nadu
               </span>
             </div>
@@ -166,7 +174,7 @@ export function Hero({ slides }: { slides: Slide[] }) {
               Land you can build on, with nothing left to check.
             </h1>
 
-            <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-muted">
+            <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
               Residential plots in sanctioned layouts across Erode, Salem, Tiruppur and Coimbatore —
               clear and marketable title, roads and water formed to the approved plan, and the plot
               schedule published before you visit.
