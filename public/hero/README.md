@@ -51,10 +51,41 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-12 | jamin img 15.png | 1672x941 | 1672, 1280, 768 | plot with a wireframe house and a NOW dial | /account/sign-in |
 | hero-13 | jamin img 16.png | 1672x941 | 1672, 1280, 768 | aerial plot with a red pin, green fields | **unassigned — spare** |
 | hero-14 | cf65435a…jpg | ⚠️ 748x421 | 748, 1280 (upscaled) | tree, boy with umbrella, cattle, paddy | retired — too small |
-| hero-15 | view-green-palm-tree…jpg | 3000x2000 | 1920, 1280, 768 | coconut palms over paddy, hills behind | homepage (cinematic) |
+| hero-15 | view-green-palm-tree…jpg | 3000x2000 | 1920, 1280, 768 | coconut palms over paddy, hills behind | **spare** — was the homepage until 2026-08-09 |
 | hero-08 | jamin 8.png | 1672x941 | 1672, 1280, 768 | aircraft trailing a red arc | /projects/future |
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
+| hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | homepage |
+
+## ⚠️ hero-16 is TRIMMED, not just resized (2026-08-09)
+
+It replaced hero-15 on the homepage. It is the first supplied frame that is a
+finished **banner** rather than a picture, and that costs it two things:
+
+- **Baked-in type.** The original carries a white strip — "DTCP Approved · Prime
+  Locations · Best Value · Safe & Secure" — and a column of categories
+  ("Residential / Villa / Investment Plots", "Farm Lands"). Those are pixels:
+  unselectable, untranslated, invisible to a screen reader, and they do not
+  reflow. Two of the categories are not sold here and "Best Value" is a claim
+  this site makes nowhere else. The renditions are cut at **y=600**, above the
+  strip (y 622–732) and above the labels (y 611–715). Regenerate from the
+  original with that same `extract` — a plain resize puts the text back.
+- **Aspect.** Trimming takes it from 2.5:1 to **3.3:1**, and `object-cover`
+  scales a background to the box HEIGHT and takes the difference off the sides.
+  How much of the banner survives is therefore decided by how tall the hero is,
+  not by any crop setting. At a 586px band: 71% of the width at 1400, 65% at
+  1280, 52% at 1024. This is why the inventory rail sits below the banner
+  instead of inside it — 107px of rail costs about a tenth of the picture.
+
+Its treatment is neither `paper` nor `cinematic`: the artwork provides its own
+empty white panel on the left, so the copy is **ink on the artwork**, with a
+left-to-right canvas wash (the mirror of `hero-fade`) guaranteeing the backdrop
+under the words. ⚠️ That overlay only holds from **1400px**. The panel is a
+fixed fraction of the artwork while the copy column is a fixed 36rem, so as the
+viewport narrows the last lines land on the gatepost: composited through the
+wash the lead measures 5.56:1 at 1400, 3.46:1 at 1280, 1.62:1 at 1024. Below
+1400 the artwork leads as a band above the copy instead, where nothing sits
+behind the text at all.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule
@@ -79,7 +110,9 @@ here before: eleven hero surfaces against ten images.
   have fallen back to hero-05, doubling with /projects, the moment a property
   was moved into it. It is now covered before it is ever used.
 - **hero-12 → /account/sign-in**, which a bug report called visually empty.
-- **hero-15 → the homepage** (2026-08-08, final swap). A 3000x2000 source, so
+- **hero-15 → the homepage** (2026-08-08). ⚠️ Superseded on 2026-08-09 by
+  hero-16; hero-15 is now a spare and the veil sweep below is history, not live
+  configuration — the homepage no longer uses `veil` at all. A 3000x2000 source, so
   every rendition is a genuine downscale — hero-14 before it was 748x421 and had
   to be upscaled to fill a desktop hero, which is why it read soft. hero-14 is
   retired for that reason alone.
