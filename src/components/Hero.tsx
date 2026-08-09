@@ -114,7 +114,18 @@ export function Hero({ slides }: { slides: Slide[] }) {
               does work further right, where the last lines of copy reach the
               gatepost. That is what makes ink type safe at every width without
               darkening a frame whose whole character is light. */}
-          <div className="absolute inset-0 bg-gradient-to-r from-canvas from-28% via-canvas/88 via-44% to-transparent to-62%" />
+          {/* ⚠️ The canvas wash that used to live here is GONE, not reduced.
+              It existed for one reason — to guarantee a backdrop under ink type
+              that was lying directly on the artwork — and the `gilt-light`
+              plate now does that job locally and unconditionally. Keeping both
+              was actively worse than either: stacked, they bleached the left
+              gatepost to a pale smear, because the plate's 0.72 was landing on
+              an area the wash had already lifted to near-white.
+
+              With it gone the frame runs edge to edge as drawn, and the only
+              thing standing between the reader and the picture is the plate the
+              words actually sit on. If copy is ever placed outside that plate,
+              the wash has to come back with it. */}
         </div>
 
         {/* 54vh, not 100. A hero that fills the viewport hides the fact that
@@ -122,10 +133,23 @@ export function Hero({ slides }: { slides: Slide[] }) {
             second constraint as well as a taste one: every extra pixel of height
             is taken off the sides of the banner. */}
         <div className="relative mx-auto flex max-w-[1280px] flex-col justify-end px-5 pb-phi4 pt-phi5 lg:px-10 min-[1400px]:min-h-[clamp(22rem,54vh,30rem)]">
-          <div className="max-w-xl reveal">
+          {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
+              and that is not a taste change — it is the height budget.
+
+              A narrow measure makes tall copy, the section is content-sized, and
+              on a 3.3:1 banner every pixel of height is taken off the SIDES. At
+              `lg` the plate's own padding pushed the block to 675px tall and the
+              banner to 764, which cropped it to 56% of its width and took the
+              red sweep with it. At 42rem the headline is two lines again, the
+              banner is back to ~71%, and the sweep survives.
+
+              What makes the wider measure safe is the plate itself: the copy no
+              longer depends on the wash reaching it, so it is free to run past
+              where the wash gives out. */}
+          <div className="gilt-light reveal max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
             <div className="flex items-center gap-3">
-              <span className="h-px w-12 rule-red" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-red-deep">
+              <span className="h-px w-12 rule-gold" />
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                 DTCP-approved plots · Tamil Nadu
               </span>
             </div>

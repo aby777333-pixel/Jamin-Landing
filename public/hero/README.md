@@ -169,6 +169,51 @@ say "not published yet" than quote a number it cannot stand behind — an
 invented photograph of its own completed layout is the one asset on the site
 that cuts against that promise.
 
+## 2026-08-09 — the veil came down and the copy moved onto a gilt plate
+
+The heroes stopped being scrims over pictures and became **pictures with a
+plate on them**. One change, two halves that cannot be separated:
+
+- `veil` is at ≈65% of its old stops (0.8/0.45 → 0.52/0.30, 0.55/0.34 →
+  0.36/0.22). On its own that would put every cinematic lead under AA.
+- the hero copy now sits in `gilt` — translucent near-black at **0.52** with a
+  gold hairline — which supplies the contrast locally instead of the page
+  supplying it globally.
+
+Net effect, measured per frame in the real boxes at 1440 (white type, brightest
+5% of the backdrop under the copy):
+
+| page | before | after |
+|---|---|---|
+| /about | 6.74 | **10.25** |
+| /properties | 3.61 | **8.08** |
+| /journal | 2.62 | **6.15** |
+
+Contrast roughly doubled while the photograph got lighter. That is the whole
+argument for the plate: a scrim pays for legibility with the whole frame, a
+plate pays only where the words are.
+
+Numbers that were swept, not chosen — change them and re-sweep:
+
+- **`gilt` at 0.52.** At 0.46 the gold label measured 3.34 on hero-18; at 0.58
+  it stopped reading as a plate.
+- **`--color-jamin-gold-pale` #f9dca6** for gold words ON the dark plate.
+  `gold-light` was tried first and gives 3.91 on hero-18 — under the 4.5 a
+  small uppercase label needs. This gives 4.63 there.
+- **`gilt-light` at 0.90**, which converged on `--glass-tint`'s number for the
+  identical reason: over ivory 0.72 looks the same, but the homepage plate's
+  corner reaches the roadway, where 0.72 gave gold-ink 3.64.
+
+⚠️ **The homepage canvas wash is GONE, not reduced.** Stacked under a 0.90
+plate it bleached the left gatepost to a smear. If copy is ever placed outside
+the plate on that hero, the wash has to come back with it.
+
+⚠️ **The homepage measure went WIDER (36rem → 42rem) when the plate arrived**,
+which looks backwards until you remember the banner is 3.3:1 and content-sized:
+a narrow plate makes tall copy, and height is taken off the SIDES. At `lg` the
+plate pushed the banner to 764px and cropped it to 56% of its width, losing the
+red sweep. At 42rem it is back to 66%.
+
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule
 above asks for on pages whose subject is a real project:

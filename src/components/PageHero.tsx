@@ -123,12 +123,22 @@ export function PageHero({
           {/* The measure opens up on a wide screen. At 42rem a headline like
               "Plots in approved layouts across Tamil Nadu" broke to three lines
               and left "Nadu" alone on the last one, with 880px of empty hero
-              beside it. */}
-          <div className="max-w-[42rem] rise xl:max-w-[46rem]">
+              beside it.
+
+              ⚠️ The `gilt` plate is load-bearing, not ornament. `veil` was
+              lightened at the same time, and it is this panel's 0.46 that puts
+              the contrast back under the words — take the panel off and every
+              cinematic hero drops below AA. The two changes ship together or
+              not at all. */}
+          <div className="gilt rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]">
             {eyebrow && (
               <div className="flex items-center gap-3">
-                <span className="h-px w-12 bg-white/50" />
-                <span className="text-micro font-medium uppercase tracking-brand text-white/85">
+                {/* Gilt, where this was a plain white hairline — the same rule
+                    that sits under BAZAAR in the logo. Gold as a RULE may be the
+                    fill gold; gold as a WORD may not, so the label takes
+                    `jamin-gold-light`, which holds on the plate. */}
+                <span className="h-px w-12 rule-gold" />
+                <span className="text-micro font-medium uppercase tracking-brand text-jamin-gold-pale">
                   {eyebrow}
                 </span>
               </div>
@@ -180,11 +190,15 @@ export function PageHero({
       <Container
         className={`relative ${size === "tall" ? "py-phi6 lg:py-phi7" : "py-phi5 lg:py-phi6"}`}
       >
-        <div className="max-w-[34rem] rise lg:max-w-[38rem]">
+        {/* The paper tone gets the same plate, in its light form. Over ivory the
+            fill is nearly invisible; what reads is the gold hairline, which is
+            the point — the copy on every hero now sits on a gilt-edged plate
+            whether or not there is a photograph behind it. */}
+        <div className="gilt-light rise max-w-[34rem] rounded-2xl p-phi3 sm:p-phi4 lg:max-w-[38rem]">
           {eyebrow && (
             <div className="flex items-center gap-3">
-              <span className="h-px w-12 rule-red" />
-              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-red-deep">
+              <span className="h-px w-12 rule-gold" />
+              <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
                 {eyebrow}
               </span>
             </div>

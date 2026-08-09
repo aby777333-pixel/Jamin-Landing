@@ -24,6 +24,14 @@
      instead — 5.29:1 on canvas, 4.95:1 on gold-soft. Rules, dots, borders and
      backgrounds keep the bright original. */
   --color-jamin-gold-ink: #8a6410;
+  /* The mirror of gold-ink, for gold words on the DARK `gilt` plate — where the
+     problem inverts and gold-ink would disappear. `gold-light` was tried first
+     and is not enough: on the worst frame the site carries (hero-18, whose
+     plate sits high over bright sky) it measures 3.91:1 against a 0.52 plate,
+     under the 4.5 a small uppercase label needs. This pales it until it clears
+     — 4.63:1 there, and better on every other frame — while still reading as
+     gold rather than as off-white. Swept, not picked. */
+  --color-jamin-gold-pale: #f9dca6;
 
   /* ---- ink ----
      The ramp was shifted one step darker after an audit: `faint` was #9aa0ab,
@@ -205,27 +213,84 @@
 }
 
 @utility veil {
-  /* The scrim that lets white type sit on a photograph and stay legible at any
-     crop. Two gradients, because the copy is anchored bottom-left and a single
-     left-to-right wash is not enough on its own: hero-01 and hero-02 are bright
-     skies, and a horizontal-only veil leaves the lead paragraph at about 4:1.
-     Stacked, the darkest point is the bottom-left corner where the words are
-     (≈0.89 combined, so white clears AA even over pure white) while the top
-     right stays almost untouched and the photograph still reads as a
-     photograph. Measured against the worst case, not eyeballed. */
+  /* The scrim that lets white type sit on a photograph. Two gradients, because
+     the copy is anchored bottom-left and a single left-to-right wash is not
+     enough on its own.
+
+     ⚠️ LIGHTENED 2026-08-09, and the two halves of that change cannot be
+     separated. The old stops (0.8/0.45 and 0.55/0.34) reached ≈0.89 combined in
+     the bottom-left corner, which is what let white clear AA over ANY frame —
+     but it bought that by flattening a third of the picture, and once the
+     supplied artwork became photographs worth looking at, the price stopped
+     being worth paying.
+
+     These stops are ≈65% of the old ones, so the veil alone no longer
+     guarantees the copy. What guarantees it now is `gilt`, the panel the copy
+     sits in, which contributes a further 0.46 of the same near-black under the
+     words only. Combined they land at ≈0.83 where the type is — within a
+     whisker of the old corner — while everywhere else the frame is markedly
+     clearer. Lightening this WITHOUT that panel would drop the lead paragraph
+     under AA on every cinematic page; measured per frame in hero/README.md. */
   background:
     linear-gradient(
       to top,
-      rgba(16, 14, 12, 0.8) 0%,
-      rgba(16, 14, 12, 0.45) 25%,
+      rgba(16, 14, 12, 0.52) 0%,
+      rgba(16, 14, 12, 0.3) 25%,
       rgba(16, 14, 12, 0) 75%
     ),
     linear-gradient(
       100deg,
-      rgba(16, 14, 12, 0.55) 0%,
-      rgba(16, 14, 12, 0.34) 40%,
+      rgba(16, 14, 12, 0.36) 0%,
+      rgba(16, 14, 12, 0.22) 40%,
       rgba(16, 14, 12, 0) 78%
     );
+}
+
+/* ── gilt: the panel the hero copy sits in ────────────────────────────────
+   A translucent plate with a gold hairline, echoing the rule under BAZAAR in
+   the logo. It does two jobs at once, which is why it is one utility and not a
+   decoration bolted on: it gives the words a KNOWN backdrop independent of the
+   frame behind them, and it is what allows `veil` above to be as light as it
+   now is.
+
+   ⚠️ The border is `jamin-gold` at low alpha — the FILL gold, which is correct
+   here because it is a rule, not a word. Gold as text still has to be
+   `jamin-gold-ink`; see the note on the tokens. */
+@utility gilt {
+  /* 0.52, swept against the worst frame rather than chosen. At 0.46 the gold
+     label measured 3.34:1 on hero-18 and 0.58 started reading as a solid box
+     instead of a plate. 0.52 clears AA on the label with the paled gold and
+     keeps white at 6.15 there — the darkest the panel gets to be while still
+     being something you can see the photograph through. */
+  background: rgba(16, 14, 12, 0.52);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid rgba(234, 163, 23, 0.38);
+  box-shadow:
+    inset 0 1px 0 rgba(245, 200, 105, 0.18),
+    0 24px 70px -34px rgba(0, 0, 0, 0.65);
+}
+
+/* The same plate for a hero whose copy sits on paper rather than on a
+   photograph — the `paper` tone and the homepage. Nearly invisible as a fill,
+   because the page under it is already warm white; what reads is the gold
+   hairline. */
+@utility gilt-light {
+  /* ⚠️ 0.90, and it converged on the same number `--glass-tint` did, for the
+     same reason recorded there: a frosted panel's effective background is
+     whatever is behind it. 0.72 was tried first and looks identical over ivory,
+     but on the homepage the plate's bottom corner reaches the roadway, and
+     there it measured gold-ink at 3.64 and ink-muted at 4.45 — both under AA.
+     The sweep: 0.72 → 3.64 · 0.80 → 4.06 · 0.86 → 4.39 · 0.90 → 4.62, the
+     first that clears. Blur and the gold edge make it read as a plate; the
+     opacity is not what makes it beautiful, it is what makes it legible. */
+  background: rgba(253, 252, 249, 0.9);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  border: 1px solid rgba(138, 100, 16, 0.26);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 20px 56px -30px rgba(26, 26, 28, 0.26);
 }
 
 @utility reveal {
