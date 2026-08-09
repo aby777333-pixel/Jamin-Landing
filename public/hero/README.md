@@ -41,7 +41,7 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | id | source | native | widths generated | subject | used on |
 |---|---|---|---|---|---|
 | hero-01 | jamin img1.png | 1850x850 | 1850, 1280, 768 | villa at sunset, distant skyline | /about (cinematic) |
-| hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | /properties (cinematic) |
+| hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | **spare** — was /properties until 2026-08-09 |
 | hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | **unassigned — spare** |
 | hero-04 | jamin img4.png | 1717x916 | 1717, 1280, 768 | street of houses in mist | /projects/ongoing |
 | hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | homepage, "How a Jamin plot happens" |
@@ -56,6 +56,7 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-09 | jamin 9.png | 1672x941 | 1672, 1280, 768 | figure walking to a drawn house | /journal |
 | hero-10 | jamin 10.png | 1672x941 | 1672, 1280, 768 | red disc over a waterfront | /contact |
 | hero-16 | ChatGPT Image Aug 9 2026 12_41_24 PM.png | 1983x793 → **trimmed to 1983x600** | 1983, 1280, 768 | temple-form gateway over a palm-lined road, red sweep at right | homepage |
+| hero-17 | ChatGPT Image Aug 9 2026 01_21_48 PM.png | 1672x941 → **trimmed to 1672x745** | 1672, 1280, 768 | formed road between planted plots, palms and hills, red sweep at right | /properties (cinematic) |
 
 ## ⚠️ hero-16 is TRIMMED, not just resized (2026-08-09)
 
@@ -86,6 +87,26 @@ viewport narrows the last lines land on the gatepost: composited through the
 wash the lead measures 5.56:1 at 1400, 3.46:1 at 1280, 1.62:1 at 1024. Below
 1400 the artwork leads as a band above the copy instead, where nothing sits
 behind the text at all.
+
+## hero-17 → /properties (2026-08-09) — same trim, opposite treatment
+
+The second banner of the same family, and the trim rule carried over unchanged:
+cut at **y=745**, above the strip (y 784–877) and above the category icons
+(from y 755). Regenerate with that `extract` or the baked type comes back.
+
+Its TREATMENT is the opposite of hero-16's, and that is the rule working, not
+an inconsistency. hero-16 is graphic with an empty paper panel, so the words
+went onto the artwork in ink. hero-17 is a **photograph** — blue sky, real
+tonal range, no empty panel anywhere — so it takes `cinematic` and white type
+over the shared `veil`, exactly like the frames it sits beside.
+
+⚠️ It was measured against hero-02, the frame it replaced, by the comparison
+method described at the end of this file — composite both through the veil's
+two gradients and read the brightest 5% of the backdrop under each zone. It is
+**safer** in every one: eyebrow 6.21 against 3.45, h1 4.23 against 3.10, lead
+10.01 against 8.89. That is why it needs no frame-specific wash, unlike hero-15
+on the homepage, which needed one swept. Those are relative figures; a real
+audit has to measure the composited page.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

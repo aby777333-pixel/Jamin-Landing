@@ -21,7 +21,7 @@ export default async function PropertiesPage() {
   return (
     <>
       <PageHero
-        art={2}
+        art={17}
         tone="cinematic"
         size="tall"
         eyebrow="Residential plots for sale"

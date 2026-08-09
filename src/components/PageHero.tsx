@@ -26,7 +26,7 @@ import { Container } from "./ui";
  * They may carry a page as brand imagery and must never be captioned as a
  * development or placed on a property card. See public/hero/README.md.
  */
-export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13;
+export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -35,6 +35,10 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // Supplied 2026-08-08. 11 ends the shortfall recorded in hero/README.md —
   // there were eleven hero surfaces and ten renders.
   11: 1720, 12: 1672, 13: 1672,
+  // Supplied 2026-08-09, a banner like hero-16 and TRIMMED the same way — the
+  // renditions are cut at y=745 to drop the baked trust strip and category
+  // column. See public/hero/README.md before regenerating it.
+  17: 1672,
 };
 
 function artSrc(n: HeroArt) {
