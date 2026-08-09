@@ -176,7 +176,19 @@ export function Hero({ slides }: { slides: Slide[] }) {
           keeps it reading as part of the hero rather than as the next section. */}
       {slides.length > 0 && (
         <div className="relative mx-auto max-w-[1280px] px-5 pb-phi5 lg:px-10">
-          <div className="glass mt-phi3 rounded-xl p-1.5 min-[1400px]:-mt-phi3">
+          {/* ⚠️ `-mx-[13px]` is arithmetic, not a nudge. Aligning the CARD with
+              the container left the thing a reader actually sees — the first
+              thumbnail — 13px right of the headline and the buttons above it,
+              because the card's own chrome insets it: 1px of glass border, 6px
+              of card padding, 6px of item padding. Bleeding the card out by
+              exactly that sum puts the thumbnail on the text column at 112 and,
+              because the same chrome insets the far end, drops the last label
+              back onto the container's right edge at 1312. Change any of those
+              three paddings and this number has to change with it.
+
+              Only from `lg`, where the gutter is 40px. Below that it is 20px and
+              a 13px bleed would leave the card 7px from the screen edge. */}
+          <div className="glass mt-phi3 rounded-xl p-1.5 lg:-mx-[13px] min-[1400px]:-mt-phi3">
             {/* The items SHARE the rail rather than queueing at its left edge:
                 `flex-1` from `sm` up divides the full width between however
                 many developments are selling, so three of them read as three
