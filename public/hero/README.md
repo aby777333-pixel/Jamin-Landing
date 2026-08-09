@@ -40,7 +40,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 
 | id | source | native | widths generated | subject | used on |
 |---|---|---|---|---|---|
-| hero-01 | jamin img1.png | 1850x850 | 1850, 1280, 768 | villa at sunset, distant skyline | /about (cinematic) |
+| hero-01 | jamin img1.png | 1850x850 | 1850, 1280, 768 | villa at sunset, distant skyline | **spare** — was /about until 2026-08-09 |
+| hero-19 | ChatGPT Image Aug 9 2026 02_00_34 PM.png | 1672x941 (**no trim**) | 1672, 1280, 768 | lit gated entrance to a plotted layout at sunset, **JAMIN BAZAAR on the arch** | /about (cinematic) |
 | hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | **spare** — was /properties until 2026-08-09 |
 | hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | **unassigned — spare** |
 | hero-04 | jamin img4.png | 1717x916 | 1717, 1280, 768 | street of houses in mist | /projects/ongoing |
@@ -137,6 +138,36 @@ hero, and the vertical wash is already at zero by 25% from the bottom, so only
 the horizontal one reaches it — and this frame has bright sky exactly there.
 If the eyebrow ever has to hold more than a short label on this page, that is
 the number to re-measure first.
+
+## 🚨 hero-19 → /about (2026-08-09) — the render that names itself
+
+No trim needed, and by the veil comparison in the real /about box (1425x639 at
+1440) it is by far the safest frame the site has carried: eyebrow 6.81 against
+hero-01's 3.84, h1 6.36 against 2.72, lead 10.11 against 4.80. Its whole left
+side is planting and boundary wall in shadow, exactly under the copy.
+
+**The problem is not contrast, it is provenance.** Every other image here is
+abstract enough that "brand imagery, never a project" is easy to hold. This one
+puts **JAMIN BAZAAR on the gate** and shows a specific finished layout — lit
+lamp posts, formed roads, planted avenues, a completed villa behind. A reader
+will take it for a photograph of a delivered Jamin development, because that is
+what it is drawn to look like. It is a render.
+
+So the no-caption rule binds harder here than anywhere else in the set:
+
+- it stays `alt=""` and `aria-hidden`, as decoration, and must never gain a
+  caption, a location, a project name or a "photo of" line;
+- it must never appear on a property card, in a project gallery, or on
+  /projects/completed, where the subject genuinely is a delivered project and
+  real photography is required;
+- if the owner ever wants a gate picture presented AS a Jamin project, it has
+  to be a photograph from Supabase storage, not this.
+
+Worth raising with him rather than deciding quietly: on a page headed "Land,
+sold the way it should be" — beside copy that says the business would rather
+say "not published yet" than quote a number it cannot stand behind — an
+invented photograph of its own completed layout is the one asset on the site
+that cuts against that promise.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule

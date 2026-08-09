@@ -40,8 +40,13 @@ export default async function AboutPage() {
 
   return (
     <>
+      {/* ⚠️ hero-19 has the JAMIN BAZAAR name rendered into the gate, so it is
+          the one frame in the set that identifies itself. It is still a render,
+          not a photograph of a delivered layout, which is exactly why it stays
+          uncaptioned and out of the accessibility tree — the no-caption rule in
+          public/hero/README.md binds harder here than anywhere else. */}
       <PageHero
-        art={1}
+        art={19}
         tone="cinematic"
         size="tall"
         eyebrow="Who we are"

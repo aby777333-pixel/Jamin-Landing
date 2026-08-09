@@ -26,7 +26,7 @@ import { Container } from "./ui";
  * They may carry a page as brand imagery and must never be captioned as a
  * development or placed on a property card. See public/hero/README.md.
  */
-export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18;
+export type HeroArt = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -42,6 +42,10 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // Also 2026-08-09, but NOT a banner: a plain photograph with no baked type,
   // so its renditions are straight downscales of the original.
   18: 1672,
+  // ⚠️ 19 carries the JAMIN BAZAAR name on the gate and depicts a specific
+  // finished layout. It is still a render, so the no-caption rule binds harder
+  // here than anywhere else in the set — see public/hero/README.md.
+  19: 1672,
 };
 
 function artSrc(n: HeroArt) {
