@@ -117,11 +117,19 @@ export function PageHero({
           <div className="veil absolute inset-0" />
         </div>
 
+        {/* `justify-center`, where this was `justify-end`. Bottom-anchoring was
+            a legibility device, not a layout preference: `veil` is darkest in
+            the bottom-left corner, so that is where bare white type had to go.
+            The `gilt` plate carries its own backdrop now, which frees the copy
+            to sit on the frame's vertical centre. The asymmetric padding stays
+            — the optical centre of a block of type sits slightly above the
+            geometric one, so a little more room below keeps it from reading
+            low. */}
         <Container
-          className={`relative flex flex-col justify-end ${
+          className={`relative flex flex-col justify-center ${
             size === "tall"
-              ? "min-h-[clamp(26rem,64vh,38rem)] pb-phi6 pt-phi7"
-              : "min-h-[clamp(20rem,48vh,30rem)] pb-phi5 pt-phi6"
+              ? "min-h-[clamp(26rem,64vh,38rem)] pb-phi7 pt-phi6"
+              : "min-h-[clamp(20rem,48vh,30rem)] pb-phi6 pt-phi5"
           }`}
         >
           {/* The measure opens up on a wide screen. At 42rem a headline like

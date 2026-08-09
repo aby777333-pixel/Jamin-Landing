@@ -138,7 +138,19 @@ export function Hero({ slides }: { slides: Slide[] }) {
             picture's width — 66% before, 59% now. What it buys is a bigger arch
             and more room around the plate. If the red sweep ever has to come
             back into frame, this number is the first thing to lower. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-end px-5 pb-phi4 pt-phi5 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)]">
+        {/* `justify-center`, where this was `justify-end`. The plate was
+            bottom-anchored back when the copy was bare type over a photograph
+            and sinking it into the darkest corner was what made it readable.
+            The plate carries its own backdrop now, so that constraint is gone
+            and the card sits on the frame's vertical centre instead. */}
+        {/* ⚠️ The padding is inverted from what it was — `pt-phi4 pb-phi5`,
+            where it used to be `pt-phi5 pb-phi4`. Centring alone did not centre
+            it: with `justify-center` the free space splits evenly and then the
+            padding is added on top, so the larger top padding left the card
+            49px low (109 above, 60 below). Reversing it puts the extra room
+            BELOW, which lands the card a touch above the geometric centre —
+            where the optical centre of a block of type actually is. */}
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 

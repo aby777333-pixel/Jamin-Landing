@@ -28,11 +28,16 @@ export default async function ProjectsPage() {
     items: all.filter((p) => p.project_phase === phase),
   })).filter((g) => g.items.length > 0);
 
-  // hero-05 stays on the homepage, where it is the literal illustration of
-  // "from sanctioned drawing to a plot you stand on" and cannot be swapped for
-  // a photograph without losing the point. This page is an index of real
-  // projects, so a real project carries it — the second photograph, because the
-  // first is the card cover in the grid below.
+  // ⚠️ The reason recorded here used to be that hero-05 was needed on the
+  // homepage, where it literally illustrated "from sanctioned drawing to a plot
+  // you stand on". That section was rewritten on 2026-08-09 and now opens on
+  // the place a buyer is from rather than on the drawing, so hero-05 is no
+  // longer doing double duty — it is this page's alone, and the fallback below
+  // can no longer collide with the homepage.
+  //
+  // The rest still holds: this page is an index of real projects, so a real
+  // project carries it — the second photograph, because the first is the card
+  // cover in the grid below.
   const showcase = all.find((p) => secondaryImage(p));
   const photo = showcase
     ? { src: secondaryImage(showcase)!, alt: `${showcase.title}, a Jamin development` }

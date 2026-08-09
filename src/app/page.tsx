@@ -201,21 +201,37 @@ export default async function HomePage() {
         <Container className="relative py-phi6">
           <div className="grid items-center gap-phi5 lg:grid-cols-[1fr_1.1fr]">
             <div className="max-w-xl">
-              <SectionLabel>How a Jamin plot happens</SectionLabel>
+              {/* ⚠️ This copy is deliberately the one warm passage on the page,
+                  and it still has to hand over to the four stages below it —
+                  the <ol> that follows has no other introduction. So it opens on
+                  the picture a buyer already carries and closes on the process,
+                  in that order. Note what it does NOT do: it makes no claim
+                  about what buyers feel or why they buy. It describes a picture
+                  and then asks whether it is yours, which is the difference
+                  between evoking something and asserting it. */}
+              <SectionLabel>The place you are from</SectionLabel>
               <h2 className="mt-phi3 text-3xl text-ink">
-                From sanctioned drawing to a plot you stand on.
+                Somewhere your children will say they are from.
               </h2>
-              <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-                Four stages, in this order, every time. Nothing is offered for sale before the
+              <p className="mt-phi3 text-lg leading-relaxed text-ink-soft">
+                A tiled roof, a field running down to the hills, an address the whole family knew
+                by heart. If that is the picture in your head, the way back to it is unromantic:
+                four stages, in this order, every time, and nothing is offered for sale before the
                 stage above it is finished and on paper.
               </p>
             </div>
-            {/* The one image in the supplied set that IS this idea — a house
-                half in red line-work, half built. Brand imagery, so it carries
-                no caption claiming to be a Jamin project. */}
+            {/* hero-22, supplied 2026-08-09. Trimmed from the original, which
+                bakes in a JAMIN BAZAAR lockup and a gold temple line-art — a
+                second logo inside a content card duplicates the header, so the
+                renditions are cut at x=580, right of both.
+
+                ⚠️ Brand imagery, and here the caption discipline matters more
+                than usual: beside copy about the place you are from, a reader
+                could easily take this for a Jamin site. It is a render of
+                nowhere. It carries no caption and must never be given one. */}
             <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
               <Image
-                src="/hero/hero-05-1823.webp"
+                src="/hero/hero-22-1194.webp"
                 alt=""
                 aria-hidden="true"
                 fill

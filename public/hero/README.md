@@ -45,7 +45,8 @@ was on both /journal and /downloads, and hero-10 on both /contact and
 | hero-02 | jamin im2.png | 1983x793 | 1920, 1280, 768 | family on a terrace over a layout | **spare** — was /properties until 2026-08-09 |
 | hero-03 | jamin img3.png | 1720x914 | 1720, 1280, 768 | formed road, plots, first houses | **unassigned — spare** |
 | hero-04 | jamin img4.png | 1717x916 | 1717, 1280, 768 | street of houses in mist | /projects/ongoing |
-| hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | homepage, "How a Jamin plot happens" |
+| hero-05 | jamin img5.png | 1823x863 | 1823, 1280, 768 | wireframe resolving into a house | /projects only — left the homepage 2026-08-09 |
+| hero-22 | ChatGPT Image Aug 9 2026 07_23_29 PM.png | 1774x887 → **trimmed to 1194x887** | 1194, 1024, 768 | tiled-roof house above paddy, hills behind | homepage, "The place you are from" |
 | hero-06 | jamin img 6.png | 1672x941 | 1672, 1280, 768 | dart in a target between blocks | /compare |
 | hero-07 | jamin img 7.png | 1672x941 | 1672, 1280, 768 | skyline, half drawn half built | /downloads |
 | hero-11 | jamin img13.png | 1720x914 | 1720, 1280, 768 | golden key over hillside villas | /projects/current |
@@ -288,6 +289,47 @@ reader was promised they could see through.
 736px at 1440, up from 656. On a 3.3:1 banner that costs picture WIDTH, because
 `object-cover` sizes to the box height: 66% → **59%**. Lower this first if the
 red sweep has to come back into frame.
+
+## hero-22, and the one warm passage on the site (2026-08-09)
+
+Not a hero — the image beside the homepage's four-stage section, which was
+rewritten at the same time from "From sanctioned drawing to a plot you stand
+on" to "Somewhere your children will say they are from."
+
+**Trimmed at x=580.** The original bakes in a JAMIN BAZAAR lockup (ends x=399)
+and a gold temple line-art (ends x=564). A second logo inside a content card
+duplicates the header three inches above it, and a half-cropped ornament reads
+as a mistake, so the cut clears both.
+
+⚠️ Two things about that section are load-bearing and easy to undo by accident:
+
+- **The copy still has to hand over to the four stages.** The `<ol>` beneath it
+  has no other introduction, so the paragraph opens on the picture a buyer
+  already carries and closes on the process. Rewrite it and that handover has
+  to survive.
+- **It evokes without asserting.** It describes a tiled roof, a field and a
+  remembered address and then asks whether that is the reader's picture. It
+  does NOT say what buyers feel or why they buy, which is the line between
+  atmosphere and an invented claim — and this is the page's only warm passage,
+  so it is the one most likely to drift over that line on the next edit.
+
+⚠️ And the caption rule bites hardest here of anywhere. Beside copy about the
+place you are from, a reader will read this as a Jamin site. It is a render of
+nowhere. No caption, no location, no project name, ever.
+
+## The heroes centre their copy (2026-08-09)
+
+Every hero moved from `justify-end` to `justify-center`. Bottom-anchoring was
+never a layout preference — `veil` is darkest in the bottom-left corner, so
+that is where bare white type had to sit. The `gilt` plate carries its own
+backdrop, which released the copy from the corner.
+
+⚠️ Centring alone did not centre it. With `justify-center` the free space
+splits evenly and the padding is then added on top, so the existing
+larger-on-top padding left the homepage card 49px low (109 above, 60 below).
+The padding is now inverted — more room BELOW than above — which lands the card
+a touch above the geometric centre, where the optical centre of a block of type
+actually is. Measured after: 88 above, 81 below.
 
 **Three surfaces deliberately use no render at all**, which is what makes the
 one-image-per-page arithmetic work — and is what the "brand imagery only" rule
