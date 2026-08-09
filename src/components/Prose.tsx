@@ -146,13 +146,21 @@ type Block =
   | { t: "table"; head: string[]; rows: string[][] }
   | { t: "hr" };
 
-/** `| a | b |` → ["a", "b"]. Leading and trailing pipes are optional. */
+/**
+ * `| a | b |` → ["a", "b"]. Leading and trailing pipes are optional.
+ *
+ * ⚠️ Splits on UNESCAPED pipes only. A cell can legitimately contain one — a
+ * width, an either/or — and the admin console escapes those as `\|` when it
+ * converts a pasted table. A naive split would end the cell there and shift
+ * every value in the row one column left, which is worse than not rendering
+ * the table at all, because it looks correct.
+ */
 function splitRow(line: string): string[] {
   return line
     .replace(/^\s*\|/, "")
-    .replace(/\|\s*$/, "")
-    .split("|")
-    .map((c) => c.trim());
+    .replace(/(?<!\\)\|\s*$/, "")
+    .split(/(?<!\\)\|/)
+    .map((c) => c.replace(/\\\|/g, "|").trim());
 }
 
 /** The `|---|:--:|` line that makes the row above it a header. */
