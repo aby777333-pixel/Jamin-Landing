@@ -1012,6 +1012,33 @@
 }
 
 /**
+ * ⚠️ A PLATE'S ALPHA BELONGS TO THE PAIR, NOT TO THE PLATE.
+ *
+ * `gilt` is 0.52, swept against hero-18 and correct on /about, /properties and
+ * /journal. hero-24 is a golden-hour village and the copy sits over its
+ * brightest quarter — sky through palms, then a sunlit road. Composited through
+ * the plate and read at the brightest 5%, everything failed there: the lead
+ * 1.80:1, the eyebrow 3.91:1, the foil's dark stop 2.97:1.
+ *
+ * Swept rather than picked, at the plate's real size over this frame:
+ *
+ *   α 0.52 → bone 3.67 · pale 3.91 · foil-dark 2.97
+ *   α 0.60 → bone 4.69 · pale 4.99 · foil-dark 3.80
+ *   α 0.66 → bone 5.66 · pale 6.02 · foil-dark 4.58   ← ships
+ *   α 0.78 → bone 8.41 · pale 8.95 · foil-dark 6.81
+ *
+ * ⚠️ THE TEXT MOVED FIRST, which is the rule globals.css records. `bone-soft`
+ * was the binding constraint and never clears — 2.78 even at 0.66, 4.13 at 0.78
+ * — so the lead and the rates line go to full `bone` instead. Rescuing them
+ * with alpha alone would have meant 0.78, which is a black box, not a plate you
+ * can see the village through. Scoped to this hero so the audited 0.52 stands
+ * everywhere else.
+ */
+.rj-gilt-vault {
+  background: rgba(16, 14, 12, 0.66);
+}
+
+/**
  * ── GOLD DUST (§6.6) ──────────────────────────────────────────────────────
  *
  * Palace sunlight, not disco. Two pixels, drifting, peaking at 0.85 — and the

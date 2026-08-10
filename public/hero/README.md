@@ -412,3 +412,33 @@ reproduce the ≈0.89 combined alpha recorded in globals.css, most likely becaus
 the 100deg gradient is approximated as an axis-aligned one. Treat this method as
 a COMPARISON between frames only. A real audit has to measure the composited
 page, not a model of it.
+
+## hero-24 → /vault (2026-08-10) — the first frame on a DARK page
+
+Supplied by the owner. A Tamil village street at dusk: tiled roofs, palms, a
+gopuram behind, elders on a platform, a bicycle and a cow. No trim needed — it
+bakes in no type and carries no Jamin mark, so the provenance risk is the
+ordinary one rather than hero-19's or hero-21's. Still `alt=""`, `aria-hidden`,
+and never captioned as a project: it is a render of nowhere.
+
+1914x822 native → 1914 / 1280 / 768 WebP at q82 (326 / 174 / 70 KB).
+
+⚠️ **It needed its own plate alpha, and that is the pair rule again.** `gilt` is
+0.52, swept against hero-18 and correct on /about, /properties and /journal.
+This frame puts the copy over its brightest quarter — sky through palms, then a
+sunlit road — and at 0.52 everything failed: lead 1.80, eyebrow 3.91, the foil's
+dark stop 2.97. Swept at the plate's real size over this frame:
+
+    0.52 → bone 3.67 · pale 3.91 · foil 2.97
+    0.60 → bone 4.69 · pale 4.99 · foil 3.80
+    0.66 → bone 5.66 · pale 6.02 · foil 4.58   ← ships, as `.rj-gilt-vault`
+    0.78 → bone 8.41 · pale 8.95 · foil 6.81
+
+⚠️ **The text moved before the plate did.** `bone-soft` was the binding
+constraint and never clears — 2.78 at 0.66, still 4.13 at 0.78 — so the lead and
+the rates line went to full `bone`. Rescuing them with alpha alone meant 0.78,
+which is a black box rather than a plate you can see the village through.
+Scoped to this hero; the audited 0.52 stands everywhere else.
+
+⚠️ It is also the first hero on a page that is already dark (`data-theme="vault"`),
+so the gold dust now drifts over a photograph instead of over flat onyx.

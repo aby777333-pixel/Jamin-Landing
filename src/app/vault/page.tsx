@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { GoldDust } from "@/components/GoldDust";
@@ -55,31 +56,53 @@ export default async function VaultPage() {
     <>
       <VaultTheme />
 
+      {/* hero-24 — the village at dusk, supplied 2026-08-10.
+          ⚠️ Brand imagery, never a Jamin project: a generic Tamil street with a
+          gopuram behind it, carrying no Jamin mark and no identifiable site. It
+          stays `alt=""` and `aria-hidden` and must never gain a caption, a
+          location or a project name. See public/hero/README.md.
+          ⚠️ Picture PLUS PLATE, not a scrim — the treatment the whole site moved
+          to on 2026-08-09. The frame is golden hour and its left third, exactly
+          where the copy sits, is the brightest part of it (sky through palms,
+          then a sunlit road), so bare type would have had nothing to sit on. */}
       <section className="relative isolate overflow-hidden bg-onyx-900">
-        {/* The only particles on the site. */}
+        <Image
+          src="/hero/hero-24-1914.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+
+        {/* The only particles on the site. Over the picture, so they read as
+            late light in the air rather than as dust on a black panel. */}
         <GoldDust />
 
         <Container className="relative py-phi7">
-          <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
-            By appointment
-          </p>
-          <h1 className="mt-phi3 text-balance text-4xl text-bone">The Royal Vault</h1>
-          <p className="rj-voice mt-phi3 max-w-2xl text-xl text-bone-soft">
-            Exceptional properties, quietly presented.
-          </p>
+          <div className="gilt rj-gilt-vault max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
+            <p className="rj-eyebrow" style={{ color: "var(--color-jamin-gold-pale)" }}>
+              By appointment
+            </p>
+            <h1 className="mt-phi3 text-balance text-4xl text-bone">The Royal Vault</h1>
+            <p className="rj-voice mt-phi3 text-xl text-bone">
+              Exceptional properties, quietly presented.
+            </p>
 
-          {/* ⚠️ §6.6 puts "price on request" in gold foil, and foil text only
-              works on a dark ground — the seal ramp measures 12.3:1 on onyx and
-              1.57:1 on ivory, and there is no ramp that fixes the second. So
-              the line lives HERE, in the onyx band, rather than beside the
-              collections on the canvas below where it would have been
-              illegible. No rupee glyph, per the brief. */}
-          <p className="mt-phi4 text-base text-bone-soft">
-            Rates are <span className="rj-foil-text font-medium">price on request</span>. Nothing
-            in the Vault carries a published figure.
-          </p>
+            {/* ⚠️ §6.6 puts "price on request" in gold foil, and foil text only
+                works on a dark ground — the seal ramp measures 12.3:1 on onyx
+                and 1.57:1 on ivory. The plate is what keeps it dark here, which
+                is the same reason the line lives in this band rather than beside
+                the collections on the canvas below. No rupee glyph, per the
+                brief. */}
+            <p className="mt-phi4 text-base text-bone">
+              Rates are <span className="rj-foil-text font-medium">price on request</span>. Nothing
+              in the Vault carries a published figure.
+            </p>
 
-          <div className="rj-fret mt-phi4 max-w-xs" aria-hidden="true" />
+            <div className="rj-fret mt-phi4 max-w-xs" aria-hidden="true" />
+          </div>
         </Container>
       </section>
 
