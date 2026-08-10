@@ -483,8 +483,20 @@ rather than the picture as a whole. Swept on the real frame:
     blur  14  α0.42 → white 3.85 · gold 3.57
     blur  44  α0.42 → white 4.55 · gold 4.21
     blur  80  α0.36 → white 4.89 · gold 4.53
-    blur  80  α0.38 → white 5.14 · gold 4.76   ← ships
+    blur  80  α0.38 → white 5.14 · gold 4.76
     blur 120  α0.28 → white 5.14 · gold 4.75
+
+Taken further again on 2026-08-10 after a third request for transparency. The
+alpha is now PER FRAME, at 100px blur, because the ceiling belongs to the
+picture rather than to the plate:
+
+    /vault   (dusk, bright sky)   α0.32 → white 5.00 · gold 4.63   ← its floor
+    /journal (banyan, deep shade) α0.10 → white 8.09 · gold 7.49
+
+The Journal frame clears AA at **no tint at all** (α0.00 → white 6.09), which is
+why it runs at 0.10 — the plate there is doing almost nothing but blurring. One
+shared number would have made the Journal murky to protect a frame it does not
+share. 100px is expensive and is the first thing to lower if a phone struggles.
 
 120/0.28 is the most transparent thing that passes and was **not** taken: a
 120px blur across a full-width hero is a real cost on a low-end phone, and §9

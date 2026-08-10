@@ -169,9 +169,39 @@ function isDivider(line: string): boolean {
   return cells.length > 0 && cells.every((c) => /^:?-{1,}:?$/.test(c));
 }
 
+/**
+ * ⚠️ REPAIR PASS FOR CALLOUTS THE PASTE CONVERTER WELDED SHUT.
+ *
+ * `admin.html`'s `htmlToMarkdown` drops the line break between a callout's
+ * title and its body, so a pasted box arrives as one run:
+ *
+ *   > 🚨 THE WHATSAPP RULEA concession casually promised on WhatsApp …
+ *   … difficult to enforce.**Get negotiated concessions properly documented.**
+ *
+ * Seven of sixteen published articles carry it, 32 occurrences in three shapes.
+ * It is fixed HERE rather than in the stored bodies because the converter will
+ * keep producing it on the next paste — repairing the data alone would fix
+ * today's articles and none of tomorrow's.
+ *
+ * ⚠️ ONLY THE BOLD WELDS ARE FIXED HERE. The third shape — an ALL-CAPS title
+ * run straight into a sentence, "THE WHATSAPP RULEA concession…" — is NOT
+ * repaired by rule, and that is deliberate. The only thing separating it from
+ * ordinary prose is that the capital beginning the new sentence happens to be a
+ * word; a regex broad enough to catch "RULEA concession" also splits
+ * "DTCP APPROVED and…" into "APPROVE / D and". Those cases are repaired in the
+ * stored bodies instead, where each one can be read before it is changed.
+ */
+function healWeldedCallouts(md: string): string {
+  return md
+    // "…enforce.**Get negotiated…" → the bold starts its own line
+    .replace(/([a-z.!?…"'])\*\*([A-Z])/g, "$1\n\n**$2")
+    // "**Title****Body**" → two runs that were never meant to touch
+    .replace(/\*\*\*\*/g, "**\n\n**");
+}
+
 function parse(md: string): Block[] {
   const blocks: Block[] = [];
-  const lines = (md ?? "").replace(/\r\n/g, "\n").split("\n");
+  const lines = healWeldedCallouts(md ?? "").replace(/\r\n/g, "\n").split("\n");
   let para: string[] = [];
   let list: { ordered: boolean; items: string[] } | null = null;
 

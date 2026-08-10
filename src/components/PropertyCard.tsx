@@ -76,15 +76,19 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
         } as React.CSSProperties
       }
     >
-      <DimensionOverlay
-        top={area}
-        left={p.plots_total ? `${p.plots_total} plot${p.plots_total === 1 ? "" : "s"}` : null}
-      />
-
       {/* 1.618:1 — which is also the ~62% of card height §6.3 asks for, and the
           same ratio the rest of the page is built on. `shrink-0` so the flex
           column cannot squash the ratio out of it. */}
+      {/* ⚠️ The dimension ticks live INSIDE the picture, not over the card.
+          Anchored to the card they ran its full height and the rotated "60
+          plots" label sat across the title and the location line — the overlap
+          that was reported. Sized by the image box, they annotate the only
+          thing on a card that has an extent. */}
       <div className="relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
+        <DimensionOverlay
+          top={area}
+          left={p.plots_total ? `${p.plots_total} plot${p.plots_total === 1 ? "" : "s"}` : null}
+        />
         {cover ? (
           <Image
             src={cover}

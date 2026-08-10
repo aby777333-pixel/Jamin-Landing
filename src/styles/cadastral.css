@@ -229,11 +229,23 @@ body > footer {
  * edges on hover, carrying the real extent and plot count. The single most
  * distinctive interaction on the site.
  */
+/**
+ * ⚠️ THE ANNOTATION BELONGS TO THE PHOTOGRAPH, NOT TO THE WHOLE CARD.
+ *
+ * This was `inset: 0`, so the extension lines ran the full height of the card
+ * and the rotated left-hand label — "60 plots" — sat at the vertical centre of
+ * the CARD rather than of the image, landing squarely across the title and the
+ * location line. On hover the gold text overlapped the copy and the card became
+ * hard to read, which is what was reported.
+ *
+ * The fix is structural rather than a percentage: PropertyCard now renders the
+ * overlay INSIDE the image box, so `inset: 0` means the picture. A percentage
+ * of the card would only ever have been an approximation — the image's share
+ * changes with the length of the title beneath it.
+ */
 .cd-dim {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease-draft);

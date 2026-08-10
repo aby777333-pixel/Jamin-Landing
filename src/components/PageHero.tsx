@@ -78,6 +78,7 @@ export function PageHero({
   size = "standard",
   tone = "paper",
   sheer = false,
+  sheerAlpha,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -105,6 +106,9 @@ export function PageHero({
    *  point. It is NOT free: it needs white copy and a heavy blur to hold AA —
    *  see `.rj-gilt-sheer`. Only set it after sweeping the frame. */
   sheer?: boolean;
+  /** Per-frame tint for the sheer plate. Sweep the picture before setting it —
+   *  the ceiling belongs to the photograph, not to the component. */
+  sheerAlpha?: number;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -153,7 +157,10 @@ export function PageHero({
               the contrast back under the words — take the panel off and every
               cinematic hero drops below AA. The two changes ship together or
               not at all. */}
-          <div className={`gilt ${sheer ? "rj-gilt-sheer" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}>
+          <div
+            className={`gilt ${sheer ? "rj-gilt-sheer" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
+            style={sheerAlpha != null ? ({ "--rj-sheer-alpha": sheerAlpha } as React.CSSProperties) : undefined}
+          >
             {eyebrow && (
               <div className="flex items-center gap-3">
                 {/* Gilt, where this was a plain white hairline — the same rule

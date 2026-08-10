@@ -452,7 +452,15 @@ function MegaPanel({ id, children }: { id: string; children: React.ReactNode }) 
     /* No onMouseLeave here: the header owns the hover region now, so leaving
        the panel downward closes it and moving between trigger and panel does
        not. Keeping a second handler here would reintroduce the flicker. */
-    <div id={id} className="rj-panel-in hidden border-t border-line/70 glass xl:block">
+    /* ⚠️ ABSOLUTE, not in flow. Rendered inside <header>, this panel was adding
+       its own height to the bar — so opening Projects grew the header and shoved
+       the whole page down, and the article heading underneath visibly jumped.
+       `top-full` hangs it off the bottom edge of the header instead, which is
+       what a dropdown is: an overlay, not a section. */
+    <div
+      id={id}
+      className="rj-panel-in absolute inset-x-0 top-full hidden border-t border-line/70 glass shadow-raise xl:block"
+    >
       <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi5">{children}</div>
     </div>
   );

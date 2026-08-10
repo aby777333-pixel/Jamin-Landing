@@ -47,7 +47,10 @@ export function DimensionOverlay({ top, left }: { top?: string | null; left?: st
       {left && (
         <span
           aria-hidden="true"
-          className="cd-dim__label left-[-14px] top-1/2 -translate-y-1/2 -rotate-90 bg-canvas px-1.5"
+          /* ⚠️ `left-1`, where this hung at -14px. The overlay now sits inside the
+             image box, which clips — the old negative offset put the label
+             outside its own parent and it disappeared entirely. */
+          className="cd-dim__label left-1 top-1/2 -translate-y-1/2 -rotate-90 bg-canvas px-1.5"
         >
           {left}
         </span>

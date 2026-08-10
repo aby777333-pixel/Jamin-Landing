@@ -1012,38 +1012,62 @@
 }
 
 /**
+ * ⚠️ THE HEADER HAS TO GO DARK WITH THE PAGE, or the Vault eats its own menu.
+ *
+ * `[data-theme="vault"]` inverts the ink tokens so text reads on onyx — but the
+ * header's `glass` and its mega panels are an IVORY tint, and they stay ivory.
+ * Scrolled past 24px on /vault, every nav label was bone-soft on near-white:
+ * the menu, the Projects dropdown and its counts were all but invisible.
+ *
+ * The tokens were only ever half the flip. §6.6 asks for the ENTIRE interface
+ * to transition, and a light bar floating over an onyx page was never that.
+ *
+ * ⚠️ The border goes with it. `glass` draws a 1px `--glass-edge` at white 0.55,
+ * which on a dark bar reads as a bright hairline round the whole header.
+ */
+[data-theme="vault"] header.glass,
+[data-theme="vault"] header .glass {
+  background: rgba(18, 17, 16, 0.82);
+  border-color: var(--line-onyx);
+}
+
+/**
  * ── THE SHEER PLATE ───────────────────────────────────────────────────────
  *
- * A card you can genuinely see the photograph through. It replaces the earlier
- * `.rj-gilt-vault` (0.56 at the stock 14px blur), which was still reading as a
- * dark panel.
+ * A card you are meant to see the photograph through, asked for three times
+ * and taken as far as each frame allows.
  *
- * ⚠️ THE TRANSPARENCY IS BOUGHT WITH BLUR, NOT WITH LUCK. A plate's worst case
- * is the brightest 5% of what sits behind it, and blur is what collapses that
- * toward the mean — under the Vault plate the mean is 0.053 against a p95 of
- * 0.170, so almost all of the contrast problem was a handful of bright spots
+ * ⚠️ THE TRANSPARENCY IS BOUGHT WITH BLUR. A plate's worst case is the
+ * brightest 5% of what sits behind it, and blur is what collapses that toward
+ * the mean — under the Vault plate the mean is 0.053 against an unblurred p95
+ * of 0.170, so nearly all of the contrast problem was a handful of bright spots
  * (sky through palms, a sunlit road) rather than the picture as a whole. Blur
- * them out and the alpha can fall a long way. Swept on the real frame:
+ * them away and the tint can very nearly disappear.
  *
- *   blur 14  α0.42 → white 3.85 · gold 3.57
- *   blur 44  α0.42 → white 4.55 · gold 4.21
- *   blur 80  α0.36 → white 4.89 · gold 4.53
- *   blur 80  α0.38 → white ~5.1 · gold ~4.7   ← ships
- *   blur 120 α0.28 → white 5.14 · gold 4.75
+ * ⚠️ THE ALPHA IS PER FRAME, because the ceiling is a property of the picture.
+ * Swept on each, at the plate's real size, at 100px blur:
  *
- * 120/0.28 is the most transparent thing that passes, and it was not taken:
- * a 120px blur over a full-width hero is a real cost on a low-end phone, and
- * §9 already treats backdrop-filter as a performance budget. 80/0.38 is a
- * third more see-through than the 0.56 it replaces and keeps honest margin.
+ *   /vault   (dusk, bright sky)   α0.32 → white 5.00 · gold 4.63   ← its floor
+ *   /journal (banyan, deep shade) α0.00 → white 6.09 · gold 5.64
  *
- * ⚠️ IT REQUIRES FULL-STRENGTH COPY. `bone`, `white/80` and `jamin-gold-pale`
- * all fail on it. Anything using this plate must set pure white body text and
- * champagne-50 for gold — PageHero does that behind the `sheer` prop, so the
- * two can never be set independently.
+ * The Journal frame clears with NO TINT AT ALL, which is why it runs at 0.10
+ * rather than the Vault's 0.32 — it is dark enough that the plate is doing
+ * almost nothing but blurring. Setting one number for both would have made the
+ * Journal needlessly murky to protect a frame it does not share.
+ *
+ * ⚠️ 100px IS EXPENSIVE, and that is a deliberate trade rather than an
+ * oversight. §9 treats backdrop-filter as a performance budget and caps it to
+ * three surfaces; these heroes are a fourth and a fifth, at a radius seven
+ * times the stock 14px. It buys the transparency that was asked for, and it is
+ * the first thing to lower if a phone struggles.
+ *
+ * ⚠️ It cannot be used without full-strength copy — `bone`, `white/80` and
+ * `jamin-gold-pale` all fail on it. PageHero sets pure white and champagne-50
+ * behind the `sheer` prop so the plate and its text can never drift apart.
  */
 .rj-gilt-sheer {
-  background: rgba(16, 14, 12, 0.38);
-  backdrop-filter: blur(80px) saturate(1.15);
+  background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.32));
+  backdrop-filter: blur(var(--rj-sheer-blur, 100px)) saturate(1.15);
 }
 
 /**
