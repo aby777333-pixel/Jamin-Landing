@@ -29,7 +29,7 @@ export default async function ContactPage() {
            it does on /about: no caption, no location, no project name. */
         art={21}
         sheer
-        sheerAlpha={0.4}
+        sheerAlpha={0.26}
         sheerBlur={8}
         eyebrow="Talk to Jamin"
         title="Book a site visit"
