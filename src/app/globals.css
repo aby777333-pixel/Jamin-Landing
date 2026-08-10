@@ -307,16 +307,23 @@
 
 @utility glass {
   background: var(--glass-tint);
+  /* ⚠️ DO NOT HAND-WRITE `-webkit-backdrop-filter` HERE. Lightning CSS treats
+     the prefixed and unprefixed forms as one property and keeps the last one
+     written, so the pair that used to live here compiled down to the WEBKIT
+     ONE ALONE — and Chrome 148 has dropped that alias entirely (assigning it
+     inline leaves cssText empty). The result was that no glass on this site
+     blurred in Chrome at all; every frosted panel was a flat 90% tint. Left to
+     itself the compiler emits the standard property and adds whatever prefixes
+     its targets actually need. */
   backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
   border: 1px solid var(--glass-edge);
   box-shadow: 0 1px 1px rgba(26, 26, 28, 0.03), 0 18px 50px -24px rgba(26, 26, 28, 0.28);
 }
 
 @utility glass-dark {
   background: var(--glass-tint-dark);
+  /* Same rule as `glass` above — no hand-written prefix. */
   backdrop-filter: blur(26px) saturate(130%);
-  -webkit-backdrop-filter: blur(26px) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 

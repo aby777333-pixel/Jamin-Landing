@@ -56,6 +56,36 @@ export const STAGE_STONE: Record<
 };
 
 /**
+ * NAVIGATION STONES (§6.1) — "small pieces of jewellery".
+ *
+ * Each tab carries a dot and an inlay underline in its own stone. The mapping
+ * is meaning-led, not decorative: Properties is land (emerald), Projects is
+ * stage (sapphire, the same stone Future wears on a card), Locations is
+ * district (amethyst), Home is the identity itself (champagne), and the two
+ * account-ish tabs are platinum, which §2 assigns to secondary interface.
+ *
+ * ⚠️ `ink` EXISTS BECAUSE A NAV LABEL IS ~12.5px TEXT. Three stones cannot be
+ * read at that size on ivory and are therefore never used as the word: jade
+ * measures 3.84:1, topaz 3.63:1 and platinum-500 2.96:1. Journal takes
+ * emerald-deep (7.93:1) rather than the jade it would otherwise get, and the
+ * platinum tabs take plat-800 (6.14:1). The bright value still paints the dot
+ * and the inlay, which carry no ratio.
+ */
+export const NAV_STONE: Record<string, { stone: string; ink: string }> = {
+  "/": { stone: "var(--color-champagne-500)", ink: "var(--color-champagne-700)" }, // 6.20:1
+  "/properties": { stone: "var(--color-emerald)", ink: "var(--color-emerald)" }, // 5.20:1
+  "/projects": { stone: "var(--color-sapphire)", ink: "var(--color-sapphire)" }, // 9.68:1
+  "/locations": { stone: "var(--color-amethyst)", ink: "var(--color-amethyst)" }, // 7.20:1
+  "/journal": { stone: "var(--color-jade)", ink: "var(--color-emerald-deep)" }, // 7.93:1
+  "/about": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
+  "/account": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
+};
+
+export function navStone(href: string): { stone: string; ink: string } {
+  return NAV_STONE[href] ?? { stone: STONE_FALLBACK, ink: "var(--color-champagne-700)" };
+}
+
+/**
  * FORWARD MAP — the marketplace taxonomy (§5c).
  *
  * ⚠️ Constants only, wired to nothing. Every property in the database is

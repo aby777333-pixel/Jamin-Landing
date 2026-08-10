@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useQueryString } from "@/lib/url-state";
 import { useEffect, useId, useRef, useState } from "react";
 import type { NavFacets } from "@/lib/site";
+import { navStone } from "@/lib/stones";
 
 /**
  * Transparent over the hero, solid once scrolled — but the listener is passive
@@ -19,6 +20,9 @@ import type { NavFacets } from "@/lib/site";
  */
 export function HeaderShell({ facets }: { facets: NavFacets }) {
   const [solid, setSolid] = useState(false);
+  /** §6.1's second threshold: the champagne hairline thickens once the reader
+   *  is properly into the page. Same passive listener, one more boolean. */
+  const [deep, setDeep] = useState(false);
   const [open, setOpen] = useState(false);
   const [panel, setPanel] = useState<null | "projects" | "locations">(null);
   const pathname = usePathname();
@@ -26,7 +30,10 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   const panelId = useId();
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 24);
+    const onScroll = () => {
+      setSolid(window.scrollY > 24);
+      setDeep(window.scrollY > 80);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -95,15 +102,11 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   const hasProjects = facets.phases.length > 0;
   const hasLocations = facets.districts.length > 0;
 
+  /* §6.1: 0.11em rather than the 0.14em this carried before — the gem dot now
+     opens each tab, and the wider tracking pushed the label far enough from its
+     own dot that the two stopped reading as one object. */
   const trigger =
-    "group relative inline-flex items-center gap-1.5 text-tiny font-medium uppercase tracking-[0.14em] text-ink-soft transition-colors hover:text-ink";
-  /* `scaleX`, not `width`: a transform never touches layout, and it lets the
-     active page hold the rule open instead of only appearing on hover. */
-  const underline =
-    "absolute -bottom-1.5 left-0 h-px w-full origin-left scale-x-0 bg-jamin-gold transition-transform duration-500 group-hover:scale-x-100";
-  /** The rule for the section the reader is actually in, in the ink gold so it
-   *  reads as a state rather than a lingering hover. */
-  const activeRule = "scale-x-100 bg-jamin-gold-ink";
+    "group relative inline-flex items-center gap-2 text-tiny font-medium uppercase tracking-[0.11em] text-ink-soft transition-colors hover:text-ink";
 
   return (
     /* ⚠️ The mouse-leave lives on the HEADER, not on the nav bar inside it.
@@ -121,10 +124,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
          shadow) would just be decoration. Once scrolled it is genuinely over
          the content, including the dark cinematic heroes, and then it earns
          the frost. */
+      /* The border is gone in favour of `.rj-hairline`, a champagne ::after
+         that thickens past 80px. Drawn rather than bordered because a
+         border-width change would shift the document half a pixel on every
+         crossing of the threshold. */
       className={`sticky top-0 z-40 transition-all duration-500 ${
-        solid || panel
-          ? "glass border-b border-line/70"
-          : "border-b border-transparent bg-transparent"
+        solid || panel ? `glass rj-hairline ${deep ? "is-deep" : ""}` : "bg-transparent"
       }`}
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
@@ -151,18 +156,22 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           {/* The wordmark has always linked home and carries an aria-label
               saying so, but a tester on the sign-in page could not find a way
               back — a convention only helps the people who already know it. */}
-          <Link href="/" className={trigger} aria-current={section("/") ? "page" : undefined}>
-            Home
-            <span className={`${underline} ${section("/") ? activeRule : ""}`} />
+          <Link
+            href="/"
+            className={trigger}
+            style={stoneVar("/")}
+            aria-current={section("/") ? "page" : undefined}
+          >
+            <Jewels href="/" label="Home" active={section("/")} />
           </Link>
 
           <Link
             href="/properties"
             className={trigger}
+            style={stoneVar("/properties")}
             aria-current={onProperties ? "page" : undefined}
           >
-            Properties
-            <span className={`${underline} ${onProperties ? activeRule : ""}`} />
+            <Jewels href="/properties" label="Properties" active={onProperties} />
           </Link>
 
           {hasProjects && (
@@ -170,13 +179,18 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               <button
                 type="button"
                 className={trigger}
+                style={stoneVar("/projects")}
                 aria-expanded={panel === "projects"}
                 aria-controls={`${panelId}-projects`}
                 onClick={() => setPanel(panel === "projects" ? null : "projects")}
               >
-                Projects
-                <Chevron open={panel === "projects"} />
-                <span className={underline} />
+                <Jewels
+                  href="/projects"
+                  label="Projects"
+                  active={section("/projects")}
+                >
+                  <Chevron open={panel === "projects"} />
+                </Jewels>
               </button>
             </div>
           )}
@@ -186,15 +200,22 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               <button
                 type="button"
                 className={trigger}
+                style={stoneVar("/locations")}
                 aria-expanded={panel === "locations"}
                 aria-controls={`${panelId}-locations`}
                 onClick={() => setPanel(panel === "locations" ? null : "locations")}
               >
-                Locations
-                <Chevron open={panel === "locations"} />
-                <span
-                  className={`${underline} ${pathname.startsWith("/projects") ? activeRule : ""}`}
-                />
+                {/* ⚠️ Locations lights on `?district=`, not on a pathname. Every
+                    entry points at /properties with a query, so this tab was
+                    previously wired to `/projects` — which lit the wrong tab
+                    whenever a reader opened a project stage. */}
+                <Jewels
+                  href="/locations"
+                  label="Locations"
+                  active={onProperties && search.includes("district=")}
+                >
+                  <Chevron open={panel === "locations"} />
+                </Jewels>
               </button>
             </div>
           )}
@@ -203,22 +224,22 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             <Link
               href="/journal"
               className={trigger}
+              style={stoneVar("/journal")}
               onMouseEnter={() => setPanel(null)}
               aria-current={section("/journal") ? "page" : undefined}
             >
-              Journal
-              <span className={`${underline} ${section("/journal") ? activeRule : ""}`} />
+              <Jewels href="/journal" label="Journal" active={section("/journal")} />
             </Link>
           )}
 
           <Link
             href="/about"
             className={trigger}
+            style={stoneVar("/about")}
             onMouseEnter={() => setPanel(null)}
             aria-current={section("/about") ? "page" : undefined}
           >
-            About
-            <span className={`${underline} ${section("/about") ? activeRule : ""}`} />
+            <Jewels href="/about" label="About" active={section("/about")} />
           </Link>
 
           {/* A plain link, not a session-aware control: the header renders on
@@ -227,16 +248,19 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <Link
             href="/account"
             className={trigger}
+            style={stoneVar("/account")}
             onMouseEnter={() => setPanel(null)}
             aria-current={section("/account") ? "page" : undefined}
           >
-            Account
-            <span className={`${underline} ${section("/account") ? activeRule : ""}`} />
+            <Jewels href="/account" label="Account" active={section("/account")} />
           </Link>
 
+          {/* ⚠️ THE ONE FILLED CONTROL IN THE VIEW (§8). It resolves through
+              --color-cta rather than naming a red, so the palette switch reaches
+              it without this file knowing which red is active. */}
           <Link
             href="/contact"
-            className="rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
+            className="rounded-full bg-cta px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-cta-deep hover:shadow-raise"
             onMouseEnter={() => setPanel(null)}
           >
             Book a Site Visit
@@ -312,10 +336,17 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
         </MegaPanel>
       )}
 
-      {/* ---- mobile ---- */}
+      {/* ---- mobile ----
+           §6.1's full-height onyx drawer.
+           ⚠️ Flipping the ground inverts every colour inside it, and none of
+           them can be left alone: `border-line` (#e7e0d4) is invisible on
+           onyx, `text-ink-faint` measures 1.6:1 on it, and the section label's
+           gold-ink is a dark gold on a dark ground. The replacements are
+           bone / plat-500 / champagne-300, all measured on onyx-900. */}
       {open && (
         <nav
-          className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-line bg-canvas px-5 pb-8 pt-2 lg:hidden"
+          className="min-h-[calc(100dvh-72px)] overflow-y-auto bg-onyx-900 px-5 pb-8 pt-2 lg:hidden"
+          style={{ borderTop: "1px solid var(--line-onyx)" }}
           aria-label="Primary mobile"
         >
           <MobileLink href="/">Home</MobileLink>
@@ -323,17 +354,17 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <MobileLink href="/projects">Projects</MobileLink>
           {facets.phases.map((f) => (
             <MobileLink key={f.key} href={f.href} sub>
-              {f.label} <span className="text-ink-faint">({f.count})</span>
+              {f.label} <span className="text-plat-500">({f.count})</span>
             </MobileLink>
           ))}
           {facets.districts.length > 0 && (
             <>
-              <div className="pt-phi3 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+              <div className="pt-phi3 text-micro font-semibold uppercase tracking-brand text-champagne-300">
                 Locations
               </div>
               {facets.districts.map((f) => (
                 <MobileLink key={f.key} href={f.href} sub>
-                  {f.label} <span className="text-ink-faint">({f.count})</span>
+                  {f.label} <span className="text-plat-500">({f.count})</span>
                 </MobileLink>
               ))}
             </>
@@ -343,13 +374,49 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <MobileLink href="/account">Account</MobileLink>
           <Link
             href="/contact"
-            className="mt-6 block rounded-full bg-jamin-red px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white"
+            className="mt-6 block rounded-full bg-cta px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white"
           >
             Book a Site Visit
           </Link>
         </nav>
       )}
     </header>
+  );
+}
+
+/** Hands the tab's stone down to `.rj-dot` and `.rj-inlay`, which both read
+ *  `--rj-stone`. Set on the tab itself so one declaration serves both. */
+function stoneVar(href: string): React.CSSProperties {
+  return { "--rj-stone": navStone(href).stone } as React.CSSProperties;
+}
+
+/**
+ * The jewellery on a tab (§6.1): the gem before the label, and the inlay under
+ * it. The active tab's inlay also carries the slow metallic sweep.
+ *
+ * ⚠️ The label is coloured with `ink`, never with `stone`. At 12.58px three of
+ * the nav stones fail AA outright — see NAV_STONE. The bright value paints the
+ * dot and the inlay, neither of which is text.
+ */
+function Jewels({
+  href,
+  label,
+  active,
+  children,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  children?: React.ReactNode;
+}) {
+  const { ink } = navStone(href);
+  return (
+    <>
+      <span className={`rj-dot ${active ? "is-on" : ""}`} aria-hidden="true" />
+      <span style={active ? { color: ink } : undefined}>{label}</span>
+      {children}
+      <span className={`rj-inlay ${active ? "is-on rj-sweep" : ""}`} aria-hidden="true" />
+    </>
   );
 }
 
@@ -370,7 +437,7 @@ function MegaPanel({ id, children }: { id: string; children: React.ReactNode }) 
     /* No onMouseLeave here: the header owns the hover region now, so leaving
        the panel downward closes it and moving between trigger and panel does
        not. Keeping a second handler here would reintroduce the flicker. */
-    <div id={id} className="hidden border-t border-line/70 glass lg:block">
+    <div id={id} className="rj-panel-in hidden border-t border-line/70 glass lg:block">
       <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi5">{children}</div>
     </div>
   );
@@ -411,16 +478,28 @@ function MobileLink({
   children: React.ReactNode;
   sub?: boolean;
 }) {
+  /* Top-level links are gold foil, sub-links are bone — §6.1 asks for foil, and
+     applying it to all forty rows would flatten the hierarchy the drawer needs.
+     `.rj-foil-text` uses the seal ramp, whose darkest stop measures 12.4:1 on
+     onyx; the full foil would put part of every glyph at 3.11:1. It works here
+     only because the ground is dark — see the warning on the class. */
   return (
     <Link
       href={href}
       className={
         sub
-          ? "block border-b border-line py-3 pl-4 text-base text-ink-muted"
-          : "block border-b border-line py-4 text-lg text-ink-soft"
+          ? "flex items-center gap-2.5 py-3 pl-4 text-base text-bone-soft"
+          : "flex items-center gap-2.5 py-4 text-lg"
       }
+      style={{ borderBottom: "1px solid var(--line-onyx)" }}
     >
-      {children}
+      {/* The gem dots are retained on mobile, per §6.1. */}
+      <span
+        className="rj-dot is-on"
+        style={{ "--rj-stone": navStone(href).stone } as React.CSSProperties}
+        aria-hidden="true"
+      />
+      <span className={sub ? undefined : "rj-foil-text"}>{children}</span>
     </Link>
   );
 }

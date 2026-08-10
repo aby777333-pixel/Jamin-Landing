@@ -241,8 +241,20 @@
   background-position: 0% 50%;
 }
 
+/**
+ * ⚠️ GOLD FOIL TEXT IS FOR DARK GROUNDS ONLY, and it uses the seal ramp.
+ *
+ * Two constraints collide here. Clipped to glyphs, the full foil puts part of
+ * every letter at its dark stop — #7a5a16 on onyx-900 measures 3.11:1 and
+ * fails. The seal ramp's darkest stop is #e3cb74, which measures 12.4:1 on
+ * onyx. So this reads beautifully on the mobile drawer and the footer.
+ *
+ * On IVORY it is the opposite and there is no ramp that saves it: #e3cb74 on
+ * canvas is 1.57:1. There is no such thing as gold foil text on a light ground
+ * in this system — use `--color-champagne-700` as a flat colour instead.
+ */
 .rj-foil-text {
-  background-image: var(--foil-gold);
+  background-image: var(--foil-gold-seal);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -347,20 +359,20 @@
  * painted into it and the centre masked out. A box-shadow cannot do this,
  * because a shadow has one colour and this has four.
  */
+/* ⚠️ No hand-written `-webkit-` prefix — see the warning on `glass` in
+   globals.css. Writing the pair here silently deletes the standard property. */
 .rj-glass {
   position: relative;
   background: var(--glass-ivory);
   backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
 }
 .rj-glass-onyx {
   background: var(--glass-onyx);
   backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
 }
 /* Blur unavailable: fall back to an opaque panel rather than a transparent
    one. A see-through panel with no blur is unreadable over a photograph. */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+@supports not (backdrop-filter: blur(1px)) {
   .rj-glass {
     background: var(--color-ivory-50);
   }
@@ -386,6 +398,115 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/**
+ * ── NAVIGATION: THE INLAY ─────────────────────────────────────────────────
+ *
+ * A 2px bar in the tab's stone that draws in from the left — a chisel cut, not
+ * a fade. `scaleX` because a transform never touches layout; the site's CLS
+ * budget is not negotiable and cadastral.css makes the same choice for its
+ * survey rule.
+ *
+ * ⚠️ THE SWEEP LIVES ON THE INLAY, NOT ON THE LABEL. Two reasons. `.rj-sweep`
+ * sets `overflow: hidden`, and the inlay is positioned *outside* its tab's box
+ * (`bottom: -6px`) — putting the sweep on the tab would clip the inlay away
+ * entirely. And a specular band travelling across words reads as a text
+ * selection, where the same band travelling along a metal bar reads as exactly
+ * what it is. Only the active tab gets one, per §6.1.
+ */
+/** The 6px gem. Present on every tab, but only the active one is at full
+ *  saturation — seven fully-lit stones in a row reads as a toy, and §6.1 puts
+ *  the siblings back at rest anyway. */
+.rj-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--rj-stone, var(--color-champagne-500));
+  opacity: 0.38;
+  transition: opacity 300ms var(--ease-silk);
+  flex: none;
+}
+.group:hover .rj-dot,
+.group:focus-visible .rj-dot {
+  opacity: 0.75;
+}
+.rj-dot.is-on {
+  opacity: 1;
+}
+
+/* ⚠️ Declared AFTER `.rj-sweep` on purpose. An active inlay carries both
+   classes, and `.rj-sweep` sets `position: relative` — which would override the
+   absolute positioning below if it came later and drop the bar into the text
+   flow. `overflow: hidden` still comes through, which is the half we want. */
+.rj-inlay {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: var(--rj-stone, var(--color-champagne-500));
+  transition: transform 420ms var(--ease-rise);
+}
+.group:hover .rj-inlay,
+.group:focus-visible .rj-inlay,
+.rj-inlay.is-on {
+  transform: scaleX(1);
+}
+
+/**
+ * ── DROPDOWN PANELS ───────────────────────────────────────────────────────
+ *
+ * Scale from 0.98 with opacity, 220ms — never a snap.
+ *
+ * ⚠️ ENTRANCE ONLY, and that is a deliberate limit rather than an oversight.
+ * The panels are conditionally rendered, so there is no element left to animate
+ * on the way out. Keeping them mounted was the alternative and it is worse: the
+ * panel sits inside the sticky header, so a mounted-but-hidden panel either
+ * expands the header box permanently or needs `display:none`, which cannot
+ * transition anyway. The entrance is the half a reader perceives as quality.
+ */
+@keyframes rj-panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rj-panel-in {
+  animation: rj-panel-in 220ms var(--ease-silk) both;
+  transform-origin: top center;
+}
+
+/**
+ * ── HEADER HAIRLINE ───────────────────────────────────────────────────────
+ *
+ * Champagne, and it thickens from 0.5px to 1px once the reader is properly
+ * into the page (§6.1's 80px). Drawn as a `::after` rather than a border so the
+ * change costs no layout — a border-width change would move the whole document
+ * by half a pixel and thrash on every scroll event.
+ */
+.rj-hairline {
+  position: relative;
+}
+.rj-hairline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.5px;
+  height: 0.5px;
+  background: var(--line-champagne);
+  transition: height 420ms var(--ease-silk), opacity 420ms var(--ease-silk);
+  pointer-events: none;
+}
+.rj-hairline.is-deep::after {
+  height: 1px;
 }
 
 /**
