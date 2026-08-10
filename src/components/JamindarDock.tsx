@@ -304,24 +304,27 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
   return (
     <>
       {/* ---- launcher ---- */}
+      {/* ⚠️ §6.8 — a discreet concierge seal, not a chat bubble. The visible
+          words are gone, so the accessible name now comes from `aria-label`;
+          without it this button would announce as "button" and the assistant
+          would be unreachable by screen reader. The label that appears on hover
+          is decoration and is hidden from the tree to avoid saying it twice. */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls="jamindar-panel"
-        className={`fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-raise transition-transform duration-300 hover:-translate-y-0.5 print:hidden ${open ? "hidden sm:inline-flex" : ""}`}
-        style={{ transitionTimingFunction: "var(--ease-silk)" }}
+        aria-label={open ? "Close Jamindar" : "Ask Jamindar"}
+        className={`rj-medallion fixed bottom-5 right-5 z-40 inline-flex items-center justify-center print:hidden ${open ? "hidden sm:inline-flex" : ""}`}
       >
-        <svg viewBox="0 0 20 20" className="h-4 w-4" aria-hidden="true">
-          <path
-            d="M3 5.5A2.5 2.5 0 0 1 5.5 3h9A2.5 2.5 0 0 1 17 5.5v6A2.5 2.5 0 0 1 14.5 14H8l-4 3v-3H5.5A2.5 2.5 0 0 1 3 11.5z"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            strokeLinejoin="round"
-          />
-        </svg>
-        {open ? "Close" : "Ask Jamindar"}
+        <span className="rj-medallion-label" aria-hidden="true">
+          {open ? "Close ✦" : "Ask Jamindar ✦"}
+        </span>
+        {/* The crest. Not `next/image`: it is a 22px mark on a fixed control
+            that appears on every page, and the optimiser round-trip costs more
+            than the file does. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo-mark.png" alt="" aria-hidden="true" className="h-[22px] w-[22px] object-contain" />
       </button>
 
       {/* ---- panel ---- */}
@@ -339,7 +342,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
              takes space from the message list and nothing else. `dvh`, not
              `vh`, because `vh` on iOS is the height WITHOUT the browser chrome
              and the composer ends up under it. */
-          className="fixed inset-0 z-40 flex h-[100dvh] w-full flex-col overflow-hidden border-line bg-canvas print:hidden sm:inset-x-auto sm:inset-y-auto sm:bottom-24 sm:right-5 sm:h-auto sm:max-h-[min(34rem,70vh)] sm:w-[26rem] sm:rounded-xl sm:border sm:shadow-raise"
+          className="rj-unfurl fixed inset-0 z-40 flex h-[100dvh] w-full flex-col overflow-hidden border-line bg-canvas print:hidden sm:inset-x-auto sm:inset-y-auto sm:bottom-24 sm:right-5 sm:h-auto sm:max-h-[min(34rem,70vh)] sm:w-[26rem] sm:rounded-xl sm:border sm:shadow-raise"
         >
           <header className="shrink-0 border-b border-line px-phi3 py-phi2">
             <div className="flex items-center justify-between gap-3">

@@ -876,6 +876,107 @@
 }
 
 /**
+ * ── THE FOOTER DESCENDS INTO ONYX (§6.9) ──────────────────────────────────
+ *
+ * Tokens again, not a restyle. The footer contains `LedgerCount` and the
+ * `.ledger-label` rule from cadastral.css, neither of which this layer owns,
+ * and both take their colour from `--color-ink-faint`. Re-scoping the tokens
+ * carries them; reaching in by selector would not.
+ *
+ * Measured on onyx-900: bone 15.2:1, bone-soft 7.5:1, plat-300 11.8:1,
+ * plat-500 6.5:1.
+ */
+.rj-footer {
+  --color-canvas: var(--color-onyx-900);
+  --color-canvas-alt: var(--color-onyx-800);
+  --color-canvas-sunken: var(--color-onyx-800);
+  --color-ink: var(--color-bone);
+  --color-ink-soft: var(--color-bone-soft);
+  /* §6.9 asks for brushed silver on the navigation and contact rows. */
+  --color-ink-muted: var(--color-plat-300);
+  --color-ink-faint: var(--color-plat-500);
+  --color-line: rgba(232, 225, 210, 0.14);
+  background: var(--color-onyx-900);
+}
+
+/**
+ * ── THE CONCIERGE MEDALLION (§6.8) ────────────────────────────────────────
+ *
+ * Not a chatbot bubble: a gold-rimmed seal, 46px, carrying the crest. It never
+ * auto-opens, never bounces and never pulses — which in practice meant adding
+ * nothing, because the dock already did none of those. The only motion it has
+ * is the label sliding out under the cursor and the panel unfurling from it.
+ */
+.rj-medallion {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--color-onyx-800);
+  box-shadow:
+    0 0 0 1px var(--color-champagne-500),
+    0 10px 30px -12px rgba(10, 10, 9, 0.7);
+  transition: transform var(--dur-lift) var(--ease-silk);
+}
+.rj-medallion:hover,
+.rj-medallion:focus-visible {
+  transform: translateY(-2px);
+}
+
+/** The label rides out to the LEFT — the medallion is pinned bottom-right, so
+ *  anywhere else would push it off-screen. `translateX`, never `width`. */
+.rj-medallion-label {
+  position: absolute;
+  right: calc(100% + 10px);
+  top: 50%;
+  white-space: nowrap;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-champagne-300);
+  background: var(--color-onyx-800);
+  border-radius: 999px;
+  padding: 6px 12px;
+  box-shadow: 0 0 0 1px var(--line-champagne);
+  opacity: 0;
+  transform: translateY(-50%) translateX(6px);
+  transition:
+    opacity 240ms var(--ease-silk),
+    transform 240ms var(--ease-silk);
+  pointer-events: none;
+}
+.rj-medallion:hover .rj-medallion-label,
+.rj-medallion:focus-visible .rj-medallion-label {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/**
+ * The panel unfurls FROM the seal — origin bottom-right, so it grows out of
+ * the medallion rather than appearing beside it.
+ *
+ * ⚠️ Only from `sm` up. Below that the panel is deliberately full-screen (the
+ * dock's own comment explains why: an on-screen keyboard halves the viewport
+ * and squeezes a floating panel), and scaling a full-screen sheet from its
+ * bottom-right corner reads as a glitch rather than as an unfurl.
+ */
+@keyframes rj-unfurl {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (min-width: 640px) {
+  .rj-unfurl {
+    animation: rj-unfurl 320ms var(--ease-silk) both;
+    transform-origin: bottom right;
+  }
+}
+
+/**
  * ── GOLD DUST (§6.6) ──────────────────────────────────────────────────────
  *
  * Palace sunlight, not disco. Two pixels, drifting, peaking at 0.85 — and the
