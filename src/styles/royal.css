@@ -726,6 +726,58 @@
   position: relative;
   border-radius: var(--radius-xl);
 }
+
+/**
+ * ── THE CONSOLE'S GRADIENT GROUND ─────────────────────────────────────────
+ *
+ * Owner's instruction, 2026-08-10: make the background a transparent gradient.
+ * It replaces the flat `--glass-onyx` (0.78 everywhere) with a ramp from 0.26
+ * at the top edge to 0.90 at the foot, which is the shape the straddle asks
+ * for anyway — the top half lies on the banner and has a picture worth seeing,
+ * the bottom half lies on the ivory canvas and has to hold white text.
+ *
+ * ⚠️ THE STOPS ARE PLACED AROUND THE TEXT, and that is the whole reason this
+ * is a four-stop ramp rather than a straight fade. Measured, not guessed:
+ *
+ * - The sheerest band (0 → ~18%) is the panel's own `p-phi4` padding. NOTHING
+ *   is set there. That is where the gradient does its visible work.
+ * - The eyebrow starts at 18%. Sampling hero-20's foot through an 8px blur —
+ *   the band the console's top 92px actually covers — gives a median of 86 and
+ *   a brightest local mean of 162. Champagne-300 needs α ≥ 0.52 against 162 to
+ *   clear 4.5:1, so the ramp is at 0.56 by the time the eyebrow begins.
+ * - The note sits at ~75–82%, by which point it is over the ivory canvas, not
+ *   the picture. Plat-300 against a WHITE backdrop needs α ≥ 0.72; the ramp is
+ *   at 0.79–0.82 there.
+ * - The fields sit in between, where α is only 0.56–0.74. They do not rely on
+ *   it — see `.rj-console-field`.
+ *
+ * ⚠️ Anyone lightening these stops must re-check the eyebrow against 162 and
+ * the note against 255, in that order. The note is the binding one: it has the
+ * brightest possible backdrop and the weakest ink of the three.
+ */
+.rj-console.rj-glass-onyx {
+  background: linear-gradient(
+    to bottom,
+    rgba(18, 17, 16, 0.26) 0%,
+    rgba(18, 17, 16, 0.56) 18%,
+    rgba(18, 17, 16, 0.79) 75%,
+    rgba(18, 17, 16, 0.9) 100%
+  );
+}
+
+/**
+ * The search field and the district select.
+ *
+ * ⚠️ They carry their OWN ground rather than borrowing the panel's, and that
+ * is what makes the gradient safe. They sit across the middle of the ramp
+ * where α is 0.56–0.74, and their old `bg-white/10` LIGHTENED that — exactly
+ * the wrong direction over a photograph. A 0.45 onyx tint composites with the
+ * panel to an effective 0.76–0.86 whatever the ramp is doing behind it, so
+ * `text-bone` and the placeholder hold their contrast at every stop.
+ */
+.rj-console-field {
+  background: rgba(18, 17, 16, 0.45);
+}
 .rj-console::before {
   content: "";
   position: absolute;

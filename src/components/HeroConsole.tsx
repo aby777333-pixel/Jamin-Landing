@@ -24,7 +24,7 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
       method="GET"
       /* `rj-glass-onyx` is §6.2's --glass-dark. It reads as an instrument
          against the ivory rail beneath it rather than competing with it. */
-      className="rj-console rj-glass-onyx rj-arrive overflow-hidden p-phi3 sm:p-phi4"
+      className="rj-console rj-glass-onyx rj-sheer-copy rj-arrive overflow-hidden p-phi3 sm:p-phi4"
       style={{ "--rj-arrive-delay": "760ms" } as React.CSSProperties}
       aria-label="Find a plot"
     >
@@ -42,7 +42,7 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
             name="q"
             type="search"
             placeholder="Place, project or survey number"
-            className="h-12 w-full rounded-full border border-white/15 bg-white/10 px-5 text-base text-bone placeholder:text-plat-300 focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
+            className="h-12 w-full rounded-full rj-console-field border border-white/15 px-5 text-base text-bone placeholder:text-plat-300 focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
           />
         </div>
 
@@ -57,7 +57,7 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
               id="hero-district"
               name="district"
               defaultValue=""
-              className="h-12 w-full rounded-full border border-white/15 bg-white/10 px-5 text-base text-bone focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
+              className="h-12 w-full rounded-full rj-console-field border border-white/15 px-5 text-base text-bone focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
             >
               {/* ⚠️ The options are dark-on-light because a native select's
                   popup is drawn by the OS, not by this stylesheet. Styling them

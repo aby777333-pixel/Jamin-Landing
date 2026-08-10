@@ -40,7 +40,23 @@ export type JournalPost = {
   reviewed_at: string | null;
   updated_at: string | null;
   tags: string[];
-  seo: { title?: string; description?: string; canonical?: string; og_image?: string; noindex?: boolean } | null;
+  /* ⚠️ `focus_keyword`, `secondary_keywords` and `long_tail` are PLANNING
+     fields written by the admin console — they are never emitted as meta tags
+     (Google has ignored the keywords meta since 2009). They earn their keep
+     here instead: they are the best keyword surface the Journal has, and the
+     search index reads them. `secondary_keywords` and `long_tail` are typed as
+     `string | string[]` because the console stores whatever the author typed —
+     a comma-separated line on the older rows, a list on the newer ones. */
+  seo: {
+    title?: string;
+    description?: string;
+    canonical?: string;
+    og_image?: string;
+    noindex?: boolean;
+    focus_keyword?: string;
+    secondary_keywords?: string | string[];
+    long_tail?: string | string[];
+  } | null;
   related_property_ids: string[];
   related_locations: string[];
   faqs: JournalFaq[];
@@ -177,6 +193,85 @@ export function readingMinutes(p: JournalPost): number | null {
   if (!p.body) return null;
   const words = p.body.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
+}
+
+/* ---------- search ---------- */
+
+/**
+ * ⚠️ BOTH SIDES OF THE SEARCH MUST NORMALISE THROUGH HERE. The index is built
+ * on the server and the query is typed in the browser; if they disagree about
+ * case, accents or punctuation the search silently returns nothing for terms
+ * that are plainly present. Diacritics are folded because "Vārapatty" and
+ * "Varapatty" are the same place to a reader.
+ */
+export function normaliseForSearch(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+const flatten = (v: string | string[] | undefined | null): string =>
+  Array.isArray(v) ? v.join(" ") : (v ?? "");
+
+/**
+ * The haystack for one article, built on the server so no article body ever
+ * reaches the browser.
+ *
+ * ⚠️ IT DELIBERATELY DOES NOT INDEX `body`. The list query does not fetch
+ * bodies — that is a load-bearing decision recorded on LIST_COLUMNS, where
+ * pulling them was transferring 246 kB and eventually failing the build. What
+ * it indexes instead is the keyword surface the author actually curates: the
+ * title, the excerpt, every tag (several articles carry thirty or more), the
+ * category, the author, the kind, and the SEO planning fields. So an article
+ * is findable by the words its author chose to be found by, which is what
+ * those fields were entered for.
+ *
+ * ⚠️ Stored as a SORTED SET OF WORDS, not as raw prose. Twenty articles of
+ * duplicated tag phrases is a payload; the unique words are a fraction of it.
+ * The cost is that phrases stop being phrases — "ready to move" matches an
+ * article carrying all three words rather than that exact run — which for a
+ * twenty-article journal is more forgiving than it is wrong.
+ */
+export function buildSearchIndex(p: JournalPost): string {
+  const seo = p.seo ?? {};
+  const parts = [
+    p.title,
+    p.excerpt ?? "",
+    p.blog_categories?.name ?? "",
+    p.blog_authors?.name ?? "",
+    KIND_LABEL[p.kind] ?? p.kind,
+    (p.tags ?? []).join(" "),
+    (p.related_locations ?? []).join(" "),
+    seo.title ?? "",
+    seo.description ?? "",
+    seo.focus_keyword ?? "",
+    flatten(seo.secondary_keywords),
+    flatten(seo.long_tail),
+  ];
+  const words = new Set(
+    normaliseForSearch(parts.join(" "))
+      .split(" ")
+      .filter((w) => w.length > 1),
+  );
+  return [...words].sort().join(" ");
+}
+
+/**
+ * Every term must match, and each matches on a word PREFIX.
+ *
+ * AND rather than OR because a two-word query is a reader narrowing, not
+ * widening — "dtcp erode" should be the articles about both. Prefix rather
+ * than exact so the list narrows while the word is still being typed and so
+ * "approv" finds "approval" and "approvals" without a stemmer.
+ */
+export function matchesQuery(index: string, query: string): boolean {
+  const terms = normaliseForSearch(query).split(" ").filter(Boolean);
+  if (terms.length === 0) return true;
+  const words = index.split(" ");
+  return terms.every((t) => words.some((w) => w.startsWith(t)));
 }
 
 export const KIND_LABEL: Record<string, string> = {
