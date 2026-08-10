@@ -477,7 +477,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                     preload="none"
                     playsInline
                     poster={coverImage(p) ?? undefined}
-                    className="w-full rounded-card border border-line bg-ink"
+                    /* ⚠️ A fixed box, not `w-full` alone. Left to itself a
+                       <video> sizes to its own intrinsic ratio, so two clips
+                       shot differently sat side by side at different heights
+                       with their tops and bottoms out of line — which is what
+                       was reported. The box is the same 1.618:1 the card grid
+                       uses, and `object-contain` gives equal heights WITHOUT
+                       cropping the walkthrough; `bg-ink` letterboxes the
+                       remainder, so a portrait clip reads as deliberate. */
+                    className="aspect-[1.618/1] w-full rounded-card border border-line bg-ink object-contain"
                   />
                 ))}
               </div>

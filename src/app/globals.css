@@ -130,6 +130,92 @@
   --shadow-hero: 0 40px 120px -40px rgba(23, 24, 28, 0.45);
 
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ══════════════════════════════════════════════════════════════════════
+     MAHARAJA 2026 — the material hierarchy.
+
+     Five tiers: canvas (onyx + ivory), champagne gold, platinum, gemstones,
+     and light. Added to this block rather than to a separate file because
+     Tailwind 4 only generates utilities from `@theme`, and only from
+     namespaced names — `--onyx-900` produces nothing, `--color-onyx-900`
+     produces `bg-onyx-900`. cadastral.css uses plain `:root` for exactly this
+     reason: it needed variables, not utilities.
+
+     ⚠️ WHAT IS DELIBERATELY ABSENT. The brief also specifies --ink #17140F,
+     --ink-soft #4A4237 and --ink-mute #8A8172. None are here. The first two
+     are within a hair of the audited --color-ink / --color-ink-soft above,
+     and cadastral.css states the rule: two sources of truth for a colour is
+     how a site ends up with two of it. The third is a real disagreement —
+     #8A8172 measures 3.02:1 on this canvas and fails AA for the metadata it
+     was specified for, which is the same failure the ink ramp was already
+     darkened once to fix. Metadata keeps --color-ink-faint.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ---- tier 1 · canvas ----
+     Onyx is warmer and deeper than the existing --color-charcoal (#1a1a1c),
+     which stays as it is: it grades the cinematic photo sections and is not
+     a page ground. These are page grounds. */
+  --color-onyx-900: #0a0a09;
+  --color-onyx-800: #121110;
+  --color-onyx-700: #1c1a17;
+  --color-onyx-600: #262320;
+
+  --color-ivory-50: #fbf8f1;
+  --color-ivory-100: #f4efe3;
+  --color-ivory-200: #ede5d4;
+
+  /* Text on onyx. */
+  --color-bone: #e8e1d2;
+  --color-bone-soft: #a79e8c;
+
+  /* ---- tier 2 · champagne gold ----
+     ⚠️ THE IDENTITY GOLD AND THE LOGO GOLD ARE NOT THE SAME COLOUR, and that
+     is intentional. --color-jamin-gold (#eaa317) is sampled from the mark and
+     stays reserved for the mark. Champagne is the interface gold: antique,
+     desaturated, and the thing that reads as metal rather than as yellow.
+
+     ⚠️ 500 IS A FILL. As text on canvas it measures 2.36:1 — worse than the
+     logo gold's 2.12:1 only in that it looks like it should pass. Every gold
+     WORD uses 700 (6.24:1) or 900. This is the third time this system has had
+     to write that rule down; globals and cadastral each record their own. */
+  --color-champagne-900: #5a4210;
+  --color-champagne-700: #7a5a16;
+  --color-champagne-500: #c9a227;
+  --color-champagne-300: #e3cb74;
+  --color-champagne-100: #f2dfa0;
+
+  /* ---- tier 3 · platinum ----
+     ⚠️ 800 IS NOT IN THE BRIEF. It was added because the brief's ramp has no
+     member that can be read as text: 500 measures 2.96:1 on canvas and 700
+     measures 4.50:1 — which is not a pass, it is a coin toss sitting exactly on
+     the line, and the paper grain multiplies over it and spends what is left.
+     "Completed" is a real label on a real card, so platinum needed a text
+     cousin for the same reason gold has one. 800 measures 6.14:1. */
+  --color-plat-800: #5a6167;
+  --color-plat-700: #6e767d;
+  --color-plat-500: #8e959b;
+  --color-plat-300: #c3c9cd;
+  --color-plat-100: #eff2f3;
+
+  /* ---- tier 4 · gemstones ----
+     District identity, stage, and plot state. Every one of these is a FILL or
+     a hairline; the text sitting on them is bone or ink, never the stone. */
+  --color-emerald: #0e7a55;
+  --color-emerald-deep: #0b5c41;
+  --color-jade: #3e8e72;
+  --color-ruby: #9b1b30;
+  --color-garnet: #7a1626;
+  --color-sapphire: #1b3e8c;
+  --color-amethyst: #6b3fa0;
+  --color-topaz: #b07a18;
+
+  /* ---- the primary action colour ----
+     Indirection on purpose. `bg-cta` compiles to `var(--color-cta)`, so
+     royal.css can repoint it per palette at runtime without regenerating a
+     single utility. Default is the logo red the site already ships.
+     White on red measures 4.78:1; white on ruby measures 8.14:1. */
+  --color-cta: #e11b22;
+  --color-cta-deep: #a81219;
 }
 
 @layer base {
@@ -148,7 +234,11 @@
      between two families — which is the harder discipline and the reason a
      magazine page reads as calm rather than busy.
      Display sizes go LIGHTER, not heavier: at 3rem+ a 300 weight with tight
-     tracking reads expensive, where a bold reads like a banner. */
+     tracking reads expensive, where a bold reads like a banner.
+     ⚠️ -0.032em belongs to Inter specifically. It was briefly relaxed to
+     -0.008em while headings were set in Marcellus, because negative tracking
+     closes a Roman capital face's counters. If a display serif is ever tried
+     again, that value has to move with it. */
   h1,
   h2 {
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
@@ -163,11 +253,25 @@
     letter-spacing: -0.014em;
     line-height: 1.22;
   }
-  /* Never trap keyboard users just because the design is quiet. */
+  /* Never trap keyboard users just because the design is quiet.
+     §6.10 asks the ring to take the active section's stone. It does that by
+     falling back through `--rj-stone`, which cards, tabs and plots already set
+     for their own jewellery — so a focused card rings in its district's colour
+     and everything else rings in the primary action colour, with no component
+     needing to know. Every stone used this way was measured as text in
+     lib/stones.ts, so all of them are visible against their ground. */
   :focus-visible {
-    outline: 2px solid var(--color-jamin-red);
+    outline: 2px solid var(--rj-stone, var(--color-cta));
     outline-offset: 3px;
     border-radius: 4px;
+  }
+
+  /* §6.10. 22% gold keeps the ink readable through it — a solid gold selection
+     drops black text to about 3:1 and makes selected copy harder to read than
+     unselected, which is the opposite of what a selection is for. */
+  ::selection {
+    background: color-mix(in srgb, var(--color-champagne-500) 22%, transparent);
+    color: var(--color-ink);
   }
 }
 
@@ -217,16 +321,23 @@
 
 @utility glass {
   background: var(--glass-tint);
+  /* ⚠️ DO NOT HAND-WRITE `-webkit-backdrop-filter` HERE. Lightning CSS treats
+     the prefixed and unprefixed forms as one property and keeps the last one
+     written, so the pair that used to live here compiled down to the WEBKIT
+     ONE ALONE — and Chrome 148 has dropped that alias entirely (assigning it
+     inline leaves cssText empty). The result was that no glass on this site
+     blurred in Chrome at all; every frosted panel was a flat 90% tint. Left to
+     itself the compiler emits the standard property and adds whatever prefixes
+     its targets actually need. */
   backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
   border: 1px solid var(--glass-edge);
   box-shadow: 0 1px 1px rgba(26, 26, 28, 0.03), 0 18px 50px -24px rgba(26, 26, 28, 0.28);
 }
 
 @utility glass-dark {
   background: var(--glass-tint-dark);
+  /* Same rule as `glass` above — no hand-written prefix. */
   backdrop-filter: blur(26px) saturate(130%);
-  -webkit-backdrop-filter: blur(26px) saturate(130%);
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 

@@ -107,7 +107,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero slides={slides} />
+      <Hero slides={slides} districts={facets.districts} />
 
       {/* ---- what we are, in plain search terms ---- */}
       <Container className="py-phi6">

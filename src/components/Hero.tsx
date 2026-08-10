@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { HeroConsole } from "./HeroConsole";
 
 /**
  * The homepage hero — one frame, no carousel.
@@ -58,7 +59,13 @@ export type Slide = {
  */
 const ART = { id: "20", w: 1983 };
 
-export function Hero({ slides }: { slides: Slide[] }) {
+export function Hero({
+  slides,
+  districts = [],
+}: {
+  slides: Slide[];
+  districts?: { label: string; count: number }[];
+}) {
   return (
     <section className="relative isolate overflow-hidden border-b border-line bg-canvas">
       {/* The setting-out grid shows only where the artwork has dissolved away,
@@ -182,8 +189,25 @@ export function Hero({ slides }: { slides: Slide[] }) {
                 and the hard break this line used to carry went with it, because
                 at 36rem "with nothing left to check." no longer fits on one line
                 and forcing the break there left "check." alone on a third. */}
+            {/* ⚠️ Chosen by the owner 2026-08-10 from three drafts, replacing
+                "Land you can build on, with nothing left to check."
+
+                Two things moved with it and are worth knowing before anyone
+                edits it back or sideways:
+
+                1. The h1 no longer names what is sold. The eyebrow directly
+                   above it ("DTCP-approved plots · Tamil Nadu"), the <title>
+                   and the lead below all still carry it, so the page is not
+                   silent on the subject — but this heading is now atmosphere
+                   rather than argument, which is a change of job.
+                2. It shares a register, and two words, with "Somewhere your
+                   children will say they are from" further down the page —
+                   whose lead runs "an address the whole family knew by heart".
+                   That section is the page's designated warm passage. Having
+                   two is not fatal, but if one of them is ever rewritten they
+                   should be pulled apart rather than closer. */}
             <h1 className="mt-phi3 text-balance text-4xl text-ink">
-              Land you can build on, with nothing left to check.
+              The address your family keeps.
             </h1>
 
             <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
@@ -214,10 +238,20 @@ export function Hero({ slides }: { slides: Slide[] }) {
         </div>
       </div>
 
-      {/* Live inventory as a glass rail straddling the foot of the banner. It
-          sits OUTSIDE the banner block on purpose: inside it, its height would
-          be taken off the sides of a 3.3:1 frame. The small negative margin
-          keeps it reading as part of the hero rather than as the next section. */}
+      {/* The console takes the straddling position the rail used to hold — it
+          overlaps the banner's foot, which is what makes glass legitimate here
+          under the rule in cadastral.css (glass only over imagery, never on the
+          page's own canvas). Like the rail it sits OUTSIDE the banner block, so
+          its height is not taken off the sides of a 3.3:1 frame. */}
+      <div className="relative mx-auto max-w-[1280px] px-5 lg:px-10">
+        <div className="mt-phi3 min-[1400px]:-mt-phi4">
+          <HeroConsole districts={districts} />
+        </div>
+      </div>
+
+      {/* Live inventory as a glass rail below the console. It sits OUTSIDE the
+          banner block on purpose: inside it, its height would be taken off the
+          sides of a 3.3:1 frame. */}
       {slides.length > 0 && (
         <div className="relative mx-auto max-w-[1280px] px-5 pb-phi5 lg:px-10">
           {/* ⚠️ The `lg:-mx-[13px]` bleed this carried is GONE, and its removal
@@ -237,7 +271,7 @@ export function Hero({ slides }: { slides: Slide[] }) {
               a rail and 35px for a plate, which is what padding is. Aligning the
               CONTENTS instead would require those two paddings to be equal —
               a chunky rail or a cramped plate. */}
-          <div className="glass mt-phi3 rounded-xl p-1.5 min-[1400px]:-mt-phi3">
+          <div className="glass mt-phi3 rounded-xl p-1.5">
             {/* The items SHARE the rail rather than queueing at its left edge:
                 `flex-1` from `sm` up divides the full width between however
                 many developments are selling, so three of them read as three

@@ -52,7 +52,7 @@ export function PlotSchedule({ plots }: { plots: Plot[] }) {
               className="rounded-lg border px-2 py-3 text-center transition-transform hover:-translate-y-0.5"
               style={{
                 background: s.fill,
-                borderColor: active ? "#E11B22" : s.stroke,
+                borderColor: active ? "var(--plot-selected-line)" : s.stroke,
                 borderWidth: active ? 2 : 1,
               }}
             >

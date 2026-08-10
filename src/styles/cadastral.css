@@ -477,7 +477,11 @@ body > footer {
   border-left: 2px solid var(--color-jamin-gold);
 }
 .cd-quote::before {
-  content: "\\201C";
+  /* ⚠️ ONE backslash. `"\\201C"` is an escaped backslash followed by the four
+     literal characters 201C, so every pull-quote on every article printed
+     `\201C` in 2rem gold across its own first line. `"\201C"` is the CSS escape
+     for U+201C, the left double quotation mark this was always meant to be. */
+  content: "\201C";
   position: absolute;
   left: 0.35rem;
   top: -0.35rem;

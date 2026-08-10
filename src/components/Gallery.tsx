@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { createPortal } from "react-dom";
 import { useCallback, useEffect, useState } from "react";
 
 /**
@@ -86,9 +87,17 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
         )}
       </div>
 
-      {open != null && (
+      {/* ⚠️ PORTALLED TO `document.body`, and `z-50` alone could never have
+          fixed this. cadastral.css gives `body > main` `z-index: 2`, which makes
+          it a STACKING CONTEXT — so this overlay's 50 was only ever 50 *inside
+          main*, and the header, a sibling of main at z-40, painted over it. The
+          reported symptom was the navbar sitting on top of the fullscreen image
+          with the Close button half-covered and unclickable.
+          ZoomableImage already portals for exactly this reason; the gallery and
+          the plot sheet were the two that had not been given the same fix. */}
+      {open != null && createPortal(
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/95 p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/95 p-4"
           role="dialog"
           aria-modal="true"
           aria-label={`${title} gallery`}
@@ -146,7 +155,8 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
               </div>
             </>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   );

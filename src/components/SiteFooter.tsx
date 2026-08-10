@@ -20,23 +20,47 @@ export async function SiteFooter() {
   const wa = waHref(desk.whatsapp, "Hello Jamin Properties — I'd like to know more about your plots.");
 
   return (
-    <footer className="mt-phi7 border-t border-line bg-canvas-alt">
+    /* §6.9 — the page descends into onyx. `.rj-footer` re-scopes the colour
+       tokens rather than restyling children, so LedgerCount and cadastral's
+       `.ledger-label` follow without either being touched. */
+    <footer className="rj-footer mt-phi7">
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>
-            <Image
-              src="/logo-full.png"
-              alt="Jamin Bazaar"
-              width={793}
-              height={312}
-              sizes="150px"
-              className="h-14 w-auto"
-            />
+            {/* ⚠️ THE MARK, THEN THE WORDMARK AS TEXT — not logo-full.png.
+                That file bakes the wordmark in as near-black ink, which
+                measures 1.06:1 on onyx and simply vanishes; the same finding
+                that put a plate under the header lockup in the Vault. §6.9 asks
+                for "the emblem, then the wordmark", so here the split is free:
+                the emblem stays an image and the wordmark becomes real text,
+                which is selectable, translatable and legible by construction. */}
+            <div className="flex items-center gap-3">
+              <Image
+                src="/logo-mark.png"
+                alt=""
+                aria-hidden="true"
+                width={256}
+                height={256}
+                sizes="44px"
+                className="h-11 w-11 object-contain"
+              />
+              <span className="text-lg font-medium uppercase tracking-brand text-ink">
+                Jamin Bazaar
+              </span>
+            </div>
+
+            <p className="rj-voice mt-phi3 text-lg text-bone-soft">
+              Property. Prosperity. Legacy.
+            </p>
+
             <p className="mt-phi3 max-w-sm text-base leading-relaxed text-ink-muted">
               DTCP-approved residential plotted developments across Tamil Nadu — planned for
               families who intend to build, and for investors who intend to hold.
             </p>
-            <div className="mt-phi3 h-px w-24 rule-gold" />
+            {/* §6.9's one fine gold rule. `rule-gold` already fades at both
+                ends — it is the same gradient as the line under BAZAAR in the
+                logo, so this is the site's existing rule, widened. */}
+            <div className="mt-phi3 h-px w-full rule-gold" />
             {/* Was one tiny grey sentence — "4 developments · 43 plots
                 available" — set at the same weight as a caption, so the only
                 hard numbers on the page were also the least visible thing on
@@ -92,7 +116,7 @@ export async function SiteFooter() {
             <ul className="mt-phi2 space-y-3">
               {tel && (
                 <li>
-                  <a href={tel} className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep">
+                  <a href={tel} className="text-base text-ink-muted transition-colors hover:text-champagne-300">
                     {desk.mobile}
                   </a>
                 </li>
@@ -103,7 +127,7 @@ export async function SiteFooter() {
                     href={wa}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
+                    className="text-base text-ink-muted transition-colors hover:text-champagne-300"
                   >
                     WhatsApp
                   </a>
@@ -113,7 +137,7 @@ export async function SiteFooter() {
                 <li>
                   <a
                     href={`mailto:${desk.email}`}
-                    className="break-all text-base text-ink-muted transition-colors hover:text-jamin-red-deep"
+                    className="break-all text-base text-ink-muted transition-colors hover:text-champagne-300"
                   >
                     {desk.email}
                   </a>
@@ -121,6 +145,7 @@ export async function SiteFooter() {
               )}
               {facets.hasJournal && <FooterLink href="/journal">Jamin Journal</FooterLink>}
               <FooterLink href="/about">About Jamin</FooterLink>
+              <FooterLink href="/vault">The Royal Vault</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>
               {/* ⚠️ The app link is withdrawn until the Play Store listing is
                   live. Sending a buyer to a raw Netlify URL and calling it "the
@@ -137,6 +162,17 @@ export async function SiteFooter() {
             Plot availability and pricing are confirmed by our sales desk at the time of booking.
           </p>
         </div>
+
+        {/* §6.9's closing line.
+            ⚠️ §6.9 also asks for social icons in brushed silver. There are none
+            here, deliberately: no social profile exists anywhere in the data or
+            the code, so an icon row would mean inventing accounts and linking
+            buyers to them. The same section's own closing rule settles it — if
+            a footer link does not earn its row, cut it — and a link to nowhere
+            earns nothing. Add them the moment there are real handles. */}
+        <p className="mt-phi4 text-center text-micro text-bone-soft">
+          Built on trust. Designed for generations.
+        </p>
       </div>
     </footer>
   );
@@ -154,7 +190,7 @@ function FooterHeading({ children }: { children: React.ReactNode }) {
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-base text-ink-muted transition-colors hover:text-jamin-red-deep">
+      <Link href={href} className="text-base text-ink-muted transition-colors hover:text-champagne-300">
         {children}
       </Link>
     </li>
