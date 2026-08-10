@@ -274,7 +274,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               it without this file knowing which red is active. */}
           <Link
             href="/contact"
-            className="rounded-full bg-cta px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:bg-cta-deep hover:shadow-raise"
+            className="rj-cta rounded-full bg-cta px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-raise"
             onMouseEnter={() => setPanel(null)}
           >
             Book a Site Visit

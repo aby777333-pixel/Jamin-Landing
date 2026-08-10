@@ -253,11 +253,25 @@
     letter-spacing: -0.014em;
     line-height: 1.22;
   }
-  /* Never trap keyboard users just because the design is quiet. */
+  /* Never trap keyboard users just because the design is quiet.
+     §6.10 asks the ring to take the active section's stone. It does that by
+     falling back through `--rj-stone`, which cards, tabs and plots already set
+     for their own jewellery — so a focused card rings in its district's colour
+     and everything else rings in the primary action colour, with no component
+     needing to know. Every stone used this way was measured as text in
+     lib/stones.ts, so all of them are visible against their ground. */
   :focus-visible {
-    outline: 2px solid var(--color-jamin-red);
+    outline: 2px solid var(--rj-stone, var(--color-cta));
     outline-offset: 3px;
     border-radius: 4px;
+  }
+
+  /* §6.10. 22% gold keeps the ink readable through it — a solid gold selection
+     drops black text to about 3:1 and makes selected copy harder to read than
+     unselected, which is the opposite of what a selection is for. */
+  ::selection {
+    background: color-mix(in srgb, var(--color-champagne-500) 22%, transparent);
+    color: var(--color-ink);
   }
 }
 

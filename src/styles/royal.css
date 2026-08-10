@@ -870,6 +870,23 @@
   --color-ink-muted: var(--color-bone-soft);
   --color-ink-faint: var(--color-plat-500);
   --color-line: var(--line-onyx);
+
+  /**
+   * ⚠️ THE DARK-TUNED INKS HAVE TO INVERT TOO, and this was found by sweeping
+   * rather than by looking. Flipping the ground is not enough on its own:
+   * champagne-700 and cta-deep exist precisely BECAUSE they are dark enough to
+   * read on ivory, so on onyx they are the worst possible choice. Measured on
+   * the Vault before this block: "Register interest" 2.48:1, the Royal ribbon
+   * 2.73:1, a card's stage word 3.25:1 — nine failures across the page.
+   *
+   * Each maps to its own light-ground counterpart rather than to a generic
+   * bone, so gold stays gold and the action colour stays distinguishable from
+   * body copy. champagne-300 measures 11-12:1 on these grounds.
+   */
+  --color-champagne-700: var(--color-champagne-300);
+  --color-cta-deep: var(--color-champagne-300);
+  --rj-stage-ink: var(--color-champagne-300);
+
   transition:
     background-color 600ms var(--ease-silk),
     color 600ms var(--ease-silk);
@@ -1012,6 +1029,267 @@
   border-radius: 999px;
   background: var(--color-champagne-300);
   animation: rj-dust var(--rj-dust-dur, 18s) ease-in-out var(--rj-dust-delay, 0s) infinite;
+}
+
+/**
+ * ── THE PRIMARY CTA (§6.10) ───────────────────────────────────────────────
+ *
+ * Gold foil rising from the bottom edge — leaf being laid, not a colour swap.
+ *
+ * ⚠️ THE LABEL HAS TO DARKEN WITH IT. White on the filled CTA measures 4.79:1;
+ * white on the foil that rises behind it measures about 1.6:1, so a hover that
+ * only changed the background would make the button unreadable at exactly the
+ * moment someone is about to press it. The text goes to champagne-900, which
+ * is 5.88:1 against the foil's darkest stop.
+ *
+ * `translateY` on a pseudo-element behind the label — transform only, and the
+ * button's own background never changes.
+ */
+.rj-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: color 420ms var(--ease-rise);
+}
+.rj-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--foil-gold-seal);
+  transform: translateY(101%);
+  transition: transform 420ms var(--ease-rise);
+}
+.rj-cta:hover::before,
+.rj-cta:focus-visible::before {
+  transform: translateY(0);
+}
+.rj-cta:hover,
+.rj-cta:focus-visible {
+  color: var(--color-champagne-900);
+}
+
+/**
+ * ── THE BACKDROP-FILTER CAP (§9) ──────────────────────────────────────────
+ *
+ * §9 limits blur to three surfaces — the header, the search console and the
+ * Jamindar panel — because `backdrop-filter` is expensive on low-end Android
+ * and the site had it in twenty-one places.
+ *
+ * ⚠️ THE TINT STAYS; ONLY THE BLUR GOES. This is safe precisely because
+ * globals.css already raised `--glass-tint` to 0.90 for a contrast reason: at
+ * that opacity the panel's backdrop can only sit between rgb(228) and rgb(253)
+ * whatever the photograph does, so legibility never depended on the blur. What
+ * is lost is the frosted LOOK on those surfaces, which is what §9 is trading
+ * away deliberately.
+ *
+ * ⚠️ Done here rather than by editing twenty components, and with no
+ * `!important`. Tailwind's utilities live in `@layer utilities` and this file
+ * is unlayered — unlayered CSS beats every layer regardless of order, which is
+ * the same mechanism the palette switch relies on. Two plain rules therefore
+ * override both `.glass` and every `backdrop-blur-*` utility.
+ *
+ * cadastral.css defends eight of these as justified because they sit over
+ * imagery, and that argument is still true — it is simply outranked here by a
+ * performance budget. If the cap is ever lifted, lift it for those eight and
+ * not for the ones sitting on the page's own canvas.
+ */
+.glass,
+.glass-dark,
+[class*="backdrop-blur"] {
+  backdrop-filter: none;
+}
+
+/**
+ * ⚠️ REMOVING THE BLUR BROKE `glass-dark`, and this is the correction.
+ *
+ * The light tint was raised to 0.90 in globals.css for a contrast reason, so
+ * `.glass` survived the cap untouched. `--glass-tint-dark` was never given the
+ * same treatment — it is 0.42, and it was leaning on `blur(26px) saturate(130%)`
+ * to darken what showed through. With the blur gone, white text on the
+ * homepage's closing CTA measured **2.64:1** over the photograph behind it.
+ *
+ * 0.72 is the floor, not a taste value: white needs the composite at or below
+ * about rgb(118) to clear 4.5, and 0.42 over a white backdrop lands at rgb(159).
+ * At 0.72 the worst case is rgb(90) — 7.0:1 — and the panel is still visibly
+ * translucent. Caught by the sweep, not by eye.
+ */
+.glass-dark {
+  background: rgba(26, 26, 28, 0.72);
+}
+#jamindar-panel.glass-dark,
+.rj-console.glass-dark {
+  background: var(--glass-tint-dark);
+}
+
+/* The three that keep it. `header .glass` covers the mega panels, which are
+   part of the header rather than a fourth surface. */
+header.glass,
+header .glass,
+.rj-console,
+#jamindar-panel {
+  backdrop-filter: blur(22px) saturate(140%);
+}
+
+/* §9's fallback: where blur is unavailable, the panel goes opaque rather than
+   staying see-through. A transparent panel with no blur is unreadable over a
+   photograph — which is the one case these surfaces exist for. */
+@supports not (backdrop-filter: blur(1px)) {
+  header.glass,
+  header .glass,
+  .rj-console {
+    background: var(--color-ivory-50);
+  }
+  #jamindar-panel,
+  .rj-glass-onyx {
+    background: var(--color-onyx-800);
+  }
+}
+
+/**
+ * ── DEED-GRADE PRINT (§9) ─────────────────────────────────────────────────
+ *
+ * A property page should come off a printer looking like a registered
+ * document: ivory paper, ink text, hairline rules, no gold and no photographs
+ * bleeding. There was no print stylesheet at all before this.
+ *
+ * ⚠️ THIS IS WHERE §6.5's HATCHES PAY FOR THEMSELVES. Every plot tint is
+ * dropped here — a colour-coded drawing is worthless on a mono printer, and
+ * `print-color-adjust: exact` would spend a buyer's toner on decoration. What
+ * survives is the geometry, the hairlines and the textures, which is exactly
+ * how a plot is distinguished on a real sanctioned plan.
+ *
+ * ⚠️ It also enforces §8 harder than the screen does. Approval numbers, survey
+ * numbers, extents and the plot schedule are the reason anyone prints this
+ * page; every seal, foil, gem band and tier ribbon is decoration and goes.
+ */
+@media print {
+  /* Paper, not ivory. A tinted ground costs toner on every sheet and is the
+     first thing that makes a printout look like a brochure rather than a
+     record. */
+  :root,
+  [data-theme="vault"],
+  .rj-footer,
+  [data-tier] {
+    --color-canvas: #fff;
+    --color-canvas-alt: #fff;
+    --color-canvas-sunken: #fff;
+    --color-ink: #000;
+    --color-ink-soft: #1a1a1a;
+    --color-ink-muted: #333;
+    --color-ink-faint: #444;
+    --color-line: #999;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Chrome, navigation and every persuasion surface. None of it is evidence. */
+  header nav,
+  footer nav,
+  .rj-console,
+  .rj-medallion,
+  .rj-medallion-label,
+  #jamindar-panel,
+  .rj-dust,
+  .cd-grain,
+  .blueprint,
+  .rj-fret,
+  .rj-gem-band,
+  .rj-tier-rule,
+  .rj-ribbon,
+  .cd-dim,
+  .cd-dim__label {
+    display: none !important;
+  }
+
+  /* Photographs do not bleed; the hero picture is not part of the record. */
+  section img,
+  .cd-photo img,
+  [class*="hero"] img {
+    display: none !important;
+  }
+
+  /* Glass is a screen effect. On paper it is a grey box. */
+  .glass,
+  .glass-dark,
+  .rj-glass,
+  .rj-glass-onyx,
+  .gilt,
+  .gilt-light {
+    background: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: 0 !important;
+  }
+
+  /* No gold, anywhere. Foil becomes ink; the seal becomes a plain word. */
+  .rj-foil,
+  .rj-foil-seal,
+  .rj-foil-silver,
+  .rj-foil-plat,
+  .rule-gold {
+    background: none !important;
+  }
+  .rj-foil-text {
+    background: none !important;
+    -webkit-text-fill-color: #000 !important;
+    color: #000 !important;
+  }
+
+  /* THE DRAWING. Geometry and texture survive; colour does not. */
+  .rj-plot {
+    fill: #fff !important;
+    stroke: #000 !important;
+    stroke-width: 0.6 !important;
+  }
+  .cd-plan__num {
+    fill: #000 !important;
+  }
+  .rj-plan-paper,
+  .rj-plan-road,
+  .rj-plan-road-existing,
+  .rj-plan-osr {
+    fill: #fff !important;
+    stroke: #000 !important;
+  }
+  .rj-plan-note,
+  .rj-plan-osr-note {
+    fill: #000 !important;
+  }
+
+  /* Links stop pretending to be buttons, and print where they point — a
+     printed page cannot be clicked. Internal hrefs only: expanding every
+     mailto and tel would bury the record in noise. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #444;
+  }
+
+  /* Never split a plot's row, a figure from its label, or a heading from what
+     it introduces. */
+  tr,
+  li,
+  dl > div,
+  figure {
+    break-inside: avoid;
+  }
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Nothing animates on paper. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /**
