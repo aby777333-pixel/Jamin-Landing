@@ -49,6 +49,12 @@ export default async function AboutPage() {
         art={19}
         tone="cinematic"
         size="tall"
+        sheer
+        /* ⚠️ Swept on this frame, not copied. hero-19's floor. The register's note that its left side is "planting and
+           boundary wall in shadow" describes the OLD veil layout — under a
+           `tall` hero the plate lands on a much brighter band, measured at
+           0.346 unblurred. It is the brightest frame the site carries. */
+        sheerAlpha={0.42}
         eyebrow="Who we are"
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."

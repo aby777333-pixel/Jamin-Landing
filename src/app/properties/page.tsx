@@ -24,6 +24,10 @@ export default async function PropertiesPage() {
         art={17}
         tone="cinematic"
         size="tall"
+        sheer
+        /* ⚠️ Swept on this frame, not copied. hero-17's floor. A photograph with real sky, so it needs more body than
+           the Journal's banyan and less than /about's gate. */
+        sheerAlpha={0.36}
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
         lead={
