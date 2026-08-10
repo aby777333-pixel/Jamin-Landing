@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
 
@@ -463,12 +464,21 @@ export function MasterPlan({
           anchored card on a 700px-tall plan can never be. It is also the shape
           the Jamin Bazaar app already uses for the same record, so the two
           products show a plot the same way. */}
-      {selected && (
+      {/* ⚠️ PORTALLED, for the reason recorded in Gallery.tsx: `body > main`
+          carries `z-index: 2` and is therefore a stacking context, so this
+          sheet's z-50 was only 50 INSIDE main and the sticky header — a sibling
+          of main at z-40 — painted straight over its top edge. The reported
+          symptom was the "Plot 12" heading disappearing behind the navbar.
+          ⚠️ It also no longer runs to `inset-y-0` on desktop: even clear of the
+          stacking bug, a full-height drawer starts underneath a sticky header.
+          It now begins below the header and the offset is shared, so the two
+          can never drift apart. */}
+      {selected && createPortal(
         <>
           {/* Scrim on a phone only. On a wider screen the drawer sits beside
               the plan and you want to keep seeing the plot you picked. */}
           <div
-            className="fixed inset-0 z-40 bg-ink/40 sm:hidden"
+            className="fixed inset-0 z-[55] bg-ink/40 sm:hidden"
             aria-hidden="true"
             onClick={() => setSelected(null)}
           />
@@ -476,7 +486,7 @@ export function MasterPlan({
             ref={sheetRef}
             role="dialog"
             aria-label={`Plot ${selected.plot} details`}
-            className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto rounded-t-[1.5rem] border-t border-line bg-canvas shadow-raise sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-[1.5rem] sm:border-l sm:border-t-0"
+            className="fixed inset-x-0 bottom-0 z-[60] max-h-[85vh] overflow-y-auto rounded-t-[1.5rem] border-t border-line bg-canvas shadow-raise sm:bottom-0 sm:left-auto sm:right-0 sm:top-[var(--header-h)] sm:max-h-none sm:w-[26rem] sm:rounded-none sm:rounded-l-[1.5rem] sm:border-l sm:border-t-0"
             style={{ animation: "reveal 0.35s var(--ease-silk) both" }}
           >
             <PlotSheet
@@ -487,7 +497,8 @@ export function MasterPlan({
               onClose={() => setSelected(null)}
             />
           </div>
-        </>
+        </>,
+        document.body,
       )}
 
       {!selected && (

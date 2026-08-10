@@ -128,18 +128,39 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
     if (open) inputRef.current?.focus();
   }, [open]);
 
+  /**
+   * Stop whatever is talking, whichever engine is talking.
+   *
+   * ⚠️ THERE ARE TWO OF THEM, and that is the bug this exists to fix. A
+   * local voice speaks through `speechSynthesis`; every language the device has
+   * no voice for falls back to Sarvam and plays through an <audio> element. The
+   * Voice button only ever called `speechSynthesis.cancel()`, so on exactly the
+   * languages the fallback serves — Tamil, Telugu, Kannada, Malayalam — pressing
+   * it did nothing audible and the answer kept reading to the end. This is now
+   * the ONLY way playback is stopped, so the two can never diverge again.
+   */
+  const stopSpeech = useCallback(() => {
+    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    const a = audioRef.current;
+    if (a) {
+      a.pause();
+      // Rewind, or the next reply resumes this one from where it was cut.
+      try { a.currentTime = 0; } catch {}
+    }
+  }, []);
+
   // Escape closes, and stops anything still being read aloud.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setOpen(false);
-        if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+        stopSpeech();
       }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+  }, [open, stopSpeech]);
 
   // Leaving the page mid-sentence must not keep talking.
   useEffect(() => {
@@ -149,6 +170,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
       recRef.current?.stop();
     };
   }, []);
+
 
   /**
    * ⚠️ Setting `utterance.lang` is a REQUEST, not an instruction.
@@ -359,7 +381,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
                     onClick={() => {
                       const nextOn = !speak;
                       setSpeak(nextOn);
-                      if (!nextOn) window.speechSynthesis?.cancel();
+                      if (!nextOn) stopSpeech();
                     }}
                     aria-pressed={speak}
                     title={speak ? "Stop reading answers aloud" : "Read answers aloud"}

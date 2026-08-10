@@ -187,7 +187,15 @@ function ArticleCard({ post }: { post: JournalPost }) {
             alt={post.cover_alt ?? post.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+            /* ⚠️ `object-contain`, not cover. The note on the lead story above
+               explains why a cover here is usually a designed infographic;
+               what it got wrong is assuming the small cards could still crop
+               one. They cannot — cropping a graphic whose whole content is
+               type cuts the headline off the top and the strip off the bottom,
+               which is what was reported. The box keeps its fixed ratio so the
+               grid stays even, and `bg-canvas-sunken` letterboxes what is left
+               over. */
+            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.03]"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">

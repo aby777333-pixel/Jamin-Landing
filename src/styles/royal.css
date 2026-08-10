@@ -22,6 +22,18 @@
 
 :root {
   /**
+   * ⚠️ THE STICKY HEADER'S HEIGHT, AS A TOKEN.
+   *
+   * Anything `fixed` that runs to the top of the viewport starts underneath the
+   * header, and the plot sheet did exactly that — its "Plot 12" heading was
+   * reported sitting behind the navbar. Hard-coding an offset in each overlay
+   * is how the two drift apart the next time the logo changes size, so the
+   * measurement lives here: py-4 top and bottom (32px) plus the logo, h-10 on
+   * a phone and h-12 from `lg`.
+   */
+  --header-h: 72px;
+
+  /**
    * METALS ARE GRADIENTS, NEVER FLAT FILLS.
    *
    * A flat #C9A227 rectangle reads as mustard — the eye decodes metal from the
@@ -914,6 +926,12 @@
   --color-ink-faint: var(--color-plat-500);
   --color-line: rgba(232, 225, 210, 0.14);
   background: var(--color-onyx-900);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 80px;
+  }
 }
 
 /**
