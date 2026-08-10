@@ -189,8 +189,25 @@ export function Hero({
                 and the hard break this line used to carry went with it, because
                 at 36rem "with nothing left to check." no longer fits on one line
                 and forcing the break there left "check." alone on a third. */}
+            {/* ⚠️ Chosen by the owner 2026-08-10 from three drafts, replacing
+                "Land you can build on, with nothing left to check."
+
+                Two things moved with it and are worth knowing before anyone
+                edits it back or sideways:
+
+                1. The h1 no longer names what is sold. The eyebrow directly
+                   above it ("DTCP-approved plots · Tamil Nadu"), the <title>
+                   and the lead below all still carry it, so the page is not
+                   silent on the subject — but this heading is now atmosphere
+                   rather than argument, which is a change of job.
+                2. It shares a register, and two words, with "Somewhere your
+                   children will say they are from" further down the page —
+                   whose lead runs "an address the whole family knew by heart".
+                   That section is the page's designated warm passage. Having
+                   two is not fatal, but if one of them is ever rewritten they
+                   should be pulled apart rather than closer. */}
             <h1 className="mt-phi3 text-balance text-4xl text-ink">
-              Land you can build on, with nothing left to check.
+              The address your family keeps.
             </h1>
 
             <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
