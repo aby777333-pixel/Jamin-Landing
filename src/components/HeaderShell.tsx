@@ -31,7 +31,13 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
 
   useEffect(() => {
     const onScroll = () => {
-      setSolid(window.scrollY > 24);
+      /* ⚠️ 8, not 24. `position: sticky` was never broken — verified — but at
+         scroll 0 the bar is deliberately transparent, and two separate reports
+         read that as the navbar scrolling away with the page. Twenty-four
+         pixels of transparent header is long enough to look like a bug. It now
+         takes its glass almost immediately, and only the very top of a page
+         still shows the bar over its own canvas. */
+      setSolid(window.scrollY > 8);
       setDeep(window.scrollY > 80);
     };
     onScroll();
@@ -64,6 +70,8 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   const onProperties = section("/properties") || pathname.startsWith("/property");
 
   const search = useQueryString();
+  /** A district-filtered listing belongs to Locations, not to Properties. */
+  const onDistrict = search.includes("district=");
   const location = pathname + search;
   const [lastLocation, setLastLocation] = useState(location);
   if (location !== lastLocation) {
@@ -169,9 +177,9 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             href="/properties"
             className={trigger}
             style={stoneVar("/properties")}
-            aria-current={onProperties ? "page" : undefined}
+            aria-current={onProperties && !onDistrict ? "page" : undefined}
           >
-            <Jewels href="/properties" label="Properties" active={onProperties} />
+            <Jewels href="/properties" label="Properties" active={onProperties && !onDistrict} />
           </Link>
 
           {hasProjects && (
@@ -212,7 +220,11 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
                 <Jewels
                   href="/locations"
                   label="Locations"
-                  active={onProperties && search.includes("district=")}
+                  /* ⚠️ Locations lights ONLY on a district-filtered listing, and
+                      Properties gives way to it there. They were both lighting
+                      on /properties?district=… because each independently
+                      matched. Two active tabs is not a state. */
+                  active={onDistrict}
                 >
                   <Chevron open={panel === "locations"} />
                 </Jewels>
@@ -311,7 +323,16 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <ul className="grid flex-1 gap-2 sm:grid-cols-2">
             {facets.phases.map((f) => (
               <li key={f.key}>
-                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1">
+                {/* ⚠️ The child page gets an active state too. The parent tab
+                    lit correctly but nothing inside the panel said WHICH stage
+                    or district you were looking at. */}
+                <Link
+                  href={f.href}
+                  aria-current={location === f.href ? "page" : undefined}
+                  className={`group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1 ${
+                    location === f.href ? "bg-canvas-alt" : ""
+                  }`}
+                >
                   <span className="flex items-baseline justify-between gap-3">
                     <span className="text-base font-medium text-ink group-hover:text-jamin-red-deep">
                       {f.label}
@@ -359,7 +380,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
            bone / plat-500 / champagne-300, all measured on onyx-900. */}
       {open && (
         <nav
-          className="min-h-[calc(100dvh-72px)] overflow-y-auto bg-onyx-900 px-5 pb-8 pt-2 xl:hidden"
+          /* ⚠️ max-h, not min-h. With `min-h` the drawer was always at least a full
+             viewport tall, so `overflow-y-auto` never engaged — and because
+             opening it sets `body { overflow: hidden }`, everything past the
+             fold became unreachable on a short screen. Reported as options
+             being cut off; it was a one-word regression. */
+          className="max-h-[calc(100dvh-var(--header-h))] overflow-y-auto overscroll-contain bg-onyx-900 px-5 pb-8 pt-2 xl:hidden"
           style={{ borderTop: "1px solid var(--line-onyx)" }}
           aria-label="Primary mobile"
         >

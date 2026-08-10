@@ -522,6 +522,24 @@
 }
 
 /**
+ * ⚠️ A hairline alone was not enough separation. On the Journal article the
+ * header's ivory glass and the page's ivory canvas are within a couple of
+ * points of each other, so the bar read as part of the page rather than as a
+ * layer floating over it — reported as the navbar "blending into the content".
+ *
+ * A soft drop shadow under the bar is what a floating layer casts; the
+ * hairline stays because it is the thing that reads as engraving rather than
+ * as chrome. Only once scrolled: at rest the header is over its own canvas and
+ * a shadow there would be pure decoration.
+ */
+.rj-hairline {
+  box-shadow: 0 1px 0 rgba(23, 24, 28, 0.04), 0 10px 28px -18px rgba(23, 24, 28, 0.35);
+}
+[data-theme="vault"] .rj-hairline {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 12px 30px -18px rgba(0, 0, 0, 0.75);
+}
+
+/**
  * ── GEM BAND + HAIRLINE ───────────────────────────────────────────────────
  *
  * The district's stone, stated as material before the address states it in

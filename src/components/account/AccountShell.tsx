@@ -95,6 +95,13 @@ export function AccountShell({ title, children }: { title: string; children: Rea
               <Link
                 key={n.href}
                 href={n.href}
+                /* ⚠️ `scroll={false}`. The handler below keeps the horizontal
+                   strip in place, but Next still scrolled the DOCUMENT to the
+                   top on every pick — so choosing a section from halfway down
+                   the page threw the reader back to the header. The strip and
+                   the page are two different scrollers and both had to be
+                   pinned. */
+                scroll={false}
                 aria-current={on ? "page" : undefined}
                 /* ⚠️ Next scrolls the focused element into view on navigation,
                    which yanked this horizontal strip back to the start every

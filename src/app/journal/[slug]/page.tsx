@@ -282,10 +282,15 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
           <h2 className="text-2xl text-ink">More like this</h2>
           <ul className="mt-phi4 grid gap-phi3 sm:grid-cols-3">
             {more.map((m) => (
-              <li key={m.id}>
+              /* ⚠️ `flex` on the item and `h-full` on the card. A grid item
+                  stretches to the tallest in its row but a `block` child does
+                  not follow it, so a two-line title made one card taller and
+                  the row stopped aligning — the same defect PropertyCard was
+                  fixed for, in a second grid that never got the treatment. */
+              <li key={m.id} className="flex">
                 <Link
                   href={journalHref(m)}
-                  className="block rounded-card border border-line bg-canvas p-phi3 transition-colors hover:border-ink-faint"
+                  className="flex h-full w-full flex-col rounded-card border border-line bg-canvas p-phi3 transition-colors hover:border-ink-faint"
                 >
                   <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
                     {KIND_LABEL[m.kind] ?? m.kind}

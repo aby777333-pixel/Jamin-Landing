@@ -196,7 +196,13 @@ function ArticleCard({ post }: { post: JournalPost }) {
       className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken">
+      {/* ⚠️ Two reports pull opposite ways here: one asked for a consistent
+              container, the other for images that are not cropped. `contain`
+              inside a FIXED box satisfies both — every card is the same height,
+              and no cover loses its headline. What was left was that the
+              letterboxing read as an accident, so the box now has padding and
+              a deliberate ground: an inset picture rather than a short one. */}
+          <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken p-2">
         {post.cover_url ? (
           <Image
             src={post.cover_url}
