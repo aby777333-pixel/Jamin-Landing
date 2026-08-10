@@ -686,6 +686,42 @@
   initial-value: 135deg;
 }
 
+/**
+ * ── THE CONSOLE'S STRADDLE ────────────────────────────────────────────────
+ *
+ * Above 1400px the console is pulled up so that EXACTLY HALF of it sits over
+ * the banner. Owner's instruction, 2026-08-10; it was overlapping by 34px of
+ * its 185, which read as a card that had slipped rather than one placed.
+ *
+ * ⚠️ `--rj-console-h` is a MEASUREMENT, not a wish. 185px is the console's
+ * laid-out height at every width the straddle applies to: above 1400 the
+ * container is capped at 1280, the fields are in a row from `sm` up and the
+ * note under them is one line, so nothing about it changes with the viewport.
+ * Re-measure with `document.querySelector('.rj-console').offsetHeight` if a
+ * control is ever added — and read it from `offsetHeight`, never from
+ * `getBoundingClientRect()`, because `.rj-arrive` leaves a translateY on the
+ * element that a rect includes and layout does not.
+ *
+ * ⚠️ `--rj-console-clear` is why the lift is safe, and the two must move
+ * together — that is the whole reason they are derived from one number rather
+ * than typed twice. The hero copy plate and the console share the left column,
+ * and the plate is only guaranteed to end `pb` above the banner's foot. At the
+ * old 55px a half-lift put the console 37px INTO the plate at 1400×700,
+ * covering both call-to-action buttons; the banner is only taller than that
+ * when `min-h` happens to exceed the copy, which is a coincidence of viewport
+ * height, not a guarantee. So the floor is raised to the lift plus 24px of air.
+ *
+ * The cost is real and is the one this file keeps flagging: the banner is
+ * 3.3:1 and `object-cover` sizes it to the box HEIGHT, so the extra padding is
+ * paid for in picture width on short screens. It buys back most of it by
+ * covering the frame's foot with the console instead of leaving it bare.
+ */
+:root {
+  --rj-console-h: 185px;
+  --rj-console-lift: calc(var(--rj-console-h) / -2);
+  --rj-console-clear: calc(var(--rj-console-h) / 2 + 1.5rem);
+}
+
 .rj-console {
   position: relative;
   border-radius: var(--radius-xl);

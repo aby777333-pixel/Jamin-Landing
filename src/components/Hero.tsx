@@ -157,7 +157,11 @@ export function Hero({
             49px low (109 above, 60 below). Reversing it puts the extra room
             BELOW, which lands the card a touch above the geometric centre —
             where the optical centre of a block of type actually is. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)]">
+        {/* ⚠️ The `min-[1400px]` bottom padding is the console's landing room,
+            not a spacing preference — see "THE CONSOLE'S STRADDLE" in
+            royal.css. Below that width the console does not overlap, so the
+            padding stays at phi5. */}
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)] min-[1400px]:pb-[var(--rj-console-clear)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
@@ -250,7 +254,12 @@ export function Hero({
           page's own canvas). Like the rail it sits OUTSIDE the banner block, so
           its height is not taken off the sides of a 3.3:1 frame. */}
       <div className="relative mx-auto max-w-[1280px] px-5 lg:px-10">
-        <div className="mt-phi3 min-[1400px]:-mt-phi4">
+        {/* Exactly half over the banner above 1400px — the lift is half the
+            console's own height, and the banner's bottom padding is derived
+            from the same number so the copy plate is never covered. Both live
+            in royal.css under "THE CONSOLE'S STRADDLE"; changing one here
+            without the other is the bug that block exists to prevent. */}
+        <div className="mt-phi3 min-[1400px]:mt-[var(--rj-console-lift)]">
           <HeroConsole districts={districts} />
         </div>
       </div>
