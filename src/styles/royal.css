@@ -529,6 +529,88 @@
 }
 
 /**
+ * ── THE SEARCH CONSOLE (§6.2) ─────────────────────────────────────────────
+ *
+ * A glass panel with a real gradient border: a 1px padding box carrying the
+ * gradient, with everything but that ring masked away. A box-shadow cannot do
+ * this — a shadow has one colour and this has four.
+ *
+ * ⚠️ The angle is registered with `@property` because a plain custom property
+ * is a string as far as the animation engine is concerned, so `135deg → 495deg`
+ * would step rather than sweep. Registering it as `<angle>` is what makes it
+ * interpolate at all. One full turn every 12s, which at that speed is meant to
+ * be noticed only if you look for it.
+ */
+@property --rj-rim-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 135deg;
+}
+
+.rj-console {
+  position: relative;
+  border-radius: var(--radius-xl);
+}
+.rj-console::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    var(--rj-rim-angle),
+    rgba(201, 162, 39, 0.55),
+    rgba(201, 162, 39, 0.06) 40%,
+    rgba(195, 201, 205, 0.35) 70%,
+    rgba(201, 162, 39, 0.42)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: rj-rim 12s linear infinite;
+}
+@keyframes rj-rim {
+  to {
+    --rj-rim-angle: 495deg;
+  }
+}
+
+/**
+ * THE LOAD SEQUENCE (§6.2) — one orchestrated arrival, not four scattered
+ * effects. Rule extends, statement rises, console fades up; ~1100ms end to end.
+ *
+ * ⚠️ NOT GATED PER SESSION, which the brief asks for. Doing that needs
+ * sessionStorage, and this hero is a SERVER component with no JavaScript behind
+ * it at all — the file's own header records that as where its LCP win comes
+ * from. Spending the hero's zero-JS property on suppressing a 1.1s animation
+ * for return visitors is the wrong trade. If it is wanted, the cheap version is
+ * a tiny inline script stamping a class on <html>, not a client component.
+ *
+ * ⚠️ `both` fill mode, per cadastral's rule: an animation that never starts
+ * must still END on its last frame. The reduced-motion block collapses the
+ * duration rather than removing the animation, so these land finished.
+ */
+@keyframes rj-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rj-arrive {
+  animation: rj-arrive 620ms var(--ease-rise) var(--rj-arrive-delay, 0ms) both;
+}
+
+/**
  * ── THE TIERS (§6.4) ──────────────────────────────────────────────────────
  *
  * Escalation by RESTRAINT, not by volume: each rung adds one material, and the
@@ -661,5 +743,17 @@
   .rj-lift,
   [data-theme="vault"] {
     transition: none;
+  }
+  /* The rim stops turning; it keeps the angle it was registered with, so the
+     border is still a gradient, just a still one. */
+  .rj-console::before {
+    animation: none;
+  }
+  /* ⚠️ Collapsed, NOT removed. `rj-arrive` starts at opacity 0, so
+     `animation: none` here would leave the whole hero permanently invisible —
+     which is the exact failure cadastral.css records for its plan drawing. */
+  .rj-arrive {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms;
   }
 }
