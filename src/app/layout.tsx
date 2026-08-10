@@ -6,6 +6,7 @@ import "./globals.css";
 import "@/styles/cadastral.css";
 /* After cadastral: the material layer, on the same terms. */
 import "@/styles/royal.css";
+import { ScrollNav } from "@/components/ScrollNav";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Jamindar } from "@/components/Jamindar";
@@ -124,6 +125,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Public since 2026-08-08 — safe only because the anonymous rate
             limiter is live and verified. See components/JamindarDock.tsx. */}
         <Jamindar />
+        {/* Stacks ABOVE the concierge medallion in the same corner — see the
+            component for why they share a column rather than sit side by side. */}
+        <ScrollNav />
       </body>
     </html>
   );

@@ -153,6 +153,40 @@ export function isSellable(p: Property) {
   return p.status === "available" || p.status === "reserved";
 }
 
+/**
+ * Art the owner supplied to the WEBSITE that is not in the app's media library.
+ *
+ * ⚠️ This is a stopgap with an exit, not a second source of truth. The app's
+ * Supabase bucket stays canonical: `property-media` only accepts writes from a
+ * super admin, so a picture handed over here cannot be pushed back up from the
+ * website's side. Each entry replaces `images[0]` — the face of the project on
+ * cards, on the detail hero, on the homepage rail and in Compare — and leaves
+ * the rest of the gallery alone.
+ *
+ * ⚠️ DELETE THE ENTRY once the same picture is uploaded through admin.html.
+ * Two covers for one project, one in the app and a different one on the web,
+ * is exactly the drift this map exists to make visible rather than permanent.
+ *
+ * Varapatty (2026-08-10): `images[0]` was the printed brochure poster — a
+ * portrait sheet with the logo, a CGI skyline and the price panel. It was
+ * being served into landscape card and hero frames, so it arrived cropped to
+ * its middle and read as a leaflet rather than a place. Replaced on the
+ * owner's instruction with the avenue photograph.
+ */
+const LOCAL_COVER: Record<string, string> = {
+  "jamin-garden-varapatty": "/property/jamin-garden-varapatty-cover.webp",
+};
+
+function withLocalArt<T extends { slug?: string | null; images?: string[] | null }>(row: T): T {
+  const local = row.slug ? LOCAL_COVER[row.slug] : undefined;
+  if (!local) return row;
+  /* Replace the first frame rather than prepending: prepending would keep the
+     old cover one slot behind, so the gallery would open on the poster the
+     picture was chosen to retire. */
+  const rest = (row.images ?? []).slice(1);
+  return { ...row, images: [local, ...rest] };
+}
+
 export async function getProperties(): Promise<Property[]> {
   const { data, error } = await supabase
     .from("properties")
@@ -160,7 +194,7 @@ export async function getProperties(): Promise<Property[]> {
     .order("is_featured", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw new Error(`properties query failed: ${error.message}`);
-  return (data ?? []) as unknown as Property[];
+  return ((data ?? []) as unknown as Property[]).map(withLocalArt);
 }
 
 export async function getProperty(slugOrId: string): Promise<PropertyDetail | null> {
@@ -170,7 +204,7 @@ export async function getProperty(slugOrId: string): Promise<PropertyDetail | nu
     .select(DETAIL_COLUMNS)
     .eq("slug", slugOrId)
     .maybeSingle();
-  if (bySlug.data) return bySlug.data as unknown as PropertyDetail;
+  if (bySlug.data) return withLocalArt(bySlug.data as unknown as PropertyDetail);
 
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
   if (!isUuid) return null;
@@ -180,7 +214,7 @@ export async function getProperty(slugOrId: string): Promise<PropertyDetail | nu
     .select(DETAIL_COLUMNS)
     .eq("id", slugOrId)
     .maybeSingle();
-  return (byId.data as unknown as PropertyDetail) ?? null;
+  return byId.data ? withLocalArt(byId.data as unknown as PropertyDetail) : null;
 }
 
 /* ---------- plots ---------- */

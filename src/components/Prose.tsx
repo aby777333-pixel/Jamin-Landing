@@ -183,20 +183,49 @@ function isDivider(line: string): boolean {
  * keep producing it on the next paste — repairing the data alone would fix
  * today's articles and none of tomorrow's.
  *
- * ⚠️ ONLY THE BOLD WELDS ARE FIXED HERE. The third shape — an ALL-CAPS title
- * run straight into a sentence, "THE WHATSAPP RULEA concession…" — is NOT
- * repaired by rule, and that is deliberate. The only thing separating it from
- * ordinary prose is that the capital beginning the new sentence happens to be a
- * word; a regex broad enough to catch "RULEA concession" also splits
- * "DTCP APPROVED and…" into "APPROVE / D and". Those cases are repaired in the
- * stored bodies instead, where each one can be read before it is changed.
+ * ⚠️ THE ALL-CAPS SHAPE IS NOT FIXED HERE. "THE WHATSAPP RULEA concession…"
+ * is left alone deliberately: the only thing separating it from ordinary prose
+ * is that the capital beginning the new sentence happens to be a word, and a
+ * regex broad enough to catch "RULEA concession" also splits "DTCP APPROVED
+ * and…" into "APPROVE / D and". Those are repaired in the stored bodies
+ * instead, where each one can be read before it is changed.
+ *
+ * ⚠️ EVERY RULE HERE INSERTS A BLANK LINE, so none of them may run over a
+ * table row or a fenced code block — a newline inside `| a | b |` stops it
+ * being a row and the table falls apart into text. That is why this walks
+ * lines rather than the whole document.
  */
+const WELD_RULES: [RegExp, string][] = [
+  // "…enforce.**Get negotiated…" → the bold starts its own line
+  [/([a-z.!?…"'])\*\*([A-Z])/g, "$1\n\n**$2"],
+  // "**Title****Body**" → two runs that were never meant to touch
+  [/\*\*\*\*/g, "**\n\n**"],
+  /* ⚠️ Two UNBOLDED shapes the converter also produces: a finished sentence run
+     straight into the next one ("…in writing.Get it in writing") and a lead-in
+     run straight into its answer ("ask:What the layout is"). The MISSING SPACE
+     is the whole safety argument — ordinary prose always has one, so "…in
+     writing. Get" cannot match, and neither can "10:30" or "https://" since
+     both want a capital immediately after. Measured against all 19 published
+     bodies once the stored text was repaired: zero matches, so these change
+     nothing today and only catch the next paste. */
+  [/([a-z][.!?]["”']?)([A-Z])/g, "$1\n\n$2"],
+  [/(:)([A-Z])/g, "$1\n\n$2"],
+];
+
 function healWeldedCallouts(md: string): string {
+  let fenced = false;
   return md
-    // "…enforce.**Get negotiated…" → the bold starts its own line
-    .replace(/([a-z.!?…"'])\*\*([A-Z])/g, "$1\n\n**$2")
-    // "**Title****Body**" → two runs that were never meant to touch
-    .replace(/\*\*\*\*/g, "**\n\n**");
+    .split("\n")
+    .map((line) => {
+      if (/^\s*```/.test(line)) {
+        fenced = !fenced;
+        return line;
+      }
+      // Code is quoted verbatim, and a table row is structure, not prose.
+      if (fenced || /^\s*\|/.test(line)) return line;
+      return WELD_RULES.reduce((acc, [re, to]) => acc.replace(re, to), line);
+    })
+    .join("\n");
 }
 
 function parse(md: string): Block[] {

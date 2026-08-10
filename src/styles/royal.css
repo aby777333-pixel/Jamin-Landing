@@ -1177,6 +1177,33 @@
 }
 
 /**
+ * The scroll control. Onyx with a champagne hairline, sized to the medallion it
+ * stacks above so the corner reads as one column rather than two ideas.
+ */
+.rj-scroll-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  color: var(--color-champagne-300);
+  background: rgba(18, 17, 16, 0.82);
+  box-shadow: 0 0 0 1px var(--line-champagne), 0 8px 22px -12px rgba(10, 10, 9, 0.8);
+  transition: transform var(--dur-lift) var(--ease-silk), color 200ms var(--ease-silk);
+}
+.rj-scroll-btn:hover,
+.rj-scroll-btn:focus-visible {
+  color: var(--color-champagne-50);
+  transform: translateY(-2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rj-scroll-btn {
+    transition: none;
+  }
+}
+
+/**
  * ── GOLD DUST (§6.6) ──────────────────────────────────────────────────────
  *
  * Palace sunlight, not disco. Two pixels, drifting, peaking at 0.85 — and the
