@@ -79,6 +79,7 @@ export function PageHero({
   tone = "paper",
   sheer = false,
   sheerAlpha,
+  sheerBlur,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -109,6 +110,9 @@ export function PageHero({
   /** Per-frame tint for the sheer plate. Sweep the picture before setting it —
    *  the ceiling belongs to the photograph, not to the component. */
   sheerAlpha?: number;
+  /** Blur radius in px. LOW keeps the photograph readable and costs tint;
+   *  HIGH flattens it to a colour wash and costs almost none. Sweep both. */
+  sheerBlur?: number;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -159,7 +163,14 @@ export function PageHero({
               not at all. */}
           <div
             className={`gilt ${sheer ? "rj-gilt-sheer" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
-            style={sheerAlpha != null ? ({ "--rj-sheer-alpha": sheerAlpha } as React.CSSProperties) : undefined}
+            style={
+              sheer
+                ? ({
+                    ...(sheerAlpha != null ? { "--rj-sheer-alpha": sheerAlpha } : {}),
+                    ...(sheerBlur != null ? { "--rj-sheer-blur": `${sheerBlur}px` } : {}),
+                  } as React.CSSProperties)
+                : undefined
+            }
           >
             {eyebrow && (
               <div className="flex items-center gap-3">

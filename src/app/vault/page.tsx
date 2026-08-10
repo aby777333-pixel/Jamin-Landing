@@ -81,7 +81,14 @@ export default async function VaultPage() {
         <GoldDust />
 
         <Container className="relative py-phi7">
-          <div className="gilt rj-gilt-sheer max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
+          <div
+            className="gilt rj-gilt-sheer max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
+            /* Swept on hero-24: at blur 16 this frame needs 0.50 (white 4.90,
+               gold 4.53). A heavier blur would buy a lighter tint, but it turns
+               the village into a colour wash - and seeing the picture is the
+               whole point of a sheer plate. */
+            style={{ "--rj-sheer-alpha": 0.5, "--rj-sheer-blur": "16px" } as React.CSSProperties}
+          >
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-50)" }}>
               By appointment
             </p>

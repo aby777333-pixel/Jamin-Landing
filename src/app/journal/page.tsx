@@ -54,10 +54,14 @@ export default async function JournalPage() {
         art={25}
         tone="cinematic"
         sheer
-        /* ⚠️ 0.10, not the 0.32 the Vault needs. This frame is deep shade under
-           the banyan and clears AA at NO tint at all (white 6.09, gold 5.64);
-           0.10 is a hint of body, not a scrim. See `.rj-gilt-sheer`. */
+        /* ⚠️ The lightest plate on the site, and the only frame that allows it.
+           Deep shade under the banyan, so it takes almost no tint AND almost no
+           blur: at 8px / 0.10 it measures white 4.97 and gold 4.60. Every other
+           hero has to choose — a sharp picture costs tint (the Vault needs 0.50
+           at this blur), a light tint costs sharpness. This one needs neither.
+           See `.rj-gilt-sheer`. */
         sheerAlpha={0.1}
+        sheerBlur={8}
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."
