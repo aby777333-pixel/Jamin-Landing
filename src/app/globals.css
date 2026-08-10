@@ -178,6 +178,9 @@
      logo gold's 2.12:1 only in that it looks like it should pass. Every gold
      WORD uses 700 (6.24:1) or 900. This is the third time this system has had
      to write that rule down; globals and cadastral each record their own. */
+  /* The seal foil's own light stop, promoted to a token because it is now
+     also the only gold that reads on a deliberately see-through plate. */
+  --color-champagne-50: #fdf6e0;
   --color-champagne-900: #5a4210;
   --color-champagne-700: #7a5a16;
   --color-champagne-500: #c9a227;

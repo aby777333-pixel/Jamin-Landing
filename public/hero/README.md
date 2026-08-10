@@ -431,13 +431,30 @@ dark stop 2.97. Swept at the plate's real size over this frame:
 
     0.52 → bone 3.67 · pale 3.91 · foil 2.97
     0.60 → bone 4.69 · pale 4.99 · foil 3.80
-    0.66 → bone 5.66 · pale 6.02 · foil 4.58   ← ships, as `.rj-gilt-vault`
+    0.66 → bone 5.66 · pale 6.02 · foil 4.58
     0.78 → bone 8.41 · pale 8.95 · foil 6.81
 
-⚠️ **The text moved before the plate did.** `bone-soft` was the binding
-constraint and never clears — 2.78 at 0.66, still 4.13 at 0.78 — so the lead and
-the rates line went to full `bone`. Rescuing them with alpha alone meant 0.78,
-which is a black box rather than a plate you can see the village through.
+It shipped at 0.66 for a few hours, then the owner asked for a plate you could
+see more of the village through — so it was **re-swept with the copy lightened
+first**, which is the move this file keeps recording:
+
+    0.50 → white 4.48 · champagne-50 4.15
+    0.52 → white 4.78 · champagne-50 4.43
+    0.54 → white 5.04 · champagne-50 4.66   ← the floor
+    0.56 → white 5.37 · champagne-50 4.97   ← ships, as `.rj-gilt-vault`
+
+⚠️ **Every gold word on this plate is `champagne-50` (#fdf6e0), and the body is
+pure white.** `bone` fails at 4.13 and `jamin-gold-pale` at 4.39; the gradient
+foil is gone from "price on request" because its darkest stop (#e3cb74) needs
+0.66 to clear and would have forced the plate back to opaque. Verified on the
+composited page at 0.56: eyebrow 4.97, h1 5.37, lead 5.37, rates 5.37, gold
+phrase 4.97.
+
+⚠️ The absolute brightest pixel under the plate is 0.184 rather than the p95's
+0.146, where the gold measures 4.18. The p95 is this file's established method
+and a single pixel is unlikely to sit under a glyph — but if the frame is ever
+re-cropped, that gap is the first thing to re-measure.
+
 Scoped to this hero; the audited 0.52 stands everywhere else.
 
 ⚠️ It is also the first hero on a page that is already dark (`data-theme="vault"`),

@@ -1034,8 +1034,27 @@
  * can see the village through. Scoped to this hero so the audited 0.52 stands
  * everywhere else.
  */
+/**
+ * ⚠️ 0.56, DOWN FROM 0.66, and the transparency was bought with text rather
+ * than taken for free — the rule this file keeps rediscovering. Re-swept with
+ * the copy lightened, against the real frame through the real plate:
+ *
+ *   α 0.50 → white 4.48 · champagne-50 4.15
+ *   α 0.52 → white 4.78 · champagne-50 4.43
+ *   α 0.54 → white 5.04 · champagne-50 4.66   ← the floor, 0.16 of margin
+ *   α 0.56 → white 5.37 · champagne-50 4.97   ← ships
+ *
+ * 0.54 is where both first clear; 0.56 ships because 0.16 is not margin worth
+ * defending on a page whose backdrop is a photograph, and it is still 15% more
+ * see-through than the 0.66 it replaces.
+ *
+ * ⚠️ THE GOLD HAD TO GET PALER TWICE OVER. `bone` and `jamin-gold-pale` both
+ * fail here — bone 4.13 and pale 4.39 at this alpha — so the body copy is white
+ * and every gold word is champagne-50. That is the same move the register
+ * records for hero-18 and hero-23: when the frame changes, move the text.
+ */
 .rj-gilt-vault {
-  background: rgba(16, 14, 12, 0.66);
+  background: rgba(16, 14, 12, 0.56);
 }
 
 /**

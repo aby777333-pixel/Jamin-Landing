@@ -82,11 +82,11 @@ export default async function VaultPage() {
 
         <Container className="relative py-phi7">
           <div className="gilt rj-gilt-vault max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
-            <p className="rj-eyebrow" style={{ color: "var(--color-jamin-gold-pale)" }}>
+            <p className="rj-eyebrow" style={{ color: "var(--color-champagne-50)" }}>
               By appointment
             </p>
-            <h1 className="mt-phi3 text-balance text-4xl text-bone">The Royal Vault</h1>
-            <p className="rj-voice mt-phi3 text-xl text-bone">
+            <h1 className="mt-phi3 text-balance text-4xl text-white">The Royal Vault</h1>
+            <p className="rj-voice mt-phi3 text-xl text-white">
               Exceptional properties, quietly presented.
             </p>
 
@@ -96,8 +96,10 @@ export default async function VaultPage() {
                 is the same reason the line lives in this band rather than beside
                 the collections on the canvas below. No rupee glyph, per the
                 brief. */}
-            <p className="mt-phi4 text-base text-bone">
-              Rates are <span className="rj-foil-text font-medium">price on request</span>. Nothing
+            <p className="mt-phi4 text-base text-white">
+              Rates are <span className="font-medium" style={{ color: "var(--color-champagne-50)" }}>
+                price on request
+              </span>. Nothing
               in the Vault carries a published figure.
             </p>
 
