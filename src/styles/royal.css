@@ -529,6 +529,81 @@
 }
 
 /**
+ * ── THE TIERS (§6.4) ──────────────────────────────────────────────────────
+ *
+ * Escalation by RESTRAINT, not by volume: each rung adds one material, and the
+ * top rung is the only one that changes the ground.
+ *
+ *   Select     platinum hairline
+ *   Signature  platinum hairline + the wordmark in champagne
+ *   Royal      gold foil rule + the seal (which the card already carries)
+ *   Crown      onyx ground + gold foil + the crest
+ */
+.rj-ribbon {
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/** The rule above the ribbon. Platinum for the lower two, foil for the upper
+ *  two — one declaration each, which is the whole point of the ladder. */
+.rj-tier-rule {
+  height: 1px;
+  background: var(--color-plat-300);
+}
+[data-tier="royal"] .rj-tier-rule,
+[data-tier="crown"] .rj-tier-rule {
+  height: 2px;
+  background: var(--foil-gold);
+}
+
+/**
+ * ⚠️ CROWN REMAPS THE CARD'S TOKENS RATHER THAN RESTYLING ITS CHILDREN.
+ *
+ * An onyx card inverts every colour inside it, and the card contains two
+ * components this layer does not own — AvailabilityChip and DimensionOverlay —
+ * whose colours come from `--color-canvas`, `--color-line-red` and
+ * `--color-jamin-gold-ink`. Restyling by selector would mean reaching into both
+ * and would break the moment either changes.
+ *
+ * Because every Tailwind colour utility compiles to `var(--color-…)`, scoping
+ * the tokens here flips the whole subtree — including components that know
+ * nothing about tiers. Same mechanism as `[data-theme="vault"]`.
+ *
+ * Measured on onyx-800: bone 13.9:1, bone-soft 6.8:1, plat-500 6.2:1,
+ * champagne-300 11.2:1.
+ */
+[data-tier="crown"] {
+  --color-canvas: var(--color-onyx-800);
+  --color-canvas-alt: var(--color-onyx-700);
+  --color-canvas-sunken: var(--color-onyx-700);
+  --color-ink: var(--color-bone);
+  --color-ink-soft: var(--color-bone-soft);
+  --color-ink-muted: var(--color-bone-soft);
+  --color-ink-faint: var(--color-plat-500);
+  --color-line: rgba(232, 225, 210, 0.16);
+  /* AvailabilityChip outlines its available cells in this. */
+  --color-line-red: rgba(232, 225, 210, 0.26);
+  /* DimensionOverlay's 10px labels. The dark gold ink is unreadable here. */
+  --color-jamin-gold-ink: var(--color-champagne-300);
+  /* The stage word, which is otherwise a gemstone tuned for ivory —
+     emerald measures 3.73:1 on onyx and fails. */
+  --rj-stage-ink: var(--color-champagne-300);
+}
+
+/** The crest, Crown only. Small, and the only image the card adds. */
+.rj-crest {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  opacity: 0.92;
+}
+
+/**
  * ── LIFT ──────────────────────────────────────────────────────────────────
  *
  * The shadow is tinted to the card's own stone at very low alpha, so a row of

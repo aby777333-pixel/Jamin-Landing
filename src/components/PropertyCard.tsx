@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AvailabilityChip } from "@/components/cadastral/AvailabilityChip";
 import { DimensionOverlay } from "@/components/cadastral/DimensionOverlay";
 import { districtName, districtStone, stageStone } from "@/lib/stones";
+import { getTier } from "@/lib/tiers";
 import {
   approvalBadges,
   coverImage,
@@ -41,6 +42,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
   const stone = districtStone(p);
   const district = districtName(p);
   const stage = stageStone(p);
+  const tier = getTier(p);
 
   return (
     /* `h-full` + column flex is what keeps a row of cards level. A grid item
@@ -51,6 +53,10 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
        the edge, and clipping is what would hide it. */
     <Link
       href={propertyHref(p)}
+      /* ⚠️ `data-tier` is not decoration — for Crown it re-scopes the card's
+         colour tokens to onyx, and every child follows, including the two
+         cadastral components this file does not own. See royal.css. */
+      data-tier={tier.key}
       className="cd-card cd-fold cd-photo rj-lift group flex h-full w-full flex-col rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500 hover:shadow-raise"
       /* The lift is `.rj-lift` (transform only). The shadow tint is the card's
          own stone at very low alpha, so a row lifts in slightly different
@@ -58,6 +64,14 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
       style={
         {
           "--rj-stone": stone,
+          /* ⚠️ Named `--rj-stone-ink`, NOT `--rj-stage-ink`, and the difference
+             is the whole mechanism. An inline style beats any selector, so
+             setting the final variable here made `[data-tier="crown"]`
+             unable to override it — the Crown card's stage word stayed emerald
+             and measured 3.53:1 on onyx. This is the BASE; the crown rule sets
+             `--rj-stage-ink`, and the label falls back to this when it is
+             unset. */
+          "--rj-stone-ink": stage?.ink,
           transitionTimingFunction: "var(--ease-silk)",
         } as React.CSSProperties
       }
@@ -121,8 +135,13 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
         <div className="flex-1">
           <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em]">
             {/* `ink`, not `stone` — the label is a word, and two of the stones
-                are illegible as words. See STAGE_STONE. */}
-            {stage && <span style={{ color: stage.ink }}>{stage.label}</span>}
+                are illegible as words. See STAGE_STONE. Routed through the card's
+                `--rj-stage-ink` so an onyx Crown card can override it. */}
+            {stage && (
+              <span style={{ color: "var(--rj-stage-ink, var(--rj-stone-ink))" }}>
+                {stage.label}
+              </span>
+            )}
             {district && (
               <>
                 <span className="text-ink-faint">·</span>
@@ -152,8 +171,16 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             availability. Never an invented "4 BHK · 2,850 sq ft": every one of
             these is a plotted development, and a configuration it does not have
             is the one thing a buyer would notice as false. */}
-        <div className="mt-phi3 border-t border-line pt-phi2">
-          <div className="flex items-end justify-between gap-phi2">
+        {/* ⚠️ The tier grades the card's FOOT rather than adding a fourth
+            horizontal line to its head. §6.3 lists the ribbon third, above the
+            gem band; stacked there it would have been rule + band + ribbon in
+            12px of card. The rule that already divided the facts strip becomes
+            the tier's own material instead — platinum for the lower two rungs,
+            gold foil for the upper two — so the escalation costs no new
+            furniture. */}
+        <div className="mt-phi3">
+          <div className="rj-tier-rule" aria-hidden="true" />
+          <div className="flex items-end justify-between gap-phi2 pt-phi2">
             <dl className="flex flex-wrap items-end gap-x-phi3 gap-y-1">
               {area && (
                 <div>
@@ -187,7 +214,30 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             </span>
           </div>
 
-          <div className="mt-phi2 text-tiny text-ink-faint">{formatPrice(p)}</div>
+          {/* The ribbon and the rate, on one line. Crown is the only rung that
+              gets foil TEXT, and only because its ground is onyx — the seal
+              ramp measures 11.7:1 there and would measure 1.57:1 on ivory. */}
+          <div className="mt-phi2 flex items-center justify-between gap-3">
+            <span
+              className={`rj-ribbon ${
+                tier.key === "crown"
+                  ? "rj-foil-text"
+                  : tier.key === "select"
+                    ? "text-plat-800"
+                    : "text-champagne-700"
+              }`}
+            >
+              {tier.key === "crown" && (
+                /* The crest, and the only image the card adds. Not `next/image`:
+                   it is 18px of decoration on every card in a grid, and the
+                   optimiser pipeline costs more than the file. */
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src="/logo-mark.png" alt="" aria-hidden="true" className="rj-crest" />
+              )}
+              {tier.label}
+            </span>
+            <span className="text-tiny text-ink-faint">{formatPrice(p)}</span>
+          </div>
         </div>
       </div>
     </Link>
