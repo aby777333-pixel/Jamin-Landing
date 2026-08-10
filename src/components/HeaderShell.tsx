@@ -152,7 +152,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           />
         </Link>
 
-        <nav className="hidden items-center gap-8 lg:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">
           {/* The wordmark has always linked home and carries an aria-label
               saying so, but a tester on the sign-in page could not find a way
               back — a convention only helps the people who already know it. */}
@@ -274,16 +274,16 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               it without this file knowing which red is active. */}
           <Link
             href="/contact"
-            className="rj-cta rounded-full bg-cta px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-raise"
+            className="rj-cta whitespace-nowrap rounded-full bg-cta px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.1em] text-white shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:shadow-raise"
             onMouseEnter={() => setPanel(null)}
           >
-            Book a Site Visit
+            Book a visit
           </Link>
         </nav>
 
         <button
           onClick={() => setOpen((v) => !v)}
-          className="lg:hidden"
+          className="xl:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
@@ -359,7 +359,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
            bone / plat-500 / champagne-300, all measured on onyx-900. */}
       {open && (
         <nav
-          className="min-h-[calc(100dvh-72px)] overflow-y-auto bg-onyx-900 px-5 pb-8 pt-2 lg:hidden"
+          className="min-h-[calc(100dvh-72px)] overflow-y-auto bg-onyx-900 px-5 pb-8 pt-2 xl:hidden"
           style={{ borderTop: "1px solid var(--line-onyx)" }}
           aria-label="Primary mobile"
         >
@@ -452,7 +452,7 @@ function MegaPanel({ id, children }: { id: string; children: React.ReactNode }) 
     /* No onMouseLeave here: the header owns the hover region now, so leaving
        the panel downward closes it and moving between trigger and panel does
        not. Keeping a second handler here would reintroduce the flicker. */
-    <div id={id} className="rj-panel-in hidden border-t border-line/70 glass lg:block">
+    <div id={id} className="rj-panel-in hidden border-t border-line/70 glass xl:block">
       <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi5">{children}</div>
     </div>
   );

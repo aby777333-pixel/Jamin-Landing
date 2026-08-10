@@ -121,9 +121,11 @@ export default async function JournalCategoryPage({
             <div className="p-phi3">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge tone="gold">{KIND_LABEL[p.kind] ?? p.kind}</Badge>
-                <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-                  {readingMinutes(p)} min read
-                </span>
+                {readingMinutes(p) !== null && (
+                  <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+                    <span className="ledger">{readingMinutes(p)}</span> min read
+                  </span>
+                )}
                 {publishedLabel(p) && (
                   <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
                     {publishedLabel(p)}

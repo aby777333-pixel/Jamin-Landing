@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
 import { EmptyState, ButtonLink } from "./ui";
+import { DISTRICT_STONE, STAGE_STONE, STONE_FALLBACK } from "@/lib/stones";
 import {
   approvalBadges,
   formatArea,
@@ -121,8 +122,12 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     set({ compare: next });
   }
 
+  /* ⚠️ `inline-flex`, so each chip can carry the same 6px gem the nav tabs do.
+     The filters ARE tabs — they select a district or a stage, which is exactly
+     what the Locations and Projects menus select — so they get the same
+     jewellery rather than a second visual language for the same job. */
   const chip = (on: boolean) =>
-    `rounded-full border px-4 py-2 text-tiny font-medium transition-colors ${
+    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium transition-colors ${
       on
         ? "border-ink bg-ink text-canvas"
         : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
@@ -203,7 +208,9 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   aria-pressed={on}
                   onClick={() => set({ district: on ? null : d })}
                   className={chip(on)}
+                  style={{ "--rj-stone": DISTRICT_STONE[d] ?? STONE_FALLBACK } as React.CSSProperties}
                 >
+                  <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {d}{" "}
                   <span className={`ledger ${on ? "text-canvas/60" : "text-ink-faint"}`}>{n}</span>
                 </button>
@@ -226,7 +233,9 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   aria-pressed={on}
                   onClick={() => set({ phase: on ? null : k })}
                   className={chip(on)}
+                  style={{ "--rj-stone": STAGE_STONE[k as keyof typeof STAGE_STONE]?.stone ?? STONE_FALLBACK } as React.CSSProperties}
                 >
+                  <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {PHASE_META[k].label}{" "}
                   <span className={`ledger ${on ? "text-canvas/60" : "text-ink-faint"}`}>{n}</span>
                 </button>

@@ -154,9 +154,11 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
         <header className="max-w-3xl">
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone="gold">{KIND_LABEL[post.kind] ?? post.kind}</Badge>
-            <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-              <span className="ledger">{readingMinutes(post)}</span> min read
-            </span>
+            {readingMinutes(post) !== null && (
+              <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+                <span className="ledger">{readingMinutes(post)}</span> min read
+              </span>
+            )}
           </div>
           <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{post.title}</h1>
           {post.excerpt && (

@@ -84,20 +84,38 @@ export default async function ContactPage() {
           </div>
         </div>
 
-        <aside>
+        {/* ⚠️ STICKY, and that is the balance fix rather than a flourish. The
+            left column carries three stacked blocks and this carries one short
+            card, so the right half of the section was empty for most of its
+            height — the "large unused space" in the report. Making the card
+            travel with the reader turns that space into margin instead of a
+            hole, and keeps the list of places visible while the form above it
+            is being filled in. Offset by the header so it never docks
+            underneath the navbar. */}
+        <aside className="lg:sticky lg:self-start" style={{ top: "calc(var(--header-h) + 1.25rem)" }}>
           <div className="rounded-card border border-line bg-canvas p-phi3 shadow-lift">
             <h2 className="text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
               Visitable developments
             </h2>
-            <ul className="mt-phi3 space-y-phi2">
+            {/* ⚠️ One rule per row, not a rule PLUS a gap. The list previously
+                stacked `space-y-phi2` on top of each row's own `pt-phi2`, so
+                every entry carried roughly 34px of dead space above its title
+                and the card read as three floating blocks rather than a
+                register. Even padding above and below each row gives it the
+                even rhythm a reference panel needs, and the entries are set a
+                step down from body copy because this is a sidebar, not the
+                page's argument. */}
+            <ul className="mt-phi2">
               {live.map((p) => (
-                <li key={p.id} className="border-t border-line pt-phi2">
-                  <div className="text-base font-medium text-ink">{p.title}</div>
-                  <div className="mt-1 text-tiny text-ink-muted">{locationLine(p)}</div>
+                <li key={p.id} className="border-t border-line py-phi2">
+                  <div className="text-base font-medium leading-snug text-ink">{p.title}</div>
+                  <div className="mt-0.5 text-tiny leading-snug text-ink-muted">
+                    {locationLine(p)}
+                  </div>
                 </li>
               ))}
             </ul>
-            <p className="mt-phi3 border-t border-line pt-phi2 text-tiny leading-relaxed text-ink-faint">
+            <p className="border-t border-line pt-phi2 text-tiny leading-relaxed text-ink-faint">
               A requested visit is not yet a confirmed appointment — we call to agree the time with
               you.
             </p>

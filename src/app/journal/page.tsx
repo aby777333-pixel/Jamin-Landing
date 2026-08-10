@@ -89,8 +89,15 @@ export default async function JournalPage() {
                        that says a category can be opened. A gold hairline and a
                        chevron give the affordance without turning the row into
                        a set of buttons. */
-                    className="group inline-flex items-center gap-1.5 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-jamin-red-deep transition-colors hover:border-jamin-gold hover:bg-jamin-gold-soft"
+                    /* ⚠️ The gem now carries the affordance the note above
+                       describes, so the row matches the nav tabs and the
+                       property filters instead of inventing a third look for
+                       the same job. Jade is the Journal's stone; the arrow
+                       stays because a category genuinely opens a page. */
+                    className="group inline-flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-jamin-red-deep transition-colors hover:border-jamin-gold hover:bg-jamin-gold-soft"
+                    style={{ "--rj-stone": "var(--color-jade)" } as React.CSSProperties}
                   >
+                    <span className="rj-dot" aria-hidden="true" />
                     {c.name}
                     <span
                       aria-hidden="true"
@@ -225,9 +232,11 @@ function Meta({ post }: { post: JournalPost }) {
           {post.blog_categories.name}
         </span>
       )}
-      <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-        <span className="ledger">{readingMinutes(post)}</span> min read
-      </span>
+      {readingMinutes(post) !== null && (
+        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+          <span className="ledger">{readingMinutes(post)}</span> min read
+        </span>
+      )}
       {publishedLabel(post) && (
         <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
           {publishedLabel(post)}

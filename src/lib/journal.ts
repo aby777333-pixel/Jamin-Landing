@@ -51,6 +51,34 @@ export type JournalPost = {
   blog_authors: JournalAuthor | null;
 };
 
+/**
+ * ⚠️ THE LIST QUERY MUST NOT FETCH ARTICLE BODIES.
+ *
+ * `POST_COLUMNS` includes `body`, and `getJournalPosts` pulls up to 50 rows —
+ * so every journal index, every category page, the related-articles rail and
+ * the sitemap were each transferring the full text of every guide. At 16 posts
+ * that is 246 kB of Markdown, and the build began FAILING outright at
+ * /journal/category/[slug] once a new 30 kB guide was published: the error
+ * surfaced with the entire payload as its message, which is what a response
+ * that size looks like coming back through the fetch cache.
+ *
+ * Nothing on a card renders the body. `faqs` is dropped for the same reason —
+ * only the article page shows them.
+ *
+ * ⚠️ Reading time used to be COUNTED from the body, so removing it here would
+ * have silently reduced every card to "1 min read". `blog_posts.reading_minutes`
+ * existed for this and was null on all 16 rows; it is now backfilled, and
+ * `readingMinutes()` returns null rather than guessing when it has neither a
+ * stored figure nor a body.
+ */
+const LIST_COLUMNS = `
+  id, slug, title, excerpt, kind, cover_url, cover_alt, status,
+  published_at, reviewed_at, updated_at, tags, seo, related_property_ids,
+  related_locations, disclaimer, reading_minutes, is_featured,
+  blog_categories ( slug, name, description, sort ),
+  blog_authors!blog_posts_author_id_fkey ( slug, name, title, bio, avatar_url )
+`;
+
 const POST_COLUMNS = `
   id, slug, title, excerpt, body, kind, cover_url, cover_alt, status,
   published_at, reviewed_at, updated_at, tags, seo, related_property_ids,
@@ -77,7 +105,7 @@ const POST_COLUMNS = `
 export async function getJournalPosts(limit = 50): Promise<JournalPost[]> {
   const { data, error } = await supabase
     .from("blog_posts")
-    .select(POST_COLUMNS)
+    .select(LIST_COLUMNS)
     .order("published_at", { ascending: false })
     .limit(limit);
   if (error) throw new Error(`journal posts query failed: ${error.message}`);
@@ -141,9 +169,13 @@ export function publishedLabel(p: JournalPost): string | null {
 
 /** Prefer the stored figure; fall back to counting, at a deliberately
  *  conservative 200 words a minute for reference material. */
-export function readingMinutes(p: JournalPost): number {
+export function readingMinutes(p: JournalPost): number | null {
   if (p.reading_minutes && p.reading_minutes > 0) return p.reading_minutes;
-  const words = (p.body ?? "").trim().split(/\s+/).filter(Boolean).length;
+  /* ⚠️ null, not a guess. List queries no longer carry `body`, and returning
+     the 1-minute floor there would have printed "1 min read" on a 25-minute
+     guide — worse than saying nothing. */
+  if (!p.body) return null;
+  const words = p.body.trim().split(/\s+/).filter(Boolean).length;
   return Math.max(1, Math.round(words / 200));
 }
 
