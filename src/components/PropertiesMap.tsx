@@ -195,11 +195,10 @@ export function PropertiesMap({ items }: { items: Property[] }) {
               <svg width={on ? 34 : 26} height={on ? 45 : 35} viewBox="0 0 30 40">
                 <path
                   d="M15 39C15 39 28 24.5 28 14.5A13 13 0 1 0 2 14.5C2 24.5 15 39 15 39Z"
-                  fill={on ? "#17181C" : "#E11B22"}
-                  stroke="#FFFDFA"
+                  style={{ fill: on ? "var(--color-ink)" : "var(--color-cta)", stroke: "var(--color-canvas)" }}
                   strokeWidth="2"
                 />
-                <circle cx="15" cy="14.5" r="4.5" fill="#FFFDFA" />
+                <circle cx="15" cy="14.5" r="4.5" style={{ fill: "var(--color-canvas)" }} />
               </svg>
             </button>
           );

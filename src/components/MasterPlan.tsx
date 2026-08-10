@@ -74,6 +74,11 @@ export function MasterPlan({
   const geo = useMemo(() => plots.filter((p) => Array.isArray(p.poly) && p.poly.length >= 3), [plots]);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
   const [vx, vy, vw, vh] = plan.viewBox ?? [0, 0, 100, 100];
+  /* The hatch tile, in the drawing's own units rather than in pixels. Every
+     traced plan carries its own viewBox — Edappadi's is nothing like a 0–100
+     box — so a fixed tile would be invisible on one plan and coarse on the
+     next. A ninetieth of the long edge reads as a fine hatch at any scale. */
+  const HATCH = Math.max(vw, vh) / 90;
   const zoom = ZOOMS[zoomIx];
 
   const pts = (poly: [number, number][]) => poly.map(([x, y]) => `${x},${y}`).join(" ");
@@ -124,11 +129,40 @@ export function MasterPlan({
                 className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-tiny font-medium"
                 style={{ background: s.fill, borderColor: s.stroke, color: s.text }}
               >
-                <span
-                  className="h-2.5 w-2.5 rounded-full"
-                  style={{ background: s.stroke }}
-                  aria-hidden="true"
-                />
+                {/* ⚠️ The swatch carries the TEXTURE, not just the colour. A
+                    legend of coloured dots is exactly the colour-only cue §6.5
+                    forbids, and it would have left the hatches on the drawing
+                    unexplained. Its own tiny pattern defs, because a `<pattern>`
+                    is resolved against the SVG it lives in — referencing the
+                    plan's defs from here renders nothing. */}
+                <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" className="shrink-0">
+                  <defs>
+                    <pattern id={`rj-key-${status}`} patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
+                      <line x1="0" y1="0" x2="0" y2="4" stroke="currentColor" strokeWidth="0.8" />
+                      {s.hatch === "cross" && (
+                        <line x1="0" y1="0" x2="4" y2="0" stroke="currentColor" strokeWidth="0.8" />
+                      )}
+                    </pattern>
+                    <pattern id={`rj-key-dot-${status}`} patternUnits="userSpaceOnUse" width="3" height="3">
+                      <circle cx="1.5" cy="1.5" r="0.6" fill="currentColor" />
+                    </pattern>
+                  </defs>
+                  <rect x="0.5" y="0.5" width="13" height="13" rx="2.5" style={{ fill: s.fill, stroke: s.stroke }} strokeWidth="1" />
+                  {s.hatch && (
+                    <rect
+                      x="0.5"
+                      y="0.5"
+                      width="13"
+                      height="13"
+                      rx="2.5"
+                      style={{
+                        fill: `url(#rj-key-${s.hatch === "dot" ? `dot-${status}` : status})`,
+                        color: s.stroke,
+                        opacity: 0.55,
+                      }}
+                    />
+                  )}
+                </svg>
                 {s.label}
                 <span className="tabular-nums opacity-70">{count}</span>
               </span>
@@ -185,17 +219,56 @@ export function MasterPlan({
             role="img"
             aria-label={`Approved layout plan for ${title}, ${geo.length} plots`}
           >
+            {/* ⚠️ §6.5 forbids colour as the only carrier of a plot's state, so
+                every state except `available` also gets a texture. This is what
+                makes the drawing readable to a colour-blind buyer and what
+                survives the deed-grade print stylesheet, where the tints go.
+
+                `userSpaceOnUse` with a viewBox-scaled tile, because the default
+                `objectBoundingBox` would size the tile to each polygon — plots
+                are different sizes, so the hatch would be coarse on a small plot
+                and fine on a large one, and the texture would stop meaning one
+                thing. Drawn in the state's own hairline colour at low opacity so
+                it reads as tone rather than as a second object. */}
+            <defs>
+              <pattern
+                id="rj-hatch-diagonal"
+                patternUnits="userSpaceOnUse"
+                width={HATCH}
+                height={HATCH}
+                patternTransform="rotate(45)"
+              >
+                <line x1={0} y1={0} x2={0} y2={HATCH} stroke="currentColor" strokeWidth={0.7} />
+              </pattern>
+              <pattern
+                id="rj-hatch-cross"
+                patternUnits="userSpaceOnUse"
+                width={HATCH}
+                height={HATCH}
+                patternTransform="rotate(45)"
+              >
+                <line x1={0} y1={0} x2={0} y2={HATCH} stroke="currentColor" strokeWidth={0.7} />
+                <line x1={0} y1={0} x2={HATCH} y2={0} stroke="currentColor" strokeWidth={0.7} />
+              </pattern>
+              <pattern
+                id="rj-hatch-dot"
+                patternUnits="userSpaceOnUse"
+                width={HATCH}
+                height={HATCH}
+              >
+                <circle cx={HATCH / 2} cy={HATCH / 2} r={0.55} fill="currentColor" />
+              </pattern>
+            </defs>
+
             {/* site boundary */}
             {plan.boundary && plan.boundary.length > 2 && (
               <polygon
                 points={pts(plan.boundary)}
-                fill="#FFFDFA"
-                stroke="#17181C"
                 strokeWidth={1.2}
                 /* `pathLength` normalises the dash maths so a polygon and a
                    rect draw at the same rate without measuring perimeters. */
                 pathLength={1}
-                className="cd-plan__boundary"
+                className="cd-plan__boundary rj-plan-paper"
               />
             )}
 
@@ -209,8 +282,7 @@ export function MasterPlan({
                     y={Math.min(y1, y2)}
                     width={Math.abs(x2 - x1)}
                     height={Math.abs(y2 - y1)}
-                    fill="#F2EDE4"
-                    stroke="#D8D0C2"
+                    className="rj-plan-road"
                     strokeWidth={0.5}
                   />
                   {r.label && (
@@ -219,7 +291,7 @@ export function MasterPlan({
                       y={(y1 + y2) / 2 + 2.5}
                       textAnchor="middle"
                       fontSize={6}
-                      fill="#6B6F7A"
+                      className="rj-plan-note"
                       letterSpacing="0.5"
                     >
                       {r.label}
@@ -232,7 +304,7 @@ export function MasterPlan({
             {/* existing road outside the site */}
             {plan.existingRoad?.quad && (
               <g>
-                <polygon points={pts(plan.existingRoad.quad)} fill="#EDE6DA" stroke="#D8D0C2" strokeWidth={0.5} />
+                <polygon points={pts(plan.existingRoad.quad)} className="rj-plan-road-existing" strokeWidth={0.5} />
                 {plan.existingRoad.label && (
                   <text
                     x={
@@ -246,7 +318,7 @@ export function MasterPlan({
                     }
                     textAnchor="middle"
                     fontSize={6}
-                    fill="#6B6F7A"
+                    className="rj-plan-note"
                   >
                     {plan.existingRoad.label}
                   </text>
@@ -257,14 +329,14 @@ export function MasterPlan({
             {/* open space reservation */}
             {plan.osr?.polygon && (
               <g>
-                <polygon points={pts(plan.osr.polygon)} fill="#EAF3F0" stroke="#1F5D4C" strokeWidth={0.7} />
+                <polygon points={pts(plan.osr.polygon)} className="rj-plan-osr" strokeWidth={0.7} />
                 <text
                   x={plan.osr.polygon.reduce((s, p) => s + p[0], 0) / plan.osr.polygon.length}
                   y={plan.osr.polygon.reduce((s, p) => s + p[1], 0) / plan.osr.polygon.length}
                   textAnchor="middle"
                   fontSize={9}
                   fontWeight={600}
-                  fill="#1F5D4C"
+                  className="rj-plan-osr-note"
                 >
                   {plan.osr.label ?? "O.S.R."}
                 </text>
@@ -274,7 +346,7 @@ export function MasterPlan({
                     y={plan.osr.polygon.reduce((s, p) => s + p[1], 0) / plan.osr.polygon.length + 9}
                     textAnchor="middle"
                     fontSize={6}
-                    fill="#1F5D4C"
+                    className="rj-plan-osr-note"
                   >
                     {plan.osr.areaSqm.toLocaleString("en-IN")} sq m
                   </text>
@@ -284,7 +356,7 @@ export function MasterPlan({
 
             {/* dimension lines from the sanctioned drawing */}
             {(plan.dimensions ?? []).map((d, i) => (
-              <g key={`dim-${i}`} stroke="#9AA0AB" strokeWidth={0.4}>
+              <g key={`dim-${i}`} className="rj-plan-tick" strokeWidth={0.4}>
                 <line x1={d.from[0]} y1={d.from[1]} x2={d.to[0]} y2={d.to[1]} strokeDasharray="3 2" />
                 {d.label && (
                   <text
@@ -292,7 +364,7 @@ export function MasterPlan({
                     y={(d.from[1] + d.to[1]) / 2 - 2}
                     textAnchor="middle"
                     fontSize={6}
-                    fill="#6B6F7A"
+                    className="rj-plan-note"
                     stroke="none"
                   >
                     {d.label}
@@ -330,20 +402,38 @@ export function MasterPlan({
                       setSelected(active ? null : p);
                     }
                   }}
-                  className="cursor-pointer outline-none [&:focus-visible>polygon]:stroke-[2.5] [&:focus-visible>polygon]:stroke-jamin-red"
+                  className="rj-plot-hit cursor-pointer outline-none [&:focus-visible>polygon]:stroke-[2.5]"
                   opacity={dimmed ? 0.25 : 1}
                   /* Capped at 40 so a large layout still finishes drawing in
                      about the same time as a small one. */
                   style={{ "--i": Math.min(i, 40) } as React.CSSProperties}
                 >
+                  {/* ⚠️ fill and stroke are INLINE STYLE, not presentation
+                      attributes. Every value here is now a `var(--plot-…)`
+                      token, and a presentation attribute does not resolve
+                      var() — written as `fill="var(…)"` the polygons render
+                      black. */}
                   <polygon
                     points={pts(p.poly!)}
                     pathLength={1}
-                    fill={active ? "#FDECEC" : s.fill}
-                    stroke={active ? "#E11B22" : s.stroke}
                     strokeWidth={active ? 2.2 : 0.8}
-                    className="cd-plan__plot transition-all duration-200"
+                    style={{
+                      fill: active ? "var(--plot-selected-fill)" : s.fill,
+                      stroke: active ? "var(--plot-selected-line)" : s.stroke,
+                    }}
+                    className="cd-plan__plot rj-plot"
                   />
+                  {/* The texture, §6.5. A second polygon rather than a pattern
+                      baked into the fill, so the tint underneath stays a flat
+                      measurable colour — the plot number is read against it.
+                      `color` drives the pattern's `currentColor`. */}
+                  {s.hatch && !active && (
+                    <polygon
+                      points={pts(p.poly!)}
+                      pointerEvents="none"
+                      style={{ fill: `url(#rj-hatch-${s.hatch})`, color: s.stroke, opacity: 0.5 }}
+                    />
+                  )}
                   {p.at && (
                     <text
                       x={p.at[0]}
@@ -351,7 +441,7 @@ export function MasterPlan({
                       textAnchor="middle"
                       fontSize={8}
                       fontWeight={700}
-                      fill={active ? "#A81219" : s.text}
+                      style={{ fill: active ? "var(--plot-selected-ink)" : s.text }}
                       pointerEvents="none"
                       className="cd-plan__num"
                     >

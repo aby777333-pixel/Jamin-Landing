@@ -107,11 +107,10 @@ export function SiteMap({
             <ellipse cx="15" cy="38" rx="6" ry="2" fill="rgba(23,24,28,0.28)" />
             <path
               d="M15 39C15 39 28 24.5 28 14.5A13 13 0 1 0 2 14.5C2 24.5 15 39 15 39Z"
-              fill="#E11B22"
-              stroke="#FFFDFA"
+              style={{ fill: "var(--color-cta)", stroke: "var(--color-canvas)" }}
               strokeWidth="2"
             />
-            <circle cx="15" cy="14.5" r="4.5" fill="#FFFDFA" />
+            <circle cx="15" cy="14.5" r="4.5" style={{ fill: "var(--color-canvas)" }} />
           </svg>
         </div>
 

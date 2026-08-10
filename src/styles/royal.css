@@ -529,6 +529,115 @@
 }
 
 /**
+ * ── PLOT STATES (§6.5) ────────────────────────────────────────────────────
+ *
+ * The gemstones applied to the sanctioned drawing. These live here, in the
+ * style layer, rather than as hexes in lib/properties.ts — that map carried
+ * nineteen of the site's forty-four hardcoded colours.
+ *
+ * ⚠️ MIXED WITH WHITE, NOT WITH `transparent`. §6.5 asks for translucency and
+ * over the drawing's paper ground the two are visually identical — but an
+ * opaque colour can be measured. `text` on this system is read against the
+ * FILL, not against the page, because the plot number is printed inside the
+ * polygon; a translucent fill would make every one of those ratios depend on
+ * whatever happened to be behind it. Mixing with white is the same picture and
+ * a knowable number.
+ *
+ * ⚠️ Every `ink` differs from its own `line`. A hairline carries no contrast
+ * requirement and can stay bright; a plot number is text.
+ */
+:root {
+  --plot-available-fill: color-mix(in srgb, var(--color-emerald) 22%, white);
+  --plot-available-line: var(--color-emerald);
+  --plot-available-ink: var(--color-emerald-deep);
+
+  --plot-reserved-fill: color-mix(in srgb, var(--color-champagne-500) 26%, white);
+  --plot-reserved-line: var(--color-champagne-700);
+  --plot-reserved-ink: var(--color-champagne-900);
+
+  --plot-booked-fill: color-mix(in srgb, var(--color-ruby) 18%, white);
+  --plot-booked-line: var(--color-ruby);
+  --plot-booked-ink: var(--color-ruby);
+
+  /* Sold is the one state that is deliberately desaturated — the drawing
+     should read "gone" without the eye being drawn to it. */
+  --plot-sold-fill: color-mix(in srgb, var(--color-plat-300) 55%, white);
+  --plot-sold-line: var(--color-plat-500);
+  --plot-sold-ink: var(--color-plat-800);
+
+  --plot-blocked-fill: color-mix(in srgb, var(--color-plat-300) 32%, white);
+  --plot-blocked-line: var(--color-plat-500);
+  --plot-blocked-ink: var(--color-plat-800);
+
+  /* Interaction, §6.5: gold on hover, champagne fill when chosen. */
+  --plot-hover-line: var(--color-champagne-500);
+  --plot-selected-fill: color-mix(in srgb, var(--color-champagne-500) 42%, white);
+  --plot-selected-line: var(--color-champagne-700);
+  /* ⚠️ The chosen plot needs its own INK, for the same reason every state does.
+     Reusing `--plot-selected-line` for the number measured 4.48:1 on the
+     champagne fill — under AA by 0.02, which is the kind of miss that only
+     shows up if you measure it. champagne-900 gives 6.68:1. */
+  --plot-selected-ink: var(--color-champagne-900);
+
+  /* The drawing's own chrome — roads, the reservation, the tick lines. Not
+     plot states, but they were the other half of MasterPlan's hardcoded
+     colours. Three of the old values were already exact matches for existing
+     tokens (ink-faint, canopy, canopy-soft) and now say so. */
+  --plan-road-fill: #f2ede4;
+  --plan-road-line: #d8d0c2;
+  --plan-road-existing: #ede6da;
+  --plan-tick: #9aa0ab;
+}
+
+/**
+ * ⚠️ CLASSES, NOT PRESENTATION ATTRIBUTES. `fill="var(--x)"` does not resolve —
+ * an SVG presentation attribute is not a CSS declaration, and written that way
+ * the shape renders black. A CSS `fill` property does resolve, and it also
+ * outranks any presentation attribute, so these can be applied by class name
+ * without removing anything else.
+ */
+.rj-plan-paper {
+  fill: var(--color-canvas);
+  stroke: var(--color-ink);
+}
+.rj-plan-road {
+  fill: var(--plan-road-fill);
+  stroke: var(--plan-road-line);
+}
+.rj-plan-road-existing {
+  fill: var(--plan-road-existing);
+  stroke: var(--plan-road-line);
+}
+.rj-plan-osr {
+  fill: var(--color-canopy-soft);
+  stroke: var(--color-canopy);
+}
+.rj-plan-note {
+  fill: var(--color-ink-faint);
+}
+.rj-plan-osr-note {
+  fill: var(--color-canopy);
+}
+.rj-plan-tick {
+  stroke: var(--plan-tick);
+}
+
+/** Hover: a 1.5px gold outline in 180ms. On the polygon itself so it cannot
+ *  disturb layout, and paired with the selected state below. */
+.cd-plan__plot,
+.rj-plot {
+  transition:
+    stroke 180ms var(--ease-silk),
+    stroke-width 180ms var(--ease-silk),
+    fill 180ms var(--ease-silk);
+}
+.rj-plot-hit:hover .rj-plot,
+.rj-plot-hit:focus-visible .rj-plot {
+  stroke: var(--plot-hover-line);
+  stroke-width: 1.5;
+}
+
+/**
  * ── THE SEARCH CONSOLE (§6.2) ─────────────────────────────────────────────
  *
  * A glass panel with a real gradient border: a 1px padding box carrying the

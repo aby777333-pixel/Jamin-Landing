@@ -192,15 +192,60 @@ export type PlotStatus = "available" | "reserved" | "booked" | "sold" | "blocked
  *  through to an unlabelled grey. */
 /* ⚠️ `text` is measured against `fill`, not against the page. It is the colour
    of the plot number printed INSIDE the polygon and of the legend chip's own
-   label, so both sit on the tint rather than on white. Two were failing there:
-   #0C8046 on #E4F6EC is 4.46:1 and #6B6F7A on #F2EDE4 is 4.31:1. The strokes
-   keep the brighter tones — an outline is not text and carries no ratio. */
-export const PLOT_STATUS: Record<PlotStatus, { label: string; fill: string; stroke: string; text: string }> = {
-  available: { label: "Available", fill: "#E4F6EC", stroke: "#0C8046", text: "#1F5D4C" }, // 6.83:1
-  reserved: { label: "Reserved", fill: "#FDF5E6", stroke: "#B4831C", text: "#8A6A45" }, // 4.61:1
-  booked: { label: "Booked", fill: "#FDECEC", stroke: "#A81219", text: "#A81219" }, // 6.65:1
-  sold: { label: "Sold", fill: "#F2EDE4", stroke: "#6B6F7A", text: "#55585F" }, // 6.11:1
-  blocked: { label: "Not released", fill: "#F2EDE4", stroke: "#9AA0AB", text: "#55585F" }, // 6.11:1
+   label, so both sit on the tint rather than on white. The strokes keep the
+   brighter tones — an outline is not text and carries no ratio.
+
+   ⚠️ The nineteen hexes that used to be here are gone; every value is now a
+   token from the plot-state block in royal.css. The audited ratios that
+   justified the old numbers have been re-measured against the gemstones rather
+   than assumed to carry over — the figures beside each row are the new ones.
+
+   ⚠️ `hatch` is not decoration. §6.5 forbids relying on colour alone, so every
+   state that is not `available` carries a texture as well as a tint, which is
+   what makes the drawing survive colour-blindness and a black-and-white print.
+   `null` is meaningful: available is the state with no texture, and that is
+   what makes the textured ones read as exceptions. */
+export type PlotHatch = "diagonal" | "cross" | "dot" | null;
+
+export const PLOT_STATUS: Record<
+  PlotStatus,
+  { label: string; fill: string; stroke: string; text: string; hatch: PlotHatch }
+> = {
+  available: {
+    label: "Available",
+    fill: "var(--plot-available-fill)",
+    stroke: "var(--plot-available-line)",
+    text: "var(--plot-available-ink)",
+    hatch: null,
+  },
+  reserved: {
+    label: "Reserved",
+    fill: "var(--plot-reserved-fill)",
+    stroke: "var(--plot-reserved-line)",
+    text: "var(--plot-reserved-ink)",
+    hatch: "diagonal",
+  },
+  booked: {
+    label: "Booked",
+    fill: "var(--plot-booked-fill)",
+    stroke: "var(--plot-booked-line)",
+    text: "var(--plot-booked-ink)",
+    hatch: "cross",
+  },
+  sold: {
+    label: "Sold",
+    fill: "var(--plot-sold-fill)",
+    stroke: "var(--plot-sold-line)",
+    text: "var(--plot-sold-ink)",
+    hatch: null,
+  },
+  blocked: {
+    label: "Not released",
+    fill: "var(--plot-blocked-fill)",
+    stroke: "var(--plot-blocked-line)",
+    text: "var(--plot-blocked-ink)",
+    hatch: "dot",
+  },
 };
 
 export function plotStatus(p: Plot): PlotStatus {
