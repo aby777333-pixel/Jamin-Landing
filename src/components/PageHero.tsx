@@ -162,7 +162,7 @@ export function PageHero({
               cinematic hero drops below AA. The two changes ship together or
               not at all. */}
           <div
-            className={`gilt ${sheer ? "rj-gilt-sheer" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
+            className={`gilt ${sheer ? "rj-gilt-sheer rj-sheer-copy" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
             style={
               sheer
                 ? ({

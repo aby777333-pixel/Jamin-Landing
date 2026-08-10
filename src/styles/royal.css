@@ -1065,6 +1065,44 @@
  * `jamin-gold-pale` all fail on it. PageHero sets pure white and champagne-50
  * behind the `sheer` prop so the plate and its text can never drift apart.
  */
+/**
+ * ⚠️ THE COPY CARRIES ITS OWN DARKNESS, so the plate does not have to.
+ *
+ * Asked for five times: cards you can genuinely see the photograph through. The
+ * plate alone could not deliver it on the bright frames — a sharp picture cost
+ * tint and a light tint cost sharpness, and the Vault's floor was 0.50 at a
+ * blur low enough to read the village.
+ *
+ * A halo around the glyphs breaks that trade. It darkens ~10px around each
+ * letter and nothing else, so the picture between the lines stays at full
+ * strength while the text keeps a dark local background. It is the standard
+ * technique for captions over film, and it is why a subtitle can sit on a
+ * bright sky without a black bar behind it.
+ *
+ * ⚠️ WHAT THIS COSTS, STATED PLAINLY. WCAG's contrast formula compares one
+ * foreground with one background; it has no concept of a halo, so the numbers
+ * quoted for these heroes are now measured against the plate PLUS a modelled
+ * shadow layer rather than the plate alone. That model is an honest
+ * approximation, not a substitute for the formula. If a strict audit is ever
+ * required, the plate alphas in each page's `sheerAlpha` are the dial to turn
+ * back up — the swept, formula-clean values are recorded in the commit history
+ * and in public/hero/README.md.
+ *
+ * Three layers: a tight one that defines the letterform, a mid one that does
+ * the real work, and a wide soft one that keeps the whole block from vibrating
+ * against busy detail.
+ */
+.rj-sheer-copy,
+.rj-sheer-copy h1,
+.rj-sheer-copy p,
+.rj-sheer-copy div,
+.rj-sheer-copy span {
+  text-shadow:
+    0 1px 2px rgba(8, 6, 4, 0.95),
+    0 2px 12px rgba(8, 6, 4, 0.85),
+    0 0 30px rgba(8, 6, 4, 0.65);
+}
+
 .rj-gilt-sheer {
   background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.32));
   backdrop-filter: blur(var(--rj-sheer-blur, 100px)) saturate(1.15);

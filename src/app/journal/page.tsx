@@ -60,8 +60,8 @@ export default async function JournalPage() {
            hero has to choose — a sharp picture costs tint (the Vault needs 0.50
            at this blur), a light tint costs sharpness. This one needs neither.
            See `.rj-gilt-sheer`. */
-        sheerAlpha={0.1}
-        sheerBlur={8}
+        sheerAlpha={0.06}
+        sheerBlur={6}
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."

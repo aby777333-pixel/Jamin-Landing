@@ -51,8 +51,8 @@ export default async function AboutPage() {
         size="tall"
         sheer
         /* Swept on this frame, not copied. The brightest frame the site carries: white 4.96, gold 4.59 at blur 16. */
-        sheerAlpha={0.52}
-        sheerBlur={16}
+        sheerAlpha={0.3}
+        sheerBlur={8}
         eyebrow="Who we are"
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
