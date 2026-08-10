@@ -27,7 +27,7 @@ import { Container } from "./ui";
  * development or placed on a property card. See public/hero/README.md.
  */
 export type HeroArt =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23;
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -54,6 +54,8 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // does show villas, plots AND apartment towers in one frame, which is the
   // Journal's subject rather than the company's — see hero/README.md.
   23: 1706,
+  /* hero-25 — the banyan lesson, /journal from 2026-08-10. */
+  25: 1983,
 };
 
 function artSrc(n: HeroArt) {
@@ -75,6 +77,7 @@ export function PageHero({
   priority = true,
   size = "standard",
   tone = "paper",
+  sheer = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -98,6 +101,10 @@ export function PageHero({
   priority?: boolean;
   size?: "standard" | "tall";
   tone?: "paper" | "cinematic";
+  /** ⚠️ A far more see-through plate, for frames where the picture is the
+   *  point. It is NOT free: it needs white copy and a heavy blur to hold AA —
+   *  see `.rj-gilt-sheer`. Only set it after sweeping the frame. */
+  sheer?: boolean;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -146,7 +153,7 @@ export function PageHero({
               the contrast back under the words — take the panel off and every
               cinematic hero drops below AA. The two changes ship together or
               not at all. */}
-          <div className="gilt rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]">
+          <div className={`gilt ${sheer ? "rj-gilt-sheer" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}>
             {eyebrow && (
               <div className="flex items-center gap-3">
                 {/* Gilt, where this was a plain white hairline — the same rule
@@ -154,7 +161,8 @@ export function PageHero({
                     fill gold; gold as a WORD may not, so the label takes
                     `jamin-gold-light`, which holds on the plate. */}
                 <span className="h-px w-12 rule-gold" />
-                <span className="text-micro font-medium uppercase tracking-brand text-jamin-gold-pale">
+                <span className={`text-micro font-medium uppercase tracking-brand ${sheer ? "" : "text-jamin-gold-pale"}`}
+                  style={sheer ? { color: "var(--color-champagne-50)" } : undefined}>
                   {eyebrow}
                 </span>
               </div>
@@ -163,7 +171,7 @@ export function PageHero({
                 to the measure and orphaning whatever is left over. */}
             <h1 className="mt-phi3 text-balance text-4xl text-white">{title}</h1>
             {lead && (
-              <div className="mt-phi3 max-w-xl text-pretty text-lg leading-relaxed text-white/80">
+              <div className={`mt-phi3 max-w-xl text-pretty text-lg leading-relaxed ${sheer ? "text-white" : "text-white/80"}`}>
                 {lead}
               </div>
             )}

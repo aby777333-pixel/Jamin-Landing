@@ -51,8 +51,9 @@ export default async function JournalPage() {
           must not be "corrected" — they are the Journal's subject, not a claim
           that the company builds them. */}
       <PageHero
-        art={23}
+        art={25}
         tone="cinematic"
+        sheer
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."

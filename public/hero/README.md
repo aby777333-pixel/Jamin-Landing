@@ -459,3 +459,44 @@ Scoped to this hero; the audited 0.52 stands everywhere else.
 
 ⚠️ It is also the first hero on a page that is already dark (`data-theme="vault"`),
 so the gold dust now drifts over a photograph instead of over flat onyx.
+
+## hero-25 → /journal (2026-08-10), and the SHEER plate
+
+The banyan lesson: a teacher and students under the tree, palm-leaf manuscripts
+on the ground, a hanging board reading **JAMIN BAZAAR**. 1983x793 native →
+1983 / 1280 / 768 WebP (369 / 185 / 77 KB). It replaces hero-23, which returns
+to the spare pile.
+
+⚠️ It **bakes the wordmark into the picture**, so hero-19's provenance rule
+applies: `alt=""`, `aria-hidden`, never a caption, never a project name. It is
+allegorical rather than documentary — nobody will mistake a gurukul for a Jamin
+layout — which is why it is a lower risk than hero-19 or hero-21, not a
+different rule.
+
+⚠️ **`.rj-gilt-sheer` — transparency bought with BLUR, not with luck.** The
+owner asked twice for a plate you can see the picture through. A plate's worst
+case is the brightest 5% of what sits behind it, and blur is what collapses
+that toward the mean: under the Vault plate the mean is 0.053 against a p95 of
+0.170, so nearly all of the contrast problem was a handful of bright spots
+rather than the picture as a whole. Swept on the real frame:
+
+    blur  14  α0.42 → white 3.85 · gold 3.57
+    blur  44  α0.42 → white 4.55 · gold 4.21
+    blur  80  α0.36 → white 4.89 · gold 4.53
+    blur  80  α0.38 → white 5.14 · gold 4.76   ← ships
+    blur 120  α0.28 → white 5.14 · gold 4.75
+
+120/0.28 is the most transparent thing that passes and was **not** taken: a
+120px blur across a full-width hero is a real cost on a low-end phone, and §9
+already treats `backdrop-filter` as a performance budget. 80/0.38 is a third
+more see-through than the 0.56 it replaced.
+
+⚠️ **The plate requires full-strength copy.** `bone`, `white/80` and
+`jamin-gold-pale` all fail on it. `PageHero` sets pure white body text and
+champagne-50 gold behind the `sheer` prop so the two cannot be set apart.
+/about and /properties keep the audited `gilt` at 0.52 and 14px — they were
+never asked to change.
+
+Measured after, on both pages: Vault eyebrow 4.76 · h1 5.14 · lead 5.14 ·
+rates 5.14 · gold phrase 4.76. Journal eyebrow 10.06 · h1 10.86 · lead 10.86,
+because that frame is far darker under the plate than the Vault's dusk.

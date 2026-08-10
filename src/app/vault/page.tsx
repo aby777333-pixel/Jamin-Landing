@@ -81,7 +81,7 @@ export default async function VaultPage() {
         <GoldDust />
 
         <Container className="relative py-phi7">
-          <div className="gilt rj-gilt-vault max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
+          <div className="gilt rj-gilt-sheer max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-50)" }}>
               By appointment
             </p>
