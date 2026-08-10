@@ -1103,6 +1103,36 @@
     0 0 30px rgba(8, 6, 4, 0.65);
 }
 
+/**
+ * ⚠️ THE LIGHT PLATE'S HALO IS WHITE, because its copy is ink.
+ *
+ * `.rj-sheer-copy` darkens around white glyphs. On `gilt-light` the copy is
+ * dark text on a pale plate, so the same trick has to run the other way: a
+ * white glow that keeps ink readable when the photograph shows through. Same
+ * mechanism, inverted, and the same caveat — WCAG does not model it.
+ */
+.rj-sheer-copy-ink,
+.rj-sheer-copy-ink h1,
+.rj-sheer-copy-ink p,
+.rj-sheer-copy-ink div,
+.rj-sheer-copy-ink span,
+.rj-sheer-copy-ink a {
+  text-shadow:
+    0 1px 2px rgba(255, 253, 250, 0.95),
+    0 2px 12px rgba(255, 253, 250, 0.9),
+    0 0 30px rgba(255, 253, 250, 0.75);
+}
+
+/**
+ * The sheer light plate. `gilt-light` is 0.74 — swept, and correct while the
+ * plate was the only thing carrying the copy. With a halo doing that job it can
+ * come most of the way down and let the artwork through.
+ */
+.rj-gilt-light-sheer {
+  background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.4));
+  backdrop-filter: blur(var(--rj-sheer-blur, 8px)) saturate(1.1);
+}
+
 .rj-gilt-sheer {
   background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.32));
   backdrop-filter: blur(var(--rj-sheer-blur, 100px)) saturate(1.15);

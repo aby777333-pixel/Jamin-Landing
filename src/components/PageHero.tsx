@@ -236,7 +236,17 @@ export function PageHero({
             fill is nearly invisible; what reads is the gold hairline, which is
             the point — the copy on every hero now sits on a gilt-edged plate
             whether or not there is a photograph behind it. */}
-        <div className="gilt-light rise max-w-[34rem] rounded-2xl p-phi3 sm:p-phi4 lg:max-w-[38rem]">
+        <div
+          className={`gilt-light ${sheer ? "rj-gilt-light-sheer rj-sheer-copy-ink" : ""} rise max-w-[34rem] rounded-2xl p-phi3 sm:p-phi4 lg:max-w-[38rem]`}
+          style={
+            sheer
+              ? ({
+                  ...(sheerAlpha != null ? { "--rj-sheer-alpha": sheerAlpha } : {}),
+                  ...(sheerBlur != null ? { "--rj-sheer-blur": `${sheerBlur}px` } : {}),
+                } as React.CSSProperties)
+              : undefined
+          }
+        >
           {eyebrow && (
             <div className="flex items-center gap-3">
               <span className="h-px w-12 rule-gold" />

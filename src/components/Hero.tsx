@@ -171,7 +171,13 @@ export function Hero({
               What makes the wider measure safe is the plate itself: the copy no
               longer depends on the wash reaching it, so it is free to run past
               where the wash gives out. */}
-          <div className="gilt-light reveal max-w-2xl rounded-2xl p-phi3 sm:p-phi4">
+          <div
+            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
+            /* The banner is light everywhere the copy sits, so the plate can go
+               a long way down before the ink is in trouble — and the white halo
+               is what carries it the rest of the way. */
+            style={{ "--rj-sheer-alpha": 0.38, "--rj-sheer-blur": "8px" } as React.CSSProperties}
+          >
             <div className="flex items-center gap-3">
               <span className="h-px w-12 rule-gold" />
               {/* `gold-deep`, not `gold-ink`. This one line was what pinned the

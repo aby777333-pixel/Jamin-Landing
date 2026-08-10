@@ -87,7 +87,7 @@ export default async function VaultPage() {
                gold 4.53). A heavier blur would buy a lighter tint, but it turns
                the village into a colour wash - and seeing the picture is the
                whole point of a sheer plate. */
-            style={{ "--rj-sheer-alpha": 0.28, "--rj-sheer-blur": "8px" } as React.CSSProperties}
+            style={{ "--rj-sheer-alpha": 0.2, "--rj-sheer-blur": "8px" } as React.CSSProperties}
           >
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-50)" }}>
               By appointment

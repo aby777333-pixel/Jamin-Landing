@@ -51,7 +51,7 @@ export default async function AboutPage() {
         size="tall"
         sheer
         /* Swept on this frame, not copied. The brightest frame the site carries: white 4.96, gold 4.59 at blur 16. */
-        sheerAlpha={0.3}
+        sheerAlpha={0.22}
         sheerBlur={8}
         eyebrow="Who we are"
         title="Land, sold the way it should be."

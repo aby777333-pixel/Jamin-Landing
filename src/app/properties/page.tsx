@@ -26,7 +26,7 @@ export default async function PropertiesPage() {
         size="tall"
         sheer
         /* Swept on this frame, not copied. white 5.31, gold 4.91 at blur 16 - the frame stays legible. */
-        sheerAlpha={0.28}
+        sheerAlpha={0.2}
         sheerBlur={8}
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
