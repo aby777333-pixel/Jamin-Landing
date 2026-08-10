@@ -176,7 +176,7 @@ export function Hero({
             /* The banner is light everywhere the copy sits, so the plate can go
                a long way down before the ink is in trouble — and the white halo
                is what carries it the rest of the way. */
-            style={{ "--rj-sheer-alpha": 0.24, "--rj-sheer-blur": "8px" } as React.CSSProperties}
+            style={{ "--rj-sheer-alpha": 0.24 } as React.CSSProperties}
           >
             <div className="flex items-center gap-3">
               <span className="h-px w-12 rule-gold" />

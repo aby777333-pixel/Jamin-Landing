@@ -1153,13 +1153,27 @@
  * come most of the way down and let the artwork through.
  */
 .rj-gilt-light-sheer {
-  background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.4));
-  backdrop-filter: blur(var(--rj-sheer-blur, 8px)) saturate(1.1);
+  background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.26));
+  /* Same reasoning as the dark plate: no filter, no pooled corner shadow. */
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
 .rj-gilt-sheer {
-  background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.32));
-  backdrop-filter: blur(var(--rj-sheer-blur, 100px)) saturate(1.15);
+  background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14));
+  /* ⚠️ NO BLUR, and no `saturate` either. Any backdrop-filter draws a hard
+     edge at the plate's boundary — the picture is frosted inside it and sharp
+     immediately outside, which is what made the JAMIN BAZAAR sign look like it
+     had been smeared behind a pane. With the halo carrying legibility the
+     filter has no job left, so the plate is now a flat tint and nothing else,
+     and the photograph runs through it unaltered.
+     ⚠️ It also removes the last backdrop-filter from these heroes, which is a
+     straight win against §9's performance budget. */
+  backdrop-filter: none;
+  /* `gilt` casts an inset gold line and a deep outer shadow. Both pooled in the
+     corners and read as a gradient over the picture. A sheer plate keeps its
+     hairline and nothing else. */
+  box-shadow: none;
 }
 
 /**

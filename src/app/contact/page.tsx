@@ -30,7 +30,6 @@ export default async function ContactPage() {
         art={21}
         sheer
         sheerAlpha={0.26}
-        sheerBlur={8}
         eyebrow="Talk to Jamin"
         title="Book a site visit"
         lead="Walk the layout, see the approvals and stand on the plot before you decide. Visits are arranged at your convenience and carry no obligation."
