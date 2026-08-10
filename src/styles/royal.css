@@ -745,9 +745,11 @@
  *   the band the console's top 92px actually covers — gives a median of 86 and
  *   a brightest local mean of 162. Champagne-300 needs α ≥ 0.52 against 162 to
  *   clear 4.5:1, so the ramp is at 0.56 by the time the eyebrow begins.
- * - The note sits at ~75–82%, by which point it is over the ivory canvas, not
- *   the picture. Plat-300 against a WHITE backdrop needs α ≥ 0.72; the ramp is
- *   at 0.79–0.82 there.
+ * - The note begins at 71.4% (measured live, not estimated), by which point it
+ *   is over the ivory canvas rather than the picture. Plat-300 against a WHITE
+ *   backdrop needs α ≥ 0.72; the ramp is at 0.776 where the note starts and
+ *   climbs from there. That 0.056 is the whole margin, so the 75% stop is the
+ *   one to leave alone.
  * - The fields sit in between, where α is only 0.56–0.74. They do not rely on
  *   it — see `.rj-console-field`.
  *
