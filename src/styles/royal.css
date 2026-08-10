@@ -1,0 +1,469 @@
+/**
+ * MAHARAJA 2026 — the material layer.
+ *
+ * Third in the cascade: globals.css (foundation + @theme) → cadastral.css
+ * (land-record craft) → this. Additive, like cadastral: it introduces nothing
+ * that replaces an audited decision in either file below it.
+ *
+ * The colour tokens are NOT here — they live in the `@theme` block in
+ * globals.css, because Tailwind 4 generates utilities only from that block.
+ * What lives here is everything Tailwind has no opinion about: the foils, the
+ * glass, the palette switch, and the motion.
+ *
+ * ⚠️ NO `@utility` IN THIS FILE. cadastral.css is imported from layout.tsx as a
+ * plain stylesheet, not through `@import "tailwindcss"`, so Tailwind's at-rules
+ * are not available to it — which is why every class it owns is a plain
+ * `.cd-*`. Same constraint, same answer: plain `.rj-*` classes. Utilities that
+ * genuinely need to compose with Tailwind go in globals.css instead.
+ *
+ * THE GOVERNING LAW, in one line, because it is the rule most easily lost:
+ * gold everywhere is cheap; gold against onyx, ivory and gemstone is expensive.
+ */
+
+:root {
+  /**
+   * METALS ARE GRADIENTS, NEVER FLAT FILLS.
+   *
+   * A flat #C9A227 rectangle reads as mustard — the eye decodes metal from the
+   * travelling specular band, not from the hue. Every "gold surface" in this
+   * system is a foil plus a sweep; --color-champagne-500 on its own is only
+   * ever a rule, a hairline or a dot.
+   */
+  --foil-gold: linear-gradient(
+    115deg,
+    #7a5a16 0%,
+    #c9a227 22%,
+    #f6ebbf 42%,
+    #c9a227 58%,
+    #8a6a1c 78%,
+    #e3cb74 100%
+  );
+  /**
+   * ⚠️ THE FOIL THAT CARRIES WORDS IS NOT THE FOIL THAT CARRIES NONE.
+   *
+   * --foil-gold ramps from #7a5a16 to #f6ebbf, which is what makes it read as
+   * metal — and which means text on it has a different contrast ratio at every
+   * point along the band. Measured with champagne-900 on it: 7.90:1 at the
+   * light stop, 3.91:1 in the middle, and 1.49:1 at the dark stop. A chip whose
+   * label is legible on one third of itself is not legible.
+   *
+   * So a text-bearing foil is clipped to the top of the ramp. The darkest stop
+   * here is #e3cb74, whose luminance (0.603) is the lowest that still clears
+   * 4.5:1 under champagne-900 — it measures 5.90:1, and every lighter stop is
+   * better. It still reads as gold and still glints, because the specular band
+   * is a separate element sliding over it rather than part of the ramp.
+   *
+   * This is the same lesson globals.css records for gold-fill vs gold-ink, one
+   * level up: the property that makes a gold beautiful is the property that
+   * makes it unreadable, so the two jobs get two tokens.
+   */
+  --foil-gold-seal: linear-gradient(
+    115deg,
+    #e3cb74 0%,
+    #f2dfa0 24%,
+    #fdf6e0 46%,
+    #f2dfa0 68%,
+    #e3cb74 100%
+  );
+
+  --foil-plat: linear-gradient(
+    115deg,
+    #82898f 0%,
+    #c3c9cd 26%,
+    #fafbfb 46%,
+    #cfd5d8 64%,
+    #8e959b 84%,
+    #e6eaec 100%
+  );
+  --foil-silver: linear-gradient(
+    115deg,
+    #6e767d 0%,
+    #aab2b8 24%,
+    #f2f5f7 44%,
+    #b7bfc5 62%,
+    #7c848b 82%,
+    #d4dade 100%
+  );
+
+  /* Glass. The tint values are deliberately heavier than the brief's .62/.58 —
+     globals.css records why: a frosted panel's effective background is whatever
+     is behind it, so a light tint hands its contrast to the photograph. The
+     brief's own §9 asks every pair to clear AA, and these are what does it. */
+  --glass-onyx: rgba(18, 17, 16, 0.78);
+  --glass-ivory: rgba(251, 248, 241, 0.9);
+  --glass-blur: 18px;
+
+  /* The gradient border painted onto glass panels. */
+  --glass-rim: linear-gradient(
+    135deg,
+    rgba(201, 162, 39, 0.55),
+    rgba(201, 162, 39, 0.06) 40%,
+    rgba(195, 201, 205, 0.35) 70%,
+    rgba(201, 162, 39, 0.42)
+  );
+
+  /* Hairlines. Engraving, not borders. */
+  --line-ivory: rgba(23, 20, 15, 0.12);
+  --line-onyx: rgba(232, 225, 210, 0.13);
+  --line-champagne: rgba(201, 162, 39, 0.42);
+
+  /* Motion. Silk settles; rise is the chisel cut. */
+  --ease-rise: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --dur-glint: 900ms;
+  --dur-sweep: 5.5s;
+  --dur-lift: 420ms;
+  --lift: 5px;
+}
+
+/**
+ * ── TYPE ROLES ────────────────────────────────────────────────────────────
+ */
+
+/**
+ * The eyebrow. The one place uppercase is permitted.
+ *
+ * ⚠️ THIS IS THE THIRD TRACKING SCALE IN THE SYSTEM and that needs justifying,
+ * because near-duplicate scales are how a site loses its rhythm. The other two
+ * stay as they are: `.tracking-brand` (0.34em) is the wordmark's own spacing
+ * and belongs to the logo lockup; `.ledger-label` (0.14em, ink-faint) is a
+ * caption sitting directly above a figure, where wide tracking would detach it
+ * from the number it names. This is neither — it is a section marker in gold,
+ * standing alone above a heading, and at 0.14em it reads as a mislabelled
+ * caption while at 0.34em it falls apart across a phone's measure.
+ *
+ * Gold 700, never 500: at 10.5px the fill gold measures 2.36:1 and fails AA
+ * outright. 700 measures 6.24:1 on canvas.
+ */
+.rj-eyebrow {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-champagne-700);
+}
+
+/**
+ * Editorial voice — the "quietly presented" register.
+ *
+ * One typeface, so this is Inter at 300 on a longer measure and a looser
+ * leading. That is the whole difference, and it is enough: what separates
+ * editorial from UI here is line-height and weight, not a second family.
+ */
+.rj-voice {
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
+  line-height: 1.62;
+}
+
+/**
+ * ⚠️ THERE IS NO `.rj-figure`, DELIBERATELY. §4 asks display numerals to carry
+ * `oldstyle-nums`, and one was written — then measured. Inter does not ship an
+ * `onum` feature table: "0123456789" renders to 378.56px with `"onum" 1` and
+ * 378.56px with `"onum" 0`, i.e. the declaration is inert. It would have been
+ * inert in Marcellus too, which is what the class was first written for.
+ *
+ * What remained after removing the dead half was `tabular-nums` plus a hair of
+ * negative tracking — and cadastral.css's `.ledger` already does tabular, and
+ * adds `slashed-zero`, which it argues for at length on a site asking people to
+ * trust a document. A second numeric class that does strictly less than the
+ * existing one is exactly the second source of truth this system keeps warning
+ * about, so every figure on a card uses `.ledger`.
+ *
+ * Old-style figures would need a face that actually has them. That is a
+ * typography decision, not a CSS one.
+ */
+
+/**
+ * ── JAALI FRET ────────────────────────────────────────────────────────────
+ *
+ * Section divider. Geometry from a pierced screen, drawn at 1px in gold at
+ * 30% — a repeating fret, not a floral border. §7's test applies: this passes
+ * because it is a lattice, and a lattice is architecture. A paisley would not.
+ */
+.rj-fret {
+  height: 8px;
+  background-image:
+    linear-gradient(45deg, transparent 46%, rgba(201, 162, 39, 0.3) 46% 54%, transparent 54%),
+    linear-gradient(-45deg, transparent 46%, rgba(201, 162, 39, 0.3) 46% 54%, transparent 54%);
+  background-size: 16px 16px;
+}
+
+/**
+ * ── THE PALETTE SWITCH ────────────────────────────────────────────────────
+ *
+ * Two candidates for the primary action colour, live at the same time so they
+ * can be photographed side by side rather than argued about.
+ *
+ * `heritage` is the default and the incumbent: #e11b22, sampled from the logo,
+ * which is why the mark currently matches the buttons around it.
+ * `ruby` is the brief's #9B1B30 — deeper, quieter, closer to private banking,
+ * and measurably stronger under white text (8.14:1 against 4.78:1). Its cost is
+ * that the logo's red no longer matches anything on the page.
+ *
+ * Nothing else in the system depends on which wins: every control resolves
+ * through --color-cta.
+ */
+[data-palette="ruby"] {
+  --color-cta: #9b1b30;
+  --color-cta-deep: #7a1626;
+}
+
+/**
+ * ── FOILS ─────────────────────────────────────────────────────────────────
+ *
+ * A foil surface and a foil word are different problems. `.rj-foil` paints a
+ * gradient across a background; `.rj-foil-text` clips that gradient to the
+ * glyphs. The text form is reserved for the wordmark and for "Price on
+ * request" — anything smaller loses legibility, because a gradient behind
+ * 11px type puts part of every letter at the light end of the ramp.
+ */
+.rj-foil {
+  background-image: var(--foil-gold);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+}
+/** The text-bearing variant. Use this for any foil surface with a label on it —
+ *  chips, seals, buttons. `.rj-foil` is for rules, bands and bare surfaces. */
+.rj-foil-seal {
+  background-image: var(--foil-gold-seal);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+}
+.rj-foil-plat {
+  background-image: var(--foil-plat);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+}
+.rj-foil-silver {
+  background-image: var(--foil-silver);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+}
+
+.rj-foil-text {
+  background-image: var(--foil-gold);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+/* A gradient clipped to text has no colour of its own to fall back on, so a
+   browser without background-clip:text would render nothing at all. */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .rj-foil-text {
+    background-image: none;
+    color: var(--color-champagne-700);
+  }
+}
+
+/**
+ * ── THE SWEEP ─────────────────────────────────────────────────────────────
+ *
+ * Sunlight crossing a polished watch. One slow band, eased, never linear and
+ * never blinking — a linear sweep reads as a loading skeleton, which is the
+ * one thing a luxury surface must not look like.
+ *
+ * ⚠️ TRANSFORM ONLY. Animating `background-position` on a foil repaints the
+ * gradient every frame; §9's performance floor allows transform and opacity
+ * and nothing else. The band is therefore a separate element that slides.
+ *
+ * Stagger with --rj-sweep-delay so no two surfaces ever fire together; a whole
+ * row glinting in sync reads as a page effect rather than as material.
+ */
+.rj-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.rj-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 62%
+  );
+  transform: translateX(-100%);
+  animation: rj-sweep var(--dur-sweep) var(--ease-silk) var(--rj-sweep-delay, 0s) infinite;
+}
+@keyframes rj-sweep {
+  /* The band crosses in the first fifth and rests for the remainder. A sweep
+     that runs the whole duration is a shimmer; a sweep that rests is a glint. */
+  0% {
+    transform: translateX(-100%);
+  }
+  22%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/**
+ * THE GLINT — the one-shot cousin, for a seal catching the light on hover.
+ *
+ * ⚠️ Not `.rj-sweep` with a shorter duration. The sweep is ambient and runs
+ * forever; the glint must be at rest until the card is hovered, so it needs its
+ * own element and its own trigger rather than an override — stacking both on
+ * one node just meant the later rule won and the seal glinted on page load.
+ *
+ * The band is tinted emerald rather than white, per §6.3.2: a green cast across
+ * gold is what a real stone set in metal throws, and a white band on a gold
+ * foil is nearly invisible anyway.
+ */
+.rj-glint {
+  position: relative;
+  overflow: hidden;
+}
+.rj-glint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 38%,
+    rgba(224, 255, 240, 0.75) 50%,
+    transparent 62%
+  );
+  transform: translateX(-100%);
+}
+.group:hover .rj-glint::after,
+.group:focus-visible .rj-glint::after,
+.rj-glint:hover::after {
+  animation: rj-sweep var(--dur-glint) var(--ease-silk) 1;
+}
+
+/**
+ * ── GLASS ─────────────────────────────────────────────────────────────────
+ *
+ * ⚠️ Capped, per §9, to the three surfaces that genuinely overlap imagery:
+ * the header, the hero console, and the Jamindar panel. `backdrop-filter` is
+ * expensive on low-end Android and this site currently uses it in 21 places.
+ *
+ * The rim is a real gradient border — a 1px padding box with the gradient
+ * painted into it and the centre masked out. A box-shadow cannot do this,
+ * because a shadow has one colour and this has four.
+ */
+.rj-glass {
+  position: relative;
+  background: var(--glass-ivory);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+}
+.rj-glass-onyx {
+  background: var(--glass-onyx);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+}
+/* Blur unavailable: fall back to an opaque panel rather than a transparent
+   one. A see-through panel with no blur is unreadable over a photograph. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .rj-glass {
+    background: var(--color-ivory-50);
+  }
+  .rj-glass-onyx {
+    background: var(--color-onyx-800);
+  }
+}
+
+.rj-rim::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: var(--glass-rim);
+  /* Paint the gradient, then punch out everything but the 1px padding ring. */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/**
+ * ── GEM BAND + HAIRLINE ───────────────────────────────────────────────────
+ *
+ * The district's stone, stated as material before the address states it in
+ * words. --rj-stone is set per card from the district map.
+ *
+ * ⚠️ It may never be the only carrier of the district. Four districts holding
+ * one property each means the band is currently indistinguishable from a
+ * per-card accent, and §2's tier-5 rule — meaning never rides on decoration —
+ * applies one tier up for exactly that reason. The name stays next to it.
+ */
+.rj-gem-band {
+  height: 3px;
+  background: var(--rj-stone, var(--color-champagne-500));
+}
+.rj-gem-rule {
+  border-color: var(--rj-stone, var(--line-champagne));
+}
+
+/**
+ * ── LIFT ──────────────────────────────────────────────────────────────────
+ *
+ * The shadow is tinted to the card's own stone at very low alpha, so a row of
+ * cards lifts in slightly different light. Transform only; the shadow is
+ * present at rest and changes opacity, because transitioning box-shadow itself
+ * repaints on every frame.
+ */
+.rj-lift {
+  transition: transform var(--dur-lift) var(--ease-silk);
+}
+.rj-lift:hover,
+.rj-lift:focus-within {
+  transform: translateY(calc(var(--lift) * -1));
+}
+
+/**
+ * ── THE VAULT ─────────────────────────────────────────────────────────────
+ *
+ * A whole-interface flip to onyx, driven by one attribute on the layout root.
+ * Every token below already resolves, so no component needs a conditional —
+ * which is also what makes this the site's first real dark theme rather than a
+ * one-page treatment. Guarded by prefers-reduced-motion further down.
+ */
+[data-theme="vault"] {
+  --color-canvas: var(--color-onyx-800);
+  --color-canvas-alt: var(--color-onyx-700);
+  --color-canvas-sunken: var(--color-onyx-600);
+  --color-ink: var(--color-bone);
+  --color-ink-soft: var(--color-bone-soft);
+  --color-ink-muted: var(--color-bone-soft);
+  --color-ink-faint: var(--color-plat-500);
+  --color-line: var(--line-onyx);
+  transition:
+    background-color 600ms var(--ease-silk),
+    color 600ms var(--ease-silk);
+}
+
+/**
+ * ⚠️ Every effect in this layer must arrive FINISHED when the reader has asked
+ * for less motion — never absent, never half-drawn. cadastral.css establishes
+ * the rule and the reason: an interrupted transition can park an element at its
+ * start value, which once left plot numbers invisible on a drawing a buyer is
+ * being asked to trust.
+ *
+ * The sweeps are the exception that proves it: a glint carries no meaning, so
+ * it is removed outright rather than parked. §2 tier 5 guarantees that costs
+ * nothing — if a sweep were carrying meaning, the system would already be wrong.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .rj-sweep::after,
+  .rj-glint::after {
+    animation: none;
+    opacity: 0;
+  }
+  .rj-lift,
+  [data-theme="vault"] {
+    transition: none;
+  }
+}

@@ -4,6 +4,8 @@ import "./globals.css";
 /* After globals: the cadastral layer adds to the foundation, it never
    overrides an audited decision made there. */
 import "@/styles/cadastral.css";
+/* After cadastral: the material layer, on the same terms. */
+import "@/styles/royal.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Jamindar } from "@/components/Jamindar";
@@ -13,7 +15,21 @@ import { SITE_URL } from "@/lib/supabase";
 /** One typeface, as the brief asks. Inter carries display and UI both; the
  *  hierarchy comes from weight and scale rather than from a second family.
  *  Loading one variable font instead of two also removes a render-blocking
- *  request, which is where a "premium" site usually loses its speed. */
+ *  request, which is where a "premium" site usually loses its speed.
+ *
+ *  ⚠️ 2026-08-10: the Maharaja brief asked for four families (Marcellus,
+ *  Cormorant Garamond, Noto Serif Tamil, Inter) and they were built and
+ *  measured before the owner reverted to Inter alone. Recording the outcome so
+ *  the same ground is not re-walked a fourth time — this rule has now survived
+ *  three separate briefs that each asked for a display serif:
+ *
+ *  - Marcellus carried the headings convincingly, and cost two extra
+ *    render-blocking families for the pair.
+ *  - Noto Serif Tamil had nothing to set: there is no Tamil script in the
+ *    source or in any property's title, description, locality or location text.
+ *  - The material change in this redesign is doing the work regardless. What
+ *    reads as expensive is the champagne-against-onyx discipline, the gem
+ *    banding and the hairlines — not the face the headline is set in. */
 const body = Inter({
   subsets: ["latin"],
   variable: "--font-body",
@@ -81,6 +97,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en-IN"
       data-scroll-behavior="smooth"
+      /* The incumbent palette. Swap to "ruby" to see the brief's darker
+         primary; every control resolves through --color-cta, so nothing else
+         in the tree has to know which one is active. */
+      data-palette="heritage"
       className={`${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
