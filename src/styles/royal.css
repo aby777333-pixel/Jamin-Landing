@@ -786,6 +786,49 @@
   --rj-stage-ink: var(--color-champagne-300);
 }
 
+/**
+ * ⚠️ THE LOCKUP NEEDS A PLATE IN THE VAULT, and this is a measurement rather
+ * than a preference. logo-full.png is a flat PNG with no dark-ground variant:
+ * 72.4% of its opaque pixels are the red mark, which holds at 3.94:1 on onyx
+ * and survives as a graphic — but 5.7% are the near-black BAZAAR wordmark,
+ * which measures **1.06:1** there and is simply not visible. The lockup would
+ * read as a red squiggle with a missing word.
+ *
+ * A CSS filter cannot fix it: black multiplied by any brightness is still
+ * black, and `invert()` turns the brand red cyan. The alternatives were a
+ * knockout asset, which does not exist and is not mine to invent, or this —
+ * the logo keeps its exact colours and sits on its own ivory chip.
+ *
+ * It is also the site's own idiom: globals.css argues that a plate pays for
+ * legibility only where the words are, instead of the whole frame paying for
+ * it. Same move, one element wide.
+ */
+[data-theme="vault"] .rj-lockup {
+  background: var(--color-ivory-50);
+  border-radius: 14px;
+  padding: 4px 12px;
+  box-shadow: 0 0 0 1px var(--line-champagne);
+}
+
+/**
+ * ⚠️ CARDS HAVE TO CLIMB INSIDE THE VAULT, or they disappear into it.
+ *
+ * A card's ground is `--color-canvas`, and the Vault remaps that to onyx-800 —
+ * which is also the page. Every card was therefore the same colour as the
+ * surface behind it, separated only by a hairline, and the Crown treatment
+ * that exists to distinguish the best development in the inventory was
+ * invisible on the one page built to present it.
+ *
+ * So the ladder is re-stacked for the dark ground: page 800, card 700, Crown
+ * 600. Measured with bone text — 13.3:1 on 700 and 12.0:1 on 600.
+ */
+[data-theme="vault"] .cd-card {
+  --color-canvas: var(--color-onyx-700);
+}
+[data-theme="vault"] .cd-card[data-tier="crown"] {
+  --color-canvas: var(--color-onyx-600);
+}
+
 /** The crest, Crown only. Small, and the only image the card adds. */
 .rj-crest {
   width: 18px;
@@ -833,6 +876,44 @@
 }
 
 /**
+ * ── GOLD DUST (§6.6) ──────────────────────────────────────────────────────
+ *
+ * Palace sunlight, not disco. Two pixels, drifting, peaking at 0.85 — and the
+ * ONLY particles anywhere on the site.
+ *
+ * ⚠️ Pure tier 5: this carries no meaning whatsoever, which is what makes it
+ * safe to delete outright under reduced motion. §2's rule is that if motion is
+ * off the page must still say everything it says with motion on; dust is the
+ * one effect that passes that trivially, because it says nothing.
+ *
+ * Transform and opacity only — §9's performance floor. `will-change` is
+ * deliberately absent: promoting two dozen layers to win a 2px animation is
+ * how a page loses the scroll performance it was trying to decorate.
+ */
+@keyframes rj-dust {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  18%,
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--rj-dust-dx, 12px), var(--rj-dust-dy, -140px), 0);
+    opacity: 0;
+  }
+}
+.rj-dust {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-champagne-300);
+  animation: rj-dust var(--rj-dust-dur, 18s) ease-in-out var(--rj-dust-delay, 0s) infinite;
+}
+
+/**
  * ⚠️ Every effect in this layer must arrive FINISHED when the reader has asked
  * for less motion — never absent, never half-drawn. cadastral.css establishes
  * the rule and the reason: an interrupted transition can park an element at its
@@ -864,5 +945,11 @@
   .rj-arrive {
     animation-duration: 0.01ms;
     animation-delay: 0ms;
+  }
+  /* Removed outright rather than collapsed. Dust says nothing, so there is no
+     final state worth landing on — and a frozen field of 24 specks would read
+     as dirt on the screen. */
+  .rj-dust {
+    display: none;
   }
 }

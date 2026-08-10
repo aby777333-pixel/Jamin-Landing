@@ -77,6 +77,19 @@ export const NAV_STONE: Record<string, { stone: string; ink: string }> = {
   "/projects": { stone: "var(--color-sapphire)", ink: "var(--color-sapphire)" }, // 9.68:1
   "/locations": { stone: "var(--color-amethyst)", ink: "var(--color-amethyst)" }, // 7.20:1
   "/journal": { stone: "var(--color-jade)", ink: "var(--color-emerald-deep)" }, // 7.93:1
+  /* ⚠️ Champagne, and the reasoning here is the opposite of every other row.
+     Onyx was tried first — §2 pairs the Vault with onyx and gold, and on a
+     light page onyx ink measures 14.8:1. But this tab's ACTIVE state only ever
+     renders on /vault, and /vault is the one route that flips the whole
+     interface to onyx. Onyx ink on an onyx ground measured 1.09:1: the label
+     for the page you are standing on was the one label you could not read.
+
+     So the ink is tuned for the ground it will actually appear on, not for the
+     ground the rest of this table assumes. champagne-300 measures 12.3:1 on
+     onyx-800. Home also carries champagne, and that is not a collision — its
+     ink is champagne-700 for a light page, and the two are never active at
+     once. */
+  "/vault": { stone: "var(--color-champagne-500)", ink: "var(--color-champagne-300)" }, // 12.3:1 on onyx
   "/about": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
   "/account": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
 };

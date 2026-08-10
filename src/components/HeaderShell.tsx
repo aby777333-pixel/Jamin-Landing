@@ -134,7 +134,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
       <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10">
-        <Link href="/" className="flex items-center" aria-label="Jamin Bazaar — home">
+        <Link href="/" className="rj-lockup flex items-center" aria-label="Jamin Bazaar — home">
           {/* The full lockup — mark, wordmark and the "signature for Fortune"
               rule. logo.png is the square app mark on its own and belongs on an
               icon, not in a header, where it reads as a favicon that wandered
@@ -231,6 +231,20 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
               <Jewels href="/journal" label="Journal" active={section("/journal")} />
             </Link>
           )}
+
+          {/* §6.6. ⚠️ Onyx is its stone rather than a gemstone — the Vault IS
+              the dark surface, and giving it a colour would have put it in the
+              same register as the district tabs it deliberately sits apart
+              from. `ink` is used for the word, as everywhere. */}
+          <Link
+            href="/vault"
+            className={trigger}
+            style={stoneVar("/vault")}
+            onMouseEnter={() => setPanel(null)}
+            aria-current={section("/vault") ? "page" : undefined}
+          >
+            <Jewels href="/vault" label="Vault" active={section("/vault")} />
+          </Link>
 
           <Link
             href="/about"
@@ -370,6 +384,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             </>
           )}
           {facets.hasJournal && <MobileLink href="/journal">Jamin Journal</MobileLink>}
+          <MobileLink href="/vault">The Royal Vault</MobileLink>
           <MobileLink href="/about">About</MobileLink>
           <MobileLink href="/account">Account</MobileLink>
           <Link
