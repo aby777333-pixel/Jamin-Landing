@@ -497,7 +497,16 @@ export default async function VaultPage() {
           <Container>
             <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
               <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
-                <VaultPlate seed={heritage.slug} sizes="(min-width: 1024px) 60vw, 100vw" />
+                {/* Reads the same `familyImages` map as every other family
+                    (0085) rather than a key of its own — it is a family that
+                    happens to get a bigger frame, not a different kind of
+                    thing. No picture in the map and it falls back to the drawn
+                    plate, exactly as this band shipped. */}
+                <VaultPlate
+                  src={settings.familyImages[heritage.slug]}
+                  seed={heritage.slug}
+                  sizes="(min-width: 1024px) 60vw, 100vw"
+                />
               </div>
               <div>
                 <p className="rj-eyebrow text-jamin-gold-ink">Heritage India</p>

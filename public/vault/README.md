@@ -1,8 +1,8 @@
 # /public/vault — artwork register for THE VAULT
 
 Same register discipline as `public/hero/README.md` and `public/section/README.md`.
-Ten photographs supplied by the owner on 2026-08-11, converted to WebP at 1200px
-wide, q80 — 27.3 MB of PNG down to 1.9 MB.
+Seventeen photographs supplied by the owner on 2026-08-11 and converted to WebP
+at q80 — 46 MB of PNG down to 2.8 MB.
 
 ## `path/` — the four ways in
 
@@ -26,15 +26,31 @@ a set of `vault_categories` rows, adding one is a console action, so its picture
 has to be swappable from the console too — paste a public-bucket URL over the
 local path and it changes with no deploy.
 
-Files: `coastal-and-waterfront`, `mountains-and-nature`,
+1200px wide. Files: `coastal-and-waterfront`, `mountains-and-nature`,
 `land-and-agricultural-estates`, `exceptional-residences`,
-`hospitality-and-investment-assets`, `rare-commercial-assets`.
+`hospitality-and-investment-assets`, `rare-commercial-assets`,
+`heritage-india`.
 
-⚠️ **HERITAGE INDIA HAS NO PICTURE.** Six were supplied for seven families.
-Heritage does not render through `FamilyBlock` — it has its own feature band
-further down `/vault` — so it keeps its drawn plate. Dropping a
-`heritage-india` key into `familyImages` will do nothing; the band reads its own
-art.
+`heritage-india` arrived second (0085) and its band now reads the same map as
+the other six rather than drawing its own plate. It is a family that gets a
+bigger frame, not a different kind of thing — an earlier note here said the key
+would do nothing, and that stopped being true when the band was rewired.
+
+## `destination/` — the places
+
+Read from `vault_destinations.image_url`. A destination **is** a row, and the
+column already existed, so unlike a family its picture belongs on the row —
+delete the place and the picture goes with it.
+
+1000px wide, and the card crops them 4:5 from landscape sources: they are
+scenery, so the centre carries the picture. Files: `goa`, `nilgiris`, `coorg`,
+`kerala`, `rajasthan`, `alibaug`.
+
+⚠️ **Six of twelve destinations have no picture** — Lonavala, Bengaluru,
+Chennai & ECR, Puducherry, Himachal Pradesh and Uttarakhand keep their plates.
+Never close that gap by pointing two places at one photograph. These cards sit
+in one grid, so the same picture under two names reads as a mistake at best, and
+at worst as a claim about somewhere it was not taken.
 
 ## The rule these images live under
 

@@ -151,7 +151,15 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
       </nav>
 
       <article className="mt-phi3">
-        <header className="max-w-3xl">
+        {/* ⚠️ FULL WIDTH ON PURPOSE, and it does NOT contradict §142's measure
+            rule below. `max-w-3xl` here capped the headline at 48rem inside a
+            75rem container, so a four-line title and its standfirst sat in the
+            left two-thirds with the right third empty — the reader met a column
+            before they met the piece. A headline is display type, read in one
+            glance rather than line by line, so the measure that protects body
+            copy costs it nothing and buys back the space. The body still wraps
+            at 68ch; that cap is the one that matters and it stays. */}
+        <header>
           <div className="flex flex-wrap items-center gap-2">
             <Badge tone="gold">{KIND_LABEL[post.kind] ?? post.kind}</Badge>
             {readingMinutes(post) !== null && (

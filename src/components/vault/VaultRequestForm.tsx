@@ -275,7 +275,35 @@ export function VaultRequestForm({ initialIntent }: { initialIntent?: "buy" | "r
           <label htmlFor="vr-poss" className={labelCls}>
             {intent === "rent" ? "Preferred check-in" : "Preferred possession"}
           </label>
-          <input id="vr-poss" type="date" value={possession} onChange={(e) => setPossession(e.target.value)} className={field} />
+          {/* ⚠️ `colorScheme: "dark"` IS THE FIX, NOT DECORATION. A date input
+              draws three things the page cannot reach with CSS — the calendar
+              button, the dd-mm-yyyy skeleton and the whole dropdown panel — and
+              Chrome picks their colours from the element's colour scheme, not
+              from anything it inherits. The Vault is the one dark surface on
+              this site, so the browser was painting a near-black glyph and a
+              white panel onto a near-black field: the button was invisible and
+              the panel arrived as a slab of glare. Every other field here is
+              ordinary text and needs nothing.
+
+              The empty skeleton is muted to match the placeholders beside it
+              and goes full-strength once a date exists — a placeholder that
+              reads louder than the answers around it looks like a filled
+              field. Driven off the value we already hold in state, and applied
+              as a style rather than a second class because `field` already
+              carries `text-ink`: two same-specificity utilities on one element
+              are settled by their order in the compiled sheet, not by the order
+              they are written here, so the muted one would win only by luck. */}
+          <input
+            id="vr-poss"
+            type="date"
+            value={possession}
+            onChange={(e) => setPossession(e.target.value)}
+            style={{
+              colorScheme: "dark",
+              color: possession ? undefined : "var(--color-ink-faint)",
+            }}
+            className={field}
+          />
         </div>
         {/* Only asked when it can be answered. A buyer has no duration. */}
         {intent === "rent" ? (
