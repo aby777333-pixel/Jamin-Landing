@@ -1,185 +1,603 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { GoldDust } from "@/components/GoldDust";
-import { PropertyCard } from "@/components/PropertyCard";
-import { VaultTheme } from "@/components/VaultTheme";
-import { getProperties, isSellable } from "@/lib/properties";
-import { getTier, TIERS } from "@/lib/tiers";
+import { VaultPlate } from "@/components/vault/VaultPlate";
+import {
+  getVaultCategories,
+  getVaultDestinations,
+  getVaultListings,
+  getVaultSettings,
+  groupFamilies,
+  publicPlace,
+  publicTitle,
+  vaultListingHref,
+  verificationBadge,
+  VAULT_FALLBACK,
+  type VaultFamily,
+} from "@/lib/vault";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "The Royal Vault — Exceptional Properties, Quietly Presented",
+  title: "The Vault — Private Real Estate & Exceptional Assets | Jamin Bazaar",
   description:
-    "The Jamin Royal Vault: developments held to the Royal and Crown Collection standard, presented on request.",
+    "Jamin Bazaar's private property desk. Acquisition, rental, sale and leasing of exceptional properties — estates, heritage residences, plantations and rare assets — handled personally and privately.",
   alternates: { canonical: "/vault" },
 };
 
 /**
- * THE ROYAL VAULT (§6.6).
+ * THE VAULT — Jamin Bazaar's private property desk.
  *
- * ⚠️ ITS SIX CATEGORIES MATCH ZERO ROWS, and that was known before it was
- * built — every property in the database is `residential_plot`, so Private
- * Estates, Beachfront, Heritage, Luxury Villas and Rare Listings have nothing
- * behind them and Investment Land has everything. The owner asked for it as
- * specified after the cost was put to him twice, so it is built as specified.
+ * ⚠️ THIS PAGE ASKS A DIFFERENT QUESTION FROM THE REST OF THE SITE. The
+ * marketplace answers "what is available?"; The Vault answers "what are you
+ * looking for?". Every decision below follows from that inversion, and the one
+ * that matters most is that INVENTORY IS NOT THE LEAD. `vault_listings` is
+ * empty today and may be empty for a long time, and the page is complete
+ * without it — the service is the desk, not the catalogue. A redesign that puts
+ * a grid at the top will be wrong the moment the grid has three things in it.
  *
- * ⚠️ What it is NOT allowed to be is a page of six dead ends. SiteHeader.tsx
- * records the standing rule — the nav was rebuilt from live facets precisely
- * because three menu items once pointed at pages that did not exist. So the
- * Vault leads with the inventory that genuinely earns the name (Royal and
- * Crown by lib/tiers) and presents the six as a register of what it will hold,
- * each routing to the desk rather than to an empty grid. The page is never
- * blank on arrival.
+ * ⚠️ NOTHING HERE IS HARD-CODED CONTENT (§19). Families, categories,
+ * destinations, the hero copy, the standing lines, the FAQ and the legal
+ * notices are all rows in `vault_categories`, `vault_destinations` and
+ * `vault_settings`. What IS in this file is structure and voice: which section
+ * comes first, and how each one speaks.
+ *
+ * ⚠️ THE TWO DESKS LIVE ON THEIR OWN PAGES, deliberately. §4 and §5 each
+ * describe a section with a long form, and putting both inline would have made
+ * this page two screens of fields under a cinematic hero — the opposite of
+ * §23's "fewer listings, more space". They are presented here as invitations
+ * with the whole argument, and the form itself gets a quiet room of its own.
+ *
+ * ⚠️ THE FORBIDDEN REGISTER (§14). No "exclusive", no "VIP", no "ultimate
+ * luxury", no "for billionaires". The audience works out who this is for from
+ * the restraint. If a line here ever needs an exclamation mark, it is the wrong
+ * line.
  */
-const COLLECTIONS = [
-  { key: "private-estates", label: "Private Estates", note: "Whole-parcel holdings, sold entire." },
-  { key: "beachfront", label: "Beachfront", note: "Coastal land with clear title." },
-  { key: "heritage", label: "Heritage", note: "Land with a history worth keeping." },
-  { key: "luxury-villas", label: "Luxury Villas", note: "Built, finished and ready to occupy." },
-  { key: "investment-land", label: "Investment Land", note: "Held for appreciation, not for building." },
-  { key: "rare-listings", label: "Rare Listings", note: "Released to enquiry only." },
+
+/* §3 — the four intent paths, in the brief's own order and wording. Structure,
+   not content: these are routes through the product, and each one lands on a
+   form that exists. */
+const PATHS = [
+  {
+    key: "buy",
+    kicker: "Buy",
+    title: "Acquire something exceptional",
+    note: "For clients looking to purchase a premium property or estate.",
+    cta: "Tell us what you want",
+    href: "/vault/request?intent=buy",
+  },
+  {
+    key: "rent",
+    kicker: "Rent",
+    title: "Live somewhere extraordinary",
+    note: "Short-term, seasonal, long-term, holiday, corporate or private rentals.",
+    cta: "Find it for me",
+    href: "/vault/request?intent=rent",
+  },
+  {
+    key: "sell",
+    kicker: "Sell",
+    title: "Sell with discretion",
+    note: "For owners wishing to sell through Jamin Bazaar's private network.",
+    cta: "Speak to The Vault",
+    href: "/vault/offer?intent=sell",
+  },
+  {
+    key: "lease",
+    kicker: "Lease",
+    title: "Place your property privately",
+    note: "For owners who want us to find suitable tenants or occupants.",
+    cta: "Offer to The Vault",
+    href: "/vault/offer?intent=lease",
+  },
 ];
 
+/* §1 and §7 — what a request actually sounds like. Written as things a client
+   would say, because the whole page is an argument that saying it is enough. */
+const SPOKEN = [
+  "A private beachfront home near Goa for three months.",
+  "A coffee estate in Coorg, with an existing residence.",
+  "A restored heritage property in Rajasthan.",
+  "A private estate near Ooty, for the family.",
+  "An orchard within two hours of Bengaluru.",
+  "A villa I own, leased privately — never publicly advertised.",
+];
+
+/* §6 — the three visibility levels, stated to owners in plain words. This is
+   the page's strongest trust argument, so it is prose rather than a table. */
+const LEVELS = [
+  {
+    name: "Public Vault",
+    note: "Shown to anyone who visits The Vault. Used only where an owner is content to be seen.",
+  },
+  {
+    name: "Private Vault",
+    note: "Held back from the public page and shown to verified clients whose requirement it answers.",
+  },
+  {
+    name: "Off-market",
+    note: "Never publicly displayed at all. Visible to authorised Vault administrators, and matched by hand against qualified requirements.",
+  },
+];
+
+function FamilyBlock({ family }: { family: VaultFamily }) {
+  return (
+    <li id={family.slug} className="scroll-mt-28">
+      <div className="overflow-hidden rounded-xl border border-line bg-canvas-alt">
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-canvas-sunken">
+          <VaultPlate seed={family.slug} label={family.name} />
+        </div>
+        <div className="p-phi3">
+          <h3 className="text-xl text-ink">{family.name}</h3>
+          <ul className="mt-phi3 space-y-2">
+            {family.items.map((c) => (
+              <li key={c.slug} className="border-t border-line pt-2 first:border-t-0 first:pt-0">
+                <p className="text-base text-ink">{c.label}</p>
+                {c.note ? <p className="text-tiny text-ink-faint">{c.note}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </li>
+  );
+}
+
 export default async function VaultPage() {
-  const all = await getProperties();
-  /* Royal and Crown are the two rungs that mean "approved, published and
-     checkable" — see lib/tiers. That is the honest definition of exceptional
-     on a site with no prices. */
-  const held = all
-    .filter((p) => getTier(p).rank >= TIERS.royal.rank)
-    .sort((a, b) => getTier(b).rank - getTier(a).rank);
+  /* Every read is independent and every one has a fallback, so one unreachable
+     table takes its own section down rather than the page. */
+  const [settings, categories, destinations, listings] = await Promise.all([
+    getVaultSettings(),
+    getVaultCategories().catch(() => []),
+    getVaultDestinations().catch(() => []),
+    getVaultListings().catch(() => []),
+  ]);
+
+  const families = groupFamilies(categories);
+  /* Heritage gets the feature band the brief asks for — but only if it is
+     actually there. Removing the family in the console removes the band, and
+     nothing else on the page notices. */
+  const heritage = families.find((f) => f.slug === "heritage-india");
+  const rest = families.filter((f) => f !== heritage);
+
+  const hero = settings.hero ?? VAULT_FALLBACK.hero;
+  const promise = settings.promise?.length ? settings.promise : VAULT_FALLBACK.promise;
 
   return (
     <>
-      <VaultTheme />
-
-      {/* hero-24 — the village at dusk, supplied 2026-08-10.
-          ⚠️ Brand imagery, never a Jamin project: a generic Tamil street with a
-          gopuram behind it, carrying no Jamin mark and no identifiable site. It
-          stays `alt=""` and `aria-hidden` and must never gain a caption, a
-          location or a project name. See public/hero/README.md.
-          ⚠️ Picture PLUS PLATE, not a scrim — the treatment the whole site moved
-          to on 2026-08-09. The frame is golden hour and its left third, exactly
-          where the copy sits, is the brightest part of it (sky through palms,
-          then a sunlit road), so bare type would have had nothing to sit on. */}
-      <section className="relative isolate overflow-hidden bg-onyx-900">
-        <Image
-          src="/hero/hero-24-1914.webp"
-          alt=""
-          aria-hidden="true"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-
-        {/* The only particles on the site. Over the picture, so they read as
-            late light in the air rather than as dust on a black panel. */}
+      {/* ── §16 THE OPENING ────────────────────────────────────────────────
+          Very little text over a very large frame. `min-h` rather than a fixed
+          height so the plate breathes on a phone without the copy ever being
+          pushed off it. */}
+      <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
+        <VaultPlate seed="the-vault-hero" priority sizes="100vw" className="opacity-90" />
+        {/* The only particles on the site, over the picture rather than on a
+            black panel, so they read as late light in the air. */}
         <GoldDust />
 
-        <Container className="relative py-phi7">
+        <Container className="relative py-phi6">
           <div
-            className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
-            /* Swept on hero-24: at blur 16 this frame needs 0.50 (white 4.90,
-               gold 4.53). A heavier blur would buy a lighter tint, but it turns
-               the village into a colour wash - and seeing the picture is the
-               whole point of a sheer plate. */
-            style={{ "--rj-sheer-alpha": 0.12 } as React.CSSProperties}
+            className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi4 sm:p-phi5"
+            style={{ "--rj-sheer-alpha": 0.16 } as React.CSSProperties}
           >
-            <p className="rj-eyebrow" style={{ color: "var(--color-champagne-50)" }}>
-              By appointment
+            <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
+              {hero.eyebrow ?? "Jamin Bazaar"}
             </p>
-            <h1 className="mt-phi3 text-balance text-4xl text-white">The Royal Vault</h1>
-            <p className="rj-voice mt-phi3 text-xl text-white">
-              Exceptional properties, quietly presented.
-            </p>
-
-            {/* ⚠️ §6.6 puts "price on request" in gold foil, and foil text only
-                works on a dark ground — the seal ramp measures 12.3:1 on onyx
-                and 1.57:1 on ivory. The plate is what keeps it dark here, which
-                is the same reason the line lives in this band rather than beside
-                the collections on the canvas below. No rupee glyph, per the
-                brief. */}
-            <p className="mt-phi4 text-base text-white">
-              Rates are <span className="font-medium" style={{ color: "var(--color-champagne-50)" }}>
-                price on request
-              </span>. Nothing
-              in the Vault carries a published figure.
+            <h1 className="mt-phi3 text-balance text-4xl text-white lg:text-5xl">
+              {hero.title ?? "The Vault"}
+            </h1>
+            <p className="rj-voice mt-phi3 text-pretty text-xl text-white">
+              {hero.lead ?? VAULT_FALLBACK.hero.lead}
             </p>
 
-            <div className="rj-fret mt-phi4 max-w-xs" aria-hidden="true" />
+            <div className="mt-phi5 flex flex-wrap gap-3">
+              <Link
+                href="/vault/request?intent=buy"
+                className="rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+              >
+                I want to buy
+              </Link>
+              <Link
+                href="/vault/request?intent=rent"
+                className="rounded-full border border-champagne-300 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+              >
+                I want to rent
+              </Link>
+            </div>
+
+            <div className="mt-phi3 flex flex-wrap gap-x-phi4 gap-y-2 text-tiny uppercase tracking-[0.12em]">
+              <Link href="/vault/offer?intent=sell" className="text-white/80 underline-offset-4 hover:underline">
+                I want to sell
+              </Link>
+              <Link href="/vault/offer?intent=lease" className="text-white/80 underline-offset-4 hover:underline">
+                I want to lease my property
+              </Link>
+              <Link href="#desks" className="text-champagne-300 underline-offset-4 hover:underline">
+                Speak privately to The Vault
+              </Link>
+            </div>
+
+            <div className="rj-fret mt-phi5 max-w-xs" aria-hidden="true" />
           </div>
         </Container>
       </section>
 
+      {/* ── §1 THE CORE IDEA ───────────────────────────────────────────────
+          Placed second on purpose. A visitor who has just arrived does not yet
+          know that this page works backwards, and everything after it depends
+          on their knowing. */}
       <Container className="py-phi6">
-        {held.length > 0 ? (
-          <>
-            <h2 className="text-2xl text-ink">Held in the Vault</h2>
-            <p className="mt-phi2 max-w-2xl text-base text-ink-muted">
-              {held.length} development{held.length === 1 ? "" : "s"} currently meet the standard:
-              sanctioned, published, and checkable against the DTCP file before you visit.
+        <div className="grid gap-phi5 lg:grid-cols-[1fr_1.618fr]">
+          <div>
+            <p className="rj-eyebrow text-jamin-gold-ink">The idea</p>
+            <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+              You do not have to find it. You have to describe it.
+            </h2>
+          </div>
+          <div>
+            <p className="text-lg leading-relaxed text-ink-soft">
+              {hero.note ?? VAULT_FALLBACK.hero.note}
             </p>
-            <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-              {held.map((p) => (
-                <div key={p.id} className="relative flex">
-                  <PropertyCard p={p} />
-                </div>
+            <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+              Most of what The Vault handles is never published — it is held quietly, and moved
+              between people who are already known to us. So instead of a catalogue to search, there
+              is a desk to speak to. Tell us what you want, and a representative takes it from
+              there.
+            </p>
+
+            <ul className="mt-phi4 grid gap-2 sm:grid-cols-2">
+              {SPOKEN.map((line) => (
+                <li
+                  key={line}
+                  className="rounded-card border border-line bg-canvas-alt px-phi3 py-2.5 text-base text-ink-soft"
+                >
+                  “{line}”
+                </li>
               ))}
-            </div>
-          </>
-        ) : (
-          <p className="max-w-2xl text-base text-ink-muted">
-            Nothing is held in the Vault today. The desk will tell you the moment something is.
-          </p>
-        )}
-
-        <div className="rj-fret my-phi6" aria-hidden="true" />
-
-        <h2 className="text-2xl text-ink">The collections</h2>
-        <p className="mt-phi2 max-w-2xl text-base text-ink-muted">
-          What the Vault is built to hold. Jamin sells sanctioned residential plots today, so most
-          of these are not open — where that is true it says so, rather than showing an empty page.
-        </p>
-
-        <ul className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-          {COLLECTIONS.map((c) => {
-            /* Counted from the real records, never asserted. Today this is
-               zero for five of the six and every card says so. */
-            const count = c.key === "investment-land" ? all.filter(isSellable).length : 0;
-            return (
-              <li key={c.key}>
-                <div className="flex h-full flex-col rounded-xl border border-line p-phi3">
-                  {/* A champagne hairline above each, which is the Select rung's
-                      treatment — the quietest thing the tier ladder owns. */}
-                  <div className="rj-tier-rule mb-phi2" aria-hidden="true" />
-                  <h3 className="text-lg text-ink">{c.label}</h3>
-                  <p className="mt-phi2 flex-1 text-base text-ink-muted">{c.note}</p>
-                  {count > 0 ? (
-                    <Link
-                      href="/properties"
-                      className="mt-phi3 text-tiny font-semibold uppercase tracking-[0.12em] text-cta-deep"
-                    >
-                      {count} available →
-                    </Link>
-                  ) : (
-                    <p className="mt-phi3 text-tiny text-ink-faint">
-                      Not open.{" "}
-                      <Link href="/contact" className="text-cta-deep underline underline-offset-4">
-                        Register interest
-                      </Link>
-                    </p>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-
+            </ul>
+          </div>
+        </div>
       </Container>
+
+      {/* ── §3 THE FOUR PATHS ──────────────────────────────────────────────*/}
+      <section className="border-y border-line bg-canvas-alt py-phi6">
+        <Container>
+          <p className="rj-eyebrow text-jamin-gold-ink">Where would you like to begin</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">Four ways into The Vault</h2>
+
+          <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+            {PATHS.map((p) => (
+              <li key={p.key} className="flex">
+                <Link
+                  href={p.href}
+                  className="rj-lift group flex w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas"
+                >
+                  <span className="relative aspect-[4/3] w-full overflow-hidden bg-canvas-sunken">
+                    <VaultPlate seed={p.key} sizes="(min-width: 1024px) 25vw, 50vw" />
+                  </span>
+                  <span className="flex flex-1 flex-col p-phi3">
+                    <span className="rj-eyebrow text-jamin-gold-ink">{p.kicker}</span>
+                    <span className="mt-phi2 text-lg text-ink">{p.title}</span>
+                    <span className="mt-phi2 flex-1 text-base leading-relaxed text-ink-muted">
+                      {p.note}
+                    </span>
+                    <span className="mt-phi3 text-tiny font-semibold uppercase tracking-[0.12em] text-cta-deep">
+                      {p.cta} →
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* ── HELD IN THE VAULT ──────────────────────────────────────────────
+          ⚠️ Renders NOTHING when there is nothing to show. An empty grid with a
+          "no results" message would be the one moment on this page that reads
+          like a portal, and the argument above it — that most of what we handle
+          is unpublished — already accounts for the silence. */}
+      {listings.length > 0 ? (
+        <Container className="py-phi6">
+          <p className="rj-eyebrow text-jamin-gold-ink">Currently in The Vault</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">
+            {listings.length} {listings.length === 1 ? "property" : "properties"} shown publicly
+          </h2>
+          <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">
+            What appears here is what its owner is content to show. It is a fraction of what The
+            Vault holds.
+          </p>
+
+          <ul className="mt-phi5 grid gap-phi4 lg:grid-cols-2">
+            {listings.map((l) => {
+              const place = publicPlace(l);
+              const badge = verificationBadge(l.stage);
+              return (
+                <li key={l.id} className="flex">
+                  <Link
+                    href={vaultListingHref(l)}
+                    className="rj-lift group flex w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas-alt"
+                  >
+                    <span className="relative aspect-[3/2] w-full overflow-hidden bg-canvas-sunken">
+                      <VaultPlate
+                        src={l.images?.[0]}
+                        seed={l.slug ?? l.id}
+                        alt=""
+                        sizes="(min-width: 1024px) 50vw, 100vw"
+                      />
+                    </span>
+                    <span className="flex flex-1 flex-col p-phi4">
+                      {badge ? (
+                        <span className="rj-eyebrow text-jamin-gold-ink">{badge}</span>
+                      ) : null}
+                      <span className="mt-phi2 text-2xl text-ink">{publicTitle(l)}</span>
+                      {place ? (
+                        <span className="mt-1 text-base text-ink-muted">{place}</span>
+                      ) : null}
+                      <span className="mt-phi3 flex-1 text-base leading-relaxed text-ink-muted">
+                        {l.discreet
+                          ? "Full details available upon qualified enquiry."
+                          : (l.headline ?? l.summary ?? "")}
+                      </span>
+                      <span className="mt-phi3 text-tiny font-semibold uppercase tracking-[0.12em] text-cta-deep">
+                        {l.discreet ? "Request private access" : "Open the dossier"} →
+                      </span>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      ) : null}
+
+      {/* ── §2 WHAT THE VAULT HANDLES ──────────────────────────────────────*/}
+      {rest.length > 0 ? (
+        <Container className="py-phi6">
+          <p className="rj-eyebrow text-jamin-gold-ink">What we handle</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">
+            Far beyond villas and apartments
+          </h2>
+          <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">
+            A register of what The Vault will take on. Where a category carries legal restriction —
+            agricultural land, coastal land, heritage, forest-adjacent — eligibility is established
+            before anything else happens.
+          </p>
+
+          <ul className="mt-phi5 grid gap-phi4 md:grid-cols-2 xl:grid-cols-3">
+            {rest.map((f) => (
+              <FamilyBlock key={f.slug} family={f} />
+            ))}
+          </ul>
+        </Container>
+      ) : null}
+
+      {/* ── §2 HERITAGE INDIA ──────────────────────────────────────────────
+          Its own band because the brief asks for one, and because it is the
+          part of this list that no international private-office template
+          covers. */}
+      {heritage ? (
+        <section className="border-y border-line bg-canvas-alt py-phi6">
+          <Container>
+            <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
+                <VaultPlate seed={heritage.slug} sizes="(min-width: 1024px) 60vw, 100vw" />
+              </div>
+              <div>
+                <p className="rj-eyebrow text-jamin-gold-ink">Heritage India</p>
+                <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+                  Houses that were never allowed to fall.
+                </h2>
+                <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+                  Havelis, Chettinad mansions, colonial and plantation bungalows, courtyard homes,
+                  palace-style residences. These rarely reach a portal — they change hands through
+                  families, lawyers and long conversations, which is the way The Vault works anyway.
+                </p>
+                <ul className="mt-phi4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {heritage.items.map((c) => (
+                    <li key={c.slug} className="text-base text-ink-soft">
+                      {c.label}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-phi4 text-tiny leading-relaxed text-ink-faint">
+                  Heritage and culturally significant property carries its own rules on alteration,
+                  transfer and use. Those are established for the specific building, never assumed
+                  from the category.
+                </p>
+              </div>
+            </div>
+          </Container>
+        </section>
+      ) : null}
+
+      {/* ── §17 DESTINATIONS ───────────────────────────────────────────────*/}
+      {destinations.length > 0 ? (
+        <Container className="py-phi6">
+          <p className="rj-eyebrow text-jamin-gold-ink">Where</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">The places we are asked for</h2>
+          <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">
+            Where requirements come from most often. It is not a claim of inventory in each — it is
+            where the desk already has people worth calling.
+          </p>
+
+          <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {destinations.map((d) => (
+              <li key={d.slug} className="flex">
+                <Link
+                  href={`/vault/request?intent=buy&where=${encodeURIComponent(d.name)}`}
+                  className="rj-lift group relative flex aspect-[4/5] w-full flex-col justify-end overflow-hidden rounded-xl border border-line bg-canvas-sunken"
+                >
+                  <VaultPlate
+                    src={d.image_url}
+                    seed={d.slug}
+                    kind="destination"
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  />
+                  {/* The scrim is what makes the name legible over any
+                      photograph an administrator later uploads — the plate is
+                      dark, but a real picture might not be. */}
+                  <span
+                    className="pointer-events-none absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(to top, rgba(10,10,9,0.88) 0%, rgba(10,10,9,0.45) 38%, rgba(10,10,9,0) 68%)",
+                    }}
+                    aria-hidden="true"
+                  />
+                  <span className="relative p-phi3">
+                    <span className="block text-xl text-white">{d.name}</span>
+                    {d.tagline ? (
+                      <span className="mt-1 block text-base text-white/75">{d.tagline}</span>
+                    ) : null}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      ) : null}
+
+      {/* ── §7 BESPOKE SEARCH + §6 THE OFF-MARKET VAULT ────────────────────*/}
+      <section className="border-y border-line bg-canvas-alt py-phi6">
+        <Container>
+          <div className="grid gap-phi5 lg:grid-cols-2">
+            <div>
+              <p className="rj-eyebrow text-jamin-gold-ink">Vault bespoke search</p>
+              <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+                You describe it. We search for it.
+              </h2>
+              <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+                When nothing we hold answers a requirement, the requirement becomes the brief. The
+                desk takes it to owners, lawyers, estate managers and the people who know what is
+                quietly available in a district — and reports back, including when the answer is
+                that it does not exist at the price.
+              </p>
+              <Link
+                href="/vault/request"
+                className="mt-phi4 inline-flex rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+              >
+                Submit a private requirement
+              </Link>
+            </div>
+
+            <div>
+              <p className="rj-eyebrow text-jamin-gold-ink">The off-market Vault</p>
+              <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+                Not everything is meant to be seen.
+              </h2>
+              <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+                Every property offered to The Vault is held at one of three levels. An owner chooses;
+                the system enforces it.
+              </p>
+              <ul className="mt-phi4 space-y-phi3">
+                {LEVELS.map((l) => (
+                  <li key={l.name} className="border-t border-line pt-phi3">
+                    <p className="text-lg text-ink">{l.name}</p>
+                    <p className="mt-1 text-base leading-relaxed text-ink-muted">{l.note}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ── §4 + §5 THE TWO DESKS ──────────────────────────────────────────*/}
+      <Container className="py-phi6">
+        <div id="desks" className="scroll-mt-28 grid gap-phi4 lg:grid-cols-2">
+          <div className="flex flex-col rounded-xl border border-champagne-500/35 bg-canvas-alt p-phi4 lg:p-phi5">
+            <p className="rj-eyebrow text-jamin-gold-ink">For clients</p>
+            <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+              Looking for something we haven&rsquo;t listed?
+            </h2>
+            <p className="mt-phi3 flex-1 text-lg leading-relaxed text-ink-muted">
+              Tell us what you are looking for. Some of the finest properties never reach the open
+              market. Location, landscape, architecture, privacy, acreage, budget, intended use —
+              whatever matters to you is what we work from.
+            </p>
+            <Link
+              href="/vault/request"
+              className="mt-phi4 inline-flex justify-center rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+            >
+              Submit private requirement
+            </Link>
+          </div>
+
+          <div className="flex flex-col rounded-xl border border-champagne-500/35 bg-canvas-alt p-phi4 lg:p-phi5">
+            <p className="rj-eyebrow text-jamin-gold-ink">For owners</p>
+            <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
+              Have something exceptional?
+            </h2>
+            <p className="mt-phi3 flex-1 text-lg leading-relaxed text-ink-muted">
+              Offer your property privately to The Vault for sale or lease. Choose to keep it
+              off-market and it never appears in the public catalogue — it is held privately and
+              matched by hand against qualified requirements.
+            </p>
+            <Link
+              href="/vault/offer"
+              className="mt-phi4 inline-flex justify-center rounded-full border border-champagne-300 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+            >
+              Offer to The Vault
+            </Link>
+          </div>
+        </div>
+      </Container>
+
+      {/* ── §14 THE STANDING LINES ─────────────────────────────────────────
+          Discretion said once, quietly, rather than asserted on every card. */}
+      <section className="border-y border-line py-phi6">
+        <Container>
+          <ul className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+            {promise.map((line) => (
+              <li key={line} className="border-t border-line pt-phi3 text-lg leading-relaxed text-ink-soft">
+                {line}
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
+
+      {/* ── TRUST ──────────────────────────────────────────────────────────*/}
+      {settings.faq?.length ? (
+        <Container className="py-phi6">
+          <p className="rj-eyebrow text-jamin-gold-ink">Before you write</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">Questions the desk is asked</h2>
+          <dl className="mt-phi5 max-w-3xl">
+            {settings.faq.map((f) => (
+              <div key={f.q} className="border-t border-line py-phi3">
+                <dt className="text-lg text-ink">{f.q}</dt>
+                <dd className="mt-phi2 text-base leading-relaxed text-ink-muted">{f.a}</dd>
+              </div>
+            ))}
+          </dl>
+        </Container>
+      ) : null}
+
+      {/* ── §22 LEGAL ──────────────────────────────────────────────────────
+          ⚠️ Small type, but never absent. §22 is explicit that luxury may not
+          cost clarity, and the verification paragraph in particular is the one
+          that stops a premium presentation from implying a legal opinion
+          nobody has given. */}
+      {settings.legal ? (
+        <Container className="pb-phi7">
+          <div className="rounded-xl border border-line p-phi4">
+            <p className="rj-eyebrow text-ink-faint">Please note</p>
+            <div className="mt-phi3 space-y-phi3 text-tiny leading-relaxed text-ink-muted">
+              {settings.legal.intro ? <p>{settings.legal.intro}</p> : null}
+              {settings.legal.restricted ? <p>{settings.legal.restricted}</p> : null}
+              {settings.legal.verification ? <p>{settings.legal.verification}</p> : null}
+              {settings.legal.privacy ? <p>{settings.legal.privacy}</p> : null}
+            </div>
+          </div>
+
+          <p className="mt-phi5 text-center text-lg leading-relaxed text-ink-muted">
+            Exceptional property doesn&rsquo;t always need a listing.
+            <br className="hidden sm:block" /> Sometimes it needs the right introduction.
+          </p>
+        </Container>
+      ) : null}
     </>
   );
 }

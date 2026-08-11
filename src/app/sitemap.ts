@@ -3,6 +3,7 @@ import { getJournalCategories, getJournalPosts, journalHref } from "@/lib/journa
 import { getProperties, propertyHref } from "@/lib/properties";
 import { PHASE_ORDER } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
+import { getVaultListings, vaultListingHref } from "@/lib/vault";
 
 export const revalidate = 3600;
 
@@ -61,6 +62,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ]
       : [];
 
+    /* The Vault's public inventory. ⚠️ Only what RLS already exposes — this
+       read returns published, `visibility = 'public'` rows and nothing else, so
+       a private or off-market property cannot reach the sitemap even if
+       somebody later loosens a filter in the page. Discreet listings are
+       excluded on top of that: they carry `robots: noindex` on their own page,
+       and a sitemap entry would be the site arguing with itself.
+       The two desk routes are deliberately absent for the same reason they are
+       `noindex` — a form has nothing to rank for. */
+    const vault: MetadataRoute.Sitemap = (await getVaultListings().catch(() => []))
+      .filter((l) => !l.discreet)
+      .map((l) => ({
+        url: `${SITE_URL}${vaultListingHref(l)}`,
+        changeFrequency: "monthly" as const,
+        priority: 0.6,
+      }));
+
     return [
       ...statics,
       ...phases,
@@ -71,6 +88,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       })),
       ...journal,
+      ...vault,
     ];
   } catch {
     // A database hiccup must not take the whole sitemap down.

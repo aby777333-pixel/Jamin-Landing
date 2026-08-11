@@ -410,7 +410,10 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             </>
           )}
           {facets.hasJournal && <MobileLink href="/journal">Jamin Journal</MobileLink>}
-          <MobileLink href="/vault">The Royal Vault</MobileLink>
+          {/* "The Vault", not "The Royal Vault" — renamed 2026-08-11 with the
+              division itself. The desktop rail already said "Vault"; these two
+              were the last places carrying the old name. */}
+          <MobileLink href="/vault">The Vault</MobileLink>
           <MobileLink href="/about">About</MobileLink>
           <MobileLink href="/account">Account</MobileLink>
           <Link
