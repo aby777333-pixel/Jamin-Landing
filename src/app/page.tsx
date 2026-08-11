@@ -5,7 +5,6 @@ import { Hero, type Slide } from "@/components/Hero";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
-import { VaultPlate } from "@/components/vault/VaultPlate";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
@@ -278,9 +277,15 @@ export default async function HomePage() {
           "Plots available today" stays above this and the record below it. */}
       {facets.districts.length > 0 && (
         <Container className="py-phi6">
-          {/* Same empty-right-half problem as the purpose section above, same
-              answer: a light plate holding the space until a photograph takes
-              it. Hidden below `lg`, where the column is full width anyway. */}
+          {/* Same empty-right-half problem as the purpose section above, and the
+              photograph the owner supplied for it on 2026-08-11 — paddy under a
+              low sun with a house in the middle of it.
+
+              ⚠️ Brand imagery: a render of nowhere, `alt=""`, `aria-hidden`,
+              never captioned. It sits directly above a map of real Jamin
+              developments, so the temptation to label it will be strong and the
+              answer is still no. Hidden below `lg`, where the column is full
+              width anyway. */}
           <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
@@ -292,7 +297,14 @@ export default async function HomePage() {
             </div>
 
             <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
-              <VaultPlate variant="light" seed="where-we-build" kind="destination" label="Tamil Nadu" />
+              <Image
+                src="/section/where-we-build-1672.webp"
+                alt=""
+                aria-hidden="true"
+                fill
+                sizes="45vw"
+                className="object-cover object-center"
+              />
             </div>
           </div>
           <LocationExplorer items={all} />

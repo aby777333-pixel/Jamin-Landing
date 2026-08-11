@@ -1,6 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
-import { VaultPlate } from "@/components/vault/VaultPlate";
 import { SectionLabel } from "@/components/ui";
 import { countPurposes } from "@/lib/purpose";
 import type { Property } from "@/lib/properties";
@@ -32,11 +32,17 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
     <div>
       {/* ⚠️ THE RIGHT HALF WAS EMPTY. A 20rem heading and a two-line lead left
           roughly 55% of this row as blank ivory on a laptop, which reads as a
-          section that has not finished loading rather than as space. The plate
-          is a PLACEHOLDER in the same sense as the Vault's — a drawn frame in
-          the light palette that says "artwork belongs here", ready to be swapped
-          for a photograph. It is `aria-hidden` decoration, so nothing is lost
-          to a reader who never sees it. */}
+          section that has not finished loading rather than as space. It held a
+          drawn plate for a few hours; the owner supplied the photograph on
+          2026-08-11 and it took the plate's place.
+
+          ⚠️ BRAND IMAGERY, AND THE RULE BITES HARDER HERE THAN ON A HERO. This
+          is a render of a plotted layout — formed roads, kerbs, street lights,
+          plots marked out — sitting directly above four cards that link to real
+          Jamin developments. A reader could take it for one of them in a
+          heartbeat. It is not: it is a render of nowhere. `alt=""`,
+          `aria-hidden`, and it must NEVER be given a caption, a project name or
+          a location. See public/section/README.md. */}
       <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
         <div className="max-w-xl">
           <SectionLabel>Start here</SectionLabel>
@@ -49,7 +55,14 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
         </div>
 
         <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
-          <VaultPlate variant="light" seed="purpose-section" label="Your purpose" />
+          <Image
+            src="/section/purpose-1857.webp"
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="45vw"
+            className="object-cover object-center"
+          />
         </div>
       </div>
 
