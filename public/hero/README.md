@@ -413,6 +413,41 @@ the 100deg gradient is approximated as an axis-aligned one. Treat this method as
 a COMPARISON between frames only. A real audit has to measure the composited
 page, not a model of it.
 
+## hero-27 → /journal (2026-08-11) — and the plate that came with it
+
+Owner-supplied. A desk, a chair and a CRT standing in a mown meadow under
+overcast light, hills and woodland behind. 1774x887 native → 1774 / 1280 / 768
+WebP (196 / 141 / 62 KB). Brand imagery: `alt=""`, `aria-hidden`, never a
+caption, and obviously not a Jamin project.
+
+⚠️ **ITS PLATE ALPHA WAS RE-SWEPT, NOT INHERITED, AND THAT IS THE LESSON.** The
+banyan it replaced (hero-25) allowed **0.02** — the lightest plate on the site —
+because it was deep shade. This frame is the exact opposite: overcast daylight,
+bright sky, pale grass, no shade anywhere. Carried over unchanged, the white
+lead measures **2.41:1**. That is not a near miss, and it would have shipped
+invisibly, because swapping `art={25}` for `art={27}` looks like a one-line
+change.
+
+Swept on the composited frame — photograph, then `veil`'s two gradients, then
+the plate — over the plate region only, at the p95 this file measures by:
+
+    0.34 → eyebrow 4.27 · white 4.61   ← eyebrow under AA
+    0.40 → eyebrow 4.89 · white 5.28
+    0.44 → eyebrow 5.36 · white 5.79   ← ships
+    0.52 → eyebrow 6.49 · white 7.01   ← the site's audited default
+
+The eyebrow is `champagne-50` at 9.9px and is the binding ink, as it is on every
+cinematic hero. 0.44 keeps margin on it while letting more of the meadow through
+than the default would. Verified on the built page: eyebrow 5.38, white 5.81,
+and 4.12 even against the single brightest pixel under the plate.
+
+**Rule for the next swap: a hero and its `sheerAlpha` are one change, not two.**
+
+## hero-25 → RETIRED from /journal 2026-08-11 (the banyan)
+
+Replaced by hero-27. Its notes below are still the reference for the lightest
+plate the system can carry, and for why deep shade is what buys it.
+
 ## hero-26 → /vault (2026-08-11) — the brightest frame the site carries
 
 Supplied by the owner. A stone-and-glass estate seen straight down its own

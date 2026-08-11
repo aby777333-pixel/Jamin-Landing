@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
+import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
@@ -14,7 +15,6 @@ import {
   locationLine,
   phaseLabel,
   propertyHref,
-  secondaryImage,
   type Property,
 } from "@/lib/properties";
 import { getNavFacets } from "@/lib/site";
@@ -98,14 +98,6 @@ export default async function HomePage() {
   const live = all.filter(isSellable);
   const completed = all.filter((p) => !isSellable(p));
   const districts = facets.districts.map((d) => d.label);
-
-  // See the closing band below. Falls back to the render if the delivered
-  // project has no second photograph, so the panel is never empty.
-  const closingPhoto =
-    all
-      .filter((p) => p.project_phase === "completed")
-      .map(secondaryImage)
-      .find(Boolean) ?? "/hero/hero-02-1920.webp";
 
   return (
     <>
@@ -381,23 +373,33 @@ export default async function HomePage() {
           the separation. */}
       <Container>
         <div className="relative isolate overflow-hidden rounded-xl bg-charcoal">
-          {/* A photograph rather than a flat black panel. The copy sits in the
-              bottom-left, which is the corner `veil` makes darkest, so white
-              type holds AA whatever the picture is doing behind it.
+          {/* FOOTAGE rather than a photograph, from 2026-08-11 — owner-supplied,
+              a walk through a finished layout, which is literally what the band
+              beside it asks the reader to do.
 
-              This was hero-02, which is also the /properties hero — the same
-              distinctive frame twice in one visit. Real land suits "walk the
-              land" better anyway. The delivered project's SECOND photograph:
-              its first is the cover on its own card further up this page, and
-              also opens /projects/completed. Still uncaptioned, so it claims to
-              be nothing. */}
-          <Image
-            src={closingPhoto}
-            alt=""
-            aria-hidden="true"
-            fill
-            sizes="(max-width: 1280px) 100vw, 1200px"
-            className="object-cover object-center"
+              ⚠️ THE SOURCE WAS 42.9 MB AND COULD NOT SHIP AS IT WAS. Re-encoded
+              muted (autoplay requires it anyway), 24fps H.264 at CRF 30 with
+              `faststart`, in two widths: 3.67 MB at 1280 and 1.80 MB at 854 —
+              a 92% reduction with no visible loss at the size this band renders.
+              Anyone replacing the clip must re-encode it; dropping a phone
+              recording in here would cost more than every image on this page
+              put together.
+
+              ⚠️ The poster is a frame of the same footage, so the band is
+              identical before the video attaches, when a visitor prefers
+              reduced motion, and when autoplay is refused. The delivered
+              project's second photograph is gone from this band with it — and
+              `secondaryImage` with that, since nothing else on this page used
+              it — but the copy below is unchanged — the corner
+              the words sit in is still the one `veil` makes darkest, so white
+              type holds AA whatever the footage is doing underneath. */}
+          <BackgroundVideo
+            poster="/video/walk-the-land-poster.jpg"
+            sources={[
+              { src: "/video/walk-the-land-854.mp4", maxWidth: 768 },
+              { src: "/video/walk-the-land-1280.mp4" },
+            ]}
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           <div className="veil absolute inset-0" aria-hidden="true" />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px rule-red" />

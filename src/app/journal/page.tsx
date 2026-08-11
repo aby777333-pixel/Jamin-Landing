@@ -67,16 +67,28 @@ export default async function JournalPage() {
           hero-25 is a photograph with real tonal range, which is the case
           `veil` and the `gilt` plate exist for. */}
       <PageHero
-        art={25}
+        art={27}
         tone="cinematic"
         sheer
-        /* ⚠️ The lightest plate on the site, and the only frame that allows it.
-           Deep shade under the banyan, so it takes almost no tint AND almost no
-           blur: at 8px / 0.10 it measures white 4.97 and gold 4.60. Every other
-           hero has to choose — a sharp picture costs tint (the Vault needs 0.50
-           at this blur), a light tint costs sharpness. This one needs neither.
-           See `.rj-gilt-sheer`. */
-        sheerAlpha={0.02}
+        /* ⚠️ RE-SWEPT FOR hero-27, NOT CARRIED OVER. The banyan this replaced
+           allowed 0.02 — the lightest plate on the site — because it was deep
+           shade. hero-27 is the opposite frame: overcast daylight, bright sky,
+           pale grass, no shade anywhere. At 0.02 the white lead measures
+           2.41:1, which is not a near miss.
+
+           Swept on the composited frame (photograph, then `veil`'s two
+           gradients, then the plate), plate region only, at the p95 this repo
+           measures by:
+
+               0.34 → eyebrow 4.27 · white 4.61   ← eyebrow under AA
+               0.40 → eyebrow 4.89 · white 5.28
+               0.44 → eyebrow 5.36 · white 5.79   ← ships
+               0.52 → eyebrow 6.49 · white 7.01   ← the site's audited default
+
+           The eyebrow is champagne-50 at 9.9px and is the binding ink, as it is
+           on every cinematic hero. 0.44 keeps a margin on it while still
+           letting more of the meadow through than the default would. */
+        sheerAlpha={0.44}
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."

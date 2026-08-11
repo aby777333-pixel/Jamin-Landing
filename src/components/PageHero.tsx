@@ -27,7 +27,7 @@ import { Container } from "./ui";
  * development or placed on a property card. See public/hero/README.md.
  */
 export type HeroArt =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25;
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -54,8 +54,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   // does show villas, plots AND apartment towers in one frame, which is the
   // Journal's subject rather than the company's — see hero/README.md.
   23: 1706,
-  /* hero-25 — the banyan lesson, /journal from 2026-08-10. */
+  /* hero-25 — the banyan lesson, /journal until 2026-08-11. */
   25: 1983,
+  /* hero-27 — the desk in the meadow, /journal from 2026-08-11. Owner-supplied.
+     ⚠️ It is the OPPOSITE frame to the banyan it replaced: overcast daylight,
+     bright sky, pale grass, and no deep shade anywhere. The banyan allowed the
+     lightest plate on the site (0.02); this one cannot, and the alpha on the
+     Journal's PageHero call was re-swept rather than carried over. */
+  27: 1774,
 };
 
 function artSrc(n: HeroArt) {
