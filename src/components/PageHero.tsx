@@ -27,7 +27,7 @@ import { Container } from "./ui";
  * development or placed on a property card. See public/hero/README.md.
  */
 export type HeroArt =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27;
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -62,6 +62,12 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      lightest plate on the site (0.02); this one cannot, and the alpha on the
      Journal's PageHero call was re-swept rather than carried over. */
   27: 1774,
+  /* hero-28 — the elephant, /tools from 2026-08-11. Owner-supplied.
+     ⚠️ MIRRORED and RETINTED before export, and both were necessary rather
+     than tasteful: the subject was in the left third where `paper`'s copy plate
+     sits, and the stock background is pure #ffffff against a #fdfcf9 canvas.
+     See public/hero/README.md before regenerating it from the original. */
+  28: 1672,
 };
 
 function artSrc(n: HeroArt) {

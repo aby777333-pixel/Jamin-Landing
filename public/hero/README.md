@@ -413,7 +413,32 @@ the 100deg gradient is approximated as an axis-aligned one. Treat this method as
 a COMPARISON between frames only. A real audit has to measure the composited
 page, not a model of it.
 
-## hero-13 → /tools (2026-08-11)
+## hero-28 → /tools (2026-08-11) — and the two edits it needed
+
+Owner-supplied, and owner-chosen over hero-13 the same afternoon: a woman in
+office clothes carrying an elephant on her back, on a plain ground. It is a
+picture of the WEIGHT OF THE DECISION rather than of the land — a different
+argument for that page, and the owner's to make. 1672x941 native → 1672 / 1280 /
+768 WebP (57 / 38 / 17 KB — a plain ground compresses to almost nothing).
+
+⚠️ **MIRRORED.** In `tone="paper"` the copy plate sits on the LEFT and the render
+bleeds off the RIGHT. The subject was in the left third: unflipped, the plate
+covered the woman entirely and the page showed the elephant's back end. Flipped,
+she stands clear on the right and the trunk points INTO the page. Nothing in the
+frame is text or handed, so the flip costs nothing.
+
+⚠️ **RETINTED TO THE CANVAS.** The stock background is pure `#ffffff`; this site's
+canvas is `#fdfcf9`. Untouched it reads as a white rectangle pasted onto ivory,
+with a hard seam along the top and right that `hero-fade` — which only dissolves
+the LEFT edge — cannot reach. Each channel is scaled by `canvas/255`, which maps
+white exactly onto the canvas and costs the elephant 0.8% of red and 2.4% of
+blue. Invisible, and it keeps the contact shadow as a gradient rather than
+turning the subject into a cut-out.
+
+**Both edits are mandatory on any regenerate.** Neither is visible as a mistake
+until the page is looked at, which is exactly why they are written down here.
+
+## hero-13 → SPARE again (was /tools for one afternoon, 2026-08-11)
 
 The spare that turned out to be the right one. /tools shipped with NO hero, on
 the argument that an instrument should open on its first field; the owner asked

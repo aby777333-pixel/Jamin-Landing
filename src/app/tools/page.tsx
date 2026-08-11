@@ -23,20 +23,28 @@ export const metadata: Metadata = {
  * journey three navigations long for no gain, and would give the site four thin
  * pages competing with each other for the same search.
  *
- * ⚠️ hero-13 AND `tone="paper"`, NOT a photograph. It shipped with no hero at
- * all on the argument that an instrument should open on its first field; the
- * owner asked for one, and the register had exactly the right frame spare. 13
- * is a plot with a wireframe house on it and a clock reading NOW — planning,
- * time, and a parcel being valued, which is what this page is for. It is also
- * from the GRAPHIC family, so `paper` is the correct tone: the copy sits on the
- * page's own ivory and the render dissolves into it, rather than a full-bleed
- * photograph putting a screen of picture between the reader and the sums.
+ * ⚠️ hero-28 AND `tone="paper"`. It shipped with no hero at all on the argument
+ * that an instrument should open on its first field; the owner asked for one,
+ * chose hero-13 (a plot with a clock reading NOW), then swapped it for this —
+ * somebody carrying an elephant. It is a picture of the weight of the decision
+ * rather than of the land, which is a different argument for the same page, and
+ * it is the owner's to make.
+ *
+ * `paper` is the correct tone for it and not a preference: the frame is a
+ * subject on a plain ground, so the copy sits on the page's own ivory and the
+ * render bleeds off the right. Laid full-bleed it would need a scrim over a
+ * white background, which is the one thing that treatment cannot do.
+ *
+ * ⚠️ The asset was MIRRORED and RETINTED on the way in — the subject was on the
+ * side the copy plate covers, and its white was whiter than the page. Both are
+ * recorded in public/hero/README.md; regenerating from the original without
+ * repeating them puts the woman behind the text on a white rectangle.
  */
 export default function ToolsPage() {
   return (
     <>
       <PageHero
-        art={13}
+        art={28}
         tone="paper"
         eyebrow="Plan your property investment"
         title="Work out what it costs before you visit."
