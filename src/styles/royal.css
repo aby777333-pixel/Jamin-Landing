@@ -765,14 +765,63 @@
  * the note against 255, in that order. The note is the binding one: it has the
  * brightest possible backdrop and the weakest ink of the three.
  */
+/**
+ * ⚠️ THE RAMP IS NOW TWO RAMPS, AND THE BREAKPOINT IS THE STRADDLE.
+ *
+ * Owner asked on 2026-08-11 to make the ground see-through. The honest answer
+ * turned out to be "where there is something behind it" — because there is not
+ * always something behind it:
+ *
+ * - From `xl` the console straddles the banner's foot, so its top 43.6% lies on
+ *   a photograph. Transparency there shows the arch and the road; it is the
+ *   whole point of a glass instrument.
+ * - Below `xl` there is no straddle at all. Measured live at 1024: the console
+ *   sits on `rgb(253,252,249)` and nothing else — the section's own ivory.
+ *   Sheer glass over a blank page shows a blank page. It buys literally nothing
+ *   and spends contrast to do it, because white ink over lightened ivory is the
+ *   worst backdrop in the building.
+ *
+ * So: sheer above, solid below. Measured against the real backdrop — the banner
+ * composited through this element's own `blur(22px) saturate(1.4)` for the
+ * overlapping band, flat ivory beneath it — taking the BRIGHTEST local patch
+ * rather than the mean, because a glyph sits on a patch:
+ *
+ *     ramp (0 / 18% / 75% / 100%)   eyebrow  field  placeholder  note
+ *     0.26 / 0.56 / 0.79 / 0.90       6.37    7.55     5.87       5.65  ← was
+ *     0.04 / 0.48 / 0.68 / 0.74       5.54    6.96     5.42       4.88  ← ships
+ *     0.04 / 0.44 / 0.60 / 0.66       5.16    6.18     4.81       3.72  ← note fails
+ *
+ * ⚠️ THE NOTE IS THE BINDING INK AND IT HAD TO CHANGE. It begins at 71.4%, by
+ * which point it is over ivory, where blur does nothing whatever — blurring a
+ * flat colour returns the flat colour. At the sheer foot, `plat-300` measures
+ * 3.80 and `bone` measures 4.88, so the note moved to `bone` in HeroConsole.
+ * Anyone putting `plat-300` back must put 0.79 back with it.
+ *
+ * ⚠️ Below `xl` the 18% stop went UP, 0.56 → 0.72, and that is a fix rather
+ * than a side effect. Champagne-300 over 0.56 onyx on ivory measures 2.81 — it
+ * has been riding on `rj-sheer-copy`'s halo, which WCAG does not model. 0.72 is
+ * the floor at which it clears 4.5 on its own.
+ */
 .rj-console.rj-glass-onyx {
   background: linear-gradient(
     to bottom,
     rgba(18, 17, 16, 0.26) 0%,
-    rgba(18, 17, 16, 0.56) 18%,
+    rgba(18, 17, 16, 0.72) 18%,
     rgba(18, 17, 16, 0.79) 75%,
     rgba(18, 17, 16, 0.9) 100%
   );
+}
+
+@media (min-width: 1280px) {
+  .rj-console.rj-glass-onyx {
+    background: linear-gradient(
+      to bottom,
+      rgba(18, 17, 16, 0.04) 0%,
+      rgba(18, 17, 16, 0.48) 18%,
+      rgba(18, 17, 16, 0.68) 75%,
+      rgba(18, 17, 16, 0.74) 100%
+    );
+  }
 }
 
 /**

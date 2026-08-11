@@ -84,8 +84,16 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
       </div>
 
       {/* ⚠️ §8: the plot counts are evidence, so they stay plain. No gold on a
-          number that is doing the selling by itself. */}
-      <p className="mt-phi2 text-tiny text-plat-300">
+          number that is doing the selling by itself.
+
+          ⚠️ `bone`, not `plat-300`, and that is the price of the sheer ground
+          rather than a change of emphasis. This line starts at 71.4% of the
+          panel, by which point it is over the page's ivory — where the
+          backdrop blur does nothing at all, because blurring a flat colour
+          returns the flat colour. Against the sheer foot `plat-300` measures
+          3.80 and `bone` measures 4.88. Putting `plat-300` back means putting
+          the 0.79 foot back with it; see royal.css. */}
+      <p className="mt-phi2 text-tiny text-bone">
         Every layout is DTCP-approved, with the plot schedule published before you visit.
       </p>
     </form>
