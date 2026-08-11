@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { GoldDust } from "@/components/GoldDust";
@@ -169,17 +170,90 @@ export default async function VaultPage() {
       {/* ── §16 THE OPENING ────────────────────────────────────────────────
           Very little text over a very large frame. `min-h` rather than a fixed
           height so the plate breathes on a phone without the copy ever being
-          pushed off it. */}
+          pushed off it.
+
+          hero-26 — the estate at the end of its own drive, supplied by the
+          owner 2026-08-11, replacing the drawn plate this section opened with.
+
+          ⚠️ BRAND IMAGERY, NEVER A JAMIN PROJECT. Same standing rule as every
+          other hero on this site: `alt=""`, `aria-hidden`, and it must never
+          gain a caption, a location or a project name. See public/hero/README.
+
+          ⚠️ THIS FRAME IS THE BRIGHTEST THE SITE CARRIES — midday sun, white
+          cloud, a sunlit lawn — and the copy over it is white. That is why the
+          treatment here is a SCRIM rather than the picture-plus-plate the rest
+          of the site moved to on 2026-08-09: a plate alone cannot hold white
+          type over a white cloud, and no amount of plate opacity fixes it
+          without turning the plate into a black box.
+
+          The scrim is two gradients, not one, because it has two jobs:
+          horizontal darkens the left third where the words actually are and
+          lets go over the house, so the picture survives; vertical anchors the
+          top under the header and the foot into the section edge. Measured
+          after: 24 text nodes in this section, zero below AA. */}
       <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
-        <VaultPlate seed="the-vault-hero" priority sizes="100vw" className="opacity-90" />
+        <Image
+          src="/hero/hero-26-1855.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(10,10,9,0.88) 0%, rgba(10,10,9,0.72) 34%, rgba(10,10,9,0.38) 64%, rgba(10,10,9,0.46) 100%), " +
+              "linear-gradient(to bottom, rgba(10,10,9,0.62) 0%, rgba(10,10,9,0.22) 38%, rgba(10,10,9,0.58) 100%)",
+          }}
+        />
+        {/* ⚠️ NARROW SCREENS NEED A FLAT VEIL ON TOP, and the reason is the crop
+            rather than the design. `object-cover` on a 2.19:1 photograph in a
+            tall box shows a narrow CENTRE slice — so below `lg` the horizontal
+            gradient's whole argument (dark left for the words, open right for
+            the house) is off-screen, and what lands under the copy is the
+            sunlit lawn and the white cloud. Measured under the plate at 375:
+            the brightest pixel took the gold eyebrow to 3.74. At 0.18 it is
+            4.83 at 375 and 4.56 at 768, and the mean luminance moves 0.023 →
+            0.017 — the picture survives; the words stop depending on which
+            part of the sky they land on. */}
+        <div
+          className="pointer-events-none absolute inset-0 lg:hidden"
+          aria-hidden="true"
+          style={{ background: "rgba(10,10,9,0.18)" }}
+        />
         {/* The only particles on the site, over the picture rather than on a
             black panel, so they read as late light in the air. */}
         <GoldDust />
 
-        <Container className="relative py-phi6">
+        {/* ⚠️ `w-full` is load-bearing here, not tidying. The section is a flex
+            container, so this is a flex ITEM and is sized by its content along
+            the main axis — without it the 1280 cap and `mx-auto` centred a box
+            only as wide as the copy, and the plate sat in the middle of the
+            frame directly over the house. It went unnoticed while the hero was
+            an abstract drawn plate; with a photograph whose subject is dead
+            centre it hides the one thing worth showing. */}
+        <Container className="relative w-full py-phi6">
+          {/* ⚠️ The plate drops to 0.14 with the scrim above it. It is no longer
+              carrying the contrast — the gradient is — so its remaining job is
+              the gold hairline and the material cue that the rest of the site
+              is built from. Swept against the composited frame at 1280, plate
+              region only, worst single pixel:
+
+                0.10 → gold 4.36 · white 7.01     ← under AA on one pixel
+                0.14 → gold 4.53 · white 7.29     ← ships
+                0.18 → gold 4.75 · white 7.64
+                0.22 → gold 5.04 · white 8.10
+
+              At the p95 this file normally measures by, 0.14 reads gold 7.07
+              and white 11.01. Left at the site's usual 0.52 it stacked with the
+              scrim and the copy sat in a visibly darker rectangle. */}
           <div
             className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi4 sm:p-phi5"
-            style={{ "--rj-sheer-alpha": 0.16 } as React.CSSProperties}
+            style={{ "--rj-sheer-alpha": 0.14 } as React.CSSProperties}
           >
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
               {hero.eyebrow ?? "Jamin Bazaar"}

@@ -1073,6 +1073,74 @@
   transform: translateY(-2px);
 }
 
+/**
+ * ── THE MEDALLION'S PULSAR ────────────────────────────────────────────────
+ *
+ * Owner's request, 2026-08-11: a pulse around the Vault medallion, in a
+ * contrasting colour.
+ *
+ * ⚠️ THE CONTRAST IS IN HUE, NOT IN BRIGHTNESS. The medallion is champagne on
+ * onyx, so a brighter gold ring would read as a halo on the same object rather
+ * than as a second thing. `jamin-red` is the site's only other accent, it is
+ * the logo's own red, and against gold it is the strongest hue separation the
+ * palette actually owns. A colour from outside the palette would have been the
+ * easy answer and the wrong one.
+ *
+ * ⚠️ IT IS DECORATION, WHICH IS WHY IT IS SAFE. §2's tier-5 rule: if it carries
+ * no meaning it may be deleted outright under reduced motion, and this carries
+ * none — the medallion is already a labelled button. That is also the licence
+ * for it existing at all next to §14's ban on anything that shouts: two thin
+ * rings at 0.5 alpha over a 3.2s cycle is a heartbeat, not a notification.
+ *
+ * ⚠️ Transform and opacity ONLY, and no `will-change` — §9's performance floor.
+ * Animating `box-shadow` or `width` here would repaint a fixed element on every
+ * frame for the life of the page.
+ *
+ * The two rings are staggered by half the cycle so there is always one in
+ * flight; a single ring reads as a blink.
+ *
+ * ⚠️ SCOPED TO `.rj-pulsar`, NOT TO `.rj-medallion`. Both docks use the
+ * medallion — JamindarDock on every page of the site and VaultDock inside the
+ * division — so putting this on the base class would have set the assistant
+ * button pulsing on the homepage, which nobody asked for and §14 would forbid.
+ */
+.rj-pulsar::before,
+.rj-pulsar::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 999px;
+  border: 1px solid var(--color-jamin-red);
+  opacity: 0;
+  pointer-events: none;
+  animation: rj-pulsar 3.2s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+.rj-pulsar::after {
+  animation-delay: 1.6s;
+}
+
+@keyframes rj-pulsar {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  /* Gone by 70% rather than at 100%, so the ring has faded well before the
+     next one starts and the two never overlap as a double outline. */
+  70%,
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rj-pulsar::before,
+  .rj-pulsar::after {
+    animation: none;
+    display: none;
+  }
+}
+
 /** The label rides out to the LEFT — the medallion is pinned bottom-right, so
  *  anywhere else would push it off-screen. `translateX`, never `width`. */
 .rj-medallion-label {

@@ -413,7 +413,60 @@ the 100deg gradient is approximated as an axis-aligned one. Treat this method as
 a COMPARISON between frames only. A real audit has to measure the composited
 page, not a model of it.
 
-## hero-24 → /vault (2026-08-10) — the first frame on a DARK page
+## hero-26 → /vault (2026-08-11) — the brightest frame the site carries
+
+Supplied by the owner. A stone-and-glass estate seen straight down its own
+drive: clipped hedges, urns, mown stripes, midday sun and white cloud. Native
+1855x848 → 1855 / 1280 / 768 WebP (380 / 221 / 87 KB — heavier than the renders
+because it is a photograph, and `next/image` re-encodes from it anyway).
+
+⚠️ **Brand imagery, and the rule bites harder here than usual.** It is a
+render of nowhere and it is not a Jamin project. It is also the most
+convincingly *real* frame in this folder — which is exactly why it must stay
+`alt=""`, `aria-hidden`, uncaptioned and off every property card. A viewer who
+believes it is a Jamin estate has been misled by the picture alone.
+
+⚠️ **It is a SCRIM frame, not a picture-plus-plate frame**, and it is the
+first exception to the treatment the site moved to on 2026-08-09. That
+treatment works because a plate can carry white type locally over a picture
+that is dark *somewhere*. This one is not dark anywhere: midday sky, white
+cloud, sunlit lawn. A plate opaque enough to hold white type over a cloud is a
+black box, so the scrim came back — and the plate dropped to 0.14 to stop the
+two compounding into a visible rectangle.
+
+Two gradients, because there are two jobs. Horizontal darkens the left third
+where the words are (0.88 → 0.72 → 0.38 → 0.46) and lets go over the house, so
+the picture survives being used. Vertical anchors the top under the header and
+the foot into the section edge (0.62 → 0.22 → 0.58).
+
+Swept on the composited frame at 1280, plate region only, worst single pixel:
+
+    plate 0.10 → gold 4.36 · white 7.01   ← one pixel under AA
+    plate 0.14 → gold 4.53 · white 7.29   ← ships
+    plate 0.18 → gold 4.75 · white 7.64
+    plate 0.22 → gold 5.04 · white 8.10
+
+At the p95 this file normally measures by, 0.14 reads gold 7.07 and white 11.01.
+
+⚠️ **Below `lg` it needs a flat veil on top, and the reason is the CROP.**
+`object-cover` on a 2.19:1 photograph in a tall box shows a narrow centre
+slice, so the horizontal gradient's whole argument is off-screen and what lands
+under the copy is lawn and cloud. At 375 the brightest pixel took the gold
+eyebrow to 3.74. A uniform `rgba(10,10,9,0.18)` under `lg:hidden` reads 4.83 at
+375 and 4.56 at 768, and moves the mean luminance only 0.023 → 0.017.
+
+⚠️ **`Container` needed `w-full` to sit left.** The hero section is a flex
+container, so the container is a flex ITEM and was sized by its content — the
+1280 cap and `mx-auto` centred a box only as wide as the copy, and the plate sat
+directly over the house. Harmless while the hero was an abstract drawn plate;
+fatal for a photograph whose subject is dead centre.
+
+## hero-24 → RETIRED 2026-08-11 (was /vault) — the first frame on a DARK page
+
+⚠️ **No longer on any page.** It opened /vault until the division was rebuilt
+on 2026-08-11 and hero-26 replaced it. The files stay; everything below is the
+record of what it cost to make it work, and is still the reference for any
+frame whose copy lands on its brightest quarter.
 
 Supplied by the owner. A Tamil village street at dusk: tiled roofs, palms, a
 gopuram behind, elders on a platform, a bicycle and a cow. No trim needed — it

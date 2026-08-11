@@ -65,7 +65,10 @@ export function VaultDock({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-label="Speak to The Vault"
-        className="rj-medallion fixed bottom-5 left-5 z-40 inline-flex items-center justify-center print:hidden"
+        /* `rj-pulsar` puts two slow red rings around it — see "THE MEDALLION'S
+           PULSAR" in royal.css. It is on THIS dock only; the assistant's
+           medallion on every other page keeps still. */
+        className="rj-medallion rj-pulsar fixed bottom-5 left-5 z-40 inline-flex items-center justify-center print:hidden"
       >
         {/* A keyhole, drawn rather than fetched — one control should not cost a
             request. It is the only literal "vault" symbol on the page, which is
