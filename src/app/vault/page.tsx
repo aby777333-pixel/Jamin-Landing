@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { GoldDust } from "@/components/GoldDust";
+import { VaultCarousel } from "@/components/vault/VaultCarousel";
 import { VaultPlate } from "@/components/vault/VaultPlate";
 import {
   getVaultCategories,
@@ -383,12 +384,21 @@ export default async function VaultPage() {
             Vault holds.
           </p>
 
-          <ul className="mt-phi5 grid gap-phi4 lg:grid-cols-2">
+          {/* A rail, not a grid. §23 asks for fewer listings and larger
+              photographs, and a grid does the opposite of both as soon as there
+              are more than four — it shrinks every picture to fit them all on
+              one screen. Scrolling keeps each one large and makes the reader
+              move through them one at a time, which is how a dossier is read. */}
+          <VaultCarousel
+            label="Properties currently in The Vault"
+            className="mt-phi5"
+            itemClassName="w-[86%] sm:w-[64%] lg:w-[48%]"
+          >
             {listings.map((l) => {
               const place = publicPlace(l);
               const badge = verificationBadge(l.stage);
               return (
-                <li key={l.id} className="flex">
+                <div key={l.id} className="flex h-full">
                   <Link
                     href={vaultListingHref(l)}
                     className="rj-lift group flex w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas-alt"
@@ -419,10 +429,10 @@ export default async function VaultPage() {
                       </span>
                     </span>
                   </Link>
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </VaultCarousel>
         </Container>
       ) : null}
 
@@ -648,6 +658,59 @@ export default async function VaultPage() {
           </dl>
         </Container>
       ) : null}
+
+      {/* ── THE GALLERY ────────────────────────────────────────────────────
+          A picture rail the desk fills by hand, at the foot of the page.
+          Deliberately NOT derived from inventory: the Vault's argument is
+          visual and its inventory may be empty for a long time, so this is how
+          it shows what it deals in without publishing a property.
+
+          ⚠️ THE SPACE IS RESERVED WHETHER OR NOT THERE ARE PICTURES. Owner's
+          instruction, 2026-08-11 — "just give space". An empty gallery renders
+          four engraved plates rather than collapsing, so the section reads as a
+          gallery awaiting photographs instead of as a hole in the page. Every
+          other empty state on this page hides itself; this one is the exception
+          and the reason is that somebody is about to fill it. */}
+      <section className="border-t border-line py-phi6">
+        <Container>
+          <p className="rj-eyebrow text-jamin-gold-ink">In pictures</p>
+          <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">What The Vault deals in</h2>
+          <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">
+            {settings.gallery.length > 0
+              ? "Estates, residences and land the desk has been asked for. Brand imagery — never a caption, never a claim about a specific property."
+              : "Photographs are added here by the desk. The frames below are placeholders."}
+          </p>
+
+          <VaultCarousel
+            label="The Vault in pictures"
+            className="mt-phi5"
+            itemClassName="w-[80%] sm:w-[52%] lg:w-[38%]"
+          >
+            {(settings.gallery.length > 0
+              ? settings.gallery
+              : /* Four reserved frames. Keyed by index so the plates are stable
+                   between builds rather than reshuffling on every render. */
+                [0, 1, 2, 3].map((i) => ({ url: "", caption: undefined as string | undefined, i }))
+            ).map((item, i) => (
+              <figure key={`g-${i}`} className="m-0">
+                <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-canvas-sunken">
+                  <VaultPlate
+                    src={item.url || undefined}
+                    seed={`vault-gallery-${i}`}
+                    alt={item.caption ?? ""}
+                    sizes="(min-width: 1024px) 38vw, 80vw"
+                  />
+                </div>
+                {/* A caption only where one was written. §22: a picture with an
+                    invented caption is a claim nobody made. */}
+                {item.caption ? (
+                  <figcaption className="mt-phi2 text-tiny text-ink-faint">{item.caption}</figcaption>
+                ) : null}
+              </figure>
+            ))}
+          </VaultCarousel>
+        </Container>
+      </section>
 
       {/* ── §22 LEGAL ──────────────────────────────────────────────────────
           ⚠️ Small type, but never absent. §22 is explicit that luxury may not

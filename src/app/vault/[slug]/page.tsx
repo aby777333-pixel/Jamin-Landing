@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui";
+import { VaultCarousel } from "@/components/vault/VaultCarousel";
 import { VaultPlate } from "@/components/vault/VaultPlate";
 import {
   getVaultListing,
@@ -227,19 +228,33 @@ export default async function VaultListingPage({
           </aside>
         </div>
 
+        {/* §13's gallery, as a rail rather than a grid. A dossier is looked
+            through in order — a grid asks the reader to choose where to start,
+            and on a phone it stacks into a column that buries everything after
+            the third picture. Native scroll-snap, no autoplay. */}
         {gallery.length > 1 ? (
-          <ul className="mt-phi6 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-            {gallery.slice(1).map((src, i) => (
-              <li key={src} className="relative aspect-[4/3] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
-                <VaultPlate
-                  src={src}
-                  seed={`${l.slug ?? l.id}-${i}`}
-                  alt=""
-                  sizes="(min-width: 1024px) 33vw, 100vw"
-                />
-              </li>
-            ))}
-          </ul>
+          <div className="mt-phi6">
+            <h2 className="text-lg text-ink">The photographs</h2>
+            <VaultCarousel
+              label="Photographs"
+              className="mt-phi3"
+              itemClassName="w-[86%] sm:w-[58%] lg:w-[46%]"
+            >
+              {gallery.slice(1).map((src, i) => (
+                <div
+                  key={src}
+                  className="relative aspect-[4/3] overflow-hidden rounded-xl border border-line bg-canvas-sunken"
+                >
+                  <VaultPlate
+                    src={src}
+                    seed={`${l.slug ?? l.id}-${i}`}
+                    alt=""
+                    sizes="(min-width: 1024px) 46vw, 86vw"
+                  />
+                </div>
+              ))}
+            </VaultCarousel>
+          </div>
         ) : null}
       </Container>
     </>

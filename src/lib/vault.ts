@@ -81,6 +81,9 @@ const LISTING_COLUMNS =
  */
 export type VaultHero = { eyebrow?: string; title?: string; lead?: string; note?: string };
 export type VaultFaq = { q: string; a: string };
+/** The picture rail at the foot of /vault (0083). Admin-fed, and empty until
+ *  somebody puts something in it — the page reserves the space either way. */
+export type VaultGalleryItem = { url: string; caption?: string };
 export type VaultLegal = {
   intro?: string;
   restricted?: string;
@@ -92,6 +95,7 @@ export type VaultSettings = {
   promise: string[];
   faq: VaultFaq[];
   legal: VaultLegal;
+  gallery: VaultGalleryItem[];
 };
 
 export const VAULT_FALLBACK: VaultSettings = {
@@ -108,6 +112,7 @@ export const VAULT_FALLBACK: VaultSettings = {
   ],
   faq: [],
   legal: {},
+  gallery: [],
 };
 
 /** A family of assets — the grouping the brief lists in §2, derived from the
@@ -228,6 +233,14 @@ export async function getVaultSettings(): Promise<VaultSettings> {
       promise: (map.get("promise") as string[]) ?? VAULT_FALLBACK.promise,
       faq: (map.get("faq") as VaultFaq[]) ?? VAULT_FALLBACK.faq,
       legal: (map.get("legal") as VaultLegal) ?? VAULT_FALLBACK.legal,
+      /* Stored as `{items:[…]}` so the row can grow other gallery-level
+         settings later without a migration. Anything malformed degrades to an
+         empty rail rather than throwing — the section reserves its space
+         regardless. */
+      gallery:
+        ((map.get("gallery") as { items?: VaultGalleryItem[] } | undefined)?.items ?? []).filter(
+          (i) => i && typeof i.url === "string" && i.url.length > 0,
+        ),
     };
   } catch {
     // The Vault must still render if this one table is unreachable. Copy is the
