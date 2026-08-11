@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
-import { BackgroundVideo } from "@/components/BackgroundVideo";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
@@ -372,53 +371,73 @@ export default async function HomePage() {
           and read as the page having ended early. The footer's own margin is
           the separation. */}
       <Container>
+        {/* ⚠️ THE COPY CAME OFF THE FOOTAGE, 2026-08-11. It used to sit over the
+            video with a `veil` behind it, which is the right treatment for a
+            still and the wrong one for this clip: somebody is speaking to
+            camera, and a heading laid across her face reads as a caption burnt
+            into the film. So the band is two panels now — the words on the
+            charcoal ground, the footage beside them, neither on top of the
+            other. The `veil` went with the overlay; nothing is over the picture
+            any more, so there is nothing left for it to protect.
+
+            ⚠️ THE VIDEO HAS CONTROLS AND SOUND. It is no longer decoration —
+            a person is talking, so muting her and hiding the controls threw the
+            content away. `controls` is the native set (play, scrub, volume,
+            full screen), which is also the accessible one: it is keyboard
+            operable and screen-reader labelled without this page writing a
+            single button. It does NOT autoplay: audio that starts by itself is
+            the thing every browser blocks and every reader resents. */}
         <div className="relative isolate overflow-hidden rounded-xl bg-charcoal">
-          {/* FOOTAGE rather than a photograph, from 2026-08-11 — owner-supplied,
-              a walk through a finished layout, which is literally what the band
-              beside it asks the reader to do.
-
-              ⚠️ THE SOURCE WAS 42.9 MB AND COULD NOT SHIP AS IT WAS. Re-encoded
-              muted (autoplay requires it anyway), 24fps H.264 at CRF 30 with
-              `faststart`, in two widths: 3.67 MB at 1280 and 1.80 MB at 854 —
-              a 92% reduction with no visible loss at the size this band renders.
-              Anyone replacing the clip must re-encode it; dropping a phone
-              recording in here would cost more than every image on this page
-              put together.
-
-              ⚠️ The poster is a frame of the same footage, so the band is
-              identical before the video attaches, when a visitor prefers
-              reduced motion, and when autoplay is refused. The delivered
-              project's second photograph is gone from this band with it — and
-              `secondaryImage` with that, since nothing else on this page used
-              it — but the copy below is unchanged — the corner
-              the words sit in is still the one `veil` makes darkest, so white
-              type holds AA whatever the footage is doing underneath. */}
-          <BackgroundVideo
-            poster="/video/walk-the-land-poster.jpg"
-            sources={[
-              { src: "/video/walk-the-land-854.mp4", maxWidth: 768 },
-              { src: "/video/walk-the-land-1280.mp4" },
-            ]}
-            className="absolute inset-0 h-full w-full object-cover object-center"
-          />
-          <div className="veil absolute inset-0" aria-hidden="true" />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px rule-red" />
-          <div className="relative max-w-2xl px-phi4 py-phi6 lg:px-phi6 lg:py-phi7">
-            <h2 className="text-3xl text-white">Walk the land before you decide.</h2>
-            <p className="mt-phi3 text-lg leading-relaxed text-white/85">
-              Pick a date and a time that suits you. We will show you the approvals, walk the plot
-              boundaries against the sanctioned plan, and answer the awkward questions. No payment,
-              no obligation.
-            </p>
-            <div className="mt-phi4 flex flex-wrap gap-3">
-              <ButtonLink href="/contact">Book a site visit</ButtonLink>
-              <Link
-                href="/properties"
-                className="glass-dark inline-flex items-center rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
-                style={{ transitionTimingFunction: "var(--ease-silk)" }}
+          <div className="relative grid items-center gap-phi5 px-phi4 py-phi6 lg:grid-cols-2 lg:px-phi6 lg:py-phi7">
+            <div className="min-w-0 max-w-2xl">
+              <h2 className="text-3xl text-white">Walk the land before you decide.</h2>
+              <p className="mt-phi3 text-lg leading-relaxed text-white/85">
+                Pick a date and a time that suits you. We will show you the approvals, walk the plot
+                boundaries against the sanctioned plan, and answer the awkward questions. No payment,
+                no obligation.
+              </p>
+              <div className="mt-phi4 flex flex-wrap gap-3">
+                <ButtonLink href="/contact">Book a site visit</ButtonLink>
+                <Link
+                  href="/properties"
+                  className="glass-dark inline-flex items-center rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
+                  style={{ transitionTimingFunction: "var(--ease-silk)" }}
+                >
+                  Browse plots first
+                </Link>
+              </div>
+            </div>
+
+            {/* ⚠️ `min-w-0` again — a video element carries an intrinsic width
+                and a grid item's `min-width: auto` is its content's minimum, so
+                without it this column refuses to shrink and takes the page
+                sideways. Exactly the failure the location explorer hit. */}
+            <div className="min-w-0">
+              {/* ⚠️ THE SOURCE WAS 42.9 MB AND COULD NOT SHIP AS IT WAS.
+                  Re-encoded 24fps H.264 at CRF 30 with `faststart`, in two
+                  widths: 3.67 MB at 1280 and 1.80 MB at 854 — a 92% reduction
+                  with no visible loss at the size this band renders. Anyone
+                  replacing the clip must re-encode it; dropping a phone
+                  recording straight in here would cost more than every image on
+                  this page put together.
+
+                  ⚠️ IT CARRIES AUDIO, and that is why the encode changed with
+                  the layout. The first pass was `-an` because a background loop
+                  must be muted to autoplay at all — which would have left the
+                  volume control sitting over a silent track. Re-encoded at CRF
+                  28 with AAC 128k: 4.83 MB, and `preload="metadata"` means only
+                  the header is fetched until somebody presses play. */}
+              <video
+                controls
+                preload="metadata"
+                playsInline
+                poster="/video/walk-the-land-poster.jpg"
+                className="aspect-video w-full rounded-card bg-black"
               >
-                Browse plots first
-              </Link>
+                <source src="/video/walk-the-land-1280.mp4" type="video/mp4" />
+                Your browser cannot play this video.
+              </video>
             </div>
           </div>
         </div>
