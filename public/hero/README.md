@@ -488,7 +488,37 @@ and 4.12 even against the single brightest pixel under the plate.
 Replaced by hero-27. Its notes below are still the reference for the lightest
 plate the system can carry, and for why deep shade is what buys it.
 
-## hero-26 → /vault (2026-08-11) — the brightest frame the site carries
+## hero-29 → /vault (2026-08-11) — the monsoon backroad
+
+Supplied by the owner, replacing hero-26 the same day. A tarred village road
+under heavy rain: coconut palms, a tiled hut at the right, mist closing the end
+of the road. Native 1672x941 → 1672 / 1280 / 768 WebP (327 / 222 / 86 KB).
+
+⚠️ **Its scrim is not hero-26's, and the correction went in OPPOSITE
+directions on desktop and mobile.** Read the hero block in
+`src/app/vault/page.tsx` before touching either number.
+
+- **Desktop lightened, ×1.00 → ×0.70 on both gradients.** hero-26 was the
+  brightest frame here and its stops were sized for a sunlit lawn. hero-29 is
+  dark wet forest exactly where the words sit, so the inherited scrim measured
+  8.66 at p95 on the gold eyebrow — three points of headroom spent crushing a
+  picture that never needed it. Ships at 6.83 p95 / 4.19 worst pixel.
+- **Mobile darkened, 0.18 → 0.28 on the flat veil.** `object-cover` in a tall
+  box crops to the centre slice, and the centre of this frame is the brightest
+  part of it — the rain-mist. The eyebrow measured 4.23 at 375 on the inherited
+  veil, under the line; 0.28 puts it at 4.92.
+
+The lesson generalises: **a desktop sweep tells you nothing about the phone**,
+because they are looking at different parts of the picture. Measure both.
+
+Same standing rule as everything in this folder — brand imagery, `alt=""`,
+never a caption, a location or a project name.
+
+## hero-26 → RETIRED from /vault 2026-08-11 — the brightest frame the site carried
+
+Replaced by hero-29 within the day. The files stay. Its notes below remain the
+reference for the heaviest scrim the system has needed and for why a bright
+frame under white type forces a scrim rather than a plate.
 
 Supplied by the owner. A stone-and-glass estate seen straight down its own
 drive: clipped hedges, urns, mown stripes, midday sun and white cloud. Native

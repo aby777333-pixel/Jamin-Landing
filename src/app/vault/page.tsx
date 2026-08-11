@@ -190,42 +190,50 @@ export default async function VaultPage() {
           height so the plate breathes on a phone without the copy ever being
           pushed off it.
 
-          hero-26 — the estate at the end of its own drive, supplied by the
-          owner 2026-08-11, replacing the drawn plate this section opened with.
+          hero-29 — a backroad under monsoon rain, supplied by the owner
+          2026-08-11, replacing hero-26's sunlit estate the same day. Third
+          picture this section has carried: it opened on a drawn plate.
 
           ⚠️ BRAND IMAGERY, NEVER A JAMIN PROJECT. Same standing rule as every
           other hero on this site: `alt=""`, `aria-hidden`, and it must never
           gain a caption, a location or a project name. See public/hero/README.
 
-          ⚠️ THIS FRAME IS THE BRIGHTEST THE SITE CARRIES — midday sun, white
-          cloud, a sunlit lawn — and the copy over it is white. That is why the
-          treatment here is a SCRIM rather than the picture-plus-plate the rest
-          of the site moved to on 2026-08-09: a plate alone cannot hold white
-          type over a white cloud, and no amount of plate opacity fixes it
-          without turning the plate into a black box.
+          The treatment is a SCRIM rather than the picture-plus-plate the rest
+          of the site moved to on 2026-08-09, and that is a property of the
+          section rather than of any one picture: the copy here is white, and a
+          plate alone cannot hold white type over a bright sky without becoming
+          a black box. The scrim is two gradients because it has two jobs —
+          horizontal darkens the left third where the words are and lets go
+          across the rest so the picture survives; vertical anchors the top
+          under the header and the foot into the section edge.
 
-          The scrim is two gradients, not one, because it has two jobs:
-          horizontal darkens the left third where the words actually are and
-          lets go over the house, so the picture survives; vertical anchors the
-          top under the header and the foot into the section edge.
+          ⚠️ THE STOPS ARE RE-SWEPT PER PICTURE, NOT CARRIED OVER. hero-26 was
+          the brightest frame the site carried — midday sun, white cloud, a
+          sunlit lawn — and its stops were sized for that. hero-29 is wet
+          forest: dark green exactly where the words sit. Inheriting hero-26's
+          scrim measured 8.66 at p95 on the gold eyebrow, three points of
+          headroom spent crushing a picture that never needed it.
 
-          ⚠️ EVERY STOP LIGHTENED BY 14% on request, 2026-08-11 — the owner
-          asked for less overlay. Swept as a single scale on both gradients
-          rather than nudged stop by stop, so their shape is preserved:
+          Swept as one scale across both gradients so their shape is preserved.
+          The gold eyebrow binds every time; the title and lead run 5+ points
+          clear of it:
 
-              ×1.00 → gold 7.11 at p95, 4.55 at the worst pixel   ← was
-              ×0.86 → gold ~5.8  at p95, ~3.6 at the worst pixel  ← ships
-              ×0.80 → gold 5.29  at p95, 3.30 at the worst pixel
-              ×0.72 → gold 4.58  at p95, 2.85 at the worst pixel  ← p95 at the line
+              ×1.00 → gold 8.66 at p95, 6.45 at the worst pixel  ← hero-26's
+              ×0.70 → gold 6.83 at p95, 4.19 at the worst pixel  ← ships
+              ×0.62 → gold 6.29 at p95, 3.53 at the worst pixel  ← hero-26's bar
+              ×0.40 → gold 4.95 at p95, 2.20 at the worst pixel  ← p95 near the line
 
-          Mean luminance under the plate goes 0.014 → 0.020, so the picture is
-          about 40% brighter where the words are. The gold eyebrow is what
-          binds. ⚠️ The `lg:hidden` veil below is NOT scaled with these — it
-          exists to fix a measured mobile failure and reducing it would put that
-          failure straight back. */}
+          ×0.70 rather than ×0.62: 0.62 reproduces the contrast hero-26 shipped
+          at exactly, and the last 5% of picture is not worth spending the worst
+          pixel down to 3.53 for. Mean luminance 0.017 → 0.027, so the rain and
+          the greens read at about 60% more light.
+
+          ⚠️ The `lg:hidden` veil below is NOT scaled with these — it exists to
+          fix a measured mobile failure and reducing it would put that failure
+          straight back. */}
       <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
         <Image
-          src="/hero/hero-26-1855.webp"
+          src="/hero/hero-29-1672.webp"
           alt=""
           aria-hidden="true"
           fill
@@ -238,24 +246,29 @@ export default async function VaultPage() {
           aria-hidden="true"
           style={{
             background:
-              "linear-gradient(to right, rgba(10,10,9,0.76) 0%, rgba(10,10,9,0.62) 34%, rgba(10,10,9,0.33) 64%, rgba(10,10,9,0.40) 100%), " +
-              "linear-gradient(to bottom, rgba(10,10,9,0.53) 0%, rgba(10,10,9,0.19) 38%, rgba(10,10,9,0.50) 100%)",
+              "linear-gradient(to right, rgba(10,10,9,0.53) 0%, rgba(10,10,9,0.43) 34%, rgba(10,10,9,0.23) 64%, rgba(10,10,9,0.28) 100%), " +
+              "linear-gradient(to bottom, rgba(10,10,9,0.37) 0%, rgba(10,10,9,0.13) 38%, rgba(10,10,9,0.35) 100%)",
           }}
         />
         {/* ⚠️ NARROW SCREENS NEED A FLAT VEIL ON TOP, and the reason is the crop
             rather than the design. `object-cover` on a 2.19:1 photograph in a
             tall box shows a narrow CENTRE slice — so below `lg` the horizontal
             gradient's whole argument (dark left for the words, open right for
-            the house) is off-screen, and what lands under the copy is the
-            sunlit lawn and the white cloud. Measured under the plate at 375:
-            the brightest pixel took the gold eyebrow to 3.74. At 0.18 it is
-            4.83 at 375 and 4.56 at 768, and the mean luminance moves 0.023 →
-            0.017 — the picture survives; the words stop depending on which
-            part of the sky they land on. */}
+            the rest) is off-screen, and what lands under the copy is whatever
+            happens to sit in the middle of the frame.
+
+            ⚠️ RAISED 0.18 → 0.28 FOR hero-29, and this is the half of the
+            picture swap that is easy to miss. Desktop got LIGHTER — the new
+            frame is dark forest where the words are — but the centre slice a
+            phone crops to is the brightest part of it, the rain-mist at the
+            end of the road. Same picture, opposite correction. At 375 the gold
+            eyebrow measured 4.23 on the inherited 0.18, below the line; 0.28
+            puts it at 4.92. Re-measure this at 375 on every hero swap: a
+            desktop sweep tells you nothing about it. */}
         <div
           className="pointer-events-none absolute inset-0 lg:hidden"
           aria-hidden="true"
-          style={{ background: "rgba(10,10,9,0.18)" }}
+          style={{ background: "rgba(10,10,9,0.28)" }}
         />
         {/* The only particles on the site, over the picture rather than on a
             black panel, so they read as late light in the air. */}
