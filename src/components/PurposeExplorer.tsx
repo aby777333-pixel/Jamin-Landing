@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+import { VaultPlate } from "@/components/vault/VaultPlate";
 import { SectionLabel } from "@/components/ui";
 import { countPurposes } from "@/lib/purpose";
 import type { Property } from "@/lib/properties";
@@ -29,14 +30,27 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
 
   return (
     <div>
-      <div className="max-w-xl">
-        <SectionLabel>Start here</SectionLabel>
-        <h2 className="mt-phi3 text-3xl text-ink">Find the right plot for your purpose</h2>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          {open === purposes.length
-            ? "Four ways in. Each one filters the list to what it actually holds."
-            : "Four ways in. Where we are not selling for a purpose yet, it says so rather than showing you an empty page."}
-        </p>
+      {/* ⚠️ THE RIGHT HALF WAS EMPTY. A 20rem heading and a two-line lead left
+          roughly 55% of this row as blank ivory on a laptop, which reads as a
+          section that has not finished loading rather than as space. The plate
+          is a PLACEHOLDER in the same sense as the Vault's — a drawn frame in
+          the light palette that says "artwork belongs here", ready to be swapped
+          for a photograph. It is `aria-hidden` decoration, so nothing is lost
+          to a reader who never sees it. */}
+      <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
+        <div className="max-w-xl">
+          <SectionLabel>Start here</SectionLabel>
+          <h2 className="mt-phi3 text-3xl text-ink">Find the right plot for your purpose</h2>
+          <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+            {open === purposes.length
+              ? "Four ways in. Each one filters the list to what it actually holds."
+              : "Four ways in. Where we are not selling for a purpose yet, it says so rather than showing you an empty page."}
+          </p>
+        </div>
+
+        <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+          <VaultPlate variant="light" seed="purpose-section" label="Your purpose" />
+        </div>
       </div>
 
       <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">

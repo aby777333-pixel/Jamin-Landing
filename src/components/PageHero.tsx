@@ -92,6 +92,7 @@ export function PageHero({
   sheer = false,
   sheerAlpha,
   sheerBlur,
+  artPosition = "left",
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -125,6 +126,18 @@ export function PageHero({
   /** Blur radius in px. LOW keeps the photograph readable and costs tint;
    *  HIGH flattens it to a colour wash and costs almost none. Sweep both. */
   sheerBlur?: number;
+  /**
+   * ⚠️ Which part of the render survives the crop, `paper` tone only.
+   *
+   * The art sits in a 58%-wide box with `object-cover`, so it is always wider
+   * than the window and something is cropped. `left` (the default, and what
+   * every other paper page uses) anchors the image's left edge and crops the
+   * right — which is correct for the graphic renders, whose subject is on the
+   * left. hero-28's subject is on the RIGHT, so the default pinned the woman
+   * against the frame's own right edge. Moving the anchor right shows more of
+   * the empty ground beside her and walks the subject leftward into the frame.
+   */
+  artPosition?: string;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -237,7 +250,8 @@ export function PageHero({
           fetchPriority={priority ? "high" : "auto"}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          className="hero-fade h-full w-full object-cover object-left"
+          className="hero-fade h-full w-full object-cover"
+          style={{ objectPosition: artPosition }}
         />
       </div>
 

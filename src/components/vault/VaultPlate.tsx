@@ -85,16 +85,38 @@ function motifFor(seed: string, kind?: "destination"): Motif {
   return MOTIFS[hash(seed) % MOTIFS.length];
 }
 
-const GOLD: CSSProperties = { stroke: "var(--color-champagne-500)", fill: "none" };
-const GOLD_SOFT: CSSProperties = { stroke: "var(--color-champagne-700)", fill: "none" };
-const PLAT: CSSProperties = { stroke: "var(--color-plat-800)", fill: "none" };
+/**
+ * ⚠️ TWO PALETTES, ONE DRAWING. The Vault is onyx and the marketing pages are
+ * ivory, and a plate tuned for one is invisible on the other — champagne-500 on
+ * ivory is a pale smear, and the dark ground would punch a black hole in the
+ * homepage. The motifs, the hairline and the label are identical; only the
+ * three inks and the ground change, so the two read as the same hand.
+ */
+const DARK_GOLD: CSSProperties = { stroke: "var(--color-champagne-500)", fill: "none" };
+const DARK_GOLD_SOFT: CSSProperties = { stroke: "var(--color-champagne-700)", fill: "none" };
+const DARK_PLAT: CSSProperties = { stroke: "var(--color-plat-800)", fill: "none" };
+
+const LIGHT_GOLD: CSSProperties = { stroke: "var(--color-jamin-gold-ink)", fill: "none" };
+const LIGHT_GOLD_SOFT: CSSProperties = { stroke: "var(--color-champagne-700)", fill: "none" };
+const LIGHT_PLAT: CSSProperties = { stroke: "var(--color-plat-700)", fill: "none" };
 
 /**
  * The drawing itself. One 800×500 frame per motif, all built from the same
  * vocabulary — a horizon, a mass, and a few fine lines — so nine different
  * plates still read as one set.
  */
-function Drawing({ motif, offset }: { motif: Motif; offset: number }) {
+function Drawing({
+  motif,
+  offset,
+  light,
+}: {
+  motif: Motif;
+  offset: number;
+  light?: boolean;
+}) {
+  const GOLD = light ? LIGHT_GOLD : DARK_GOLD;
+  const GOLD_SOFT = light ? LIGHT_GOLD_SOFT : DARK_GOLD_SOFT;
+  const PLAT = light ? LIGHT_PLAT : DARK_PLAT;
   // A small deterministic wobble so two categories sharing a motif are not
   // pixel-identical. Bounded hard: this is texture, never composition.
   const o = (offset % 7) - 3;
@@ -298,6 +320,7 @@ export function VaultPlate({
   className = "",
   sizes = "(min-width: 1024px) 33vw, 100vw",
   priority,
+  variant = "dark",
 }: {
   /** A real photograph from the console. Wins whenever it is present. */
   src?: string | null;
@@ -310,6 +333,8 @@ export function VaultPlate({
   className?: string;
   sizes?: string;
   priority?: boolean;
+  /** `light` for the ivory marketing pages, `dark` inside the Vault. */
+  variant?: "dark" | "light";
 }) {
   if (src) {
     return (
@@ -325,7 +350,8 @@ export function VaultPlate({
   }
 
   const motif = motifFor(seed, kind);
-  const gid = `vp-${seed.replace(/[^a-z0-9]/gi, "")}`;
+  const light = variant === "light";
+  const gid = `vp-${variant}-${seed.replace(/[^a-z0-9]/gi, "")}`;
 
   return (
     <svg
@@ -339,14 +365,24 @@ export function VaultPlate({
         {/* Blue hour, drawn rather than photographed: a little warmth low in the
             frame where a horizon would be, onyx everywhere else. */}
         <linearGradient id={gid} x1="0" y1="0" x2="0.35" y2="1">
-          <stop offset="0%" style={{ stopColor: "var(--color-onyx-900)" }} />
-          <stop offset="62%" style={{ stopColor: "var(--color-onyx-800)" }} />
-          <stop offset="100%" style={{ stopColor: "var(--color-onyx-700)" }} />
+          {light ? (
+            <>
+              <stop offset="0%" style={{ stopColor: "var(--color-ivory-50)" }} />
+              <stop offset="62%" style={{ stopColor: "var(--color-ivory-100)" }} />
+              <stop offset="100%" style={{ stopColor: "var(--color-ivory-200)" }} />
+            </>
+          ) : (
+            <>
+              <stop offset="0%" style={{ stopColor: "var(--color-onyx-900)" }} />
+              <stop offset="62%" style={{ stopColor: "var(--color-onyx-800)" }} />
+              <stop offset="100%" style={{ stopColor: "var(--color-onyx-700)" }} />
+            </>
+          )}
         </linearGradient>
       </defs>
 
       <rect width="800" height="500" style={{ fill: `url(#${gid})` }} />
-      <Drawing motif={motif} offset={hash(seed)} />
+      <Drawing motif={motif} offset={hash(seed)} light={light} />
 
       {/* The inset hairline is what makes it read as a plate rather than as a
           failed image. 14px in, so it survives any crop the container applies. */}
@@ -357,9 +393,9 @@ export function VaultPlate({
         height="472"
         style={{
           fill: "none",
-          stroke: "var(--color-champagne-500)",
+          stroke: light ? "var(--color-jamin-gold)" : "var(--color-champagne-500)",
           strokeWidth: 1,
-          opacity: 0.28,
+          opacity: light ? 0.42 : 0.28,
         }}
       />
 
@@ -368,11 +404,11 @@ export function VaultPlate({
           x="34"
           y="462"
           style={{
-            fill: "var(--color-champagne-300)",
+            fill: light ? "var(--color-jamin-gold-ink)" : "var(--color-champagne-300)",
             fontSize: "17px",
             letterSpacing: "3.4px",
             textTransform: "uppercase",
-            opacity: 0.72,
+            opacity: light ? 0.6 : 0.72,
           }}
         >
           {label.toUpperCase()}

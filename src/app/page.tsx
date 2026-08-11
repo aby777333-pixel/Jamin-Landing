@@ -5,6 +5,7 @@ import { Hero, type Slide } from "@/components/Hero";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
+import { VaultPlate } from "@/components/vault/VaultPlate";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
@@ -277,13 +278,22 @@ export default async function HomePage() {
           "Plots available today" stays above this and the record below it. */}
       {facets.districts.length > 0 && (
         <Container className="py-phi6">
-          <div className="max-w-xl">
-            <SectionLabel>Where we build</SectionLabel>
-            <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
-            <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-              Pick a district to see every Jamin development in it on the map, then open a project
-              to walk its plot plan.
-            </p>
+          {/* Same empty-right-half problem as the purpose section above, same
+              answer: a light plate holding the space until a photograph takes
+              it. Hidden below `lg`, where the column is full width anyway. */}
+          <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
+            <div className="max-w-xl">
+              <SectionLabel>Where we build</SectionLabel>
+              <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
+              <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+                Pick a district to see every Jamin development in it on the map, then open a project
+                to walk its plot plan.
+              </p>
+            </div>
+
+            <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+              <VaultPlate variant="light" seed="where-we-build" kind="destination" label="Tamil Nadu" />
+            </div>
           </div>
           <LocationExplorer items={all} />
         </Container>

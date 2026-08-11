@@ -190,8 +190,22 @@ export default async function VaultPage() {
           The scrim is two gradients, not one, because it has two jobs:
           horizontal darkens the left third where the words actually are and
           lets go over the house, so the picture survives; vertical anchors the
-          top under the header and the foot into the section edge. Measured
-          after: 24 text nodes in this section, zero below AA. */}
+          top under the header and the foot into the section edge.
+
+          ⚠️ EVERY STOP LIGHTENED BY 14% on request, 2026-08-11 — the owner
+          asked for less overlay. Swept as a single scale on both gradients
+          rather than nudged stop by stop, so their shape is preserved:
+
+              ×1.00 → gold 7.11 at p95, 4.55 at the worst pixel   ← was
+              ×0.86 → gold ~5.8  at p95, ~3.6 at the worst pixel  ← ships
+              ×0.80 → gold 5.29  at p95, 3.30 at the worst pixel
+              ×0.72 → gold 4.58  at p95, 2.85 at the worst pixel  ← p95 at the line
+
+          Mean luminance under the plate goes 0.014 → 0.020, so the picture is
+          about 40% brighter where the words are. The gold eyebrow is what
+          binds. ⚠️ The `lg:hidden` veil below is NOT scaled with these — it
+          exists to fix a measured mobile failure and reducing it would put that
+          failure straight back. */}
       <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
         <Image
           src="/hero/hero-26-1855.webp"
@@ -207,8 +221,8 @@ export default async function VaultPage() {
           aria-hidden="true"
           style={{
             background:
-              "linear-gradient(to right, rgba(10,10,9,0.88) 0%, rgba(10,10,9,0.72) 34%, rgba(10,10,9,0.38) 64%, rgba(10,10,9,0.46) 100%), " +
-              "linear-gradient(to bottom, rgba(10,10,9,0.62) 0%, rgba(10,10,9,0.22) 38%, rgba(10,10,9,0.58) 100%)",
+              "linear-gradient(to right, rgba(10,10,9,0.76) 0%, rgba(10,10,9,0.62) 34%, rgba(10,10,9,0.33) 64%, rgba(10,10,9,0.40) 100%), " +
+              "linear-gradient(to bottom, rgba(10,10,9,0.53) 0%, rgba(10,10,9,0.19) 38%, rgba(10,10,9,0.50) 100%)",
           }}
         />
         {/* ⚠️ NARROW SCREENS NEED A FLAT VEIL ON TOP, and the reason is the crop

@@ -82,13 +82,25 @@ export default async function JournalPage() {
 
                0.34 → eyebrow 4.27 · white 4.61   ← eyebrow under AA
                0.40 → eyebrow 4.89 · white 5.28
-               0.44 → eyebrow 5.36 · white 5.79   ← ships
+               0.44 → eyebrow 5.36 · white 5.79
                0.52 → eyebrow 6.49 · white 7.01   ← the site's audited default
+
+           ⚠️ LIGHTENED AGAIN on request, 2026-08-11 — the owner asked for less
+           overlay. Re-swept on the built page rather than scaled by eye:
+
+               0.40 → eyebrow 4.89 · white 5.28
+               0.38 → eyebrow 4.71 · white 5.09   ← ships
+               0.36 → eyebrow 4.50 · white 4.86   ← exactly on the line
+               0.34 → eyebrow 4.29 · white 4.64   ← under
+
+           0.36 is the floor and it has NO margin; 0.38 keeps a little. Anyone
+           going lower has to change the ink first — champagne-50 at 9.9px is
+           what binds, not the white.
 
            The eyebrow is champagne-50 at 9.9px and is the binding ink, as it is
            on every cinematic hero. 0.44 keeps a margin on it while still
            letting more of the meadow through than the default would. */
-        sheerAlpha={0.44}
+        sheerAlpha={0.38}
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."

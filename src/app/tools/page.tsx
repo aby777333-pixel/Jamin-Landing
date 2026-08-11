@@ -46,6 +46,21 @@ export default function ToolsPage() {
       <PageHero
         art={28}
         tone="paper"
+        /* ⚠️ 42%, and the number is COMPUTED rather than nudged. The default
+           `object-left` crop pinned the woman against the frame's own right
+           edge; the owner asked for her to line up with the header's "Book a
+           visit" button. Measured rather than eyeballed:
+
+             she sits at x 1114–1222 of hero-28's 1672 → centre 69.9%
+             the art box at 1366 is 783 wide, 629 tall, left edge 567
+             cover scale 0.668 → drawn 1117 wide → 334px of crop to spend
+             screen x = 567 + 0.699·1117 − 334·X  =  1347.8 − 334X
+             "Book a visit" centre = 1206  →  X = 0.425
+
+           At 42% the window covers image x 210–1382, so neither she (1114–1222)
+           nor the elephant (495–1302) is clipped — the crop only spends empty
+           ground. Re-derive this if the art box or the header ever changes. */
+        artPosition="42% center"
         eyebrow="Plan your property investment"
         title="Work out what it costs before you visit."
         lead="Four calculators, using your figures rather than ours. Jamin publishes no rate — every number below is one you enter, and nothing here is an offer of finance."
