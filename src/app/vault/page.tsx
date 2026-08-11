@@ -59,7 +59,11 @@ export const metadata: Metadata = {
 
 /* §3 — the four intent paths, in the brief's own order and wording. Structure,
    not content: these are routes through the product, and each one lands on a
-   form that exists. */
+   form that exists.
+
+   ⚠️ The pictures are LOCAL, unlike the families' — these four are structure
+   rather than data. There is no row behind "Buy"; it is a route, and a route
+   cannot be added or removed in the console. So its art lives beside it. */
 const PATHS = [
   {
     key: "buy",
@@ -68,6 +72,7 @@ const PATHS = [
     note: "For clients looking to purchase a premium property or estate.",
     cta: "Tell us what you want",
     href: "/vault/request?intent=buy",
+    image: "/vault/path/buy.webp",
   },
   {
     key: "rent",
@@ -76,6 +81,7 @@ const PATHS = [
     note: "Short-term, seasonal, long-term, holiday, corporate or private rentals.",
     cta: "Find it for me",
     href: "/vault/request?intent=rent",
+    image: "/vault/path/rent.webp",
   },
   {
     key: "sell",
@@ -84,6 +90,7 @@ const PATHS = [
     note: "For owners wishing to sell through Jamin Bazaar's private network.",
     cta: "Speak to The Vault",
     href: "/vault/offer?intent=sell",
+    image: "/vault/path/sell.webp",
   },
   {
     key: "lease",
@@ -92,6 +99,7 @@ const PATHS = [
     note: "For owners who want us to find suitable tenants or occupants.",
     cta: "Offer to The Vault",
     href: "/vault/offer?intent=lease",
+    image: "/vault/path/lease.webp",
   },
 ];
 
@@ -123,12 +131,21 @@ const LEVELS = [
   },
 ];
 
-function FamilyBlock({ family }: { family: VaultFamily }) {
+function FamilyBlock({ family, image }: { family: VaultFamily; image?: string }) {
   return (
     <li id={family.slug} className="scroll-mt-28">
       <div className="overflow-hidden rounded-xl border border-line bg-canvas-alt">
         <div className="relative aspect-[16/9] w-full overflow-hidden bg-canvas-sunken">
-          <VaultPlate seed={family.slug} label={family.name} />
+          {/* The drawn plate is the fallback, not the plan: a family without a
+              picture in `familyImages` still gets a designed frame rather than
+              a hole. ⚠️ The label is dropped once there is a photograph — a
+              caption over brand imagery is the one thing this site forbids. */}
+          <VaultPlate
+            src={image}
+            seed={family.slug}
+            label={image ? undefined : family.name}
+            sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+          />
         </div>
         <div className="p-phi3">
           <h3 className="text-xl text-ink">{family.name}</h3>
@@ -363,7 +380,7 @@ export default async function VaultPage() {
                   className="rj-lift group flex w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas"
                 >
                   <span className="relative aspect-[4/3] w-full overflow-hidden bg-canvas-sunken">
-                    <VaultPlate seed={p.key} sizes="(min-width: 1024px) 25vw, 50vw" />
+                    <VaultPlate src={p.image} seed={p.key} sizes="(min-width: 1024px) 25vw, 50vw" />
                   </span>
                   <span className="flex flex-1 flex-col p-phi3">
                     <span className="rj-eyebrow text-jamin-gold-ink">{p.kicker}</span>
@@ -465,7 +482,7 @@ export default async function VaultPage() {
 
           <ul className="mt-phi5 grid gap-phi4 md:grid-cols-2 xl:grid-cols-3">
             {rest.map((f) => (
-              <FamilyBlock key={f.slug} family={f} />
+              <FamilyBlock key={f.slug} family={f} image={settings.familyImages[f.slug]} />
             ))}
           </ul>
         </Container>

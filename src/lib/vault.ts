@@ -96,6 +96,10 @@ export type VaultSettings = {
   faq: VaultFaq[];
   legal: VaultLegal;
   gallery: VaultGalleryItem[];
+  /** Family slug → picture (0084). ⚠️ Per-FAMILY, not per-category: a family is
+   *  many rows and none of them owns it, so this cannot live on
+   *  `vault_categories.image_url`. Missing keys fall back to the drawn plate. */
+  familyImages: Record<string, string>;
 };
 
 export const VAULT_FALLBACK: VaultSettings = {
@@ -113,6 +117,7 @@ export const VAULT_FALLBACK: VaultSettings = {
   faq: [],
   legal: {},
   gallery: [],
+  familyImages: {},
 };
 
 /** A family of assets — the grouping the brief lists in §2, derived from the
@@ -241,6 +246,11 @@ export async function getVaultSettings(): Promise<VaultSettings> {
         ((map.get("gallery") as { items?: VaultGalleryItem[] } | undefined)?.items ?? []).filter(
           (i) => i && typeof i.url === "string" && i.url.length > 0,
         ),
+      /* Family slug → picture (0084). A missing or malformed row leaves the map
+         empty, and every family falls back to its drawn plate — which is why
+         `FamilyBlock` takes the image as an optional prop rather than looking
+         it up itself. */
+      familyImages: (map.get("familyImages") as Record<string, string>) ?? {},
     };
   } catch {
     // The Vault must still render if this one table is unreachable. Copy is the
