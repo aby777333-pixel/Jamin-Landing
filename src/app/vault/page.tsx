@@ -665,20 +665,25 @@ export default async function VaultPage() {
           visual and its inventory may be empty for a long time, so this is how
           it shows what it deals in without publishing a property.
 
-          ⚠️ THE SPACE IS RESERVED WHETHER OR NOT THERE ARE PICTURES. Owner's
-          instruction, 2026-08-11 — "just give space". An empty gallery renders
-          four engraved plates rather than collapsing, so the section reads as a
-          gallery awaiting photographs instead of as a hole in the page. Every
-          other empty state on this page hides itself; this one is the exception
-          and the reason is that somebody is about to fill it. */}
+          ⚠️ HIDDEN UNTIL THERE ARE PICTURES. It shipped on 2026-08-11 holding
+          its space with four engraved plates, and the owner asked the same day
+          for it to be hidden instead — a placeholder rail on a page whose whole
+          argument is restraint reads as an unfinished page. So the section is
+          gated on the gallery having content.
+
+          ⚠️ THE FEATURE IS NOT DELETED, IT IS DORMANT. The Gallery tab in the
+          admin console still writes here, and the first upload brings the
+          section back with no deploy. Removing this block would mean the
+          console has a screen that changes nothing, which is worse than an
+          empty state — it is a lie about what the button does. */}
+      {settings.gallery.length > 0 ? (
       <section className="border-t border-line py-phi6">
         <Container>
           <p className="rj-eyebrow text-jamin-gold-ink">In pictures</p>
           <h2 className="mt-phi2 text-2xl text-ink lg:text-3xl">What The Vault deals in</h2>
           <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">
-            {settings.gallery.length > 0
-              ? "Estates, residences and land the desk has been asked for. Brand imagery — never a caption, never a claim about a specific property."
-              : "Photographs are added here by the desk. The frames below are placeholders."}
+            Estates, residences and land the desk has been asked for. Brand imagery — never a
+            caption, never a claim about a specific property.
           </p>
 
           <VaultCarousel
@@ -686,12 +691,7 @@ export default async function VaultPage() {
             className="mt-phi5"
             itemClassName="w-[80%] sm:w-[52%] lg:w-[38%]"
           >
-            {(settings.gallery.length > 0
-              ? settings.gallery
-              : /* Four reserved frames. Keyed by index so the plates are stable
-                   between builds rather than reshuffling on every render. */
-                [0, 1, 2, 3].map((i) => ({ url: "", caption: undefined as string | undefined, i }))
-            ).map((item, i) => (
+            {settings.gallery.map((item, i) => (
               <figure key={`g-${i}`} className="m-0">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line bg-canvas-sunken">
                   <VaultPlate
@@ -711,6 +711,7 @@ export default async function VaultPage() {
           </VaultCarousel>
         </Container>
       </section>
+      ) : null}
 
       {/* ── §22 LEGAL ──────────────────────────────────────────────────────
           ⚠️ Small type, but never absent. §22 is explicit that luxury may not

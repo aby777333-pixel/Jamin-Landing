@@ -1,0 +1,89 @@
+import Link from "next/link";
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+import { SectionLabel } from "@/components/ui";
+import { countPurposes } from "@/lib/purpose";
+import type { Property } from "@/lib/properties";
+
+/**
+ * FEATURE 1 — EXPLORE BY PURPOSE, directly under the hero console.
+ *
+ * The console asks "where?"; this asks "what for?". They are the two questions
+ * a visitor actually arrives with, and putting them together at the top means
+ * nobody has to scroll a catalogue to find their own starting point.
+ *
+ * ⚠️ A PURPOSE WITH NO INVENTORY SAYS SO. Every property in the database today
+ * is `residential_plot`, so Farm and Commercial match nothing — and a card that
+ * silently filters to an empty page is the exact failure this site has already
+ * designed around twice: `getNavFacets` drops a phase with nothing in it, and
+ * the Vault's collections say "Not open" and route to the desk. So a purpose
+ * with a count routes to `/properties?purpose=…`, and one without says it is
+ * not open yet and routes to the desk instead. Both are real destinations.
+ *
+ * ⚠️ It is a SERVER component and the counts are computed from the same rows
+ * the page already fetched — no second query, no client bundle, no hydration.
+ * The interactivity the brief asks for is a link; it does not need JavaScript.
+ */
+export function PurposeExplorer({ all }: { all: Property[] }) {
+  const purposes = countPurposes(all);
+  const open = purposes.filter((p) => p.count > 0).length;
+
+  return (
+    <div>
+      <div className="max-w-xl">
+        <SectionLabel>Start here</SectionLabel>
+        <h2 className="mt-phi3 text-3xl text-ink">Find the right plot for your purpose</h2>
+        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+          {open === purposes.length
+            ? "Four ways in. Each one filters the list to what it actually holds."
+            : "Four ways in. Where we are not selling for a purpose yet, it says so rather than showing you an empty page."}
+        </p>
+      </div>
+
+      <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+        {purposes.map(({ purpose, count }) => {
+          const live = count > 0;
+          const href = live ? `/properties?purpose=${purpose.key}` : "/contact";
+          return (
+            <li key={purpose.key} className="flex">
+              <Link
+                href={href}
+                className="group flex w-full flex-col rounded-xl border border-line bg-canvas p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                style={{ transitionTimingFunction: "var(--ease-silk)" }}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`flex h-11 w-11 items-center justify-center rounded-[12px] ${
+                    live ? "bg-canopy-soft text-canopy" : "bg-canvas-sunken text-ink-faint"
+                  }`}
+                >
+                  <SurveyIcon name={purpose.icon as never} className="h-[23px] w-[23px]" />
+                </span>
+
+                <span className="mt-phi3 block text-xl text-ink">{purpose.label}</span>
+                <span className="mt-phi2 block flex-1 text-base leading-relaxed text-ink-muted">
+                  {purpose.note}
+                </span>
+
+                {/* ⚠️ The number is the evidence, so it stays plain — §8's rule
+                    about not putting gold on a figure that is selling by
+                    itself. */}
+                {live ? (
+                  <span className="mt-phi3 block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-transform duration-500 group-hover:translate-x-1">
+                    <span className="ledger">{count}</span> development{count === 1 ? "" : "s"} →
+                  </span>
+                ) : (
+                  <span className="mt-phi3 block text-tiny text-ink-faint">
+                    Not selling for this yet —{" "}
+                    <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                      register interest →
+                    </span>
+                  </span>
+                )}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}

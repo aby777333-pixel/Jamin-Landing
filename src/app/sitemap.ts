@@ -17,6 +17,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/downloads`, changeFrequency: "weekly", priority: 0.7 },
+    /* Added with the route, not after it — the standing rule this list already
+       carries for /vault. */
+    { url: `${SITE_URL}/tools`, changeFrequency: "monthly", priority: 0.6 },
     /* ⚠️ Added with the route, not after it. A new public page reachable from
        the primary nav but absent here is discoverable only by crawl, which is
        exactly the gap nobody notices until the page has been live for months. */

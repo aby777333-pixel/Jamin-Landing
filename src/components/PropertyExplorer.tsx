@@ -17,6 +17,7 @@ import {
 } from "@/lib/properties";
 import { matchReason, matches, suggestions, summaryLine } from "@/lib/search";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
+import { purposeByKey, type PurposeKey } from "@/lib/purpose";
 import { setQuery, useQueryString } from "@/lib/url-state";
 
 /**
@@ -33,7 +34,18 @@ import { setQuery, useQueryString } from "@/lib/url-state";
 
 const MAX_COMPARE = 3;
 type View = "grid" | "list" | "map";
-type Filters = { q: string; district: string | null; phase: Phase | null; view: View; compare: string[] };
+type Filters = {
+  q: string;
+  district: string | null;
+  phase: Phase | null;
+  /* Arrives from the homepage's "Explore by Purpose" cards. It is a filter like
+     any other — it appears as a removable chip and clears with "Clear all", so
+     a visitor who lands here from a purpose card is never stuck inside it
+     wondering why the list is short. */
+  purpose: PurposeKey | null;
+  view: View;
+  compare: string[];
+};
 
 function parse(search: string): Filters {
   const s = new URLSearchParams(search);
@@ -43,6 +55,9 @@ function parse(search: string): Filters {
     q: s.get("q") ?? "",
     district: s.get("district")?.trim() || null,
     phase: phase && (PHASE_ORDER as readonly string[]).includes(phase) ? (phase as Phase) : null,
+    // Validated through the same map the cards are built from, so an invented
+    // `?purpose=` in the URL is ignored rather than filtering to nothing.
+    purpose: (purposeByKey(s.get("purpose"))?.key as PurposeKey | undefined) ?? null,
     view: view === "list" || view === "map" ? view : "grid",
     compare: (s.get("compare") ?? "").split(",").filter(Boolean).slice(0, MAX_COMPARE),
   };
@@ -53,6 +68,7 @@ function serialise(f: Filters): URLSearchParams {
   if (f.q.trim()) s.set("q", f.q.trim());
   if (f.district) s.set("district", f.district);
   if (f.phase) s.set("phase", f.phase);
+  if (f.purpose) s.set("purpose", f.purpose);
   if (f.view !== "grid") s.set("view", f.view);
   if (f.compare.length) s.set("compare", f.compare.join(","));
   return s;
@@ -100,9 +116,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
       all.filter((p) => {
         if (f.district && (p.district ?? p.city ?? "").trim() !== f.district) return false;
         if (f.phase && p.project_phase !== f.phase) return false;
+        if (f.purpose && !purposeByKey(f.purpose)?.matches(p)) return false;
         return matches(p, f.q);
       }),
-    [all, f.district, f.phase, f.q],
+    [all, f.district, f.phase, f.purpose, f.q],
   );
 
   const tips = useMemo(
@@ -112,7 +129,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
 
   const live = results.filter(isSellable);
   const completed = results.filter((p) => !isSellable(p));
-  const active = !!(f.q.trim() || f.district || f.phase);
+  const active = !!(f.q.trim() || f.district || f.phase || f.purpose);
   const compared = f.compare.filter((id) => all.some((p) => p.id === id));
 
   function toggleCompare(id: string) {
@@ -249,6 +266,29 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             pushed to the far edge, and once it wrapped it left a ragged gap
             beside it. Stacked below `sm`, both sides align to the same left
             edge as the chips above them. */}
+        {/* ⚠️ The purpose gets its OWN removable chip rather than joining the
+            district or stage rows. It arrives from a homepage card, so it is
+            the one filter a visitor did not set on this page — if it were
+            invisible, a short list would look like a small catalogue rather
+            than a narrowed one. */}
+        {f.purpose && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+              Purpose
+            </span>
+            <button
+              type="button"
+              aria-pressed
+              onClick={() => set({ purpose: null })}
+              className={chip(true)}
+            >
+              <span className="rj-dot is-on" aria-hidden="true" />
+              {purposeByKey(f.purpose)?.label}
+              <span className="ml-1 text-canvas/60" aria-hidden="true">✕</span>
+            </button>
+          </div>
+        )}
+
         <div className="flex flex-col gap-phi2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             {active && (
@@ -259,7 +299,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 </span>
                 <button
                   type="button"
-                  onClick={() => set({ q: "", district: null, phase: null })}
+                  onClick={() => set({ q: "", district: null, phase: null, purpose: null })}
                   className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
                 >
                   Clear filters

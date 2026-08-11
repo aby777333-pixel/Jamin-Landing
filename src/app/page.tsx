@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
+import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
+import { PurposeExplorer } from "@/components/PurposeExplorer";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
@@ -108,6 +110,16 @@ export default async function HomePage() {
   return (
     <>
       <Hero slides={slides} districts={facets.districts} />
+
+      {/* ---- FEATURE 1: explore by purpose ----
+          Directly below the hero console, because the console asks "where?" and
+          this asks "what for?" — the two questions a visitor arrives with. A
+          purpose with no inventory says so and routes to the desk rather than
+          filtering to an empty page; see lib/purpose.ts for why two of the four
+          are closed today. */}
+      <Container className="pt-phi6">
+        <PurposeExplorer all={all} />
+      </Container>
 
       {/* ---- what we are, in plain search terms ---- */}
       <Container className="py-phi6">
@@ -261,37 +273,88 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* ---- where we build: colour, and four real internal links ---- */}
-      {districts.length > 0 && (
+      {/* ---- FEATURE 2: the interactive location explorer ----
+          Replaces the grid of four coloured district tiles. The interaction is
+          district → projects on the map → project → its plots, and every step
+          of that already existed somewhere on this site — `PropertiesMap` is
+          the same OSM map the properties page uses, and the property page it
+          links to carries the plot plan. What was missing was the first step.
+          "Plots available today" stays above this and the record below it. */}
+      {facets.districts.length > 0 && (
         <Container className="py-phi6">
-          <div className="flex flex-wrap items-end justify-between gap-phi3">
-            <div className="max-w-xl">
-              <SectionLabel>Where we build</SectionLabel>
-              <h2 className="mt-phi3 text-3xl text-ink">Districts with Jamin land today</h2>
-            </div>
+          <div className="max-w-xl">
+            <SectionLabel>Where we build</SectionLabel>
+            <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
+            <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+              Pick a district to see every Jamin development in it on the map, then open a project
+              to walk its plot plan.
+            </p>
           </div>
-          <div className="mt-phi4 grid gap-phi2 sm:grid-cols-2 lg:grid-cols-4">
-            {facets.districts.map((d, i) => (
-              <Link
-                key={d.key}
-                href={d.href}
-                className={`group relative overflow-hidden rounded-xl border border-line p-phi3 transition-all duration-500 hover:-translate-y-1 hover:shadow-lift ${
-                  ["bg-canopy-soft", "bg-jamin-gold-soft", "bg-jamin-red-soft", "bg-canvas-sunken"][i % 4]
-                }`}
-                style={{ transitionTimingFunction: "var(--ease-silk)" }}
-              >
-                <span className="block text-xl text-ink">{d.label}</span>
-                <span className="mt-1 block text-tiny text-ink-muted">
-                  {d.count} development{d.count === 1 ? "" : "s"}
-                </span>
-                <span className="mt-phi3 block text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-transform duration-500 group-hover:translate-x-1">
-                  Plots in {d.label} →
-                </span>
-              </Link>
-            ))}
-          </div>
+          <LocationExplorer items={all} />
         </Container>
       )}
+
+      {/* ---- FEATURE 3: plan your property investment ----
+          Four tools, four cards, one destination. They sit AFTER the inventory
+          and the map because the sum only becomes interesting once somebody has
+          seen something they want; leading with a calculator would open the
+          page on arithmetic.
+
+          ⚠️ Every card lands on a working calculator at /tools, not on a
+          "coming soon". The app links on this site are withdrawn until the
+          Play Store listing exists, so borrowing the app's tools was not an
+          option — they are rebuilt for the web. */}
+      <section className="border-y border-line bg-canvas-alt py-phi6">
+        <Container>
+          <div className="flex flex-wrap items-end justify-between gap-phi3">
+            <div className="max-w-xl">
+              <SectionLabel>Before you commit</SectionLabel>
+              <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
+              <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
+                Four calculators, using your figures rather than ours. Jamin publishes no rate, so
+                every number is one you enter.
+              </p>
+            </div>
+            <Link
+              href="/tools"
+              className="text-tiny font-semibold uppercase tracking-[0.14em] text-jamin-red-deep transition-opacity hover:opacity-70"
+            >
+              Open all four →
+            </Link>
+          </div>
+
+          <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              ["emi", "EMI calculator", "Estimate your monthly EMI.", "ledger"],
+              ["eligibility", "Loan eligibility", "Check your eligible loan amount.", "stamp"],
+              ["cost", "Purchase cost", "Understand the complete cost of buying a plot.", "deed"],
+              ["yield", "Rental yield", "Estimate potential rental returns.", "growth"],
+            ].map(([anchor, title, note, icon]) => (
+              <li key={anchor} className="flex">
+                <Link
+                  href={`/tools#${anchor}`}
+                  className="group flex w-full flex-col rounded-xl border border-line bg-canvas p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                  style={{ transitionTimingFunction: "var(--ease-silk)" }}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-jamin-gold-soft text-jamin-gold-ink"
+                  >
+                    <SurveyIcon name={icon as never} className="h-[23px] w-[23px]" />
+                  </span>
+                  <span className="mt-phi3 block text-xl text-ink">{title}</span>
+                  <span className="mt-phi2 block flex-1 text-base leading-relaxed text-ink-muted">
+                    {note}
+                  </span>
+                  <span className="mt-phi3 block text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-transform duration-500 group-hover:translate-x-1">
+                    Open →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </Container>
+      </section>
 
       {/* ---- track record ---- */}
       {completed.length > 0 && (
