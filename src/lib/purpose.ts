@@ -36,6 +36,13 @@ export type Purpose = {
   note: string;
   /** The `SurveyIcon` name, drawn rather than typed. */
   icon: string;
+  /** ⚠️ The card's own ground, and the icon chip's, as ONE pair. A tinted chip
+   *  on a white card read as a sticker; the two tones together read as a
+   *  material. All four are the site's existing soft tokens — the same set the
+   *  district tiles used before the map replaced them — so nothing new was
+   *  invented for this and every one is already contrast-audited as a ground. */
+  tint: string;
+  chip: string;
   matches: (p: Property) => boolean;
 };
 
@@ -52,6 +59,8 @@ const typeIs = (p: Property, list: string[]) =>
 export const PURPOSES: Purpose[] = [
   {
     key: "home",
+    tint: "bg-canopy-soft",
+    chip: "bg-canopy-soft text-canopy",
     label: "Build a Home",
     note: "Residential plots in layouts that are formed and selling now.",
     icon: "home",
@@ -59,6 +68,8 @@ export const PURPOSES: Purpose[] = [
   },
   {
     key: "investment",
+    tint: "bg-jamin-gold-soft",
+    chip: "bg-jamin-gold-soft text-jamin-gold-ink",
     label: "Investment",
     note: "Approved land at an earlier stage, bought to hold rather than to build on.",
     icon: "growth",
@@ -67,6 +78,8 @@ export const PURPOSES: Purpose[] = [
   },
   {
     key: "farm",
+    tint: "bg-canvas-alt",
+    chip: "bg-canvas-sunken text-ink-soft",
     label: "Farm",
     note: "Agricultural and farmland parcels.",
     icon: "leaf",
@@ -74,6 +87,8 @@ export const PURPOSES: Purpose[] = [
   },
   {
     key: "commercial",
+    tint: "bg-canvas-alt",
+    chip: "bg-canvas-sunken text-ink-soft",
     label: "Commercial",
     note: "Commercial and industrial land.",
     icon: "building",

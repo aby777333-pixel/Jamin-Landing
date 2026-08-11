@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PropertiesMap } from "@/components/PropertiesMap";
-import { locationLine, phaseLabel, propertyHref, type Property } from "@/lib/properties";
+import { type Property } from "@/lib/properties";
 
 /**
  * FEATURE 2 — THE INTERACTIVE LOCATION EXPLORER.
@@ -57,8 +57,6 @@ export function LocationExplorer({ items }: { items: Property[] }) {
     [items, district],
   );
 
-  const mappable = useMemo(() => shown.filter((p) => p.lat != null && p.lng != null), [shown]);
-
   const chip = (on: boolean) =>
     `inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
       on
@@ -94,77 +92,28 @@ export function LocationExplorer({ items }: { items: Property[] }) {
         ))}
       </div>
 
-      {/* ⚠️ `min-w-0` ON BOTH TRACKS, and it is load-bearing rather than tidy.
-          `PropertiesMap` lays out a fixed 1280x768 tile plane, and a grid
-          item's default `min-width: auto` is its CONTENT's minimum — so the map
-          column refused to shrink below the plane, the sibling list stretched
-          with it, and the homepage scrolled sideways by 164px on a phone. This
-          is the same failure recorded against the property cards, where one
-          long place name pushed the page 18px wider: the fix belongs on the
-          ITEM, and `truncate` on a child cannot substitute for it. */}
-      <div className="mt-phi4 grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
-        {/* Step 2 — the projects on the map. Keyed by district so the map
-            remounts and refits its zoom instead of animating between two
-            unrelated bounding boxes. */}
-        <div className="min-w-0 overflow-hidden rounded-xl border border-line">
-          {mappable.length > 0 ? (
-            <PropertiesMap key={district ?? "all"} items={mappable} />
-          ) : (
-            <div className="flex h-full min-h-[18rem] items-center justify-center p-phi4 text-center text-base text-ink-muted">
-              No pin has been placed for {district ?? "these developments"} yet. The list beside
-              this one still has every project.
-            </div>
-          )}
-        </div>
+      {/* ⚠️ `PropertiesMap` ALREADY RENDERS THE LIST. It is a map plus a
+          linked list of the pinned developments in its own two-column grid,
+          and this component was wrapping it and adding a second list beside
+          it — three columns, the same projects twice, and a map squeezed into
+          the narrowest of them. What was actually missing was never the list;
+          it was the district filter above it.
 
-        {/* Step 3 — the project. Every row is a real link into the property
-            page, which is where the plots are. */}
-        <div className="min-w-0">
-          <p className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint">
-            {district ? `${shown.length} in ${district}` : `${shown.length} developments`}
-          </p>
-          <ul className="mt-phi3 space-y-2">
-            {shown.map((p) => (
-              <li key={p.id}>
-                <Link
-                  href={propertyHref(p)}
-                  className="group flex items-center gap-3 rounded-card border border-line bg-canvas p-phi2 transition-colors hover:border-ink-faint"
-                >
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-base text-ink group-hover:text-jamin-red-deep">
-                      {p.title}
-                    </span>
-                    <span className="mt-0.5 block truncate text-tiny text-ink-muted">
-                      {/* `phaseLabel` takes the PROPERTY, not the phase string —
-                          it resolves the buyer-facing wording, which is not the
-                          same as the column value ("current" reads "Upcoming"). */}
-                      {locationLine(p)}
-                      {phaseLabel(p) ? ` · ${phaseLabel(p)}` : ""}
-                    </span>
-                  </span>
-                  {p.plots_available != null && p.plots_available > 0 ? (
-                    <span className="ledger shrink-0 text-tiny text-ink-faint">
-                      {p.plots_available} plots
-                    </span>
-                  ) : null}
-                  <span aria-hidden="true" className="shrink-0 text-ink-faint">
-                    ›
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {district ? (
-            <Link
-              href={`/properties?district=${encodeURIComponent(district)}`}
-              className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-opacity hover:opacity-70"
-            >
-              Explore plots in {district} →
-            </Link>
-          ) : null}
-        </div>
+          So this component is now chips, the map, and the way onward. Anything
+          without a pin is still reachable: `PropertiesMap` counts them and says
+          so under its own list rather than dropping them silently. */}
+      <div className="mt-phi4">
+        <PropertiesMap key={district ?? "all"} items={shown} />
       </div>
+
+      {district ? (
+        <Link
+          href={`/properties?district=${encodeURIComponent(district)}`}
+          className="mt-phi4 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-opacity hover:opacity-70"
+        >
+          Explore plots in {district} →
+        </Link>
+      ) : null}
     </div>
   );
 }

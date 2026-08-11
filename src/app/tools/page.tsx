@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageHero } from "@/components/PageHero";
 import { PlanningTools } from "@/components/PlanningTools";
-import { Container, SectionLabel } from "@/components/ui";
+import { Container } from "@/components/ui";
 
 export const revalidate = 3600;
 
@@ -22,26 +23,27 @@ export const metadata: Metadata = {
  * journey three navigations long for no gain, and would give the site four thin
  * pages competing with each other for the same search.
  *
- * ⚠️ NO PAGE HERO. Every other page on this site opens on a photograph, and
- * this one deliberately does not: it is an instrument, the reader arrived to do
- * a sum, and a full-bleed frame would put a screen of picture between them and
- * the first field. The register is the ledger, not the estate.
+ * ⚠️ hero-13 AND `tone="paper"`, NOT a photograph. It shipped with no hero at
+ * all on the argument that an instrument should open on its first field; the
+ * owner asked for one, and the register had exactly the right frame spare. 13
+ * is a plot with a wireframe house on it and a clock reading NOW — planning,
+ * time, and a parcel being valued, which is what this page is for. It is also
+ * from the GRAPHIC family, so `paper` is the correct tone: the copy sits on the
+ * page's own ivory and the render dissolves into it, rather than a full-bleed
+ * photograph putting a screen of picture between the reader and the sums.
  */
 export default function ToolsPage() {
   return (
-    <Container className="py-phi6">
-      <div className="max-w-2xl">
-        <SectionLabel>Plan your property investment</SectionLabel>
-        <h1 className="mt-phi3 text-3xl text-ink lg:text-4xl">
-          Work out what it costs before you visit.
-        </h1>
-        <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
-          Four calculators, using your figures rather than ours. Jamin publishes no rate — every
-          number below is one you enter, and nothing here is an offer of finance.
-        </p>
-      </div>
-
-      <nav aria-label="Tools" className="mt-phi5 flex flex-wrap gap-2">
+    <>
+      <PageHero
+        art={13}
+        tone="paper"
+        eyebrow="Plan your property investment"
+        title="Work out what it costs before you visit."
+        lead="Four calculators, using your figures rather than ours. Jamin publishes no rate — every number below is one you enter, and nothing here is an offer of finance."
+      />
+      <Container className="py-phi6">
+      <nav aria-label="Tools" className="flex flex-wrap gap-2">
         {[
           ["#emi", "EMI"],
           ["#eligibility", "Loan eligibility"],
@@ -78,6 +80,7 @@ export default function ToolsPage() {
           Ask the desk instead →
         </Link>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

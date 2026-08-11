@@ -413,6 +413,21 @@ the 100deg gradient is approximated as an axis-aligned one. Treat this method as
 a COMPARISON between frames only. A real audit has to measure the composited
 page, not a model of it.
 
+## hero-13 → /tools (2026-08-11)
+
+The spare that turned out to be the right one. /tools shipped with NO hero, on
+the argument that an instrument should open on its first field; the owner asked
+for one and 13 was unused. It is a plot with a wireframe house on it and a clock
+reading **NOW** — planning, time, and a parcel being valued, which is exactly
+what that page is for.
+
+⚠️ **`tone="paper"`, not `cinematic`.** 13 is from the GRAPHIC family (near-white
+ground, architectural line-work), so the copy sits on the page's own ivory and
+`hero-fade` dissolves the render's left edge into it. Laid full-bleed it would
+need a heavy scrim, which destroys the very thing that makes it good — the rule
+this file opens with. Measured after: 86 nodes on /tools, zero WCAG failures,
+and no plate alpha needed at all because nothing sits on the picture.
+
 ## hero-27 → /journal (2026-08-11) — and the plate that came with it
 
 Owner-supplied. A desk, a chair and a CRT standing in a mown meadow under

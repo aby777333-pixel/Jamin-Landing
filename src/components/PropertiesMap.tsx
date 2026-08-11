@@ -150,7 +150,15 @@ export function PropertiesMap({ items }: { items: Property[] }) {
     <div className="grid gap-phi3 lg:grid-cols-[1.618fr_1fr]">
       <div
         ref={frameRef}
-        className="relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10]"
+        /* ⚠️ From `lg` the frame STRETCHES to the row rather than holding an
+           aspect ratio: `h-full` in a grid row whose height is set by the list
+           beside it, so the map reaches the same bottom border instead of
+           leaving a band of empty card under it. The aspect ratios still govern
+           below `lg`, where the two stack and there is no row to fill, and
+           `min-h` protects the case where the list is one item long.
+           `PropertiesMap` measures its own frame and refits the zoom, so a
+           taller box simply shows more map — nothing else has to change. */
+        className="relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[24rem]"
       >
         <div
           className="absolute left-1/2 top-1/2"

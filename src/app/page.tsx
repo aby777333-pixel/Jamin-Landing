@@ -67,18 +67,21 @@ const ASSURANCES = [
     d: "Every Jamin layout is sanctioned by the Directorate of Town and Country Planning. We publish the approval number and the sanctioned plan on each project page.",
     icon: "stamp" as const,
     tint: "bg-jamin-gold-soft text-jamin-gold-ink",
+    ground: "bg-jamin-gold-soft/45",
   },
   {
     k: "Clear, marketable title",
     d: "Title and encumbrance are checked before a single plot is offered, and the documents are on the page for you to read.",
     icon: "deed" as const,
     tint: "bg-canopy-soft text-canopy",
+    ground: "bg-canopy-soft/45",
   },
   {
     k: "Roads, water, drains",
     d: "Internal roads formed to the sanctioned width, common water to every plot, storm-water drains and street lighting by the promoter.",
     icon: "junction" as const,
     tint: "bg-jamin-red-soft text-jamin-red-deep",
+    ground: "bg-jamin-red-soft/45",
   },
   {
     k: "Loan assistance",
@@ -88,6 +91,7 @@ const ASSURANCES = [
     // for a glyph; burgundy is 9.7:1 and is the deeper tone the palette already
     // carries for exactly this kind of accent.
     tint: "bg-canvas-sunken text-burgundy",
+    ground: "bg-canvas-sunken/70",
   },
 ];
 
@@ -151,7 +155,7 @@ export default async function HomePage() {
             {ASSURANCES.map((a) => (
               <div
                 key={a.k}
-                className="flex gap-phi2 rounded-card border border-line/70 bg-canvas p-phi2 transition-all duration-500 hover:-translate-y-0.5 hover:border-line hover:shadow-lift"
+                className={`flex gap-phi2 rounded-card border border-line/70 ${a.ground} p-phi2 transition-all duration-500 hover:-translate-y-0.5 hover:border-line hover:shadow-lift`}
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 {/* Drawn, not typed — see components/cadastral/SurveyIcon. */}
@@ -316,20 +320,20 @@ export default async function HomePage() {
 
           <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["emi", "EMI calculator", "Estimate your monthly EMI.", "ledger"],
-              ["eligibility", "Loan eligibility", "Check your eligible loan amount.", "stamp"],
-              ["cost", "Purchase cost", "Understand the complete cost of buying a plot.", "deed"],
-              ["yield", "Rental yield", "Estimate potential rental returns.", "growth"],
-            ].map(([anchor, title, note, icon]) => (
+              ["emi", "EMI calculator", "Estimate your monthly EMI.", "ledger", "bg-jamin-gold-soft/50"],
+              ["eligibility", "Loan eligibility", "Check your eligible loan amount.", "stamp", "bg-canopy-soft/50"],
+              ["cost", "Purchase cost", "Understand the complete cost of buying a plot.", "deed", "bg-jamin-red-soft/45"],
+              ["yield", "Rental yield", "Estimate potential rental returns.", "growth", "bg-canvas-sunken/80"],
+            ].map(([anchor, title, note, icon, ground]) => (
               <li key={anchor} className="flex">
                 <Link
                   href={`/tools#${anchor}`}
-                  className="group flex w-full flex-col rounded-xl border border-line bg-canvas p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                  className={`group flex w-full flex-col rounded-xl border border-line ${ground} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift`}
                   style={{ transitionTimingFunction: "var(--ease-silk)" }}
                 >
                   <span
                     aria-hidden="true"
-                    className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-jamin-gold-soft text-jamin-gold-ink"
+                    className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-canvas/70 text-jamin-gold-ink"
                   >
                     <SurveyIcon name={icon as never} className="h-[23px] w-[23px]" />
                   </span>

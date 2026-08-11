@@ -47,14 +47,12 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
             <li key={purpose.key} className="flex">
               <Link
                 href={href}
-                className="group flex w-full flex-col rounded-xl border border-line bg-canvas p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift"
+                className={`group flex w-full flex-col rounded-xl border border-line ${purpose.tint} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift`}
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 <span
                   aria-hidden="true"
-                  className={`flex h-11 w-11 items-center justify-center rounded-[12px] ${
-                    live ? "bg-canopy-soft text-canopy" : "bg-canvas-sunken text-ink-faint"
-                  }`}
+                  className={`flex h-11 w-11 items-center justify-center rounded-[12px] bg-canvas/70 ${purpose.chip.split(" ").slice(1).join(" ")}`}
                 >
                   <SurveyIcon name={purpose.icon as never} className="h-[23px] w-[23px]" />
                 </span>
