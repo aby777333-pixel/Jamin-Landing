@@ -1,4 +1,5 @@
 import { getDeskContact, telHref, waHref } from "@/lib/site";
+import { DeskEmail } from "./DeskEmail";
 
 /**
  * §39 — Call and WhatsApp, right where the interest is, instead of only a
@@ -6,7 +7,13 @@ import { getDeskContact, telHref, waHref } from "@/lib/site";
  * Support screen reads, so the number can never disagree between the two.
  *
  * The WhatsApp text is prefilled with context (§95): "Hi" tells the desk
- * nothing, whereas the project name and its URL tell them everything.
+ * nothing, whereas the project name and its URL tell them everything. Email now
+ * carries the same prefill as a subject and a body, for the same reason.
+ *
+ * ⚠️ Email is a client component and the other two are not. That asymmetry is
+ * deliberate and is explained in `DeskEmail` — it is the only one of the three
+ * that can fail silently on the visitor's machine, so it is the only one that
+ * needs to watch whether its own click did anything.
  */
 export async function DeskActions({
   context,
@@ -42,9 +49,7 @@ export async function DeskActions({
         </a>
       )}
       {desk.email && (
-        <a href={`mailto:${desk.email}`} className={base}>
-          Email
-        </a>
+        <DeskEmail email={desk.email} className={base} context={context} url={url} />
       )}
     </div>
   );

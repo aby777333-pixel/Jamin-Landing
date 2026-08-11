@@ -72,22 +72,49 @@ export function Hero({
           so the empty left panel reads as drawing paper rather than as a gap. */}
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 
-      {/* Below 1400px the artwork LEADS as a band instead of sitting behind the
-          words.
+      {/* Below `xl` (1280px) the artwork LEADS as a band instead of sitting
+          behind the words.
 
-          ⚠️ 1400, not `lg`. The overlay composition is not a matter of taste at
-          the narrow end, it fails an audit: the paper panel is a fixed FRACTION
-          of the artwork, so as the viewport narrows the 36rem copy column keeps
-          its pixels while the panel loses them, and the last lines end up on the
-          gatepost and the road. Composited through the wash, the lead measured
-          5.54:1 at 1440, 3.46:1 at 1280 and 1.62:1 at 1024. Only the first of
-          those clears AA, which is what sets the breakpoint.
+          ⚠️ 1280, LOWERED FROM 1400 on 2026-08-11 — reported as "the hero
+          layout is wrong at 100% zoom and correct at 90%", which is exactly
+          what a 1400px breakpoint does to a 1280 or 1366 laptop: 1366 / 0.9 =
+          1518 CSS px, so zooming OUT was the only way to reach the composition
+          the page was designed in. Two of the commonest desktop widths there
+          are were getting the phone treatment.
+
+          The old note here said the overlay "fails an audit" below 1400, and
+          the number it quoted (3.46:1 at 1280) was measured through the CANVAS
+          WASH — which no longer exists. Re-measured against the `gilt-light`
+          plate that replaced it, sampling the actual pixels of hero-20 under
+          the plate's rect and compositing at its 0.24 alpha:
+
+            width   dark px behind plate   h1 @ 5th pct   lead    eyebrow
+            1440           14.4%              3.90         2.28     1.70   ← shipped
+            1366           14.7%              3.84         2.25     1.67
+            1280           14.8%              3.86         2.26     1.68
+            1200           17.3%              3.58         2.09     1.56
+            1100           20.9%              3.26         1.90     1.42
+            1024           24.6%              2.94         1.72     1.28
+
+          1366 and 1280 are within one percent of the composition that is
+          already live at 1440; 1200 and below are not. That cliff is not a
+          coincidence and it is what pins the breakpoint HERE rather than at
+          some rounder number: the copy container is `max-w-[1280px]` and
+          centred, and the banner is centred too, so above 1280 the plate and
+          the crop slide inward together and the plate keeps landing on the same
+          slice of artwork (source x 443 at 1440, 450 at 1280). At 1280 the
+          container stops shrinking and the crop does not, so from there down
+          the plate walks right — onto the gatepost and the arch, which is the
+          failure the original note described. Source x reaches 486 at 1200 and
+          549 at 1024.
+
+          Move this breakpoint below `xl` and that walk is what you are buying.
 
           The band comes FIRST so a phone still opens on the picture; put it
           after the copy and the whole first screen is type on ivory. Cropped to
           the arch and the road — centring it would show the empty paper panel
           and lose the only thing in the frame worth seeing at this size. */}
-      <div className="relative h-44 w-full sm:h-56 min-[1400px]:hidden">
+      <div className="relative h-44 w-full sm:h-56 xl:hidden">
         <Image
           src={`/hero/hero-${ART.id}-${ART.w}.webp`}
           alt=""
@@ -102,9 +129,9 @@ export function Hero({
       {/* The banner and the words it was drawn around. The rail is deliberately
           NOT in here — see the note on ART above. */}
       <div className="relative">
-        {/* From 1400px up the banner is full-bleed behind the copy. */}
+        {/* From `xl` (1280px) up the banner is full-bleed behind the copy. */}
         <div
-          className="pointer-events-none absolute inset-0 hidden min-[1400px]:block"
+          className="pointer-events-none absolute inset-0 hidden xl:block"
           aria-hidden="true"
         >
           <Image
@@ -157,11 +184,14 @@ export function Hero({
             49px low (109 above, 60 below). Reversing it puts the extra room
             BELOW, which lands the card a touch above the geometric centre —
             where the optical centre of a block of type actually is. */}
-        {/* ⚠️ The `min-[1400px]` bottom padding is the console's landing room,
-            not a spacing preference — see "THE CONSOLE'S STRADDLE" in
-            royal.css. Below that width the console does not overlap, so the
-            padding stays at phi5. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 min-[1400px]:min-h-[clamp(30rem,82vh,46rem)] min-[1400px]:pb-[var(--rj-console-clear)]">
+        {/* ⚠️ The `xl` bottom padding is the console's landing room, not a
+            spacing preference — see "THE CONSOLE'S STRADDLE" in royal.css.
+            Below that width the console does not overlap, so the padding stays
+            at phi5. The three `xl` rules in this component and the console's
+            `xl` lift below are ONE breakpoint in four places: the banner must
+            be full-bleed, tall, and cleared at exactly the widths where the
+            console straddles it. */}
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 xl:min-h-[clamp(30rem,82vh,46rem)] xl:pb-[var(--rj-console-clear)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
@@ -254,12 +284,12 @@ export function Hero({
           page's own canvas). Like the rail it sits OUTSIDE the banner block, so
           its height is not taken off the sides of a 3.3:1 frame. */}
       <div className="relative mx-auto max-w-[1280px] px-5 lg:px-10">
-        {/* Exactly half over the banner above 1400px — the lift is half the
+        {/* Exactly half over the banner from `xl` up — the lift is half the
             console's own height, and the banner's bottom padding is derived
             from the same number so the copy plate is never covered. Both live
             in royal.css under "THE CONSOLE'S STRADDLE"; changing one here
             without the other is the bug that block exists to prevent. */}
-        <div className="mt-phi3 min-[1400px]:mt-[var(--rj-console-lift)]">
+        <div className="mt-phi3 xl:mt-[var(--rj-console-lift)]">
           <HeroConsole districts={districts} />
         </div>
       </div>

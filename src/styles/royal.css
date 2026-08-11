@@ -689,14 +689,22 @@
 /**
  * ── THE CONSOLE'S STRADDLE ────────────────────────────────────────────────
  *
- * Above 1400px the console is pulled up so that EXACTLY HALF of it sits over
- * the banner. Owner's instruction, 2026-08-10; it was overlapping by 34px of
- * its 185, which read as a card that had slipped rather than one placed.
+ * From `xl` (1280px) up the console is pulled up so that EXACTLY HALF of it
+ * sits over the banner. Owner's instruction, 2026-08-10; it was overlapping by
+ * 34px of its 185, which read as a card that had slipped rather than one
+ * placed.
+ *
+ * ⚠️ The straddle begins at 1280, LOWERED FROM 1400 on 2026-08-11 with the
+ * hero's own breakpoint — the two describe the same composition and must never
+ * be given different numbers, or the console lifts onto a banner that is not
+ * behind the copy (or fails to, and leaves the frame's foot bare). The reason
+ * for the move, and the pixel measurements behind it, are in `Hero.tsx`.
  *
  * ⚠️ `--rj-console-h` is a MEASUREMENT, not a wish. 185px is the console's
- * laid-out height at every width the straddle applies to: above 1400 the
- * container is capped at 1280, the fields are in a row from `sm` up and the
- * note under them is one line, so nothing about it changes with the viewport.
+ * laid-out height at every width the straddle applies to — re-verified at 1280
+ * on 2026-08-11, where the container is the viewport rather than the 1280 cap:
+ * the fields are still in a row from `sm` up and the note under them is still
+ * one line, so nothing about it changes with the viewport.
  * Re-measure with `document.querySelector('.rj-console').offsetHeight` if a
  * control is ever added — and read it from `offsetHeight`, never from
  * `getBoundingClientRect()`, because `.rj-arrive` leaves a translateY on the
