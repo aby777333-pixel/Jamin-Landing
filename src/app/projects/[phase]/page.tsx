@@ -77,7 +77,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // skyline render. This is the direction hero/README.md already prefers — a
   // page whose subject genuinely IS a Jamin project should carry a real
   // photograph rather than brand imagery of nowhere.
-  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 31, current: 11, future: 32 };
+  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 31, current: 11, future: 33 };
 
   /**
    * 🚨 THE SIGN IS AT THE FAR LEFT OF BOTH NEW FRAMES, AND `paper` FADES THE
@@ -86,11 +86,31 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    * `hero-fade` masks the leftmost 22% of the image box to transparent so the
    * picture dissolves into the canvas instead of ending on a hard edge. The
    * default `artPosition: "left"` anchors the source's left edge there — which
-   * on hero-31/32 is exactly where the JAMIN BAZAAR board stands. Worked
+   * on hero-31/33 is exactly where the JAMIN BAZAAR board stands. Worked
    * through rather than eyeballed: at the widths this box takes, the crop shows
-   * about 77% of the source, so for the board (source x 45–470 of 1774) to
-   * clear the fade the crop would have to START at a negative offset. There is
-   * no `artPosition` value that both keeps the board and leaves it solid.
+   * about 77% of the source, so for the board (source x 45–470 on hero-31,
+   * 267–484 on hero-33, of 1774) to clear the fade the crop would have to START
+   * at a negative offset. There is no `artPosition` value that both keeps the
+   * board and leaves it solid.
+   *
+   * ⚠️ hero-33 IS TRIMMED, and the reason is worth keeping because the first
+   * attempt was wrong. Its board sits further into the frame (source x 267–484
+   * rather than 45–470), and the crop window is only 1366px wide, so even a
+   * full right anchor starts at x 409 — always short of 484. A 75px sliver of
+   * the board's dark-framed edge survived every anchor value. I reasoned it
+   * would dissolve, since it lands 5.5% across a box whose fade runs to 22%.
+   * It did not: the mask is already about a quarter opaque there, and a
+   * high-contrast dark frame on white reads clearly through that. On screen it
+   * looked like a sign sliced in half.
+   *
+   * So hero-33's renditions are cut at source x 494 and the whole board is
+   * gone. That is the hero-22 precedent applied for a NEW reason — not "a
+   * second wordmark duplicates the header" but "the geometry cannot crop it
+   * cleanly". The trim also re-squares the frame to 16/9, which keeps the
+   * phone band's `object-contain` from letterboxing.
+   *
+   * The rule for the next swap: if the board sits more than about 400px into a
+   * 1774-wide frame, `artPosition` alone CANNOT remove it — trim the source.
    *
    * So the board is cropped out on desktop and the frame shows what the page is
    * actually about — formed roads, kerbs, street lighting, the hills behind.

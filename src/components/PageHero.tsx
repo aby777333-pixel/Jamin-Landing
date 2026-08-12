@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32;
+  | 31 | 32 | 33;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -77,7 +77,18 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      They are still brand imagery under the standing rule: `alt=""`,
      `aria-hidden`, and never a caption naming a development. */
   31: 1774,
+  /* ⚠️ 32 is UNUSED — the owner replaced it with 33 the same afternoon, before
+     it had been live an hour. Kept in the register rather than deleted because
+     it is a perfectly good frame of an earlier stage, and /projects/future is
+     the page most likely to want one back. */
   32: 1774,
+  /* hero-33 (/projects/future) — the finished avenue: lawns in, avenue trees
+     planted, flower beds, plot markers, boundary walls and a completed house.
+     ⚠️ 1280, not 1774: it is TRIMMED. The JAMIN BAZAAR board was cut off the
+     left edge (source x 0–494) because no `artPosition` could clear it — see
+     the note on the phase page. Re-cut from the original, not from a rendition,
+     if it is ever regenerated. */
+  33: 1280,
 };
 
 function artSrc(n: HeroArt) {

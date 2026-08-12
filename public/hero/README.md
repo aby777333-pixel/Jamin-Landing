@@ -763,3 +763,40 @@ standing as hero-19 and hero-21 — but if the register is ever tightened so tha
 a hero must depict its page's stage, this is the pairing to revisit first.
 
 hero-04 and hero-08 return to the spare pile.
+
+## hero-33 replaces hero-32 on /projects/future (2026-08-12, same afternoon)
+
+Owner-supplied. **TRIMMED**: the original is 1774x887; the renditions are cut at
+source x 494 and re-squared to 16/9, giving 1280x720 native -> 1280 / 768 WebP
+(165 / 72 KB). The finished avenue: lawns laid, avenue trees and flower beds
+planted, plot markers and boundary walls in, a completed house at the head of
+the road.
+
+WARNING: It is a LATER stage than the frame it replaces, not an earlier one. The
+note under hero-32 flagged that a formed layout sits oddly under "Land secured
+and planning under way"; hero-33 is further along still. That was put to the
+owner and he chose this picture, so the pairing is deliberate. It remains
+uncaptioned brand imagery under the standing rule, the same standing as hero-19
+and hero-21, and makes no claim about any specific future project. If the
+register is ever tightened so a hero must depict its page's stage, this is the
+first pairing to revisit, and hero-32 is kept in the spare pile for exactly
+that rather than deleted.
+
+WARNING: THE TRIM IS THE INTERESTING PART, because the first attempt was wrong
+and the mistake generalises. hero-33's board sits further into the frame than
+hero-31's (source x 267-484 against 45-470). The `paper` box crops to a 1366px
+window, so even a full right anchor starts at x 409 and can never reach 484 - a
+75px sliver of the board's dark-framed edge survived EVERY `artPosition` value.
+It was shipped on the reasoning that the sliver lands 5.5% across a box whose
+`hero-fade` runs to 22%, so it would dissolve. It did not: the mask is already
+about a quarter opaque at 5.5%, and a dark frame on white reads clearly through
+that. On screen it looked like a sign sliced in half.
+
+Hence the cut. This is the hero-22 trimming precedent applied for a NEW reason -
+not "a second wordmark duplicates the header" but "the geometry cannot crop it
+cleanly". Trimming also restored 16/9, which keeps the phone band's
+`object-contain` from letterboxing.
+
+THE RULE FOR THE NEXT SWAP: if a baked-in board sits more than about 400px into
+a 1774-wide frame, `artPosition` alone cannot remove it. Trim the source, and
+check the result on screen rather than trusting a percentage against the fade.
