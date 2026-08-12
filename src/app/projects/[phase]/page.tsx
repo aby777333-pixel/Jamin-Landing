@@ -93,24 +93,32 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    * at a negative offset. There is no `artPosition` value that both keeps the
    * board and leaves it solid.
    *
-   * ⚠️ hero-33 IS TRIMMED, and the reason is worth keeping because the first
-   * attempt was wrong. Its board sits further into the frame (source x 267–484
-   * rather than 45–470), and the crop window is only 1366px wide, so even a
-   * full right anchor starts at x 409 — always short of 484. A 75px sliver of
-   * the board's dark-framed edge survived every anchor value. I reasoned it
-   * would dissolve, since it lands 5.5% across a box whose fade runs to 22%.
-   * It did not: the mask is already about a quarter opaque there, and a
-   * high-contrast dark frame on white reads clearly through that. On screen it
-   * looked like a sign sliced in half.
+   * 🚨 SO BOTH FRAMES ARE TRIMMED, and it took two goes to learn why the anchor
+   * is never enough on its own.
    *
-   * So hero-33's renditions are cut at source x 494 and the whole board is
-   * gone. That is the hero-22 precedent applied for a NEW reason — not "a
-   * second wordmark duplicates the header" but "the geometry cannot crop it
-   * cleanly". The trim also re-squares the frame to 16/9, which keeps the
-   * phone band's `object-contain` from letterboxing.
+   * hero-33 first: its board sits at source x 267–484, and the crop window is
+   * only 1366px wide, so even a full right anchor starts at x 409 — always
+   * short of 484. A 75px sliver of the board's dark-framed edge survived every
+   * anchor value. I reasoned it would dissolve, since it lands 5.5% across a
+   * box whose fade runs to 22%. It did not: the mask is already about a quarter
+   * opaque there, and a high-contrast dark frame on white reads clearly through
+   * it. On screen it was a sign sliced in half. Cut at source x 494.
    *
-   * The rule for the next swap: if the board sits more than about 400px into a
-   * 1774-wide frame, `artPosition` alone CANNOT remove it — trim the source.
+   * hero-31 second, and this one is the sharper lesson. Its board DID sit far
+   * enough left to be cropped, so it shipped untrimmed — and looked correct,
+   * because the copy plate was opaque and simply covered it. The moment that
+   * plate went sheer the board ghosted through the headline: "AMIN BAZAAR"
+   * reading straight across "Ongoing Jamin". Nothing about the picture changed;
+   * a plate stopped hiding it. Cut at source x 526 (its board measures out to
+   * 498, not the 470 first assumed — measure, do not eyeball).
+   *
+   * Two rules out of it. If a board sits more than ~400px into a 1774-wide
+   * frame, `artPosition` alone CANNOT remove it. And a plate that hides
+   * something is not the same as a frame that is clean — anything relying on
+   * plate opacity to cover artwork breaks the day the plate goes transparent.
+   *
+   * Both trims also re-square the frames to 16/9, which keeps the phone band's
+   * `object-contain` from letterboxing.
    *
    * So the board is cropped out on desktop and the frame shows what the page is
    * actually about — formed roads, kerbs, street lighting, the hills behind.

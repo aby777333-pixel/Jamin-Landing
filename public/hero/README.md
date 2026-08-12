@@ -730,7 +730,9 @@ WebP (212/129/52 KB and 219/134/55 KB).
 
 - **hero-31** — formed asphalt roads with lane markings, kerbs, street lighting,
   a completed building and a roller still working. Reads as "under development
-  and selling now", which is what /projects/ongoing says.
+  and selling now", which is what /projects/ongoing says. **TRIMMED** at source
+  x 526 -> 1248x702, exported 768 / 1280 (62 / 140 KB). See the warning below:
+  it shipped untrimmed and only looked right because the copy plate was opaque.
 - **hero-32** — red earth, plots demarcated and kerbed, roads laid, the thatched
   site office, hills behind.
 
@@ -800,3 +802,21 @@ cleanly". Trimming also restored 16/9, which keeps the phone band's
 THE RULE FOR THE NEXT SWAP: if a baked-in board sits more than about 400px into
 a 1774-wide frame, `artPosition` alone cannot remove it. Trim the source, and
 check the result on screen rather than trusting a percentage against the fade.
+
+
+## The plate-opacity trap (2026-08-12, learned the hard way on hero-31)
+
+hero-31 shipped UNTRIMMED and looked correct: its board sat far enough left that
+`artPosition="right"` cropped most of it, and whatever remained was hidden
+behind the `paper` hero's opaque `gilt-light` copy plate. The moment that plate
+was made see-through, the board ghosted through the headline - "AMIN BAZAAR"
+reading straight across "Ongoing Jamin". Nothing about the picture changed; a
+plate stopped covering it.
+
+THE RULE: a plate that HIDES something is not the same as a frame that is
+CLEAN. Before lowering any plate's alpha, look at what the plate was covering.
+Anything relying on plate opacity to conceal artwork - a baked wordmark, a
+caption, a busy corner - breaks the day that plate goes transparent.
+
+Also: measure the board, do not eyeball it. hero-31's was first noted as ending
+at x 470; it actually ends at 498, and a cut at 494 would have left a 4px seam.

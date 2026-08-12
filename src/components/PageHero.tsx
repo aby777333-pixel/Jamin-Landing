@@ -76,7 +76,12 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      why they ship with `artPosition="right"` — see the note on the phase page.
      They are still brand imagery under the standing rule: `alt=""`,
      `aria-hidden`, and never a caption naming a development. */
-  31: 1774,
+  /* ⚠️ 1280, not 1774: hero-31 is TRIMMED, cut at source x 526. It shipped
+     untrimmed while the copy plate was opaque, which hid the board behind it —
+     the moment the plate went sheer the board ghosted straight through the
+     headline. Anchoring right was never enough on its own. Same treatment and
+     same native width as hero-33 so the two behave identically. */
+  31: 1280,
   /* ⚠️ 32 is UNUSED — the owner replaced it with 33 the same afternoon, before
      it had been live an hour. Kept in the register rather than deleted because
      it is a perfectly good frame of an earlier stage, and /projects/future is
