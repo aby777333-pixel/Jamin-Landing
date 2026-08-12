@@ -84,6 +84,43 @@ export async function SiteFooter() {
                   ))}
               </dl>
             )}
+
+            {/* ⚠️ STANDS ALONE, and is deliberately not in the Projects list —
+                owner's call 2026-08-12, and the markup follows from it. As a
+                list item it had to look like its neighbours: no icon, and the
+                weight stacked underneath on a second line, because that column
+                is only about 150px wide. Out here it is a control rather than a
+                destination, so it can be a bordered target with the icon and
+                the weight on one line — and the brand column is `max-w-sm`, so
+                that line fits without wrapping.
+
+                ⚠️ Still a plain <a>, not `FooterLink`. That renders a Next
+                `Link`, which prefetches and client-navigates a STATIC PDF and
+                cannot carry `download` at all.
+
+                The weight is stated rather than sprung on the reader — half a
+                megabyte on a phone connection is their decision, not ours. */}
+            <a
+              href="/brochure/jamin-bazaar-royal-presentation.pdf"
+              download
+              className="mt-phi4 inline-flex items-center gap-3 rounded-full border border-line px-5 py-3 text-base text-ink transition-colors hover:border-champagne-300 hover:text-champagne-300"
+            >
+              <svg
+                viewBox="0 0 16 16"
+                className="h-4 w-4 shrink-0"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 2v8m0 0L5 7m3 3 3-3" />
+                <path d="M2.5 11.5v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" />
+              </svg>
+              Download brochure
+              <span className="text-tiny text-ink-faint">PDF · 540 KB</span>
+            </a>
           </div>
 
           <div>
@@ -92,32 +129,6 @@ export async function SiteFooter() {
               <FooterLink href="/properties">All properties</FooterLink>
               <FooterLink href="/projects">Projects by stage</FooterLink>
               <FooterLink href="/downloads">Brochures &amp; plans</FooterLink>
-              {/* ⚠️ A plain <a>, not `FooterLink`. That component renders a
-                  Next `Link`, which prefetches and client-navigates — neither
-                  of which means anything for a static PDF, and the router will
-                  happily try to treat it as a route. `download` also cannot be
-                  passed through it.
-                  The size is stated because an unlabelled link to half a
-                  megabyte is a decision the reader is not being given. */}
-              {/* ⚠️ Two lines, no icon, and both of those are corrections made
-                  after looking at it. The first build put an icon and the size
-                  chip inline: this column is about 150px wide, so "Download
-                  brochure" broke across two lines and the chip wrapped again
-                  under it — three ragged lines where its neighbours are one.
-                  None of the other footer links carries an icon either, so it
-                  was reading as a different kind of thing. */}
-              <li>
-                <a
-                  href="/brochure/jamin-bazaar-royal-presentation.pdf"
-                  download
-                  className="block text-base text-ink-muted transition-colors hover:text-champagne-300"
-                >
-                  Download brochure
-                  {/* The weight is stated rather than sprung on the reader —
-                      the same courtesy /downloads already extends. */}
-                  <span className="mt-0.5 block text-tiny text-ink-faint">PDF · 540 KB</span>
-                </a>
-              </li>
               {facets.phases.map((f) => (
                 <FooterLink key={f.key} href={f.href}>
                   {f.label}
