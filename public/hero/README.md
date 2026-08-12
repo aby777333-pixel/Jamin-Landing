@@ -820,3 +820,40 @@ caption, a busy corner - breaks the day that plate goes transparent.
 
 Also: measure the board, do not eyeball it. hero-31's was first noted as ending
 at x 470; it actually ends at 498, and a cut at 494 would have left a 4px seam.
+
+## hero-34/35/36 -> the district pages (2026-08-12)
+
+Owner-supplied, one shoot: golden-hour Jamin layouts with the marble JAMIN
+BAZAAR sign. hero-34 Erode, hero-35 Salem, hero-36 Tiruppur. Coimbatore keeps
+hero-17 at the owner's request, which is why ART_BY_DISTRICT has no entry for it.
+
+WARNING: hero-34 IS TRIMMED, cut at source x 1422 -> 1422x800, exported
+768 / 1280 / 1422 (101 / 234 / 274 KB). The original carries a "ROYAL CHETTINADU
+ENCLAVE" plaque on its right edge - a development name that is NOT in the
+catalogue, on a page whose whole job is to list the catalogue. Put to the owner
+2026-08-12; he chose to cut it. Re-cut from the ORIGINAL if regenerated, not
+from a rendition. 35 and 36 are untrimmed 1774x887.
+
+WARNING: THE PLATE IS 0.52 HERE, AGAINST 0.12 ON /properties, AND THE SWEEP IS
+WHY. hero-17 is a trimmed banner that is dark where the copy sits; these three
+are bright golden-hour frames with a lot of sky and measure about 2.5x lighter
+under the plate. At /properties' 0.12 the gold eyebrow reads 1.72-1.88 at the
+worst pixel - not a near miss. Swept at 1280, plate region, gold eyebrow (it
+binds every time, white runs about 1.1x clear):
+
+    0.12 -> Erode 1.72 · Salem 1.76 · Tiruppur 1.88   <- /properties' value
+    0.34 -> Erode 2.87 · Salem 2.93 · Tiruppur 3.12
+    0.42 -> Erode 3.54 · Salem 3.62 · Tiruppur 3.83
+    0.52 -> Erode ~4.6 · Salem ~4.7 · Tiruppur ~4.9   <- ships
+
+ONE alpha for three frames, which departs from the per-frame rule this register
+normally insists on. Justified because they are one shoot at one time of day and
+measure within 0.3 of each other at every step; the number satisfies the darkest
+of them (Erode). At 375 the worst pixel is about 4.1 and `.rj-sheer-copy`'s
+four-layer halo covers the remainder. If a district frame is ever swapped for
+one from a different shoot, sweep it on its own.
+
+Note the copy plate sits over the marble sign in all three. That is not a
+defect - the sign reads through the sheer plate - but it is why these were given
+`cinematic` rather than `paper`: the paper tone fades its left 22%, which is
+exactly where the sign is, and hero-31/33 already paid for that lesson.

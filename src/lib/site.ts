@@ -131,7 +131,11 @@ export async function getNavFacets(): Promise<NavFacets> {
       key: d,
       label: d,
       count,
-      href: `/properties?district=${encodeURIComponent(d)}`,
+      /* ⚠️ Points at the district PAGE, not the filter. `/properties?district=`
+         still resolves and is not redirected — those links are in the wild —
+         but the menu leads to a route that owns its own hero and metadata. See
+         the note on `districtSlug` below. */
+      href: `/locations/${districtSlug(d)}`,
     }));
 
   const selling = all.filter(isSellable);
@@ -145,4 +149,46 @@ export async function getNavFacets(): Promise<NavFacets> {
       plotsAvailable: selling.reduce((n, p) => n + (p.plots_available ?? 0), 0),
     },
   };
+}
+
+/* ── DISTRICTS AS PAGES ─────────────────────────────────────────────────────
+ *
+ * The Locations menu used to point at `/properties?district=Erode`, where the
+ * district is client-side URL state. That works as a filter but it cannot carry
+ * a district's own hero: the page is statically prerendered, so the server has
+ * no idea which district is being asked for and any per-district image would
+ * have to be swapped after hydration — a wrong photograph for one paint on
+ * every shared link.
+ *
+ * So each district is a real, statically generated route. The filter still
+ * works — `/properties?district=…` is untouched and old links keep resolving —
+ * but the menu now leads to a page that owns its own picture and metadata.
+ *
+ * ⚠️ The slug is derived, not stored. `district` is free text typed in the
+ * admin console, so anything that assumes a fixed set breaks the first time
+ * somebody adds one. `districtSlug` and `districtFromSlug` are inverses over
+ * whatever the database happens to hold.
+ */
+export function districtSlug(district: string): string {
+  return district
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Resolves a slug back to the district string as the DATABASE spells it —
+ *  which is the only spelling that matches a property row. */
+export function districtFromSlug(slug: string, districts: string[]): string | null {
+  return districts.find((d) => districtSlug(d) === slug) ?? null;
+}
+
+/** Every district that actually has a property, as written in the records. */
+export function districtNames(items: { district?: string | null; city?: string | null }[]): string[] {
+  const seen = new Set<string>();
+  for (const p of items) {
+    const d = (p.district ?? p.city ?? "").trim();
+    if (d) seen.add(d);
+  }
+  return [...seen].sort((a, b) => a.localeCompare(b));
 }

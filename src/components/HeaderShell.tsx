@@ -70,8 +70,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   const onProperties = section("/properties") || pathname.startsWith("/property");
 
   const search = useQueryString();
-  /** A district-filtered listing belongs to Locations, not to Properties. */
-  const onDistrict = search.includes("district=");
+  /** A district belongs to Locations, not to Properties.
+   *  ⚠️ Two ways in now: the district PAGES (`/locations/erode`), which is what
+   *  the menu points at, and the older filtered listing (`?district=…`), whose
+   *  links are still in the wild. Dropping the second would leave Properties
+   *  lit on a URL that is plainly a Locations destination. */
+  const onDistrict = pathname.startsWith("/locations") || search.includes("district=");
   const location = pathname + search;
   const [lastLocation, setLastLocation] = useState(location);
   if (location !== lastLocation) {

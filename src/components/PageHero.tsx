@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33;
+  | 31 | 32 | 33 | 34 | 35 | 36;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -94,6 +94,17 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      the note on the phase page. Re-cut from the original, not from a rendition,
      if it is ever regenerated. */
   33: 1280,
+  /* hero-34/35/36 — the district pages (Erode, Salem, Tiruppur), owner-supplied
+     2026-08-12. One shoot: golden-hour layouts with the marble JAMIN BAZAAR
+     sign. Coimbatore keeps hero-17, at the owner's request.
+     ⚠️ 34 is 1422, not 1774 — it is TRIMMED. The original carries a "ROYAL
+     CHETTINADU ENCLAVE" plaque on its right edge, a development name that is
+     not in the catalogue, and the owner chose to cut it rather than publish a
+     project the listing beneath it does not contain. Re-cut from the ORIGINAL
+     at source x 1422, not from a rendition, if it is ever regenerated. */
+  34: 1422,
+  35: 1774,
+  36: 1774,
 };
 
 function artSrc(n: HeroArt) {

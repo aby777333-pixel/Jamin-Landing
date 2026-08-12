@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PropertiesMap } from "@/components/PropertiesMap";
+import { districtSlug } from "@/lib/site";
 import { type Property } from "@/lib/properties";
 
 /**
@@ -112,8 +113,10 @@ export function LocationExplorer({ items }: { items: Property[] }) {
       </div>
 
       {district ? (
+        /* Leads to the district's own page now, which is where the menu goes
+           and where that district's hero and metadata live. */
         <Link
-          href={`/properties?district=${encodeURIComponent(district)}`}
+          href={`/locations/${districtSlug(district)}`}
           className="mt-phi4 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-opacity hover:opacity-70"
         >
           Explore plots in {district} →

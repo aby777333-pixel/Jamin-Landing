@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getJournalCategories, getJournalPosts, journalHref } from "@/lib/journal";
 import { getProperties, propertyHref } from "@/lib/properties";
-import { PHASE_ORDER } from "@/lib/site";
+import { districtNames, districtSlug, PHASE_ORDER } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
 import { getVaultListings, vaultListingHref } from "@/lib/vault";
 
@@ -37,6 +37,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${SITE_URL}/projects/${k}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    }));
+
+    /* ⚠️ Added with the route, not after it — the standing rule above. The
+       district pages are generated only for districts that hold a property and
+       `dynamicParams` is false there, so building this list from the same
+       helper cannot put a 404 in the sitemap. */
+    const locations: MetadataRoute.Sitemap = districtNames(all).map((d) => ({
+      url: `${SITE_URL}/locations/${districtSlug(d)}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     }));
 
     // Journal. RLS only returns published articles, and the category route is
@@ -84,6 +94,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
       ...statics,
       ...phases,
+      ...locations,
       ...all.map((p) => ({
         url: `${SITE_URL}${propertyHref(p)}`,
         lastModified: p.updated_at ? new Date(p.updated_at) : undefined,
