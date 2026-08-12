@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { locationLine, phaseLabel, propertyHref, type Property } from "@/lib/properties";
+import {
+  approvalBadges,
+  formatArea,
+  isSellable,
+  locationLine,
+  phaseLabel,
+  propertyHref,
+  type Property,
+} from "@/lib/properties";
 
 /**
  * The map view (§17, §76): every development on one frame, pin linked to card.
@@ -30,8 +38,36 @@ const latToY = (lat: number, z: number) => {
  *  bounding box is not half off the frame. */
 const PIN_INSET = 56;
 
-export function PropertiesMap({ items }: { items: Property[] }) {
+export function PropertiesMap({
+  items,
+  /**
+   * The selected district, when the map is being used as a district explorer.
+   *
+   * ⚠️ IT DRAWS A HALO AROUND THE PROJECTS, NOT A DISTRICT BOUNDARY, and the
+   * difference matters on this site more than on most. We hold no administrative
+   * geometry — no district polygon, no survey outline — so anything shaped like
+   * a boundary would be invented, and inventing a boundary on a page about land
+   * is exactly the kind of claim the rest of this codebase refuses to make. What
+   * IS true is where the pins are, so the halo is fitted to the pins and the
+   * label counts them. It is deliberately a soft disc with no hard edge: a
+   * crisp outline reads as a border, a wash reads as "around here".
+   */
+  district = null,
+}: {
+  items: Property[];
+  district?: string | null;
+}) {
   const [active, setActive] = useState<string | null>(null);
+
+  /** Escape closes the open card, like every other overlay on the site. */
+  useEffect(() => {
+    if (!active) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActive(null);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [active]);
 
   /**
    * ⚠️ The zoom has to be fitted to the FRAME, not to the tile plane.
@@ -146,6 +182,26 @@ export function PropertiesMap({ items }: { items: Property[] }) {
     y: (latToY(Number(p.lat), z) - fy) * TILE,
   });
 
+  /**
+   * The halo: centred on the pins it contains, sized to reach the furthest of
+   * them plus room for the pin graphic itself.
+   *
+   * ⚠️ The floor matters more than the fit. Most districts here hold one
+   * project, and a radius fitted to a single pin is zero — the highlight would
+   * vanish on exactly the case a reader is most likely to select. 96px is about
+   * three pin-heights, which reads as "this area" rather than as a dot.
+   */
+  const halo = (() => {
+    if (!district || pinned.length === 0) return null;
+    const os = pinned.map(pinOffset);
+    const cxp = os.reduce((s, o) => s + o.x, 0) / os.length;
+    const cyp = os.reduce((s, o) => s + o.y, 0) / os.length;
+    const reach = Math.max(...os.map((o) => Math.hypot(o.x - cxp, o.y - cyp)));
+    return { x: cxp, y: cyp, r: Math.max(96, reach + 56) };
+  })();
+
+  const openCard = active ? pinned.find((p) => p.id === active) ?? null : null;
+
   return (
     <div className="grid gap-phi3 lg:grid-cols-[1.618fr_1fr]">
       <div
@@ -184,6 +240,40 @@ export function PropertiesMap({ items }: { items: Property[] }) {
           ))}
         </div>
 
+        {/* The district halo, under the pins. Two stops rather than a flat
+            disc — a flat one has an edge wherever its alpha ends, which is the
+            border this must not draw. */}
+        {halo && (
+          <>
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute rounded-full"
+              style={{
+                left: `calc(50% + ${halo.x - halo.r}px)`,
+                top: `calc(50% + ${halo.y - halo.r}px)`,
+                width: halo.r * 2,
+                height: halo.r * 2,
+                zIndex: 5,
+                background:
+                  "radial-gradient(circle, color-mix(in srgb, var(--color-cta) 22%, transparent) 0%, color-mix(in srgb, var(--color-cta) 14%, transparent) 62%, transparent 100%)",
+              }}
+            />
+            {/* The label is the only thing here making a claim, so it says
+                exactly what is true: the district, and how many of its projects
+                are pinned inside this circle. */}
+            <span
+              className="pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/85 px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white backdrop-blur"
+              style={{
+                left: `calc(50% + ${halo.x}px)`,
+                top: `calc(50% + ${halo.y - halo.r - 12}px)`,
+                zIndex: 6,
+              }}
+            >
+              {district} · {pinned.length} project{pinned.length === 1 ? "" : "s"}
+            </span>
+          </>
+        )}
+
         {pinned.map((p) => {
           const o = pinOffset(p);
           const on = active === p.id;
@@ -193,6 +283,7 @@ export function PropertiesMap({ items }: { items: Property[] }) {
               type="button"
               onClick={() => setActive(on ? null : p.id)}
               aria-label={`${p.title} — ${locationLine(p)}`}
+              aria-expanded={on}
               className="absolute -translate-x-1/2 -translate-y-full transition-transform duration-300 hover:scale-110"
               style={{
                 left: `calc(50% + ${o.x}px)`,
@@ -211,6 +302,141 @@ export function PropertiesMap({ items }: { items: Property[] }) {
             </button>
           );
         })}
+
+        {/* ── THE PIN CARD ────────────────────────────────────────────────────
+            Anchored to the pin, clamped to the frame.
+
+            ⚠️ The clamp is why the frame is measured. The card is 260px wide
+            and sits above a pin that may be anywhere — including hard against
+            an edge, which is common because the zoom is fitted to the bounding
+            box of the pins, so there is ALWAYS a pin near each side. Without
+            the clamp the card hangs outside the map on those, and `overflow:
+            hidden` on the frame cuts it in half. `frame` is null only for the
+            first paint before the measurement lands; the fallback keeps the
+            card centred rather than mispositioned.
+
+            ⚠️ It flips BELOW the pin when there is not room above. A pin in the
+            top row of the bounding box is the normal case, not the edge case. */}
+        {openCard && (() => {
+          const o = pinOffset(openCard);
+          const W = frame?.w ?? (COLS - 1.4) * TILE;
+          const H = frame?.h ?? (ROWS - 1.2) * TILE;
+          const CARD_W = 260;
+          /* ⚠️ THE CARD HAS TO FIT THE FRAME, NOT JUST BE PLACED IN IT. This
+             estimate went 180 → 290 → 236 across three attempts, and the middle
+             one is the instructive failure: at 290 the arithmetic was right and
+             the card STILL got cut, because the frame on a one-project district
+             is only about 350px tall and the card as first written needed over
+             300. Positioning cannot rescue a card that does not fit — the
+             content had to come down too, which is why the body below is a
+             single facts row with the approval chip folded up beside the phase
+             label rather than a stack of sections.
+             `maxHeight` on the card is the backstop for the case this estimate
+             is still wrong: it scrolls rather than being sliced. */
+          const CARD_H = 236;
+          const GAP = 14;
+
+          /* Frame-relative, in plain pixels. ⚠️ No transforms: the first build
+             anchored with `translate(-50%,-100%)` and could only clamp the
+             horizontal, so a pin in the upper half pushed the card straight
+             through the top edge — and the frame is `overflow-hidden`, so it
+             was sliced rather than merely overhanging. Positioning outright
+             lets both axes be clamped by the same arithmetic. */
+          const px = W / 2 + o.x;
+          const py = H / 2 + o.y;
+
+          const left = Math.min(Math.max(px - CARD_W / 2, 8), Math.max(8, W - CARD_W - 8));
+          const above = py - GAP - CARD_H;
+          const below = py + GAP;
+          /* Prefer above the pin — it is the pin that is being pointed at, and a
+             card under it hides the place. Fall back to below, then to whatever
+             fits, so a short frame still shows a whole card. */
+          const top =
+            above >= 8
+              ? above
+              : below + CARD_H <= H - 8
+                ? below
+                : Math.max(8, H - CARD_H - 8);
+
+          const area = formatArea(openCard);
+          const approvals = approvalBadges(openCard);
+          return (
+            <div
+              role="dialog"
+              aria-label={openCard.title}
+              className="absolute w-[260px] overflow-y-auto rounded-card border border-line bg-canvas p-phi3 shadow-raise"
+              style={{ left, top, zIndex: 30, maxHeight: Math.max(140, H - 16) }}
+            >
+              <button
+                type="button"
+                onClick={() => setActive(null)}
+                aria-label="Close"
+                className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full text-ink-faint transition-colors hover:bg-canvas-alt hover:text-ink"
+              >
+                <svg viewBox="0 0 12 12" className="h-3 w-3" aria-hidden="true">
+                  <path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" strokeWidth="1.5" fill="none" />
+                </svg>
+              </button>
+
+              {/* The stage and the approval on ONE line — the approval used to
+                  have a row of its own, which is 30px this card cannot spare. */}
+              <div className="flex flex-wrap items-center gap-2 pr-6 text-micro font-semibold uppercase tracking-[0.14em]">
+                <span className="text-jamin-gold-ink">{phaseLabel(openCard)}</span>
+                {approvals.map((a) => (
+                  <span
+                    key={a}
+                    className="rj-foil-seal inline-flex items-center rounded-full px-2 py-0.5 tracking-[0.1em] text-champagne-900"
+                  >
+                    {a}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-1 line-clamp-2 text-base text-ink">{openCard.title}</div>
+              {/* Clamped: these addresses run to three and four lines, and every
+                  extra line here is one the button loses. */}
+              <div className="mt-0.5 line-clamp-2 text-tiny leading-relaxed text-ink-muted">
+                {locationLine(openCard)}
+              </div>
+
+              {/* Real fields only, and only the ones this record actually has —
+                  the same rule the property card follows. `flex-nowrap` with
+                  `min-w-0` cells so three facts stay on one line instead of
+                  wrapping into a second row. */}
+              {(area || openCard.plots_total) && (
+                <dl className="mt-phi2 flex items-baseline gap-x-phi2 border-t border-line pt-phi2">
+                  {area && (
+                    <div className="min-w-0">
+                      <dt className="ledger-label">Extent</dt>
+                      <dd className="ledger truncate text-tiny text-ink">{area}</dd>
+                    </div>
+                  )}
+                  {openCard.plots_total ? (
+                    <div className="min-w-0">
+                      <dt className="ledger-label">Plots</dt>
+                      <dd className="ledger text-tiny text-ink">{openCard.plots_total}</dd>
+                    </div>
+                  ) : null}
+                  {isSellable(openCard) && openCard.plots_available != null && openCard.plots_total ? (
+                    <div className="min-w-0">
+                      <dt className="ledger-label">Available</dt>
+                      <dd className="ledger text-tiny text-ink">
+                        {openCard.plots_available} / {openCard.plots_total}
+                      </dd>
+                    </div>
+                  ) : null}
+                </dl>
+              )}
+
+              <Link
+                href={propertyHref(openCard)}
+                className="mt-phi2 block rounded-full bg-cta px-4 py-2 text-center text-tiny font-semibold uppercase tracking-[0.1em] text-white transition-colors hover:bg-jamin-red-deep"
+              >
+                View project
+              </Link>
+            </div>
+          );
+        })()}
 
         <span className="absolute bottom-0 right-0 bg-canvas/85 px-2 py-0.5 text-[10px] text-ink-muted">
           ©{" "}

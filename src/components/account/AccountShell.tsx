@@ -58,6 +58,10 @@ export function AccountShell({ title, children }: { title: string; children: Rea
 
   return (
     <Container className="py-phi5">
+      {/* ⚠️ SIGN OUT IS NO LONGER HERE. It used to sit at the top right of this
+          header, which is in the content column and scrolls — so the moment a
+          reader moved down the page, the way out went with it. It now lives at
+          the foot of the sidebar, which stays put. */}
       <header className="flex flex-wrap items-end justify-between gap-phi3">
         <div>
           <SectionLabel>Your account</SectionLabel>
@@ -67,27 +71,39 @@ export function AccountShell({ title, children }: { title: string; children: Rea
             {profile?.member_code ? ` · ${profile.member_code}` : ""}
           </p>
         </div>
-        <button
-          onClick={async () => {
-            await signOut();
-            router.replace("/");
-          }}
-          className="rounded-full border border-line bg-canvas px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
-        >
-          Sign out
-        </button>
       </header>
 
       <div className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
-        {/* ⚠️ `sticky` needs `self-start`. A grid item stretches to the row by
-            default, so the nav was as tall as the article beside it and had no
-            room left to stick within — it scrolled away and took the whole
-            account menu with it.
-            `overscroll-contain` on the mobile scroller stops a horizontal flick
+        {/* ⚠️ THE STICKY LIVES ON THIS WRAPPER, NOT ON THE <nav>. The nav and
+            the sign-out control have to travel together — pinning only the nav
+            is what left the button behind in the first place.
+
+            ⚠️ `self-start` is load-bearing. A grid item stretches to the row by
+            default, so a sticky column would be exactly as tall as the article
+            beside it and have no room left to stick within — it scrolls away
+            and takes the whole menu with it. This is the second time that has
+            been written down here; do not remove it.
+
+            ⚠️ `max-h` + `overflow-y-auto` rather than a bare sticky, which is
+            the report's last clause: with today's eight entries the column is
+            far shorter than the viewport and nothing scrolls, but a ninth or a
+            short laptop screen would otherwise push the sign-out control below
+            the fold with no way to reach it. The height is the viewport less
+            the header and the gap it is offset by.
+
+            ⚠️ `top` is an inline style, not a `lg:top-24` guess. `--header-h`
+            is 72px and becomes 80px at `lg`, so a hard-coded 6rem is wrong at
+            one of the two — the same token every other sticky aside on this
+            site offsets by. */}
+        <div
+          className="flex flex-col gap-phi3 lg:sticky lg:z-10 lg:max-h-[calc(100dvh-var(--header-h)-2.5rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
+          style={{ top: "calc(var(--header-h) + 1.25rem)" }}
+        >
+        {/* `overscroll-contain` on the mobile scroller stops a horizontal flick
             from turning into a page scroll. */}
         <nav
           aria-label="Account"
-          className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain lg:sticky lg:top-24 lg:z-10 lg:flex-col lg:self-start lg:overflow-visible"
+          className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain lg:flex-col lg:overflow-visible"
         >
           {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : [])].map((n) => {
             const on = pathname === n.href;
@@ -125,6 +141,23 @@ export function AccountShell({ title, children }: { title: string; children: Rea
             );
           })}
         </nav>
+
+        {/* The foot of the sidebar. `lg:mt-auto` pushes it to the bottom of the
+            column when the column is taller than its links; on a phone the
+            sidebar is a horizontal strip and this simply follows it, kept to
+            its own width by `self-start` so it does not read as a full-width
+            primary action directly above the content. */}
+        <button
+          onClick={async () => {
+            await signOut();
+            router.replace("/");
+          }}
+          className="self-start rounded-full border border-line bg-canvas px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink lg:mt-auto lg:w-full lg:border-t lg:text-center"
+        >
+          Sign out
+        </button>
+        </div>
+
         <div className="min-w-0">{children}</div>
       </div>
     </Container>

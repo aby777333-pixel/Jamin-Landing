@@ -102,8 +102,13 @@ export function LocationExplorer({ items }: { items: Property[] }) {
           So this component is now chips, the map, and the way onward. Anything
           without a pin is still reachable: `PropertiesMap` counts them and says
           so under its own list rather than dropping them silently. */}
+      {/* ⚠️ `district` is passed down so the MAP can answer the second half of
+          the question. The chips say which district is selected; without this
+          the map only silently re-fitted its zoom, which on a single-project
+          district looks identical to no selection at all. With it the map
+          draws a halo round that district's projects and names them. */}
       <div className="mt-phi4">
-        <PropertiesMap key={district ?? "all"} items={shown} />
+        <PropertiesMap key={district ?? "all"} items={shown} district={district} />
       </div>
 
       {district ? (

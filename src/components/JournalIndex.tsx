@@ -229,7 +229,23 @@ function LeadStory({ post }: { post: JournalCard }) {
   return (
     <Link
       href={`/journal/${post.slug}`}
-      className="group grid items-center gap-phi4 lg:grid-cols-[1.618fr_1fr]"
+      /* ⚠️ 1.2fr, down from 1.618fr — and the ratio ALONE does not fix this.
+         Reported as the two halves being different heights, which they were:
+         measured at 1440, the picture came out 721x360 beside 445x555 of text,
+         a 194px overhang.
+
+         Swept the ratio on the live page first, because the obvious move is to
+         change it and stop. It does not work. The picture's height falls
+         LINEARLY with its column (height = width / 2.0), while the text's falls
+         in line-steps and hits a floor around 355px however wide it gets — so
+         every ratio from 1.618fr down to 1fr_1.618fr left a 130-190px gap, and
+         the narrow end just made the picture small as well as unbalanced.
+
+         What actually closes it is bounding the text: `line-clamp-3` on the
+         excerpt below. Measured together at 1440 — 1.2fr + clamp 3 gives 318
+         against 339, a 21px residual that `items-center` splits to about 10px
+         at each end. */
+      className="group grid items-center gap-phi4 lg:grid-cols-[1.2fr_1fr]"
     >
       {/* ⚠️ The LEAD story alone gets the image's own ratio. A cover is
           frequently a designed infographic, and on the lead it is doing the
@@ -256,11 +272,22 @@ function LeadStory({ post }: { post: JournalCard }) {
       </div>
       <div className="self-center">
         <Meta post={post} />
-        <h2 className="mt-phi2 text-2xl text-ink transition-colors group-hover:text-jamin-red-deep lg:text-3xl">
+        {/* Clamped for the same reason as the excerpt: this block's height has
+            to be bounded or the balance holds only for today's lead story. Four
+            lines fits every headline in the table and leaves the cap doing
+            nothing most days. */}
+        <h2 className="mt-phi2 line-clamp-4 text-2xl text-ink transition-colors group-hover:text-jamin-red-deep lg:text-3xl">
           {post.title}
         </h2>
         {post.excerpt && (
-          <p className="mt-phi2 text-lg leading-relaxed text-ink-muted">{post.excerpt}</p>
+          /* ⚠️ THE CLAMP IS THE HALF THAT DOES THE WORK — see the note on the
+             grid above. Unclamped, the excerpt is whatever the editor wrote and
+             the column simply runs past the picture; no column ratio can
+             balance against an unbounded height. Three lines, where the article
+             cards below use two: the lead gets one more, not a different rule. */
+          <p className="mt-phi2 line-clamp-3 text-lg leading-relaxed text-ink-muted">
+            {post.excerpt}
+          </p>
         )}
         <span className="mt-phi3 inline-block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep">
           Read the guide →
