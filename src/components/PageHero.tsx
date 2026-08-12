@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -105,6 +105,10 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   34: 1422,
   35: 1774,
   36: 1774,
+  /* hero-37 — the aerial gate, /properties from 2026-08-12, owner-supplied.
+     ⚠️ hero-17 is NOT freed by this: it stays the default for a district page
+     with no art of its own, which today is Coimbatore. */
+  37: 1916,
 };
 
 function artSrc(n: HeroArt) {

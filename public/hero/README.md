@@ -849,11 +849,50 @@ binds every time, white runs about 1.1x clear):
 ONE alpha for three frames, which departs from the per-frame rule this register
 normally insists on. Justified because they are one shoot at one time of day and
 measure within 0.3 of each other at every step; the number satisfies the darkest
-of them (Erode). At 375 the worst pixel is about 4.1 and `.rj-sheer-copy`'s
-four-layer halo covers the remainder. If a district frame is ever swapped for
+of them (Erode). CORRECTION (2026-08-12, same day): the note first written here cited a 375px
+worst pixel as if the phone were the tight case. It is not, and the mistake is
+worth keeping because it is easy to repeat. Below `lg` the CINEMATIC tone puts
+the picture in a band ABOVE the copy and the words sit on the section's own
+charcoal — no photograph is behind them at all, so the phone is the SAFEST
+width. The binding case is the narrowest width that still composites copy over
+photograph, which is 1024. Sweeping a full-bleed phone crop overstates the
+constraint; it errs safe, but it is measuring something the page does not do. If a district frame is ever swapped for
 one from a different shoot, sweep it on its own.
 
 Note the copy plate sits over the marble sign in all three. That is not a
 defect - the sign reads through the sheer plate - but it is why these were given
 `cinematic` rather than `paper`: the paper tone fades its left 22%, which is
 exactly where the sign is, and hero-31/33 already paid for that lesson.
+
+
+## hero-37 -> /properties (2026-08-12)
+
+Owner-supplied aerial of the gate and the layout beyond it. 1916x821 native ->
+1916 / 1280 / 768 WebP (340 / 177 / 69 KB). Replaces hero-17.
+
+WARNING: hero-17 IS NOT FREED. It remains DEFAULT_ART for a district page with
+no art of its own, which today means /locations/coimbatore — the owner asked for
+Coimbatore's hero to stay as it was. Do not reassign 17 without checking
+ART_BY_DISTRICT.
+
+WARNING: the plate is 0.52 here, against hero-17's 0.12. hero-17 was a trimmed
+banner, dark exactly where the copy sits; this is an aerial under a bright sky.
+Gold eyebrow, worst pixel, at the widths where the photograph is genuinely
+behind the copy:
+
+    a0.12 -> 1280 2.20                <- hero-17's value
+    a0.42 -> 1024 3.10 · 1280 4.36
+    a0.52 -> 1024 4.17 · 1280 5.64    <- ships
+    a0.56 -> 1024 4.72 · 1280 6.28
+
+1024 BINDS, NOT 375 — see the correction under hero-34/35/36 above.
+
+## The homepage "purpose" picture (2026-08-12)
+
+`public/section/purpose-gate-960.webp` / `-1440.webp`, owner-supplied, replacing
+`purpose-1857.webp` in `PurposeExplorer`.
+
+WARNING: a NEW FILENAME, not a new file at the old path. `next/image` keys its
+optimised output by source path, so overwriting purpose-1857.webp would let a
+warm build keep serving the old picture from a deploy that looks correct. Same
+trap recorded against hero-27. purpose-1857 is left in place, unused.

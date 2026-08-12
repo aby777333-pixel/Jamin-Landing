@@ -21,12 +21,32 @@ export default async function PropertiesPage() {
   return (
     <>
       <PageHero
-        art={17}
+        /* hero-37 — the aerial gate, owner-supplied 2026-08-12, replacing
+           hero-17. hero-17 is not retired: it is still the fallback for a
+           district page without art of its own, which today means Coimbatore. */
+        art={37}
         tone="cinematic"
         size="tall"
         sheer
-        /* Swept on this frame, not copied. white 5.31, gold 4.91 at blur 16 - the frame stays legible. */
-        sheerAlpha={0.12}
+        /* ⚠️ 0.52, up from hero-17's 0.12, and swept rather than carried.
+           hero-17 was a trimmed banner that is dark exactly where the copy
+           sits; this frame is an aerial under a bright sky and measures far
+           lighter under the plate. Gold eyebrow (it binds; white runs ~1.1x
+           clear), worst pixel, at the widths where the photograph is actually
+           BEHIND the copy:
+
+               a0.12 → 1024 n/a · 1280 2.20      ← hero-17's value
+               a0.42 → 1024 3.10 · 1280 4.36
+               a0.52 → 1024 4.17 · 1280 5.64     ← ships
+               a0.56 → 1024 4.72 · 1280 6.28
+
+           ⚠️ 1024 BINDS, not 375. Below `lg` the cinematic tone puts the
+           picture in a band above the copy and the words sit on the section's
+           charcoal, so the phone is the safest width, not the tightest — a
+           sweep that models a full-bleed phone crop overstates the constraint.
+           The tightest real case is the narrowest width that still composites
+           copy over photograph, which is 1024. */
+        sheerAlpha={0.52}
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
         lead={

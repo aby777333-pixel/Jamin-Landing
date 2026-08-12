@@ -55,8 +55,13 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
         </div>
 
         <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+          {/* Owner-supplied 2026-08-12, replacing purpose-1857.
+              ⚠️ New FILENAME, not a new file at the old path. `next/image` keys
+              its optimised output by source path, so overwriting
+              purpose-1857.webp would have let a warm build keep serving the old
+              picture from a correct-looking deploy. */}
           <Image
-            src="/section/purpose-1857.webp"
+            src="/section/purpose-gate-1440.webp"
             alt=""
             aria-hidden="true"
             fill
