@@ -74,10 +74,21 @@ export function VisitsView() {
       timeZone: "Asia/Kolkata",
     });
 
+  /**
+   * ⚠️ Keyed on STATUS, not on which column happens to be filled.
+   *
+   * This used to read "`scheduled_at` present → it is a settled date". That was
+   * true while every visit came from the app, and false for every visit booked
+   * on the website: `website_book_visit` writes the buyer's requested time into
+   * `scheduled_at` immediately, so a merely-requested visit printed a bare date
+   * and read exactly like a confirmed appointment. The status chip beside it
+   * said "requested" and the line under the title said "Thu 13 August 2026",
+   * which is the contradiction the report was pointing at.
+   */
   const when = (v: Visit) => {
-    if (v.scheduled_at) return day(v.scheduled_at);
-    if (v.preferred_date) return `${day(v.preferred_date)} — requested`;
-    return "Date to be confirmed";
+    const iso = v.scheduled_at ?? v.preferred_date;
+    if (!iso) return "Date to be confirmed";
+    return v.status === "requested" ? `${day(iso)} — requested, not yet confirmed` : day(iso);
   };
 
   return (

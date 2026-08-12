@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { supabase } from "@/lib/supabase";
 import { captureAttribution, currentRef } from "@/lib/attribution";
 
@@ -134,10 +134,52 @@ export function VisitBooking({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{ ref?: string; when?: string } | null>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     captureAttribution();
   }, []);
+
+  /**
+   * 🚨 AFTER SUBMITTING, PUT THE READER BACK ON THE CONFIRMATION.
+   *
+   * Reported as "the page scrolls to the footer instead of the visit
+   * confirmation". Nothing scrolls the page — that is what made it confusing.
+   * What happens is that this component swaps a very tall subtree (a month
+   * calendar, four slot buttons, five fields and a consent block) for a short
+   * card, so the document loses well over a thousand pixels in one paint. The
+   * browser holds `scrollY` where it was, and on the now-much-shorter page that
+   * offset lands at or past the footer. The reader is exactly where they were;
+   * the page moved out from under them.
+   *
+   * So the scroll has to be restored deliberately, and it has to happen AFTER
+   * the shrink — this effect runs post-commit, so `doneRef` is measuring the
+   * card in its final position.
+   *
+   * ⚠️ Offset by `--header-h`. The header is sticky, so scrolling the card to
+   * viewport top puts its heading underneath the bar. The token is read rather
+   * than hard-coded because it changes at `lg` (72 → 80px).
+   *
+   * ⚠️ Focus moves too, with `preventScroll`. A visually-obvious change that
+   * nothing announces is invisible to a screen reader, and the card is the
+   * entire result of the action. `preventScroll` stops focus doing its own
+   * competing scroll before ours lands.
+   */
+  useEffect(() => {
+    if (!done) return;
+    const el = doneRef.current;
+    if (!el) return;
+
+    el.focus({ preventScroll: true });
+
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 72;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerH - 24;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: Math.max(0, top), behavior: reduced ? "auto" : "smooth" });
+  }, [done]);
 
   // Adjust-during-render rather than in an effect: the month has no meaning
   // until we know today's date, and an effect would paint an empty grid first.
@@ -205,7 +247,17 @@ export function VisitBooking({
 
   if (done) {
     return (
-      <div className="rounded-xl border border-canopy/30 bg-canopy-soft p-phi4">
+      <div
+        ref={doneRef}
+        /* `-1` so the effect above can move focus here without adding the card
+           to the tab order. `role="status"` announces it for anyone who is not
+           watching the screen. `scroll-mt` is the CSS half of the header offset,
+           so an in-page anchor lands correctly too. */
+        tabIndex={-1}
+        role="status"
+        aria-live="polite"
+        className="scroll-mt-28 rounded-xl border border-canopy/30 bg-canopy-soft p-phi4 outline-none"
+      >
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-canopy text-canvas">
             ✓

@@ -49,6 +49,33 @@ export default async function ProjectsPage() {
         art={5}
         photo={photo}
         tone={photo ? "cinematic" : "paper"}
+        /* ⚠️ SHEER, at the owner's request 2026-08-12: "make the bg card see
+           through transparent". Two things change and the second one is doing
+           most of the work — `gilt` is 0.52 near-black WITH a 14px backdrop
+           blur, so the picture behind the copy was both darkened and frosted.
+           `rj-gilt-sheer` drops the blur entirely, so the photograph now runs
+           through the plate sharp, and takes the tint to 0.34. Measured under
+           the plate on the frame this page actually carries, mean luminance
+           goes 0.033 → 0.060 — about twice the light, before counting the
+           frost coming off.
+
+           ⚠️ 0.34 rather than lower, and this hero is the reason the number is
+           not free to keep falling: its backdrop is a PHOTOGRAPH FROM THE
+           DATABASE (`secondaryImage` of the first project with one), so an
+           administrator can replace it tomorrow and no sweep here can bind the
+           frame. 0.34 is the alpha /journal already ships over a photograph,
+           and it is the top of the range this treatment uses. Swept at 1280
+           against all three candidate photos in `property-media` today, plate
+           region, gold eyebrow at p95: Erode 5.79 · Varapatty 5.90 · New
+           project 8.95. The worst single pixel runs 2.79–4.04 and is covered by
+           `.rj-sheer-copy`'s four-layer halo, which is precisely the thing that
+           replaced the blur — see the note on that class.
+
+           If a future photo looks washed here, RAISE THIS, do not re-add blur:
+           a backdrop-filter draws a hard frosted edge at the plate boundary,
+           which is the artefact that got it removed in the first place. */
+        sheer
+        sheerAlpha={0.34}
         eyebrow="Plotted developments"
         title="Every Jamin project, by stage"
         lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."
