@@ -1393,11 +1393,46 @@
  * plate was the only thing carrying the copy. With a halo doing that job it can
  * come most of the way down and let the artwork through.
  */
+/**
+ * 🚨 THIS PLATE IS TRANSPARENT ONLY WHERE IT IS NOT OVER THE PHOTOGRAPH.
+ *
+ * The dark `rj-gilt-sheer` can be sheer at every width because a cinematic hero
+ * puts the picture behind the copy everywhere, and the sweep accounts for it.
+ * `paper` is different: the picture is a 58%-wide band bleeding off the RIGHT,
+ * and the copy plate is supposed to sit on the page's own ivory. Whether those
+ * two overlap depends entirely on the viewport, because the plate is capped by
+ * a centred 1280 container while the band is a percentage of the window.
+ *
+ * Measured on /projects/ongoing and /projects/future, contrast of the gold
+ * eyebrow (`jamin-gold-deep`, the line that binds — ink runs ~2.2x clear of it)
+ * against the composited backdrop inside the plate's TEXT box, worst pixel:
+ *
+ *     1024   0.74 → 4.07     0.34 → 1.11     0.26 → 1.22
+ *     1152   0.74 → 4.55     0.34 → 1.66     0.26 → 1.31
+ *     1280   0.74 → 5.89     0.34 → 3.85     0.26 → 3.51
+ *     1440   0.74 → 7.39     0.34 → 7.19     0.26 → 7.15
+ *
+ * At 1440 the band has moved right of the plate and the backdrop is the ivory
+ * canvas, so the alpha is nearly free. Below that the copy is genuinely over
+ * asphalt and no amount of tint rescues it — 1024 fails at 0.74 already, which
+ * is a pre-existing marginal case this file now records rather than creates.
+ *
+ * So the transparency is scoped, not global. ⚠️ 1440 is measured, not a
+ * breakpoint token — it is where the 1280-capped container stops overlapping a
+ * 58% band. If either of those two numbers changes, re-measure this.
+ */
 .rj-gilt-light-sheer {
-  background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.26));
+  /* Below the threshold: `gilt-light`'s audited 0.74, i.e. unchanged. */
+  background: rgba(253, 252, 249, var(--rj-sheer-alpha-narrow, 0.74));
   /* Same reasoning as the dark plate: no filter, no pooled corner shadow. */
   backdrop-filter: none;
   box-shadow: none;
+}
+
+@media (min-width: 1440px) {
+  .rj-gilt-light-sheer {
+    background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.26));
+  }
 }
 
 .rj-gilt-sheer {

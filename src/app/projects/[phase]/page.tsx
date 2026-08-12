@@ -151,6 +151,19 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         art={ART_BY_PHASE[phase] ?? 5}
         photo={photo}
         artPosition={ART_POSITION_BY_PHASE[phase] ?? "left"}
+        /* See-through copy plate, at the owner's request 2026-08-12. `gilt-light`
+           is 0.74 with a 14px backdrop blur; `rj-gilt-light-sheer` drops the blur
+           and takes the tint to 0.26, so the blueprint grid and the picture's
+           faded edge read straight through and only the gold hairline holds the
+           shape.
+
+           ⚠️ It is transparent only from 1440px up, and that is enforced in
+           royal.css rather than here. Below it the plate genuinely sits over the
+           photograph — at 1024 the gold eyebrow measures 1.11 at this alpha
+           against 4.07 at the opaque one — so the narrow widths keep 0.74. Read
+           the sweep on `.rj-gilt-light-sheer` before touching either number. */
+        sheer
+        sheerAlpha={0.26}
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}
