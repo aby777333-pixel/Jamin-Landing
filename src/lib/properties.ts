@@ -335,6 +335,26 @@ export function formatArea(p: Property): string | null {
   return `${v} ${p.area_unit ?? ""}`.trim();
 }
 
+/**
+ * The same extent, split into the number and its unit.
+ *
+ * The card's facts strip sets the figure large and the unit as its label, so
+ * "4 acres" has to arrive as `{ value: "4", unit: "acres" }` rather than as one
+ * string. Derived from `formatArea` rather than from the columns directly, so
+ * the two can never disagree about grouping or rounding.
+ *
+ * ⚠️ Splits on the LAST space, because the value is the part that can contain
+ * one: `26,727 sqft` groups with a comma today, but `en-IN` uses a thin space
+ * for some locales and a naive `split(" ")[0]` would print "26" on that day.
+ */
+export function areaParts(p: Property): { value: string; unit: string } | null {
+  const s = formatArea(p);
+  if (!s) return null;
+  const i = s.lastIndexOf(" ");
+  if (i < 0) return { value: s, unit: "" };
+  return { value: s.slice(0, i), unit: s.slice(i + 1) };
+}
+
 export function locationLine(p: Property): string {
   if (p.location_text) return p.location_text;
   return [p.locality, p.city, p.district, p.state].filter(Boolean).join(", ");

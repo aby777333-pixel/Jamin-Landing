@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 /* After globals: the cadastral layer adds to the foundation, it never
@@ -74,6 +74,41 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+};
+
+/**
+ * 🚨 `interactiveWidget: "resizes-content"` IS A BUG FIX, NOT A PREFERENCE.
+ *
+ * The default is `resizes-visual`: when the on-screen keyboard opens, only the
+ * VISUAL viewport shrinks. The layout viewport — and therefore `100dvh`, `vh`
+ * and everything `position: fixed` — keeps the height of the whole screen, so a
+ * full-screen panel quietly extends underneath the keyboard.
+ *
+ * That is the Jamindar report: with the keyboard up, the header and language
+ * chips were visible and the question box was not; scroll down to reach the box
+ * and the header left the screen. Nothing was wrong with the panel's own
+ * layout — it is a correct `flex-col` with a `shrink-0` header, a `min-h-0
+ * flex-1` transcript and a `shrink-0` composer — it was simply being told the
+ * screen was 300px taller than the part the reader could see.
+ *
+ * `resizes-content` makes the layout viewport shrink with the keyboard, so
+ * `100dvh` becomes the space actually visible and that flex column resolves
+ * exactly as designed: header pinned, composer pinned, only the transcript
+ * scrolls.
+ *
+ * ⚠️ It is site-wide because it is a viewport declaration, and that is fine —
+ * it is what iOS Safari already does. The one thing it changes elsewhere is
+ * that a `fixed` element now sits above the keyboard rather than behind it,
+ * which is the desirable direction everywhere on this site.
+ *
+ * ⚠️ Safari does NOT support this key. `JamindarDock` carries a
+ * `visualViewport` fallback for that; the two are belt and braces and neither
+ * one covers every browser alone.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  interactiveWidget: "resizes-content",
 };
 
 /** Organisation-level structured data, emitted once for the whole site. */

@@ -133,9 +133,24 @@ const LEVELS = [
 
 function FamilyBlock({ family, image }: { family: VaultFamily; image?: string }) {
   return (
-    <li id={family.slug} className="scroll-mt-28">
-      <div className="overflow-hidden rounded-xl border border-line bg-canvas-alt">
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-canvas-sunken">
+    /* ⚠️ `flex` on the item and `h-full` on the card, for the reason recorded on
+       PropertyCard: a grid item stretches to the tallest in its row, but a
+       `block` child does not follow it. Every family here carries a different
+       number of categories — that is data, and the console can change it any
+       day — so without this the three frames in a row ended at three different
+       heights and the section read as broken rather than as varied. The two
+       sibling grids on this page (`PATHS`, `destinations`) were already built
+       this way; this one was the outlier, and it was the one reported.
+
+       The frames level; the LISTS inside them still differ, which is correct.
+       Padding a short family with invented categories, or trimming a long one,
+       would be editing the register to suit the layout. */
+    <li id={family.slug} className="flex scroll-mt-28">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-line bg-canvas-alt">
+        {/* `shrink-0` or the flex column squashes the 16/9 out of the frame in
+            the shorter cards — the ratio is the thing keeping the row of
+            pictures consistent. */}
+        <div className="relative aspect-[16/9] w-full shrink-0 overflow-hidden bg-canvas-sunken">
           {/* The drawn plate is the fallback, not the plan: a family without a
               picture in `familyImages` still gets a designed frame rather than
               a hole. ⚠️ The label is dropped once there is a photograph — a
@@ -147,7 +162,7 @@ function FamilyBlock({ family, image }: { family: VaultFamily; image?: string })
             sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
           />
         </div>
-        <div className="p-phi3">
+        <div className="flex flex-1 flex-col p-phi3">
           <h3 className="text-xl text-ink">{family.name}</h3>
           <ul className="mt-phi3 space-y-2">
             {family.items.map((c) => (
@@ -190,9 +205,10 @@ export default async function VaultPage() {
           height so the plate breathes on a phone without the copy ever being
           pushed off it.
 
-          hero-29 — a backroad under monsoon rain, supplied by the owner
-          2026-08-11, replacing hero-26's sunlit estate the same day. Third
-          picture this section has carried: it opened on a drawn plate.
+          hero-30 — a Pichwai-style painting of a palace in a wooded valley at
+          sunset, supplied by the owner 2026-08-12, replacing hero-29's monsoon
+          backroad. Fourth picture this section has carried: it opened on a
+          drawn plate.
 
           ⚠️ BRAND IMAGERY, NEVER A JAMIN PROJECT. Same standing rule as every
           other hero on this site: `alt=""`, `aria-hidden`, and it must never
@@ -207,33 +223,54 @@ export default async function VaultPage() {
           across the rest so the picture survives; vertical anchors the top
           under the header and the foot into the section edge.
 
-          ⚠️ THE STOPS ARE RE-SWEPT PER PICTURE, NOT CARRIED OVER. hero-26 was
-          the brightest frame the site carried — midday sun, white cloud, a
-          sunlit lawn — and its stops were sized for that. hero-29 is wet
-          forest: dark green exactly where the words sit. Inheriting hero-26's
-          scrim measured 8.66 at p95 on the gold eyebrow, three points of
-          headroom spent crushing a picture that never needed it.
+          ⚠️ THE SCRIM IS UNCHANGED FROM hero-29 AND THE PLATE DID THE MOVING.
+          That is the opposite of the last two swaps and it is worth reading
+          before touching either number, because the instinct — re-scale the
+          scrim, as hero-26 → hero-29 did — was swept here and rejected on
+          evidence.
 
-          Swept as one scale across both gradients so their shape is preserved.
-          The gold eyebrow binds every time; the title and lead run 5+ points
-          clear of it:
+          hero-29 was wet forest: uniformly dark exactly where the words sit, so
+          a gradient could carry the whole job. A Pichwai painting is the
+          hardest kind of frame for white type, because it is dark on AVERAGE
+          and locally bright EVERYWHERE — white blossom, a waterfall, peacock
+          highlights, gold domes and an orange sky, all at glyph scale. Nothing
+          global fixes a scatter like that:
 
-              ×1.00 → gold 8.66 at p95, 6.45 at the worst pixel  ← hero-26's
-              ×0.70 → gold 6.83 at p95, 4.19 at the worst pixel  ← ships
-              ×0.62 → gold 6.29 at p95, 3.53 at the worst pixel  ← hero-26's bar
-              ×0.40 → gold 4.95 at p95, 2.20 at the worst pixel  ← p95 near the line
+            • object-position was swept at 1024/1280/1440/1920 (left, 20%, 35%,
+              centre). The worst pixel under the plate moved between 1.89 and
+              2.58 — i.e. not at all. There is no crop where the copy sits over
+              calm paint, because the bright bits are in every third of it.
+            • Scaling the scrim up needs ×1.60 to reach the worst pixel hero-29
+              shipped at, and that takes the frame's mean luminance from 0.026
+              to 0.011. It buys legibility by putting the painting out.
 
-          ×0.70 rather than ×0.62: 0.62 reproduces the contrast hero-26 shipped
-          at exactly, and the last 5% of picture is not worth spending the worst
-          pixel down to 3.53 for. Mean luminance 0.017 → 0.027, so the rain and
-          the greens read at about 60% more light.
+          So the scrim stays at hero-29's stops and the PLATE goes 0.14 → 0.46.
+          A scrim pays for the words with the whole picture; a plate pays only
+          where the words are — the same argument that put every hero on this
+          site onto plates in the first place, applied to the frame that needs
+          it most. Swept at 1024, the tightest width (plate region, gold eyebrow
+          — it binds every time, and white runs ~1.6× clear of it):
+
+              0.14 → gold 4.54 at p95, 2.26 at the worst pixel  ← hero-29's
+              0.32 → gold 5.76 at p95, 3.21 at the worst pixel
+              0.40 → gold 6.40 at p95, 3.80 at the worst pixel
+              0.46 → gold 6.92 at p95, 4.32 at the worst pixel  ← ships
+              0.58 → gold 8.04 at p95, 5.61 at the worst pixel  ← plate reads
+                                                                  as a box
+
+          0.46 clears the 4.19 worst pixel hero-29 shipped at, at every width
+          measured (1024 4.32 · 1280 4.38 · 1440 4.75 · 1920 5.76 · 768 5.97 ·
+          375 5.88). And because the scrim did not move, the painting OUTSIDE
+          the plate reads at mean luminance 0.035 against hero-29's 0.027 —
+          brighter than the picture it replaces, which is the whole point of
+          spending the contrast locally.
 
           ⚠️ The `lg:hidden` veil below is NOT scaled with these — it exists to
           fix a measured mobile failure and reducing it would put that failure
           straight back. */}
       <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
         <Image
-          src="/hero/hero-29-1672.webp"
+          src="/hero/hero-30-1916.webp"
           alt=""
           aria-hidden="true"
           fill
@@ -264,7 +301,13 @@ export default async function VaultPage() {
             end of the road. Same picture, opposite correction. At 375 the gold
             eyebrow measured 4.23 on the inherited 0.18, below the line; 0.28
             puts it at 4.92. Re-measure this at 375 on every hero swap: a
-            desktop sweep tells you nothing about it. */}
+            desktop sweep tells you nothing about it.
+
+            ✅ Held at 0.28 for hero-30 rather than assumed: with the plate at
+            0.46 the phone crop (the palace and the sunset, the brightest part
+            of the painting) measures gold 8.06 at p95 and 5.88 at the worst
+            pixel. It is now the SAFEST width rather than the tightest, so this
+            veil has headroom to come down if the crop is ever reworked. */}
         <div
           className="pointer-events-none absolute inset-0 lg:hidden"
           aria-hidden="true"
@@ -282,23 +325,19 @@ export default async function VaultPage() {
             an abstract drawn plate; with a photograph whose subject is dead
             centre it hides the one thing worth showing. */}
         <Container className="relative w-full py-phi6">
-          {/* ⚠️ The plate drops to 0.14 with the scrim above it. It is no longer
-              carrying the contrast — the gradient is — so its remaining job is
-              the gold hairline and the material cue that the rest of the site
-              is built from. Swept against the composited frame at 1280, plate
-              region only, worst single pixel:
+          {/* ⚠️ 0.46, and the sweep that chose it is in the section comment
+              above — it is the hero-30 swap, not a taste change. The short
+              version: under hero-29 the scrim carried the contrast and the
+              plate could drop to 0.14; under a painting that is bright at glyph
+              scale in every third of the frame, the plate has to carry it
+              again, and doing that locally is what keeps the picture bright.
 
-                0.10 → gold 4.36 · white 7.01     ← under AA on one pixel
-                0.14 → gold 4.53 · white 7.29     ← ships
-                0.18 → gold 4.75 · white 7.64
-                0.22 → gold 5.04 · white 8.10
-
-              At the p95 this file normally measures by, 0.14 reads gold 7.07
-              and white 11.01. Left at the site's usual 0.52 it stacked with the
-              scrim and the copy sat in a visibly darker rectangle. */}
+              Still well under the site's audited 0.52 for the opaque `gilt`,
+              and it is a flat tint with no backdrop-filter, so the painting
+              runs through it unaltered rather than being frosted. */}
           <div
             className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi4 sm:p-phi5"
-            style={{ "--rj-sheer-alpha": 0.14 } as React.CSSProperties}
+            style={{ "--rj-sheer-alpha": 0.46 } as React.CSSProperties}
           >
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
               {hero.eyebrow ?? "Jamin Bazaar"}

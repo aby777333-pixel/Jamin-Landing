@@ -162,6 +162,65 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
     return () => document.removeEventListener("keydown", onKey);
   }, [open, stopSpeech]);
 
+  /**
+   * 🚨 THE KEYBOARD FALLBACK — pins the full-screen panel to the part of the
+   * screen the reader can actually see.
+   *
+   * `interactiveWidget: "resizes-content"` in app/layout.tsx is the real fix and
+   * covers Chrome. Safari ignores that key entirely: there, the on-screen
+   * keyboard shrinks only the VISUAL viewport, `100dvh` stays the height of the
+   * whole screen, and the composer sits underneath the keyboard — the exact
+   * symptom that was reported. `window.visualViewport` is the only thing that
+   * reports the visible box in that browser, so the height is set from it
+   * directly.
+   *
+   * ⚠️ Guarded on `< sm`. From 640px up the panel is a floating card with its
+   * own `sm:h-auto` and `sm:max-h`, and an inline height would override both —
+   * a desktop panel would suddenly be as tall as the window. The style is also
+   * cleared on the way out, so a resize across the breakpoint cannot leave a
+   * stale pixel height behind.
+   *
+   * ⚠️ `offsetTop` as well as `height`. Safari does not just shrink the visual
+   * viewport, it SCROLLS it — so a panel pinned to `top: 0` of the layout
+   * viewport drifts off the top of the screen. Following `offsetTop` keeps the
+   * header where the reader is looking.
+   */
+  useEffect(() => {
+    if (!open) return;
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    if (!vv) return;
+
+    const apply = () => {
+      const el = panelRef.current;
+      if (!el) return;
+      if (window.innerWidth >= 640) {
+        el.style.height = "";
+        el.style.top = "";
+        return;
+      }
+      el.style.height = `${vv.height}px`;
+      el.style.top = `${vv.offsetTop}px`;
+    };
+
+    apply();
+    /* Captured now rather than read in the cleanup: the panel unmounts with
+       `open`, so by the time cleanup runs `panelRef.current` is already null and
+       the styles would never be cleared. */
+    const panel = panelRef.current;
+    vv.addEventListener("resize", apply);
+    vv.addEventListener("scroll", apply);
+    window.addEventListener("resize", apply);
+    return () => {
+      vv.removeEventListener("resize", apply);
+      vv.removeEventListener("scroll", apply);
+      window.removeEventListener("resize", apply);
+      if (panel) {
+        panel.style.height = "";
+        panel.style.top = "";
+      }
+    };
+  }, [open]);
+
   // Leaving the page mid-sentence must not keep talking.
   useEffect(() => {
     return () => {
@@ -363,7 +422,17 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
              up above the scroll. Taking the whole screen means the keyboard
              takes space from the message list and nothing else. `dvh`, not
              `vh`, because `vh` on iOS is the height WITHOUT the browser chrome
-             and the composer ends up under it. */
+             and the composer ends up under it.
+
+             ⚠️ THIS COLUMN WAS ALWAYS RIGHT AND STILL FAILED — read the two
+             notes it depends on before changing anything here. `shrink-0`
+             header, `min-h-0 flex-1` transcript, `shrink-0` composer is exactly
+             the "only the chat scrolls" structure that was asked for; what
+             broke it is that `100dvh` does not shrink when the keyboard opens,
+             so the column was resolving against a box 300px taller than the
+             screen. The height comes from `interactiveWidget` in
+             app/layout.tsx and from the `visualViewport` effect above, and
+             those two are what make this class list mean what it says. */
           className="rj-unfurl fixed inset-0 z-40 flex h-[100dvh] w-full flex-col overflow-hidden border-line bg-canvas print:hidden sm:inset-x-auto sm:inset-y-auto sm:bottom-24 sm:right-5 sm:h-auto sm:max-h-[min(34rem,70vh)] sm:w-[26rem] sm:rounded-xl sm:border sm:shadow-raise"
         >
           <header className="shrink-0 border-b border-line px-phi3 py-phi2">

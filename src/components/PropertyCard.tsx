@@ -2,10 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { AvailabilityChip } from "@/components/cadastral/AvailabilityChip";
 import { DimensionOverlay } from "@/components/cadastral/DimensionOverlay";
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { districtName, districtStone, stageStone } from "@/lib/stones";
 import { getTier } from "@/lib/tiers";
 import {
   approvalBadges,
+  areaParts,
   coverImage,
   formatArea,
   formatPrice,
@@ -43,6 +45,32 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
   const district = districtName(p);
   const stage = stageStone(p);
   const tier = getTier(p);
+
+  /**
+   * The facts strip, built before the markup so the grid can be told how many
+   * columns it actually has.
+   *
+   * ⚠️ The UNIT is the label and the NUMBER is the figure — "4" over "ACRES",
+   * not "4 acres" over "EXTENT". That is the reference design's arrangement and
+   * it is also the honest one: every cell then reads as one measurement, and
+   * the three cells are comparable down the column across a whole grid of
+   * cards. `Extent` is only used as a fallback for a record whose `area_unit`
+   * is null, which the table does allow.
+   *
+   * ⚠️ Availability is `2 / 27`, both numbers, never a bare remaining count. A
+   * lone "2" is unreadable without the total and reads as scarcity; the pair is
+   * a fact. It is also the only cell that can be absent on a card whose
+   * neighbours have it — hence a computed column count rather than a fixed
+   * three, so a two-fact card still fills its strip instead of ruling off an
+   * empty third.
+   */
+  const areaP = areaParts(p);
+  const facts: { label: string; value: string }[] = [];
+  if (areaP) facts.push({ label: areaP.unit || "Extent", value: areaP.value });
+  if (p.plots_total)
+    facts.push({ label: p.plots_total === 1 ? "Plot" : "Plots", value: String(p.plots_total) });
+  if (sellable && p.plots_total != null && p.plots_available != null)
+    facts.push({ label: "Available", value: `${p.plots_available} / ${p.plots_total}` });
 
   return (
     /* `h-full` + column flex is what keeps a row of cards level. A grid item
@@ -132,10 +160,19 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           in the eyebrow directly below. See the warning in lib/stones.ts. */}
       <div className="rj-gem-band shrink-0" aria-hidden="true" />
 
+      {/* ── THE RECORD ───────────────────────────────────────────────────────
+          Rearranged 2026-08-12 from the UI report's reference design. The
+          content is identical; what changed is that it now reads as four
+          separated blocks — WHERE it is, WHAT it is called, WHAT IT MEASURES,
+          and WHAT TO DO — instead of six things at six different rhythms. The
+          report's words were "crowded in some areas and excessive unused space
+          in others", and both halves of that had one cause: everything below
+          the title was sized by its own content, so no two cards in a row
+          agreed about where anything sat. */}
       <div className="flex flex-1 flex-col p-phi3">
-        {/* The variable-length half. `flex-1` absorbs the difference between a
-            one-line and a two-line title so the facts strip below always lands
-            at the same height across the row. */}
+        {/* ── 1. status · location, title, address ────────────────────────────
+            `flex-1` absorbs the difference between a one-line and a two-line
+            title so everything below lands at the same height across the row. */}
         <div className="flex-1">
           <div className="flex items-center gap-2 text-micro font-semibold uppercase tracking-[0.16em]">
             {/* `ink`, not `stone` — the label is a word, and two of the stones
@@ -155,27 +192,49 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             {!stage && !district && <span className="text-jamin-gold-ink">{phaseLabel(p)}</span>}
           </div>
 
-          <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-cta-deep">
+          <h3 className="mt-phi2 text-xl text-ink transition-colors group-hover:text-cta-deep">
             {p.title}
           </h3>
 
-          <p className="mt-1.5 line-clamp-1 text-base tracking-[0.05em] text-ink-muted">
-            {locationLine(p)}
+          {/* ⚠️ `line-clamp-2`, not 1. At one line "KamanaickenPalayam,
+              Varapatty, Coimbatore" truncated to "KamanaickenPalayam,
+              Varapatty,…" — the district, which is the part a buyer is
+              scanning for, was the part being cut. Two lines fit every address
+              in the table today and the clamp still guarantees the block cannot
+              grow without limit.
+              `items-start` + `mt-[0.15em]` on the marker: it aligns to the
+              first LINE of the address, not to the centre of a block that may
+              be two lines tall. */}
+          <p className="mt-phi2 flex items-start gap-1.5 text-base tracking-[0.05em] text-ink-muted">
+            <SurveyIcon
+              name="station"
+              size="h-3.5 w-3.5"
+              className="mt-[0.15em] shrink-0 text-ink-faint"
+            />
+            <span className="line-clamp-2">{locationLine(p)}</span>
           </p>
-
-          {/* Only where the record carries both counts — see the component. */}
-          {sellable && (
-            <div className="mt-phi2">
-              <AvailabilityChip total={p.plots_total} available={p.plots_available} />
-            </div>
-          )}
         </div>
 
-        {/* THE FACTS STRIP (§6.3.8). Real plot fields only — extent, plots,
-            availability. Never an invented "4 BHK · 2,850 sq ft": every one of
-            these is a plotted development, and a configuration it does not have
-            is the one thing a buyer would notice as false. */}
-        {/* ⚠️ The tier grades the card's FOOT rather than adding a fourth
+        {/* ── 2. THE FACTS STRIP (§6.3.8) ──────────────────────────────────────
+            Real plot fields only — extent, plots, availability. Never an
+            invented "4 BHK · 2,850 sq ft": every one of these is a plotted
+            development, and a configuration it does not have is the one thing a
+            buyer would notice as false.
+
+            ⚠️ A RULED GRID, NOT `flex-wrap`. This is the specific thing the
+            report asked for and the specific thing that was wrong. Wrapping
+            sized each figure by its own text, so "26,727 sqft" pushed
+            AVAILABLE onto a second row on the Erode card while the Salem card
+            beside it stayed on one — two cards, same three facts, different
+            heights and different reading order. Equal columns cost nothing and
+            cannot do that.
+
+            ⚠️ `min-w-0` on every cell. A grid track's default `min-width` is
+            its content's minimum, so one long figure widens the track rather
+            than truncating inside it — the same lesson `PropertiesMap` and the
+            homepage rail already paid for.
+
+            ⚠️ The tier grades the card's FOOT rather than adding a fourth
             horizontal line to its head. §6.3 lists the ribbon third, above the
             gem band; stacked there it would have been rule + band + ribbon in
             12px of card. The rule that already divided the facts strip becomes
@@ -184,64 +243,93 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             furniture. */}
         <div className="mt-phi3">
           <div className="rj-tier-rule" aria-hidden="true" />
-          <div className="flex items-end justify-between gap-phi2 pt-phi2">
-            <dl className="flex flex-wrap items-end gap-x-phi3 gap-y-1">
-              {area && (
-                <div>
-                  <dt className="ledger-label">Extent</dt>
-                  <dd className="ledger text-lg text-ink">{area}</dd>
-                </div>
-              )}
-              {p.plots_total ? (
-                <div>
-                  <dt className="ledger-label">Plots</dt>
-                  <dd className="ledger text-lg text-ink">{p.plots_total}</dd>
-                </div>
-              ) : null}
-              {sellable && p.plots_available ? (
-                <div>
-                  <dt className="ledger-label">Available</dt>
-                  {/* ⚠️ §8: an availability count never turns gold. A number
-                      that sells itself stops being a number. */}
-                  <dd className="ledger text-lg text-ink">{p.plots_available}</dd>
-                </div>
-              ) : null}
-            </dl>
+          <dl
+            className="grid divide-x divide-line pt-phi2"
+            style={{ gridTemplateColumns: `repeat(${facts.length}, minmax(0, 1fr))` }}
+          >
+            {facts.map((f, i) => (
+              <div key={f.label} className={`min-w-0 ${i === 0 ? "pr-phi2" : "px-phi2"} last:pr-0`}>
+                {/* ⚠️ §8: an availability count never turns gold. A number that
+                    sells itself stops being a number. */}
+                <dd className="ledger truncate text-lg text-ink">{f.value}</dd>
+                <dt className="ledger-label truncate">{f.label}</dt>
+              </div>
+            ))}
+          </dl>
+        </div>
 
-            {/* Slides in rather than blinking on — the movement is what reads as
-                considered; opacity alone reads as a flicker. */}
+        {/* ── 3. what is actually left ─────────────────────────────────────────
+            ⚠️ DRAWN ONLY WHEN IT SAYS SOMETHING. The plot grid used to render
+            on every sellable card, and because no plot in the database has ever
+            had a status other than `available`, every one of them drew a block
+            of empty outlines that told the reader nothing — while costing one
+            row of height per twelve plots. That is why a 27-plot card, a
+            16-plot card and a 1-plot card (which drew nothing at all, leaving
+            the hole the report called "excessive unused space") were three
+            different heights.
+
+            Guarding on `available < total` keeps the component and its whole
+            argument: the moment the owner marks a plot sold in the app's admin
+            console, that card starts drawing its grid again — and by then it is
+            carrying real information rather than decoration. */}
+        {sellable && p.plots_total != null && p.plots_available != null && p.plots_available < p.plots_total && (
+          <div className="mt-phi2">
+            <AvailabilityChip total={p.plots_total} available={p.plots_available} />
+          </div>
+        )}
+
+        {/* ── 4. the collection ───────────────────────────────────────────────
+            Below the statistics on every card, which is what the report asked
+            for — it used to share a line with the rate, so on a card whose rate
+            string was long the ribbon shifted left and the column stopped
+            existing. Crown is the only rung that gets foil TEXT, and only
+            because its ground is onyx — the seal ramp measures 11.7:1 there and
+            would measure 1.57:1 on ivory. */}
+        <div className="mt-phi2">
+          <span
+            className={`rj-ribbon ${
+              tier.key === "crown"
+                ? "rj-foil-text"
+                : tier.key === "select"
+                  ? "text-plat-800"
+                  : "text-champagne-700"
+            }`}
+          >
+            {tier.key === "crown" && (
+              /* The crest, and the only image the card adds. Not `next/image`:
+                 it is 18px of decoration on every card in a grid, and the
+                 optimiser pipeline costs more than the file. */
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src="/logo-mark.png" alt="" aria-hidden="true" className="rj-crest" />
+            )}
+            {tier.label}
+          </span>
+        </div>
+
+        {/* ── 5. the actions ──────────────────────────────────────────────────
+            ⚠️ "View details" IS NO LONGER HOVER-ONLY. It was `opacity-0` until
+            `group-hover`, which meant the card's primary affordance did not
+            exist for anyone on a touch device — and the report's reference
+            design shows it present on every card. The considered movement the
+            old treatment was after is kept as a transform: the arrow slides,
+            the label does not appear from nowhere.
+
+            Its own rule above it, so the two actions read as the card's footer
+            rather than as the last line of the ribbon block — and because
+            everything above is now fixed-height per row, this line lands at the
+            same y on every card in the row, which was the ask. */}
+        <div className="mt-phi2 flex items-center justify-between gap-3 border-t border-line pt-phi2">
+          <span className="inline-flex items-center gap-1.5 text-tiny font-medium text-cta-deep">
+            View details
             <span
-              className="shrink-0 translate-x-1 text-tiny font-medium text-cta-deep opacity-0 transition-all duration-500 group-hover:translate-x-0 group-hover:opacity-100"
+              aria-hidden="true"
+              className="transition-transform duration-500 group-hover:translate-x-1"
               style={{ transitionTimingFunction: "var(--ease-silk)" }}
             >
-              View details →
+              →
             </span>
-          </div>
-
-          {/* The ribbon and the rate, on one line. Crown is the only rung that
-              gets foil TEXT, and only because its ground is onyx — the seal
-              ramp measures 11.7:1 there and would measure 1.57:1 on ivory. */}
-          <div className="mt-phi2 flex items-center justify-between gap-3">
-            <span
-              className={`rj-ribbon ${
-                tier.key === "crown"
-                  ? "rj-foil-text"
-                  : tier.key === "select"
-                    ? "text-plat-800"
-                    : "text-champagne-700"
-              }`}
-            >
-              {tier.key === "crown" && (
-                /* The crest, and the only image the card adds. Not `next/image`:
-                   it is 18px of decoration on every card in a grid, and the
-                   optimiser pipeline costs more than the file. */
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src="/logo-mark.png" alt="" aria-hidden="true" className="rj-crest" />
-              )}
-              {tier.label}
-            </span>
-            <span className="text-tiny text-ink-faint">{formatPrice(p)}</span>
-          </div>
+          </span>
+          <span className="shrink-0 text-tiny text-ink-faint">{formatPrice(p)}</span>
         </div>
       </div>
     </Link>

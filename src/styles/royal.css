@@ -503,7 +503,33 @@
  * change costs no layout — a border-width change would move the whole document
  * by half a pixel and thrash on every scroll event.
  */
-.rj-hairline {
+/**
+ * 🚨 `:not(.sticky)` IS THE WHOLE BUG FIX — DO NOT SIMPLIFY IT AWAY.
+ *
+ * This file is UNLAYERED, and unlayered CSS beats anything in a cascade layer
+ * no matter the specificity. Tailwind 4 emits `.sticky { position: sticky }`
+ * into `@layer utilities`, so a bare `.rj-hairline { position: relative }` here
+ * silently won on the site header — and `position: relative` on a header is
+ * indistinguishable from having no positioning at all.
+ *
+ * The timing is what made it so confusing to diagnose. HeaderShell only adds
+ * `rj-hairline` once `scrollY > 8`, so the header IS sticky at rest and stops
+ * being sticky at the exact moment it is asked to stick. Anything that inspects
+ * the header at scroll 0 — which is all a non-compositing preview pane can do —
+ * reads `position: sticky` and concludes the CSS is fine. It was reported twice
+ * ("the navbar scrolls away with the page"), verified as a non-bug once, and
+ * shipped broken on every page in between. Reproduced and fixed in real Chrome
+ * on 2026-08-12: at scrollY 1077 the header's top went from -1077 to 0.
+ *
+ * The hairline loses nothing: `position: sticky` is a positioned value, so it
+ * already establishes the containing block the `::after` needs. This rule only
+ * has to supply one for elements that would otherwise be static.
+ *
+ * ⚠️ The same trap is armed in `.rj-sweep`, `.rj-glint`, `.rj-glass`,
+ * `.rj-console`, `.rj-cta` and `.cd-fold`. None of them currently lands on an
+ * element with a position utility — check that before adding one.
+ */
+.rj-hairline:not(.sticky):not(.fixed):not(.absolute) {
   position: relative;
 }
 .rj-hairline::after {

@@ -65,9 +65,44 @@ export default async function SignInPage() {
           {/* `next` deliberately is NOT read from the query string. An open
               redirect on a sign-in page is a phishing primitive, and the only
               place a buyer needs to land afterwards is their own account. */}
-          <Suspense fallback={null}>
-            <SignInForm next="/account" />
-          </Suspense>
+          {/* ⚠️ The left column is a COLUMN now, not just the form. The report's
+              words: the picture below the account information "creates
+              additional vertical length and leaves the left side
+              underutilised". It was right — the form is short and the aside is
+              five blocks long, so the page was a tall right-hand strip beside
+              half a screen of blueprint. Moving the one movable block across
+              shortens the page by its own height instead of adding to it.
+
+              On a phone the two columns collapse to one and the picture lands
+              directly under the form, which is also where it reads best: it
+              breaks the page between "do this" and "here is why", rather than
+              trailing off the bottom where nobody scrolls to. */}
+          <div className="flex flex-col gap-phi4">
+            <Suspense fallback={null}>
+              <SignInForm next="/account" />
+            </Suspense>
+
+            {/* hero-12. The report called this page empty, and a render here
+                fills it with something on-brand rather than with padding. */}
+            <div className="overflow-hidden rounded-card border border-line bg-canvas-alt">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/hero/hero-12-1280.webp"
+                srcSet="/hero/hero-12-768.webp 768w, /hero/hero-12-1280.webp 1280w"
+                /* ⚠️ Re-stated with the move. It used to sit in the 0.85fr
+                   column and now sits in the 1fr one, so the old `34vw` would
+                   have had the browser pick a rendition about a third too small
+                   and upscale it. A `sizes` that no longer matches the box is
+                   invisible in review and obvious on a retina screen. */
+                sizes="(max-width: 1024px) 100vw, 46vw"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+                className="h-auto w-full"
+              />
+            </div>
+          </div>
 
           <aside className="lg:pt-phi2">
             <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
@@ -100,23 +135,7 @@ export default async function SignInPage() {
               </div>
             )}
 
-            {/* hero-12. The report called this page empty, and a render here
-                fills it with something on-brand rather than with padding. */}
-            <div className="mt-phi4 overflow-hidden rounded-card border border-line bg-canvas-alt">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/hero/hero-12-1280.webp"
-                srcSet="/hero/hero-12-768.webp 768w, /hero/hero-12-1280.webp 1280w"
-                sizes="(max-width: 1024px) 100vw, 34vw"
-                alt=""
-                aria-hidden="true"
-                loading="lazy"
-                decoding="async"
-                className="h-auto w-full"
-              />
-            </div>
-
-            <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
+            <p className="mt-phi4 text-tiny leading-relaxed text-ink-faint">
               No password is ever set or stored. Signing in mints a one-time credential that is
               exchanged for a session immediately and never shown again.
             </p>

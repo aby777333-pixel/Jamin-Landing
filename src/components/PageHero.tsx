@@ -146,7 +146,35 @@ export function PageHero({
   if (tone === "cinematic") {
     return (
       <section className="relative isolate overflow-hidden bg-charcoal">
-        <div className="absolute inset-0">
+        {/* 🚨 BELOW `lg` THIS IS A BAND, NOT A BACKGROUND — and it is ONE
+            element that changes job at the breakpoint, not two.
+
+            The bug: `object-cover` sizes to the box's HEIGHT, and on a phone the
+            box is roughly square while every frame in the set is between 1.78:1
+            and 2.5:1. /journal's hero is 2.0:1 in a 375×420 box, so the reader
+            saw a 40% centre slice — reported as "the mobile layout crops a large
+            portion of the image… important parts of the original are missing
+            from view". No amount of `object-position` fixes that; the picture is
+            simply wider than the hole.
+
+            So on a phone the picture stops being a backdrop and becomes a band
+            above the copy, `object-contain` inside a 16/9 box — which is the
+            NARROWEST ratio in the set, so nothing is ever cropped left or right
+            and a wider frame only letterboxes onto the section's own charcoal.
+            The copy then sits on that charcoal, where white type is far safer
+            than it ever was over a photograph.
+
+            ⚠️ ONE `<Image>`. The obvious build is a `lg:hidden` band plus a
+            `hidden lg:block` backdrop, and it costs every phone a second full
+            hero download — a `display: none` image is still fetched. Instead the
+            WRAPPER changes: in flow with an aspect box on mobile, absolutely
+            filling the section from `lg`. `fill` is satisfied either way because
+            both states are positioned.
+
+            ⚠️ It also puts the picture FIRST on a phone, which is what the
+            homepage banner already does and what the second report asked for —
+            see the note on the paper band below. */}
+        <div className="relative aspect-[16/9] w-full lg:absolute lg:inset-0 lg:aspect-auto">
           {/* A render is decoration and stays out of the accessibility tree; a
               photograph of a real project is content and gets a real alt. */}
           <Image
@@ -156,9 +184,12 @@ export function PageHero({
             fill
             priority={priority}
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-contain object-center lg:object-cover"
           />
-          <div className="veil absolute inset-0" />
+          {/* The veil is a legibility device for type sitting ON the picture.
+              Below `lg` nothing sits on it, so darkening it there would spend
+              the photograph for nothing. */}
+          <div className="veil absolute inset-0 hidden lg:block" />
         </div>
 
         {/* `justify-center`, where this was `justify-end`. Bottom-anchoring was
@@ -169,11 +200,17 @@ export function PageHero({
             — the optical centre of a block of type sits slightly above the
             geometric one, so a little more room below keeps it from reading
             low. */}
+        {/* ⚠️ The `min-h` is `lg:` only now. It exists to give a full-bleed
+            photograph room to be a photograph; below `lg` there is no
+            photograph behind this block, so a forced 48vh box would just be
+            empty charcoal under three lines of type. The vertical rhythm on a
+            phone is now the same `py-phi5` every other section on the site
+            opens with, which is half of what the second report asked for. */}
         <Container
-          className={`relative flex flex-col justify-center ${
+          className={`relative flex flex-col justify-center py-phi5 ${
             size === "tall"
-              ? "min-h-[clamp(26rem,64vh,38rem)] pb-phi7 pt-phi6"
-              : "min-h-[clamp(20rem,48vh,30rem)] pb-phi6 pt-phi5"
+              ? "lg:min-h-[clamp(26rem,64vh,38rem)] lg:pb-phi7 lg:pt-phi6"
+              : "lg:min-h-[clamp(20rem,48vh,30rem)] lg:pb-phi6 lg:pt-phi5"
           }`}
         >
           {/* The measure opens up on a wide screen. At 42rem a headline like
@@ -234,6 +271,44 @@ export function PageHero({
     <section className="relative overflow-hidden border-b border-line bg-canvas-alt">
       {/* setting-out grid, the faint texture a layout plan is drawn on */}
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
+
+      {/* 🚨 THE PHONE BAND MOVED ABOVE THE COPY (2026-08-12) — this is the
+          "every page has a different layout" report, and it was true.
+
+          A reader going /properties → /projects/ongoing → /journal met three
+          different structures: banner-then-copy on the homepage, copy-then-band
+          on every `paper` page, and words-over-picture on every `cinematic`
+          one. Each was defensible alone; together they read as three websites.
+
+          One rule now: on a phone the picture comes first at full width, then
+          the copy. The homepage banner already worked that way and is the one
+          the owner designed by hand, so it is the one the rest follows.
+
+          ⚠️ `aspect-[16/9]` + `object-contain`, where this was `h-44 sm:h-56`
+          + `object-cover object-right`. A fixed height cannot be right for a
+          set whose frames run 1.78:1 to 3.31:1 — at `sm:h-56` a 640px-wide
+          phone was cropping a 1.78 render by 38%, and `object-right` then chose
+          which 62% to keep. 16/9 is the narrowest ratio in the register, so
+          nothing is cropped horizontally and the wider frames letterbox onto
+          the section's own ivory, which is invisible.
+
+          ⚠️ Still a SECOND element rather than the single re-positioned one the
+          cinematic tone uses. It has to be: the desktop render is 58% wide,
+          right-aligned and masked by `hero-fade`, and that mask is not
+          something a full-width phone band should carry. The extra fetch is
+          real and is the price of the two treatments being genuinely
+          different pictures of the same file. */}
+      <div className="relative aspect-[16/9] w-full lg:hidden">
+        <Image
+          src={src}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="100vw"
+          priority={priority}
+          className="object-contain object-center"
+        />
+      </div>
 
       {/* the render, bleeding off the right edge and dissolving into the page */}
       <div
@@ -296,19 +371,6 @@ export function PageHero({
         </div>
       </Container>
 
-      {/* On a phone the render becomes a band beneath the words rather than
-          disappearing — the artwork is half the message. */}
-      <div className="relative -mt-phi2 h-44 w-full sm:h-56 lg:hidden">
-        <Image
-          src={src}
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="100vw"
-          priority={priority}
-          className="object-cover object-right"
-        />
-      </div>
     </section>
   );
 }

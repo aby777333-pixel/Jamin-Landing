@@ -670,3 +670,54 @@ never asked to change.
 Measured after, on both pages: Vault eyebrow 4.76 · h1 5.14 · lead 5.14 ·
 rates 5.14 · gold phrase 4.76. Journal eyebrow 10.06 · h1 10.86 · lead 10.86,
 because that frame is far darker under the plate than the Vault's dusk.
+
+## hero-30 → /vault (2026-08-12), and why the PLATE moved instead of the scrim
+
+A Pichwai-style painting: a cream palace in a wooded valley at sunset, peacocks,
+cattle at a river, hill shrines, birds crossing an orange sky. Owner-supplied,
+1916×821 native → 1916 / 1280 / 768 WebP (447 / 239 / 93 KB). It replaces
+hero-29, which returns to the spare pile.
+
+⚠️ It bakes NO wordmark and depicts nothing that could be read as a Jamin
+development, so it is the lowest-provenance-risk hero in the set. The standing
+rule still binds — `alt=""`, `aria-hidden`, never a caption — because it is
+brand imagery, not a photograph of anything Jamin owns.
+
+⚠️ **It is the hardest frame on the site for white type, and not for the reason
+a glance suggests.** Its mean luminance is low — it looks like a dark picture —
+but it is bright at GLYPH SCALE in every third of the frame: white blossom and a
+waterfall on the left, gold domes and a lit facade in the centre, an orange sky
+above. A scatter like that cannot be fixed by anything global, and both global
+levers were swept before the plate was touched:
+
+    object-position at 1024/1280/1440/1920, left → centre
+      worst pixel under the plate moved only 1.89 → 2.58. There is no crop
+      where the copy sits over calm paint.
+
+    scrim scale (hero-29's two gradients, scaled as one)
+      ×1.60 is needed to reach hero-29's shipped worst pixel, and it takes the
+      frame's mean luminance from 0.026 to 0.011 — it buys the words by putting
+      the painting out.
+
+So the scrim kept hero-29's stops exactly and `--rj-sheer-alpha` went
+**0.14 → 0.46**. Swept at 1024 (the tightest width), plate region, gold eyebrow
+— it binds every time and white runs about 1.6× clear of it:
+
+    0.14 → gold 4.54 p95 · 2.26 worst   ← hero-29's, fails here
+    0.32 → gold 5.76 p95 · 3.21 worst
+    0.40 → gold 6.40 p95 · 3.80 worst
+    0.46 → gold 6.92 p95 · 4.32 worst   ← ships
+    0.58 → gold 8.04 p95 · 5.61 worst   ← plate starts reading as a box
+
+Worst pixel at every width measured: 1024 4.32 · 1280 4.38 · 1440 4.75 ·
+1920 5.76 · 768 5.97 · 375 5.88. All clear the 4.19 hero-29 shipped at.
+
+**The result is a brighter page, not a darker one.** Because the scrim did not
+move, the painting outside the plate reads at mean luminance 0.035 against
+hero-29's 0.027. That is the general lesson and it is the same one the site
+learned in 2026-08-09: a scrim pays for legibility with the whole frame, a plate
+pays only where the words are — so when a frame gets harder, spend it locally.
+
+⚠️ The `lg:hidden` mobile veil stayed at 0.28 and was re-measured rather than
+assumed. With the plate at 0.46, 375px is now the SAFEST width rather than the
+tightest, so that veil has headroom if the phone crop is ever reworked.

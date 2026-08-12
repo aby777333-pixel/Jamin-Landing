@@ -23,7 +23,16 @@ export type SurveyIconName =
   | "home"
   | "growth"
   | "leaf"
-  | "building";
+  | "building"
+  /* Added 2026-08-12 for the property card's address line, which the UI report's
+     reference design opens with a location marker.
+     ⚠️ It is a SURVEY STATION, not a map pin. A teardrop pin is a web
+     convention borrowed from a mapping product; a triangle with a centred dot
+     over a levelled base is the symbol a surveyor actually leaves on the
+     ground, which is the test this whole set has to pass. It is also the only
+     icon here used at 14px rather than 24 — the 1.25px stroke survives the
+     reduction because every shape in it is straight. */
+  | "station";
 
 const STROKE = {
   fill: "none",
@@ -33,9 +42,24 @@ const STROKE = {
   strokeLinejoin: "round" as const,
 };
 
-export function SurveyIcon({ name, className = "" }: { name: SurveyIconName; className?: string }) {
+/**
+ * ⚠️ `size` is a separate prop rather than something you pass through
+ * `className`. The box used to be a hard-coded `h-6 w-6` prefix, and appending
+ * `h-3.5` after it does NOT reliably win: both are utilities in the same layer,
+ * so the winner is decided by their order in the generated stylesheet, not by
+ * their order in the string. That reads as an icon that ignores its size.
+ */
+export function SurveyIcon({
+  name,
+  className = "",
+  size = "h-6 w-6",
+}: {
+  name: SurveyIconName;
+  className?: string;
+  size?: string;
+}) {
   return (
-    <svg viewBox="0 0 24 24" className={`h-6 w-6 ${className}`} aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 24 24" className={`${size} ${className}`} aria-hidden="true" focusable="false">
       {name === "stamp" && (
         /* A rubber approval stamp: double-ruled impression with the arc of text
            reduced to the arc itself, and the handle above it. */
@@ -119,6 +143,16 @@ export function SurveyIcon({ name, className = "" }: { name: SurveyIconName; cla
           <rect x="5.2" y="4.2" width="8.2" height="16.2" rx="0.8" />
           <rect x="13.4" y="9.4" width="5.4" height="11" rx="0.8" />
           <path d="M7.4 8h4M7.4 11.4h4M7.4 14.8h4M15.2 12.6h1.8M15.2 16h1.8" />
+        </g>
+      )}
+
+      {name === "station" && (
+        /* A trig station: the triangle of the observation, the centre mark it
+           is set over, and the levelled ground line it is referenced to. */
+        <g {...STROKE}>
+          <path d="M12 4.6 20 18.2H4Z" />
+          <circle cx="12" cy="14.4" r="1.5" />
+          <path d="M2.6 21.2h18.8" />
         </g>
       )}
     </svg>
