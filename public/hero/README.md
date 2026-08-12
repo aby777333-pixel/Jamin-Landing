@@ -721,3 +721,45 @@ pays only where the words are — so when a frame gets harder, spend it locally.
 ⚠️ The `lg:hidden` mobile veil stayed at 0.28 and was re-measured rather than
 assumed. With the plate at 0.46, 375px is now the SAFEST width rather than the
 tightest, so that veil has headroom if the phone crop is ever reworked.
+
+## hero-31 → /projects/ongoing · hero-32 → /projects/future (2026-08-12)
+
+Owner-supplied photographs of Jamin's OWN layouts, replacing hero-04 (a villa
+render) and hero-08 (an abstract skyline). 1774×887 native → 1774 / 1280 / 768
+WebP (212/129/52 KB and 219/134/55 KB).
+
+- **hero-31** — formed asphalt roads with lane markings, kerbs, street lighting,
+  a completed building and a roller still working. Reads as "under development
+  and selling now", which is what /projects/ongoing says.
+- **hero-32** — red earth, plots demarcated and kerbed, roads laid, the thatched
+  site office, hills behind.
+
+This is the direction this register already prefers: a page whose subject
+genuinely IS a Jamin project should carry a real photograph, and the renders are
+brand imagery of nowhere. The standing rule still binds — `alt=""`,
+`aria-hidden`, never a caption naming a development — exactly as it does for
+hero-19 and hero-21, which also carry the JAMIN BAZAAR name in frame.
+
+⚠️ **Both ship with `artPosition="right"`, and it is not a taste call.** The
+JAMIN BAZAAR board stands at the far LEFT of both frames, and `paper` tone masks
+the leftmost 22% of the image box to transparent (`hero-fade`) so the picture
+dissolves into the canvas. The default `left` anchor puts the board precisely in
+the dissolve. Worked through: the box crops to about 77% of the source width, so
+for the board (source x 45–470) to clear the fade the crop would have to start
+at a negative offset — there is no anchor value that keeps the board AND leaves
+it solid. Cropping it out on desktop and showing the roads is the better half of
+that trade.
+
+⚠️ **The phone still sees the whole photograph, board included** — the mobile
+band is `aspect-[16/9]` + `object-contain`, so nothing is cropped there. That is
+also why the sign should NOT be trimmed out of the renditions: the hero-22
+trimming precedent was for a picture inside a content card, where a second
+wordmark duplicates the header. Here the original stays whole and the desktop
+crop does the work.
+
+⚠️ hero-32 shows a layout already formed, on a page headed "Land secured and
+planning under way". It is brand imagery and carries no caption, the same
+standing as hero-19 and hero-21 — but if the register is ever tightened so that
+a hero must depict its page's stage, this is the pairing to revisit first.
+
+hero-04 and hero-08 return to the spare pile.

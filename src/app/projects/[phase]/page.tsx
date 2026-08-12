@@ -72,7 +72,38 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // `current` ("Upcoming" in the app) now has hero-11, supplied 2026-08-08.
   // It previously had none, and the page would have fallen back to hero-05 and
   // doubled with /projects the moment a property was moved into that stage.
-  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 4, current: 11, future: 8 };
+  // ⚠️ 2026-08-12: `ongoing` and `future` took owner-supplied photographs of
+  // Jamin's OWN layouts (hero-31, hero-32), replacing the villa render and the
+  // skyline render. This is the direction hero/README.md already prefers — a
+  // page whose subject genuinely IS a Jamin project should carry a real
+  // photograph rather than brand imagery of nowhere.
+  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 31, current: 11, future: 32 };
+
+  /**
+   * 🚨 THE SIGN IS AT THE FAR LEFT OF BOTH NEW FRAMES, AND `paper` FADES THE
+   * LEFT. That collision is the whole reason this map exists.
+   *
+   * `hero-fade` masks the leftmost 22% of the image box to transparent so the
+   * picture dissolves into the canvas instead of ending on a hard edge. The
+   * default `artPosition: "left"` anchors the source's left edge there — which
+   * on hero-31/32 is exactly where the JAMIN BAZAAR board stands. Worked
+   * through rather than eyeballed: at the widths this box takes, the crop shows
+   * about 77% of the source, so for the board (source x 45–470 of 1774) to
+   * clear the fade the crop would have to START at a negative offset. There is
+   * no `artPosition` value that both keeps the board and leaves it solid.
+   *
+   * So the board is cropped out on desktop and the frame shows what the page is
+   * actually about — formed roads, kerbs, street lighting, the hills behind.
+   * The phone band is unaffected: it is `aspect-[16/9]` + `object-contain`, so
+   * a phone still sees the whole photograph, sign included.
+   *
+   * ⚠️ Do NOT "fix" this by trimming the sign out of the renditions. hero-19
+   * and hero-21 both carry the JAMIN BAZAAR name baked in and ship as heroes;
+   * the trimming precedent (hero-22) was for a picture inside a content card,
+   * where a second wordmark duplicates the header. Cropping by position keeps
+   * the original whole for the phone and for any future use.
+   */
+  const ART_POSITION_BY_PHASE: Record<string, string> = { ongoing: "right", future: "right" };
 
   // The SECOND photograph, not the cover: the same project is carded in the
   // grid directly below this hero, and the cover is what that card shows. Falls
@@ -99,6 +130,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
         photo={photo}
+        artPosition={ART_POSITION_BY_PHASE[phase] ?? "left"}
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}

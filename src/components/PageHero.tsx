@@ -27,7 +27,8 @@ import { Container } from "./ui";
  * development or placed on a property card. See public/hero/README.md.
  */
 export type HeroArt =
-  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28;
+  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
+  | 31 | 32;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -68,6 +69,15 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      sits, and the stock background is pure #ffffff against a #fdfcf9 canvas.
      See public/hero/README.md before regenerating it from the original. */
   28: 1672,
+  /* hero-31 (/projects/ongoing) and hero-32 (/projects/future) — owner-supplied
+     2026-08-12, replacing the villa render and the skyline render. Both are
+     Jamin's OWN layouts: formed roads, kerbs, street lighting, plot markers.
+     ⚠️ Both bake the JAMIN BAZAAR sign into the frame at the FAR LEFT, which is
+     why they ship with `artPosition="right"` — see the note on the phase page.
+     They are still brand imagery under the standing rule: `alt=""`,
+     `aria-hidden`, and never a caption naming a development. */
+  31: 1774,
+  32: 1774,
 };
 
 function artSrc(n: HeroArt) {
