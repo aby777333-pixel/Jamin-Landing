@@ -99,15 +99,40 @@ export async function SiteFooter() {
                 cannot carry `download` at all.
 
                 The weight is stated rather than sprung on the reader — half a
-                megabyte on a phone connection is their decision, not ours. */}
+                megabyte on a phone connection is their decision, not ours.
+
+                ⚠️ IT IS GOLD, NOT RED, AND THAT IS THE RULE RATHER THAN A
+                PREFERENCE. Owner asked for colour on it 2026-08-13. The obvious
+                answer is a filled `bg-cta` pill — but the footer sits on EVERY
+                page and the header already carries the site's one filled red
+                control ("Book a visit", HeaderShell), so a red button here would
+                put two of them on every view and the red would stop meaning
+                "this is the thing to press". Gold is the site's other brand
+                colour, it is what the rule above this block already uses, and it
+                is unspoken-for.
+
+                Three materials, each doing one job, all on onyx-900: the glyph
+                is `jamin-red` (4.13:1 — a graphic needs 3:1, and it echoes the
+                red mark sitting directly above it in this column), the label is
+                `champagne-100` (14.94:1), and the weight stays brushed silver
+                like every other piece of metadata in this footer. The gold wash
+                is 7% so the chip reads as filled without becoming a second
+                button; hover doubles it rather than changing colour.
+
+                ⚠️ The ring is gold at 0.55, not 0.45. Against the tinted fill
+                0.45 composites to 2.71:1 — under §1.4.11's 3:1 for the boundary
+                of a control — and 0.55 gives 3.42:1. Worth knowing that the
+                `border-line` it replaced measured about 1.6:1, so this was
+                already the weakest edge in the footer before any colour went
+                near it. */}
             <a
               href="/brochure/jamin-bazaar-royal-presentation.pdf"
               download
-              className="mt-phi4 inline-flex items-center gap-3 rounded-full border border-line px-5 py-3 text-base text-ink transition-colors hover:border-champagne-300 hover:text-champagne-300"
+              className="mt-phi4 inline-flex items-center gap-3 rounded-full border border-jamin-gold/55 bg-jamin-gold/[0.07] px-5 py-3 text-base text-champagne-100 transition-colors hover:border-jamin-gold hover:bg-jamin-gold/15 hover:text-champagne-50"
             >
               <svg
                 viewBox="0 0 16 16"
-                className="h-4 w-4 shrink-0"
+                className="h-4 w-4 shrink-0 text-jamin-red"
                 aria-hidden="true"
                 fill="none"
                 stroke="currentColor"
