@@ -322,6 +322,25 @@
   mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
 }
 
+@utility rj-burn {
+  /* 🚨 THE MIRROR OF `hero-fade`, AND IT IS A SEPARATE UTILITY ON PURPOSE.
+     `hero-fade` dissolves a picture that bleeds off the RIGHT of a paper hero,
+     so it fades its LEFT edge at 22%. This one is for a picture that bleeds off
+     the right of the WINDOW on a property header, where the edge facing the
+     reader is also the left — but the requirement is different: the owner asked
+     for "more than half" of the frame to survive, so the ramp is longer and
+     softer and then stops. Solid from 30%, i.e. 70% of the picture at full
+     strength, with a knee at 12% so the dissolve reads as a burn into the
+     blueprint grid rather than a straight linear wipe.
+
+     ⚠️ The prefixed line is written FIRST and the standard one last, exactly as
+     `hero-fade` does. Lightning CSS treats the pair as one property and keeps
+     what it sees last — the ordering is what stops the standard property being
+     dropped. Do not reorder them, and do not add a third variant. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 12%, #000 30%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 12%, #000 30%, #000 100%);
+}
+
 @utility glass {
   background: var(--glass-tint);
   /* ⚠️ DO NOT HAND-WRITE `-webkit-backdrop-filter` HERE. Lightning CSS treats

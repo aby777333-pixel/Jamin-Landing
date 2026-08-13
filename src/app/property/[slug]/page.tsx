@@ -187,6 +187,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   const hasGeometry = !!p.plot_plan?.viewBox && plots.some((x) => Array.isArray(x.poly));
   const availablePlots = plots.filter((x) => plotStatus(x) === "available").length;
 
+  const headerArt = headerArtFor(p);
+
   const all = await getProperties();
   const related = all.filter((x) => x.id !== p.id && isSellable(x)).slice(0, 3);
 
@@ -207,7 +209,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           development — which it does not. */}
       <section className="relative overflow-hidden border-b border-line bg-canvas">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
-        <div className="relative mx-auto max-w-[1280px] px-5 pb-phi4 pt-phi3 lg:px-10">
+        <div className="relative mx-auto max-w-[1280px] px-5 pt-phi3 lg:px-10">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
             <Link href="/" className="hover:text-jamin-red-deep">
               Home
@@ -220,7 +222,23 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             <span className="text-ink-soft">{p.title}</span>
           </nav>
 
-          <header className="mt-phi3 flex flex-wrap items-end justify-between gap-phi3">
+          {/* 🚨 THE HEADER IS A TWO-TRACK GRID FROM `xl`, AND THE RIGHT TRACK
+              BLEEDS OFF THE PAGE.
+
+              Owner's request 2026-08-13: put the project name on one line, and
+              burn a picture into the empty right half. Both halves of that were
+              real — the titles ran to two lines on every property ("Jamin
+              Garden —" then the place, which reads as two thoughts), and beyond
+              the copy there was nothing but blueprint grid to the window edge.
+
+              ⚠️ THE SPLIT STARTS AT `xl`, NOT `lg`. At 1024 the container's
+              inner width is 944px; a 620px copy column leaves 310px of picture,
+              which is a stripe rather than a photograph, and narrowing the copy
+              to fit puts the title back onto two lines. Below `xl` the copy
+              takes the full width and there is no image — an honest "there is
+              no room for both" rather than a bad version of both. */}
+          <div className="pb-phi4 xl:grid xl:grid-cols-[minmax(0,620px)_1fr] xl:items-end xl:gap-phi4">
+          <header className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
                 {phaseLabel(p) && (
@@ -242,7 +260,32 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   </span>
                 )}
               </div>
-              <h1 className="mt-phi3 text-4xl text-ink">{p.title}</h1>
+              {/* 🚨 ONE LINE, AND THE SIZE IS MEASURED RATHER THAN CHOSEN.
+                  `text-4xl` clamps to 4.236rem — 67.8px at 1440 — and the
+                  longest title on the site, "Jamin Garden — Shastri Nagar",
+                  renders 912px wide at that size. It has never fitted anything.
+                  Measured in the page's own h1 style at 1440: 32px → 430px ·
+                  40px → 538 · 44px → 592 · 48px → 646.
+                  So the ceiling is 2.75rem (44px), which clears the 620px copy
+                  track with 28px to spare, and the fluid part is sized to keep
+                  the same title on one line all the way down to 768 (36px →
+                  484px against 728px of container). Below that a phone cannot
+                  hold it on one line at any readable size, and it wraps.
+                  ⚠️ If a project is ever named longer than "Shastri Nagar",
+                  re-measure — this is a ceiling that fits today's catalogue, not
+                  a rule that fits every future name. It degrades to a wrap. */}
+              {/* ⚠️ THE SIZE IS AN INLINE STYLE, for the same reason the burn's
+                  width is: written as a `text-[...]` arbitrary value carrying that clamp
+                  it crashed the postcss subprocess with a Windows stack
+                  overflow on every build. A `clamp()` carrying an unparenthesised
+                  sum is more than Tailwind's arbitrary-value parser will walk.
+                  Same declaration, different parser. */}
+              <h1
+                className="mt-phi3 leading-[1.08] text-ink"
+                style={{ fontSize: "clamp(2rem, 1rem + 2.6vw, 2.75rem)" }}
+              >
+                {p.title}
+              </h1>
               <p className="mt-phi2 text-lg text-ink-muted">{locationLine(p)}</p>
 
               {/* 🚨 THE STATUS CARD — directly under the location, which is where
@@ -269,9 +312,75 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </div>
           </header>
 
+          {/* 🚨 THE BURN. The picture bleeds off the right edge of the WINDOW,
+              not of the container, and dissolves into the blueprint grid on its
+              left instead of ending on a border.
+
+              The width is `100% + the container's right padding + whatever
+              gutter the 1280 cap leaves` — `min(100vw,1280px)` handles both
+              sides of that cap in one expression, and the section's own
+              `overflow-hidden` absorbs the overhang and the scrollbar.
+
+              ⚠️ `.rj-burn` fades the LEFT edge, which is the mirror of
+              `hero-fade` and not the same utility — that one dissolves a
+              picture that bleeds off the RIGHT of a paper hero, this one has to
+              dissolve the edge that faces the copy. Solid from 30%, so 70% of
+              the frame is at full strength: the owner's "make the images
+              visible more than half".
+
+              ⚠️ Brand imagery, and the rule binds on a PROPERTY page harder
+              than anywhere: `alt=""`, `aria-hidden`, never a caption. These are
+              landscapes of countryside, not of a plotted layout — no roads, no
+              plot markers, no gate — which is exactly why they are safe here
+              where a picture of a formed layout would not be. The project's own
+              photography is in the Gallery immediately below, which is where a
+              reader goes to see the actual land. */}
+          {headerArt && (
+            <div className="relative hidden min-h-[20rem] self-stretch xl:block" aria-hidden="true">
+              {/* 🚨 A `<picture>` WITH A MEDIA-GATED SOURCE, AND IT IS THE ONLY
+                  THING THAT ACTUALLY STOPS THE DOWNLOAD.
+
+                  The wrapper is `hidden xl:block`, which is enough to stop the
+                  picture RENDERING on a phone and not even slightly enough to
+                  stop it being FETCHED — a `display: none` image is still
+                  downloaded, which is the same trap `PageHero` records against
+                  its own mobile band. Measured at 375 before this: the header
+                  art was in the network log on a phone that could never show it,
+                  90–140 KB spent on nothing.
+
+                  So the real candidates live on a `<source>` gated at 1280 and
+                  the `<img>` itself carries a 43-byte transparent GIF. Under
+                  1280 the browser matches no source, falls back to that, and
+                  fetches nothing over the network. `srcset` on the img would
+                  defeat the whole arrangement — it must stay on the source. */}
+              <picture>
+                <source media="(min-width: 1280px)" srcSet={headerArt.srcSet} sizes="46vw" />
+              <img
+                src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+                alt=""
+                decoding="async"
+                fetchPriority="high"
+                /* ⚠️ THE WIDTH IS AN INLINE STYLE, NOT A TAILWIND ARBITRARY
+                   VALUE, and that is not a style preference. Written as
+                   a `w-[...]` arbitrary value carrying that same calc it took
+                   the postcss subprocess down with a Windows stack overflow
+                   (exit 0xc00000fd) on every build — nested parens with a
+                   `min()` inside a `calc()` is more than the arbitrary-value
+                   parser will walk. The declaration is identical; only who
+                   parses it changes. */
+                style={{
+                  width: "calc(100% + 2.5rem + (100vw - min(100vw, 1280px)) / 2)",
+                }}
+                className="rj-burn absolute inset-y-0 left-0 h-full max-w-none object-cover"
+              />
+              </picture>
+            </div>
+          )}
+          </div>
+
           {/* The facts of record, as a document header. Renders only the fields
               that exist — see the component. */}
-          <div className="mt-phi4 -mx-phi3 lg:-mx-phi4">
+          <div className="mt-phi4 -mx-phi3 pb-phi4 lg:-mx-phi4">
             <ApprovalStrip p={p} />
           </div>
 
@@ -702,6 +811,50 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       </div>
     </article>
   );
+}
+
+/**
+ * 🚨 THE HEADER ART, ONE PICTURE PER PROJECT, KEYED BY SLUG.
+ *
+ * Owner-supplied 2026-08-13, one for each of the four developments, and the
+ * files arrived named for their destination — Edappadi, Varapatti, Udumalaipet,
+ * Shastri Nagar — so the mapping is his rather than mine.
+ *
+ * ⚠️ KEYED BY SLUG **AND** BY ID, because one property has no slug. Udumalaipet
+ * is served at a raw UUID (its `slug` column is null, which is a content gap
+ * recorded in the project notes), so a slug-only map would have silently left
+ * that page — the only sold-out one — as the odd page without a picture.
+ *
+ * ⚠️ A MISS IS A NORMAL OUTCOME, not a bug. A fifth development added tomorrow
+ * gets no header art and the header falls back to full-width copy, which is
+ * exactly what every property looked like the day before this shipped. The
+ * alternative — reusing another project's picture — would put a photograph of
+ * one place at the top of another, which is the one thing this page must not do.
+ *
+ * ⚠️ Brand imagery under the standing rule: these are landscapes of countryside,
+ * not photographs of these developments. `alt=""`, `aria-hidden`, and never a
+ * caption, a location or a project name. See the note at the render site for
+ * why a countryside frame is defensible here where a formed layout would not be.
+ */
+const HEADER_ART: Record<string, { file: string; widths: number[] }> = {
+  "jamin-new-project-jul-2026": { file: "jamin-new-project-jul-2026", widths: [960, 1440, 1717] },
+  "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
+  "jamin-garden-shastri-nagar-erode": {
+    file: "jamin-garden-shastri-nagar-erode",
+    widths: [960, 1440, 1799],
+  },
+  /* No slug in the database — this is the id the URL actually uses. */
+  "c0e9c29e-8865-45ba-b852-1ab993fb1664": { file: "udumalaipet", widths: [960, 1440, 1448] },
+};
+
+function headerArtFor(p: PropertyDetail): { src: string; srcSet: string } | null {
+  const art = (p.slug && HEADER_ART[p.slug]) || HEADER_ART[p.id];
+  if (!art) return null;
+  const url = (w: number) => `/property/header/${art.file}-${w}.webp`;
+  return {
+    src: url(art.widths[art.widths.length - 1]),
+    srcSet: art.widths.map((w) => `${url(w)} ${w}w`).join(", "),
+  };
 }
 
 /**
