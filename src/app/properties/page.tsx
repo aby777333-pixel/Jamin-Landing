@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
 import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -63,6 +64,11 @@ export default async function PropertiesPage() {
           hydration, so the static HTML a crawler receives is complete. */}
         <PropertyExplorer all={all} />
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

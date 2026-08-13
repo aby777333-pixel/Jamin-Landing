@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PageHero } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, secondaryImage } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 
@@ -114,6 +115,11 @@ export default async function ProjectsPage() {
         ))
       )}
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

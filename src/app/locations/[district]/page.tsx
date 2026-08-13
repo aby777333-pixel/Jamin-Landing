@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
 import { Container } from "@/components/ui";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 import { districtFromSlug, districtNames, districtSlug } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
@@ -200,6 +201,11 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           <PropertyExplorer all={items} />
         </div>
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

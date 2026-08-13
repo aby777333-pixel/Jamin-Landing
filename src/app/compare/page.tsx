@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
 import { CompareTable } from "@/components/CompareTable";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -35,6 +36,11 @@ export default async function ComparePage() {
       <Container className="py-phi5">
         <CompareTable all={all} />
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

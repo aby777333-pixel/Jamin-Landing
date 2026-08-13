@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { JournalIndex, type JournalCard } from "@/components/JournalIndex";
+import { CallbackBand } from "@/components/CallbackBand";
 import {
   KIND_LABEL,
   buildSearchIndex,
@@ -131,6 +132,11 @@ export default async function JournalPage() {
           />
         )}
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

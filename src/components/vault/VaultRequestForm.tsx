@@ -31,7 +31,11 @@ import { VaultUpload, type UploadedFile } from "./VaultUpload";
 
 const CONTACT_METHODS = ["Phone", "WhatsApp", "Email"];
 
-export function VaultRequestForm({ initialIntent }: { initialIntent?: "buy" | "rent" }) {
+/** What the visitor is asking for. `codevelop` joined the set on 2026-08-13 —
+ *  see migrations 0088-0090 and the note on `codevRole` below. */
+type VaultAsk = "buy" | "rent" | "codevelop";
+
+export function VaultRequestForm({ initialIntent }: { initialIntent?: VaultAsk }) {
   /**
    * ⚠️ THE INTENT IS DERIVED, NOT SYNCHRONISED, and the difference is what
    * keeps this component lint-clean and correct at once.
@@ -51,10 +55,33 @@ export function VaultRequestForm({ initialIntent }: { initialIntent?: "buy" | "r
    */
   const params = useSearchParams();
   const fromUrl = params.get("intent");
-  const [chosen, setChosen] = useState<"buy" | "rent" | null>(null);
-  const intent: "buy" | "rent" =
-    chosen ?? initialIntent ?? (fromUrl === "rent" ? "rent" : "buy");
+  const [chosen, setChosen] = useState<VaultAsk | null>(null);
+  const intent: VaultAsk =
+    chosen ??
+    initialIntent ??
+    (fromUrl === "rent" ? "rent" : fromUrl === "codevelop" ? "codevelop" : "buy");
   const setIntent = setChosen;
+
+  /**
+   * 🚨 CO-DEVELOPMENT IS ONE FORM WITH A ROLE, NOT TWO FORMS.
+   *
+   * The visitor either owns land and wants it developed, or has capital and
+   * wants into a development. Owner's call 2026-08-13, and it is the right one:
+   * the two halves share nine of their eleven fields, so two intents would have
+   * meant two near-identical forms and two admin queues for what is one
+   * conversation.
+   *
+   * ⚠️ The role is REQUIRED for this intent and refused for every other one —
+   * enforced in the RPC, not only here. `vault_request` originally tested it
+   * with a bare `not in (...)`, which a NULL sails straight through because
+   * `NULL not in (…)` is NULL rather than TRUE; migration 0090 has the fix and
+   * the story. Never rely on the client for a discriminator the table sorts by.
+   */
+  const [codevRole, setCodevRole] = useState<"land" | "capital" | null>(null);
+  const [codevExtent, setCodevExtent] = useState("");
+  const [codevTitle, setCodevTitle] = useState("");
+  const [codevCapital, setCodevCapital] = useState("");
+  const [codevHorizon, setCodevHorizon] = useState("");
 
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -93,8 +120,18 @@ export function VaultRequestForm({ initialIntent }: { initialIntent?: "buy" | "r
     setBusy(true);
     setError(null);
     try {
+      if (intent === "codevelop" && !codevRole) {
+        setError("Please tell us whether you are bringing land or capital.");
+        setBusy(false);
+        return;
+      }
       const { data, error: rpcError } = await supabase.rpc("vault_request", {
         p_intent: intent,
+        p_codev_role: intent === "codevelop" ? codevRole : null,
+        p_codev_extent: intent === "codevelop" ? codevExtent || null : null,
+        p_codev_title: intent === "codevelop" ? codevTitle || null : null,
+        p_codev_capital: intent === "codevelop" ? codevCapital || null : null,
+        p_codev_horizon: intent === "codevelop" ? codevHorizon || null : null,
         p_name: name,
         p_mobile: mobile,
         p_email: email || null,
@@ -159,24 +196,143 @@ export function VaultRequestForm({ initialIntent }: { initialIntent?: "buy" | "r
           changes which of the fields below actually matter. */}
       <fieldset>
         <legend className={labelCls}>I want to</legend>
-        <div className="flex gap-2">
-          {(["buy", "rent"] as const).map((k) => (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {(["buy", "rent", "codevelop"] as const).map((k) => (
             <button
               key={k}
               type="button"
               onClick={() => setIntent(k)}
               aria-pressed={intent === k}
-              className={`flex-1 rounded-full border px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
+              className={`rounded-full border px-4 py-3 text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
                 intent === k
                   ? "border-champagne-300 bg-canvas-sunken text-ink"
                   : "border-line bg-canvas text-ink-muted hover:border-champagne-500"
               }`}
             >
-              {k === "buy" ? "Acquire" : "Rent"}
+              {k === "buy" ? "Acquire" : k === "rent" ? "Rent" : "Co-develop"}
             </button>
           ))}
         </div>
       </fieldset>
+
+      {/* 🚨 THE CO-DEVELOPMENT BLOCK, and it is the only part of this form that
+          appears and disappears. Everything else on the page is asked of every
+          visitor; this is asked only of someone proposing a partnership, and it
+          changes again depending on which side of it they are on.
+
+          ⚠️ THE ROLE IS A REAL CHOICE WITH NO DEFAULT. Pre-selecting "I have
+          land" would put a landowner's answers in front of an investor and
+          quietly bias what we collect — and the RPC refuses the submission
+          without one anyway, so a default would only move the error later. */}
+      {intent === "codevelop" && (
+        <div className="rounded-card border border-champagne-500/40 bg-canvas-alt p-phi3">
+          <fieldset>
+            <legend className={labelCls}>What are you bringing?</legend>
+            <div className="grid grid-cols-2 gap-2">
+              {([
+                ["land", "I have land"],
+                ["capital", "I have capital"],
+              ] as const).map(([k, label]) => (
+                <button
+                  key={k}
+                  type="button"
+                  onClick={() => setCodevRole(k)}
+                  aria-pressed={codevRole === k}
+                  className={`rounded-full border px-4 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
+                    codevRole === k
+                      ? "border-champagne-300 bg-canvas-sunken text-ink"
+                      : "border-line bg-canvas text-ink-muted hover:border-champagne-500"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
+          {/* Nothing below is shown until the side is chosen — a landowner
+              should never see a question about capital, and the reverse. */}
+          {codevRole === "land" && (
+            <div className="mt-phi3 grid gap-phi2 sm:grid-cols-2">
+              <div>
+                <label htmlFor="vr-cd-extent" className={labelCls}>
+                  Extent
+                </label>
+                <input
+                  id="vr-cd-extent"
+                  value={codevExtent}
+                  onChange={(e) => setCodevExtent(e.target.value)}
+                  placeholder="2.5 acres, 400 cents, 12,000 sq ft…"
+                  className={field}
+                />
+              </div>
+              <div>
+                <label htmlFor="vr-cd-horizon" className={labelCls}>
+                  When could you start
+                </label>
+                <input
+                  id="vr-cd-horizon"
+                  value={codevHorizon}
+                  onChange={(e) => setCodevHorizon(e.target.value)}
+                  placeholder="Immediately, within six months, after the harvest…"
+                  className={field}
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <label htmlFor="vr-cd-title" className={labelCls}>
+                  Title and approvals, as they stand
+                </label>
+                {/* ⚠️ Free text, deliberately. A dropdown of "patta / EC /
+                    DTCP" would make the owner pick the nearest wrong answer,
+                    and this is precisely the field where the desk needs their
+                    own words before anyone promises anything. */}
+                <textarea
+                  id="vr-cd-title"
+                  rows={2}
+                  value={codevTitle}
+                  onChange={(e) => setCodevTitle(e.target.value)}
+                  placeholder="Patta in my name, EC clear for 30 years, no layout approval yet…"
+                  className={field}
+                />
+              </div>
+            </div>
+          )}
+
+          {codevRole === "capital" && (
+            <div className="mt-phi3 grid gap-phi2 sm:grid-cols-2">
+              <div>
+                <label htmlFor="vr-cd-capital" className={labelCls}>
+                  Range you would consider
+                </label>
+                <input
+                  id="vr-cd-capital"
+                  value={codevCapital}
+                  onChange={(e) => setCodevCapital(e.target.value)}
+                  placeholder="A range is enough at this stage"
+                  className={field}
+                />
+              </div>
+              <div>
+                <label htmlFor="vr-cd-horizon-c" className={labelCls}>
+                  Your horizon
+                </label>
+                <input
+                  id="vr-cd-horizon-c"
+                  value={codevHorizon}
+                  onChange={(e) => setCodevHorizon(e.target.value)}
+                  placeholder="Three years, five years, open…"
+                  className={field}
+                />
+              </div>
+            </div>
+          )}
+
+          <p className="mt-phi2 text-tiny leading-relaxed text-ink-faint">
+            Nothing here is an offer or an agreement. It starts a conversation —
+            terms are settled in writing, with your own advisor in the room.
+          </p>
+        </div>
+      )}
 
       <div className="grid gap-phi2 sm:grid-cols-2">
         <div>

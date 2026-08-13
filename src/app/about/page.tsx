@@ -4,6 +4,7 @@ import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 
 export const revalidate = 3600;
@@ -189,6 +190,11 @@ export default async function AboutPage() {
         </Link>
       </section>
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

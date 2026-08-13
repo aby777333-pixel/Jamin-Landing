@@ -101,6 +101,24 @@ const PATHS = [
     href: "/vault/offer?intent=lease",
     image: "/vault/path/lease.webp",
   },
+  /* ⚠️ CO-DEVELOPMENT IS A REQUEST, NOT AN OFFER, so it points at
+     `/vault/request` beside buy and rent rather than at `/vault/offer` beside
+     sell and lease — even though a landowner arrives here the same way a seller
+     does. The distinction is what is being started: an offer lists an asset, a
+     request opens a conversation, and a partnership is the second. Owner's
+     addition 2026-08-13.
+     ⚠️ It reuses `sell.webp` because no artwork exists for it yet. That is a
+     visible placeholder rather than a hidden one: the card is real, the picture
+     is borrowed, and it should be replaced. */
+  {
+    key: "codevelop",
+    kicker: "Co-develop",
+    title: "Build it together",
+    note: "For landowners with land to develop, and for investors who want into a development.",
+    cta: "Start the conversation",
+    href: "/vault/request?intent=codevelop",
+    image: "/vault/path/sell.webp",
+  },
 ];
 
 /* §1 and §7 — what a request actually sounds like. Written as things a client
@@ -384,6 +402,9 @@ export default async function VaultPage() {
               </Link>
               <Link href="/vault/offer?intent=lease" className="text-white/80 underline-offset-4 hover:underline">
                 I want to lease my property
+              </Link>
+              <Link href="/vault/request?intent=codevelop" className="text-white/80 underline-offset-4 hover:underline">
+                I want to co-develop a property
               </Link>
               <Link href="#desks" className="text-champagne-300 underline-offset-4 hover:underline">
                 Speak privately to The Vault

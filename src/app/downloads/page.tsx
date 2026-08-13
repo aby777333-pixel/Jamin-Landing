@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
+import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, getProperty, isSellable, locationLine, propertyHref } from "@/lib/properties";
 import { SITE_URL } from "@/lib/supabase";
 
@@ -113,6 +114,11 @@ export default async function DownloadsPage() {
           }),
         }}
       />
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }

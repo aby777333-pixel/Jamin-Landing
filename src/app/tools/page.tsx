@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { PlanningTools } from "@/components/PlanningTools";
 import { Container } from "@/components/ui";
+import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
 
@@ -104,6 +105,11 @@ export default function ToolsPage() {
         </Link>
       </div>
       </Container>
+      {/* The desk, on a page that otherwise ends without one. Links for
+          someone who wants to act now, and a three-field form for someone who
+          would rather be called — the form is the only half that becomes a
+          record, because a tap on a `tel:` link cannot be counted. */}
+      <CallbackBand />
     </>
   );
 }
