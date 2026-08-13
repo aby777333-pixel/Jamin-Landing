@@ -95,20 +95,31 @@ export function AccountShell({ title, children }: { title: string; children: Rea
           surface — a shortlist, a visit list, a lead table — and a 78vh opener
           would put the reader's own data below the fold on every section.
 
-          ⚠️ ITS OWN RATIO ON A PHONE, A BAND FROM `lg`. 16/9 is the frame's
-          native ratio, so nothing is cropped at 375; from `lg` it becomes 2.4:1,
-          which is `object-cover` cropping the HEIGHT. `object-bottom` decides
-          which part survives, and it is not a taste call — the artwork bakes its
-          own caption into the lower-left, so a centre crop slices the type in
-          half. Anchoring the bottom keeps the caption whole and spends the sky
-          instead. Any replacement frame with type at the top needs this flipped.
+          ⚠️ BOTH RATIOS TRACK THE ARTWORK, so a swapped frame needs both
+          re-checked. 3/2 is this picture's native ratio, so nothing is cropped
+          at 375. From `lg` it is 2/1, and that number is arithmetic rather than
+          taste: `object-cover` against a 1.5 source shows 1.5/2.0 = exactly 75%
+          of the height, the same share the owner asked for on the property
+          headers. The frame this replaced was 1.777 and sat in a 2.4:1 band for
+          the same 74%; carrying 2.4 over to a 3:2 picture would have shown 62%.
+
+          ⚠️ `object-bottom` is not a taste call either — the artwork bakes its
+          own caption into the lower right, so a centre crop slices the type in
+          half. Anchoring the bottom keeps it whole and spends the sky instead.
+          A frame with type at the TOP needs this flipped.
+
+          ⚠️ A NEW FILENAME ON EVERY SWAP. `next/image` keys its optimised output
+          by source path, so writing over the old file lets a warm build keep
+          serving the old picture from a deploy that looks correct — the trap
+          recorded against hero-27 and purpose-gate. The previous
+          `account-*.webp` set stays in the folder, unused.
 
           ⚠️ Brand imagery under the standing rule: `alt=""`, `aria-hidden`, and
           never a caption of ours — the picture already carries its own. It is a
           render of nowhere, not a Jamin site. */}
-      <div className="relative mb-phi4 aspect-[16/9] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken lg:aspect-[2.4/1]">
+      <div className="relative mb-phi4 aspect-[3/2] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken lg:aspect-[2/1]">
         <Image
-          src="/section/account-1672.webp"
+          src="/section/account-home-1536.webp"
           alt=""
           aria-hidden="true"
           fill
