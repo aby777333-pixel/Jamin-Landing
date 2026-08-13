@@ -251,7 +251,13 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               the badges, which is the "large empty space on the right" complaint
               arriving from the other side. */}
           <div className="pb-phi4 xl:grid xl:grid-cols-[minmax(0,620px)_1fr] xl:items-center xl:gap-phi4">
-          <header className="flex flex-wrap items-end justify-between gap-phi3">
+          {/* ⚠️ `relative z-10` is what makes the burn's leftward reach safe.
+              The picture is the SECOND grid item, so without a raised copy
+              column it paints over the title and the status card the moment the
+              two overlap. Raising the words rather than lowering the picture
+              keeps the stacking readable: everything in this header sits above
+              the artwork, by construction. */}
+          <header className="relative z-10 flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
                 {phaseLabel(p) && (
@@ -407,10 +413,35 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                    `min()` inside a `calc()` is more than the arbitrary-value
                    parser will walk. The declaration is identical; only who
                    parses it changes. */
+                /* 🚨 IT REACHES 6rem LEFT OF ITS OWN TRACK. "Make the burn more
+                   left… show the picture a bit more, more than half" (owner,
+                   2026-08-13). Measured before: the picture ran 766→1432 at
+                   1440, which is 47% of the page — just under half, and the eye
+                   reads just-under-half as a panel rather than as a picture the
+                   page is standing on.
+
+                   Pulling it 5rem left takes it to 52% at 1440 and 54% at
+                   1600 — over half, which is what was asked, and no further.
+
+                   ⚠️ 5rem AND NOT 6rem, AND THE 1rem IS A CONTRAST DECISION.
+                   At 6rem the longest title on the site ("Jamin Garden — Shastri
+                   Nagar") ended 34px inside the dissolve and the LOCATION line
+                   under it ended inside it too. The title never cared — 11.9:1
+                   even against the darkest thing a photo could put there — but
+                   the location is `ink-muted`, which is only 4.95:1 on bare
+                   canvas to begin with, and the wash took it to 4.83. That
+                   clears AA and has no margin left in a model that is a
+                   comparison rather than an audit. At 5rem the same line ends
+                   about 10px inside a 4% wash and the question stops existing.
+
+                   ⚠️ It works only because the copy is raised above it — see
+                   the `z-10` on the header. Without that the picture is the
+                   later grid item and paints OVER the words. */
                 style={{
-                  width: "calc(100% + 2.5rem + (100vw - min(100vw, 1280px)) / 2)",
+                  left: "-5rem",
+                  width: "calc(100% + 5rem + 2.5rem + (100vw - min(100vw, 1280px)) / 2)",
                 }}
-                className="rj-burn absolute inset-y-0 left-0 h-full max-w-none object-cover"
+                className="rj-burn absolute inset-y-0 h-full max-w-none object-cover"
               />
               </picture>
             </div>
