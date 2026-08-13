@@ -3,8 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/Gallery";
 import { PropertyCard } from "@/components/PropertyCard";
-import { MasterPlan } from "@/components/MasterPlan";
-import { PlotSchedule } from "@/components/PlotSchedule";
+import { LayoutViews } from "@/components/LayoutViews";
 import { SiteMap } from "@/components/SiteMap";
 import { SaveProperty } from "@/components/SaveProperty";
 import { EnquiryForm } from "@/components/EnquiryForm";
@@ -313,11 +312,13 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                     }.`
               }
             >
-              {hasGeometry ? (
-                <MasterPlan plots={plots} plan={p.plot_plan!} title={p.title} />
-              ) : (
-                <PlotSchedule plots={plots} />
-              )}
+              {/* ⚠️ ONE COMPONENT FOR BOTH VIEWS since 2026-08-13. This used to
+                  choose for the reader — drawing where the plan was traced,
+                  block grid where it was not — and the owner asked for the
+                  choice to be theirs. `LayoutViews` shows the switch only where
+                  there is genuinely a second view, so an untraced project still
+                  renders exactly one thing and no dead control. */}
+              <LayoutViews plots={plots} plan={hasGeometry ? p.plot_plan : null} title={p.title} />
 
               {p.master_plan_url && (
                 <a

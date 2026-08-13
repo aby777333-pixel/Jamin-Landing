@@ -2,17 +2,26 @@
 
 import { useMemo, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot } from "@/lib/properties";
+import { dimensions as fmtDims, length as fmtLength, type Unit } from "@/lib/units";
 
 /**
- * The layout for a project whose plan has NOT been traced.
+ * The layout as a structured block of tiles.
  *
  * Shastri Nagar has 16 schedule rows and a flat scan of the drawing — no
  * polygons — so there is nothing to click on the image. Rather than print a
  * colour key the picture cannot honour, the plots become a grid of real tiles
  * driven by the same status data. The key and the tiles are generated from one
  * source, so they can never disagree.
+ *
+ * ⚠️ SINCE 2026-08-13 IT IS ALSO A CHOICE, not just a fallback. `LayoutViews`
+ * offers it beside the traced drawing on projects that have one, because a
+ * drawing answers "where is plot 14" and a block answers "what is there and how
+ * big" — and on a phone the second question is far easier to answer in a grid
+ * than on a plan you have to pinch. So this component now has to carry the plot
+ * RECORD, not just a number: a reader who picks blocks must not end up with
+ * less than a reader who picks the plan.
  */
-export function PlotSchedule({ plots }: { plots: Plot[] }) {
+export function PlotSchedule({ plots, unit = "ft" }: { plots: Plot[]; unit?: Unit }) {
   const [selected, setSelected] = useState<Plot | null>(null);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
 
@@ -83,11 +92,34 @@ export function PlotSchedule({ plots }: { plots: Plot[] }) {
               {PLOT_STATUS[plotStatus(selected)].label}
             </span>
           </div>
-          <p className="mt-phi2 text-base text-ink-soft">
-            {[plotArea(selected), selected.facing ? `${selected.facing} facing` : null]
-              .filter(Boolean)
-              .join(" · ") || "Details on request"}
-          </p>
+          {/* ⚠️ THE SAME RECORD THE PLOT SHEET SHOWS, in the space a panel
+              allows. Before the block view became a choice this was area and
+              facing only, which was right when the only projects using it had
+              nothing else recorded — Shastri Nagar has no dimensions and no
+              road widths. A traced project does, and dropping them here would
+              have made the switch a downgrade. Every row is conditional, so a
+              project with only a schedule still renders exactly what it did. */}
+          <dl className="mt-phi2 grid gap-x-phi3 gap-y-1.5 text-base sm:grid-cols-2">
+            {(
+              [
+                ["Area", plotArea(selected)],
+                ["Dimensions", selected.dim_m ? fmtDims(selected.dim_m, unit) : null],
+                ["Facing", selected.facing ?? null],
+                ["Road width", selected.road_m != null ? fmtLength(selected.road_m, unit) : null],
+                ["Block", selected.block ?? null],
+              ] as [string, string | null][]
+            )
+              .filter(([, v]) => v)
+              .map(([k, v]) => (
+                <div key={k} className="flex items-baseline justify-between gap-3 border-b border-line pb-1.5">
+                  <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">{k}</dt>
+                  <dd className="text-right text-ink">{v}</dd>
+                </div>
+              ))}
+          </dl>
+          {!plotArea(selected) && !selected.facing && (
+            <p className="mt-phi2 text-base text-ink-soft">Details on request</p>
+          )}
           <p className="mt-phi2 text-tiny leading-relaxed text-ink-muted">
             The rate for this plot is confirmed by the sales desk — we do not publish estimates.
           </p>

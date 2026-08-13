@@ -4,6 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
+import {
+  area as fmtArea,
+  dimensions as fmtDims,
+  length as fmtLength,
+  relabel,
+  type Unit,
+} from "@/lib/units";
 
 /**
  * The interactive DTCP layout (§16).
@@ -26,10 +33,14 @@ export function MasterPlan({
   plots,
   plan,
   title,
+  unit = "ft",
 }: {
   plots: Plot[];
   plan: PlotPlan;
   title: string;
+  /** Which unit the reader has chosen. The drawing is stored in metres — see
+   *  `lib/units.ts` for why this is a display layer and never a rewrite. */
+  unit?: Unit;
 }) {
   const [selected, setSelected] = useState<Plot | null>(null);
   /**
@@ -295,7 +306,12 @@ export function MasterPlan({
                       className="rj-plan-note"
                       letterSpacing="0.5"
                     >
-                      {r.label}
+                      {/* `widthM` where the data carries it, the caption
+                          otherwise — the dimension lines have no number at all,
+                          so both paths are needed. See lib/units.ts. */}
+                      {r.widthM != null
+                        ? `${fmtLength(r.widthM, unit)} ROAD`
+                        : relabel(r.label, unit)}
                     </text>
                   )}
                 </g>
@@ -321,7 +337,7 @@ export function MasterPlan({
                     fontSize={6}
                     className="rj-plan-note"
                   >
-                    {plan.existingRoad.label}
+                    {relabel(plan.existingRoad.label, unit)}
                   </text>
                 )}
               </g>
@@ -349,7 +365,7 @@ export function MasterPlan({
                     fontSize={6}
                     className="rj-plan-osr-note"
                   >
-                    {plan.osr.areaSqm.toLocaleString("en-IN")} sq m
+                    {fmtArea(plan.osr.areaSqm, unit)}
                   </text>
                 )}
               </g>
@@ -368,7 +384,7 @@ export function MasterPlan({
                     className="rj-plan-note"
                     stroke="none"
                   >
-                    {d.label}
+                    {relabel(d.label, unit)}
                   </text>
                 )}
               </g>
@@ -493,6 +509,7 @@ export function MasterPlan({
               plot={selected}
               plan={plan}
               title={title}
+              unit={unit}
               closeRef={closeRef}
               onClose={() => setSelected(null)}
             />
@@ -513,79 +530,98 @@ export function MasterPlan({
         </p>
       )}
 
-      {/* the drawing's own particulars */}
-      {(plan.approvalNo || plan.areaStatement?.length) && (
-        /* ⚠️ A DIVIDED PAIR, and the divider is the point.
-           Reported as "the information should be clearly divided into left and
-           right sections… ensure both sections have clear and equal visual
-           space… use a simple divider or spacing between the two". It was
-           already `lg:grid-cols-2`, so the split existed; what it lacked was any
-           mark saying where one section ends and the other begins, and at `lg`
-           the two 253px columns were narrow enough that the reader had to infer
-           it from alignment alone.
-           `lg:gap-phi5` + a hairline on the right column gives the boundary;
-           below `lg` the columns stack and the rule would be a line across the
-           middle of nothing, so it is scoped to `lg` and the Area statement's
-           own heading carries the separation on a phone. */
-        <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2 lg:gap-phi5">
-          {/* ⚠️ `@container`, so PlanRow can respond to THIS COLUMN's width
-              rather than the viewport's. The column is 242px at 1024 and 337px
-              at 1440 on a page whose main content sits beside a sticky aside —
-              a viewport breakpoint cannot see that difference and would pick the
-              wrong layout at one of the two. */}
-          <dl className="@container space-y-2 text-base">
-            {plan.approvalNo && <PlanRow label="Approval no." value={plan.approvalNo} />}
-            {plan.authority && <PlanRow label="Sanctioned by" value={plan.authority} />}
-            {plan.surveyNos && <PlanRow label="Survey numbers" value={plan.surveyNos} />}
-            {plan.village && (
-              <PlanRow
-                label="Village"
-                value={[plan.village, plan.taluk ? `${plan.taluk} taluk` : null].filter(Boolean).join(", ")}
-              />
-            )}
-            {plan.scale && <PlanRow label="Scale" value={plan.scale} />}
-          </dl>
-
-          {plan.areaStatement?.length ? (
-            <div className="lg:border-l lg:border-line lg:pl-phi5">
-              {/* h3: this sits under the "The layout" h2, and h4 would skip a level. */}
-              <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
-                Area statement
-              </h3>
-              <ul className="mt-phi2 divide-y divide-line border-y border-line">
-                {plan.areaStatement.map((a) => (
-                  <li key={a.label} className="flex items-baseline justify-between gap-4 py-2.5">
-                    <span className="text-base text-ink-soft">{a.label}</span>
-                    <span className="shrink-0 text-base text-ink">
-                      {a.areaSqm != null ? `${a.areaSqm.toLocaleString("en-IN")} sq m` : ""}
-                      {a.percent != null ? ` · ${a.percent}%` : ""}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-        </div>
-      )}
-
-      {plan.notes?.length ? (
-        <details className="mt-phi3 rounded-card border border-line bg-canvas-alt p-phi3">
-          <summary className="cursor-pointer text-base font-medium text-ink">
-            Conditions printed on the approved plan
-          </summary>
-          <ul className="mt-phi2 space-y-2">
-            {plan.notes.map((n, i) => (
-              <li key={i} className="flex gap-2.5 text-base leading-relaxed text-ink-muted">
-                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink-faint" />
-                {n}
-              </li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
     </div>
   );
 }
+
+/**
+ * The drawing's own particulars — approval identifiers on the left, the area
+ * statement on the right, and the conditions printed on the plan below.
+ *
+ * ⚠️ LIFTED OUT OF `MasterPlan` ON 2026-08-13 so it can sit under EITHER view.
+ * The owner asked for a plan/blocks switch with "all functions remain the
+ * same", and these particulars are the most load-bearing thing on the section:
+ * the approval number, the sanctioned authority and the area statement are the
+ * evidence the whole page rests on. Leaving them inside the drawing would have
+ * meant a reader who preferred the block view silently lost them.
+ */
+export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) {
+  return (
+    <>
+  {/* the drawing's own particulars */}
+  {(plan.approvalNo || plan.areaStatement?.length) && (
+    /* ⚠️ A DIVIDED PAIR, and the divider is the point.
+       Reported as "the information should be clearly divided into left and
+       right sections… ensure both sections have clear and equal visual
+       space… use a simple divider or spacing between the two". It was
+       already `lg:grid-cols-2`, so the split existed; what it lacked was any
+       mark saying where one section ends and the other begins, and at `lg`
+       the two 253px columns were narrow enough that the reader had to infer
+       it from alignment alone.
+       `lg:gap-phi5` + a hairline on the right column gives the boundary;
+       below `lg` the columns stack and the rule would be a line across the
+       middle of nothing, so it is scoped to `lg` and the Area statement's
+       own heading carries the separation on a phone. */
+    <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2 lg:gap-phi5">
+      {/* ⚠️ `@container`, so PlanRow can respond to THIS COLUMN's width
+          rather than the viewport's. The column is 242px at 1024 and 337px
+          at 1440 on a page whose main content sits beside a sticky aside —
+          a viewport breakpoint cannot see that difference and would pick the
+          wrong layout at one of the two. */}
+      <dl className="@container space-y-2 text-base">
+        {plan.approvalNo && <PlanRow label="Approval no." value={plan.approvalNo} />}
+        {plan.authority && <PlanRow label="Sanctioned by" value={plan.authority} />}
+        {plan.surveyNos && <PlanRow label="Survey numbers" value={plan.surveyNos} />}
+        {plan.village && (
+          <PlanRow
+            label="Village"
+            value={[plan.village, plan.taluk ? `${plan.taluk} taluk` : null].filter(Boolean).join(", ")}
+          />
+        )}
+        {plan.scale && <PlanRow label="Scale" value={plan.scale} />}
+      </dl>
+
+      {plan.areaStatement?.length ? (
+        <div className="lg:border-l lg:border-line lg:pl-phi5">
+          {/* h3: this sits under the "The layout" h2, and h4 would skip a level. */}
+          <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
+            Area statement
+          </h3>
+          <ul className="mt-phi2 divide-y divide-line border-y border-line">
+            {plan.areaStatement.map((a) => (
+              <li key={a.label} className="flex items-baseline justify-between gap-4 py-2.5">
+                <span className="text-base text-ink-soft">{a.label}</span>
+                <span className="shrink-0 text-base text-ink">
+                  {a.areaSqm != null ? fmtArea(a.areaSqm, unit) : ""}
+                  {a.percent != null ? ` · ${a.percent}%` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+    </div>
+  )}
+
+  {plan.notes?.length ? (
+    <details className="mt-phi3 rounded-card border border-line bg-canvas-alt p-phi3">
+      <summary className="cursor-pointer text-base font-medium text-ink">
+        Conditions printed on the approved plan
+      </summary>
+      <ul className="mt-phi2 space-y-2">
+        {plan.notes.map((n, i) => (
+          <li key={i} className="flex gap-2.5 text-base leading-relaxed text-ink-muted">
+            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-ink-faint" />
+            {n}
+          </li>
+        ))}
+      </ul>
+    </details>
+  ) : null}
+    </>
+  );
+}
+
 
 /** What a plot actually is, in the space a floating card allows. */
 /**
@@ -597,26 +633,39 @@ function PlotSheet({
   plot,
   plan,
   title,
+  unit,
   closeRef,
   onClose,
 }: {
   plot: Plot;
   plan: PlotPlan;
   title: string;
+  unit: Unit;
   closeRef: React.RefObject<HTMLButtonElement | null>;
   onClose: () => void;
 }) {
   const s = PLOT_STATUS[plotStatus(plot)];
   const available = plotStatus(plot) === "available";
 
+  /**
+   * ⚠️ THE SHEET KEEPS BOTH UNITS, WHICHEVER ONE IS SELECTED, and it is the one
+   * place on the plan that does.
+   *
+   * Everywhere else the switch replaces the figure, because a caption on a
+   * drawing has room for one number. This is the record of a specific plot —
+   * the thing a buyer screenshots and takes to a surveyor — so the sanctioned
+   * metre value stays beside the converted one rather than behind a toggle they
+   * may not have noticed. `size_sqft` is stored, not derived, which is why it
+   * leads: it is what the approved schedule itself says.
+   */
   const record: [string, string][] = [["Plot number", plot.plot]];
   if (plot.block) record.push(["Block", plot.block]);
   if (plot.size_sqft != null)
     record.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")} sq ft`]);
-  if (plot.size_sqm != null) record.push(["Area (m²)", `${plot.size_sqm} m²`]);
-  if (plot.dim_m) record.push(["Dimensions", `${plot.dim_m} m`]);
+  if (plot.size_sqm != null) record.push(["Area (sanctioned)", `${plot.size_sqm} m²`]);
+  if (plot.dim_m) record.push(["Dimensions", fmtDims(plot.dim_m, unit)]);
   if (plot.facing) record.push(["Facing", plot.facing]);
-  if (plot.road_m != null) record.push(["Road width", `${plot.road_m.toFixed(2)} m`]);
+  if (plot.road_m != null) record.push(["Road width", fmtLength(plot.road_m, unit)]);
 
   const approval: [string, string][] = [];
   if (plan.approvalNo) approval.push(["DTCP application", plan.approvalNo]);
