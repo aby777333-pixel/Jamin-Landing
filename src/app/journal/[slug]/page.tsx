@@ -5,6 +5,7 @@ import { Container, SectionLabel, Badge, ButtonLink } from "@/components/ui";
 import { Prose, extractHeadings } from "@/components/Prose";
 import { ZoomableImage } from "@/components/cadastral/ZoomableImage";
 import { TableOfContents } from "@/components/cadastral/TableOfContents";
+import { ReadingRule } from "@/components/ReadingRule";
 import { PropertyCard } from "@/components/PropertyCard";
 import {
   KIND_LABEL,
@@ -221,9 +222,18 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
           </div>
         )}
 
+        {/* Decoration: a hairline filled as the reader moves through a long
+            piece. It reports nothing the scrollbar does not, which is why it is
+            `aria-hidden` and carries no role. */}
+        <ReadingRule />
+
         <div className="mt-phi5 grid gap-phi5 lg:grid-cols-[1fr_16rem]">
           {/* §142 — a comfortable measure, not a wall of text across a monitor */}
-          <div className="max-w-[68ch]">
+          {/* `rj-dropcap` sets the opening letter of the first paragraph only —
+              see the note on it in ornament.css. Applied by hand rather than to
+              every article body automatically, because a piece that opens on a
+              list or a quotation must not get one. */}
+          <div className="rj-dropcap max-w-[68ch]">
             <Prose markdown={post.body ?? ""} />
 
             {post.faqs?.length > 0 && (

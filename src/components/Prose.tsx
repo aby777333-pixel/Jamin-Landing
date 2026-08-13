@@ -392,7 +392,11 @@ export function Prose({ markdown }: { markdown: string }) {
               <ul key={i} className="space-y-2">
                 {b.items.map((it, j) => (
                   <li key={j} className="flex gap-3 text-lg leading-relaxed text-ink-soft">
-                    <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-jamin-gold" />
+                    {/* A gold lozenge rather than a dot — the mark a surveyor
+                        sets rather than the bullet a word processor offers.
+                        Still an element and not a `::marker`, because it has to
+                        stay aligned with the first line of a wrapped item. */}
+                    <span className="mt-2.5 h-1.5 w-1.5 shrink-0 rotate-45 rounded-[1px] bg-jamin-gold" />
                     <span>{inline(it, `ul${i}-${j}`)}</span>
                   </li>
                 ))}

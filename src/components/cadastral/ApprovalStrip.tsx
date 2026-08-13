@@ -49,7 +49,10 @@ export function ApprovalStrip({ p }: { p: Property }) {
   if (!hasSubstance || entries.length < 2) return null;
 
   return (
-    <div className="cd-strip border-y border-line bg-canvas-alt">
+    /* ⚠️ `rj-seal` is ornament and nothing else — the mark, embossed at 4.5%
+       into the band that carries the facts of record, the way a watermark sits
+       on a document. It adds no information and is `pointer-events: none`. */
+    <div className="cd-strip rj-seal border-y border-line bg-canvas-alt">
       {/* 🚨 IT SPANS THE FULL CONTENT WIDTH FROM `lg`, AND THE ENTRIES SHARE IT.
           Reported 2026-08-13: "property statistics do not use the full available
           page width… keep all five details evenly distributed". They were

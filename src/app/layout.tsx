@@ -6,6 +6,10 @@ import "./globals.css";
 import "@/styles/cadastral.css";
 /* After cadastral: the material layer, on the same terms. */
 import "@/styles/royal.css";
+/* Last: ornament. Decoration only — nothing in it changes what a page says or
+   does, and the site is functionally identical without it. It is imported last
+   on purpose; see the header of that file. */
+import "@/styles/ornament.css";
 import { ScrollNav } from "@/components/ScrollNav";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";

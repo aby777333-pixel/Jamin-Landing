@@ -1,0 +1,348 @@
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * ORNAMENT — the small things.
+ *
+ * Owner's brief, 2026-08-13: "add little things that will make the site
+ * beautiful, one of a kind… no code or function change." So everything here is
+ * decoration. Nothing in this file changes what a page says, what it claims, or
+ * what it does; delete the import and the site is functionally identical.
+ *
+ * ⚠️ IT IS IMPORTED LAST, AND THAT IS LOAD-BEARING. This project has already
+ * paid for the lesson that unlayered CSS beats a Tailwind utility of equal
+ * specificity regardless of source order inside `@layer` — see the note on
+ * `.rj-hairline` in royal.css, which silently unstuck the navbar on every page.
+ * These rules are unlayered too, so they win. Keep every selector tight enough
+ * that winning is what you actually wanted: no bare element selectors that a
+ * utility class might reasonably need to override.
+ *
+ * ⚠️ NOTHING HERE MAY CARRY MEANING. An ornament that only some readers see is
+ * fine; an ornament that tells them something the text does not is a claim, and
+ * this site's whole argument is that its claims are checkable.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+
+:root {
+  /**
+   * The page's own ground, captured at the ROOT so it survives being read
+   * inside a re-scoped subtree.
+   *
+   * ⚠️ This exists because `.rj-footer` re-defines `--color-canvas` to onyx for
+   * its whole subtree, so a deckle drawn inside the footer that asked for
+   * `var(--color-canvas)` would paint itself black and disappear. A custom
+   * property is computed where it is DECLARED and inherited as that computed
+   * value, so declaring it here freezes the ivory and hands it down.
+   */
+  --rj-page-edge: var(--color-canvas);
+}
+
+/* ── 1. SELECTION ─────────────────────────────────────────────────────────
+   The default is the browser's blue, which is the one piece of chrome a
+   visitor sees on every site they have ever used. Champagne over ink costs two
+   declarations and is the first thing that makes a page feel made.
+   Contrast is not decoration here: ink #17181c on champagne-100 #f2dfa0
+   measures 13.4:1, so selected text stays as readable as unselected. */
+::selection {
+  background: var(--color-champagne-100);
+  color: var(--color-ink);
+}
+
+/* The dark surfaces need the inverse or the selection reads as a hole. */
+.rj-footer ::selection,
+[data-theme="vault"] ::selection {
+  background: var(--color-champagne-300);
+  color: var(--color-onyx-900);
+}
+
+/* ── 5. PRETTY WRAPPING ───────────────────────────────────────────────────
+   `text-wrap: pretty` asks the browser to avoid a last line with one short
+   word on it. It was already on a handful of blocks via `text-pretty`; this
+   extends it to ordinary prose everywhere.
+   ⚠️ Scoped to text-bearing elements ONLY. `text-balance` on the headings is
+   the same CSS property, and a bare `*` here would fight it. */
+p,
+li,
+dd,
+figcaption,
+blockquote {
+  text-wrap: pretty;
+}
+
+/* ── 2. THE DROP CAP ──────────────────────────────────────────────────────
+   Editorial, and only where there is genuinely an article to open: applied by
+   hand, never automatically.
+   ⚠️ `float` rather than `initial-letter`, which Chrome still does not support.
+   The line-height and margin are tuned to Inter's cap height so the letter
+   sits ON the baseline of the third line rather than near it. */
+.rj-dropcap::first-letter {
+  float: left;
+  font-size: 3.4em;
+  line-height: 0.82;
+  padding: 0.06em 0.09em 0 0;
+  margin-right: 0.02em;
+  color: var(--color-jamin-gold-ink);
+  font-weight: 300;
+}
+
+/* ── 4. HANGING PUNCTUATION ───────────────────────────────────────────────
+   The pull-quote's opening mark already sat inside the text column, so the
+   quote's left edge stepped in by the width of a glyph. Pulling it into the
+   margin puts the WORDS on the optical edge, which is what the rule is
+   actually for. `hanging-punctuation` is Safari-only; the offset does the same
+   job everywhere else, so both are declared. */
+.cd-quote {
+  hanging-punctuation: first last;
+}
+.cd-quote::before {
+  left: -0.1rem;
+}
+
+/* ── 3. GOLD MARKERS ──────────────────────────────────────────────────────
+   Real `::marker`s, for the lists this site renders with a browser bullet.
+   Prose builds its own bullets as elements (they need to align with a wrapped
+   line), so those are handled in the markup; this catches everything else. */
+.rj-list {
+  list-style: square;
+}
+.rj-list::marker,
+.rj-list > li::marker {
+  color: var(--color-jamin-gold);
+}
+
+/* ── 8. THE MEASURE RULE ──────────────────────────────────────────────────
+   A dimension line rather than a plain hairline: the same gold rule, with the
+   end serifs a surveyor's drawing puts on a measured span. Used as a span
+   beside or under a heading.
+   The rule itself is the element's background; the serifs are the two
+   pseudo-elements, which is why the host needs `position: relative`. */
+.rule-measure {
+  position: relative;
+  display: block;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-jamin-gold) 12%,
+    var(--color-jamin-gold) 88%,
+    transparent
+  );
+}
+.rule-measure::before,
+.rule-measure::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  width: 1px;
+  height: 7px;
+  background: var(--color-jamin-gold);
+  opacity: 0.85;
+}
+.rule-measure::before {
+  left: 0;
+}
+.rule-measure::after {
+  right: 0;
+}
+
+/* ── 6. REGISTRATION TICKS ────────────────────────────────────────────────
+   The crop marks a printed plan sheet carries at its corners. Eight gradients
+   on one overlay — four corners, two strokes each — so it costs no DOM and
+   cannot be clicked.
+   ⚠️ The host must establish a positioning context. `.rj-sheet` sets it.
+   ⚠️ Deliberately NOT on cards. A registration mark says "this is a sheet of a
+   drawing", so it belongs on the document-like blocks (the layout, the
+   approvals, the downloads) and nowhere else. Put it on everything and it
+   stops meaning anything. */
+.rj-sheet {
+  position: relative;
+}
+.rj-sheet::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  pointer-events: none;
+  --t: var(--color-jamin-gold);
+  --len: 14px;
+  background-image:
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)),
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)),
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t)),
+    linear-gradient(var(--t), var(--t)), linear-gradient(var(--t), var(--t));
+  background-repeat: no-repeat;
+  background-size:
+    var(--len) 1px, 1px var(--len),
+    var(--len) 1px, 1px var(--len),
+    var(--len) 1px, 1px var(--len),
+    var(--len) 1px, 1px var(--len);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+  opacity: 0.5;
+}
+
+/* ── 7. THE DEED WATERMARK ────────────────────────────────────────────────
+   The mark, embossed into the paper the way a watermark sits on a document.
+   ⚠️ Opacity lives on the pseudo-element, not on the image: `background-image`
+   has no opacity of its own, and fading the host would take the text with it.
+   ⚠️ It is `logo-mark.png`, the emblem alone — never `logo-full.png`, whose
+   near-black BAZAAR wordmark measures 1.06:1 on a dark ground and is the
+   reason the footer builds its lockup out of real text. */
+.rj-seal {
+  position: relative;
+}
+.rj-seal::after {
+  content: "";
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  width: 116px;
+  height: 116px;
+  background-image: url("/logo-mark.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  opacity: 0.045;
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  /* On a phone the block is narrow enough that a 116px seal sits under the
+     words rather than beside them. */
+  .rj-seal::after {
+    display: none;
+  }
+}
+
+/* ── 10. UNDERLINES THAT GROW ─────────────────────────────────────────────
+   A gradient standing in for the underline, animated from 0 to full width, so
+   the line is drawn rather than switched on.
+   ⚠️ `background-size` and not `width`, because the element is inline and may
+   wrap across two lines — a width transition would animate the box.
+   ⚠️ Reduced motion gets the finished state immediately, not no state. */
+.rj-underline {
+  background-image: linear-gradient(var(--color-jamin-gold), var(--color-jamin-gold));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 420ms var(--ease-silk);
+  text-decoration: none;
+}
+.rj-underline:hover,
+.rj-underline:focus-visible {
+  background-size: 100% 1px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rj-underline {
+    transition: none;
+  }
+}
+
+/* ── 11. THE LOGO'S RULE ──────────────────────────────────────────────────
+   The logo already carries a gold rule under BAZAAR. This draws it, on hover,
+   from the left — the same gesture as the link underline, on the one mark the
+   whole palette was taken from. */
+.rj-lockup-rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--color-jamin-gold), transparent);
+  transition: transform 520ms var(--ease-silk);
+}
+.rj-lockup:hover .rj-lockup-rule,
+.rj-lockup:focus-visible .rj-lockup-rule {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rj-lockup-rule {
+    transition: none;
+  }
+}
+
+/* ── 9. THE DECKLED EDGE ──────────────────────────────────────────────────
+   Where the ivory page meets the onyx footer, a torn paper edge instead of a
+   straight cut.
+   ⚠️ It is drawn INSIDE the footer, in the page's colour, rather than by
+   masking the footer itself. Masking would make `.rj-footer` a containing
+   block for any `position: fixed` descendant — the scroll control and the
+   Jamindar medallion both live down there — and they would silently start
+   scrolling with the page.
+   ⚠️ The colour comes from `--rj-page-edge`, captured at `:root`, because
+   `--color-canvas` is onyx inside this subtree. The MASK is monochrome, so the
+   data URI carries no colour and the two never disagree. */
+.rj-footer {
+  position: relative;
+}
+.rj-footer::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: var(--rj-page-edge);
+  pointer-events: none;
+  -webkit-mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='10' viewBox='0 0 44 10'><path d='M0 0h44v3.2c-3.6 0-4.4 2.6-8 2.6S30.4 3 26.8 3s-4.4 3.4-8 3.4S14.4 3.6 10.8 3.6 6.4 6.2 2.8 6.2C1.7 6.2 0.9 5.9 0 5.3Z' fill='black'/></svg>");
+  mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='10' viewBox='0 0 44 10'><path d='M0 0h44v3.2c-3.6 0-4.4 2.6-8 2.6S30.4 3 26.8 3s-4.4 3.4-8 3.4S14.4 3.6 10.8 3.6 6.4 6.2 2.8 6.2C1.7 6.2 0.9 5.9 0 5.3Z' fill='black'/></svg>");
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 44px 10px;
+  mask-size: 44px 10px;
+}
+
+/* ── 13. LETTERPRESS ON THE ONYX ──────────────────────────────────────────
+   A whisper of grain and a single hairline of light along the top, so the dark
+   band reads as printed card rather than as an absence of paper.
+   ⚠️ The grain is a fixed turbulence tile at 2.5% — the same restraint
+   cadastral.css settles on for the paper grain, and for the same reason: grain
+   spends contrast headroom, and every ratio in that footer was audited. */
+.rj-footer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='120' height='120' filter='url(%23n)'/></svg>");
+  box-shadow: inset 0 1px 0 rgba(232, 225, 210, 0.07);
+}
+
+/* ── 14. SCROLLBARS ───────────────────────────────────────────────────────
+   Thin, and in the site's own metals rather than the platform's grey.
+   ⚠️ `scrollbar-color` is inherited, so the footer and the Vault override it
+   for their own scrollers. Firefox and Chromium both honour the standard
+   property now; no `::-webkit-scrollbar` block, which would only apply to one
+   engine and drift from this one. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-champagne-500) var(--color-canvas-alt);
+}
+.rj-footer,
+[data-theme="vault"] {
+  scrollbar-color: var(--color-champagne-500) var(--color-onyx-800);
+}
+
+/* ── 12. THE READING RULE ─────────────────────────────────────────────────
+   A champagne hairline across the very top of a long article, filled as the
+   reader moves through it. Decoration: it reports nothing the scrollbar does
+   not, and it is `aria-hidden`.
+   ⚠️ `transform` rather than `width`, so it never triggers layout, and
+   `will-change` is deliberately absent — a permanently promoted layer on every
+   article page costs more than it saves for one hairline. */
+.rj-reading-rule {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 45;
+  pointer-events: none;
+  transform-origin: left center;
+  transform: scaleX(var(--rj-read, 0));
+  background: linear-gradient(
+    90deg,
+    var(--color-jamin-gold),
+    var(--color-champagne-300) 55%,
+    var(--color-jamin-gold)
+  );
+}

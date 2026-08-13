@@ -103,14 +103,18 @@ function Block({
   title,
   lead,
   children,
+  className = "",
 }: {
   id: string;
   title: string;
   lead?: string;
   children: React.ReactNode;
+  /** Ornament hook only — `rj-sheet` puts registration ticks at the corners of
+   *  a block that genuinely is a drawing. Never anything structural. */
+  className?: string;
 }) {
   return (
-    <section id={id} className="mt-phi5 scroll-mt-28">
+    <section id={id} className={`mt-phi5 scroll-mt-28 ${className}`}>
       {/* The gold rule now rules ITSELF across, the way a guide line is drawn
           before the words — see SurveyReveal. On a page this long the sections
           otherwise run into one another as an undifferentiated column. */}
@@ -214,11 +218,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             <Link href="/" className="hover:text-jamin-red-deep">
               Home
             </Link>
-            <span className="px-2">/</span>
+            <span className="px-2.5 text-jamin-gold" aria-hidden="true">
+              <span className="inline-block h-1 w-1 rotate-45 rounded-[1px] bg-jamin-gold align-middle" />
+            </span>
             <Link href="/properties" className="hover:text-jamin-red-deep">
               Properties
             </Link>
-            <span className="px-2">/</span>
+            <span className="px-2.5 text-jamin-gold" aria-hidden="true">
+              <span className="inline-block h-1 w-1 rotate-45 rounded-[1px] bg-jamin-gold align-middle" />
+            </span>
             <span className="text-ink-soft">{p.title}</span>
           </nav>
 
@@ -440,6 +448,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                  schedule where it was not ---- */}
           {plots.length > 0 && (
             <Block
+              className="rj-sheet"
               id="layout"
               title="The layout"
               lead={
@@ -478,7 +487,16 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
                 {amenities.map((a) => (
                   <li key={a} className="flex items-start gap-2.5 text-base text-ink-soft">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-jamin-gold" />
+                    {/* A drawn mark instead of a dot. `leaf` is the set's mark
+                        for planting and open space, which is what an amenity on
+                        a plotted layout is; the services list below takes
+                        `junction`, the mark for a formed road meeting another.
+                        Both are `aria-hidden` — the words carry the meaning. */}
+                    <SurveyIcon
+                      name="leaf"
+                      size="h-4 w-4"
+                      className="mt-0.5 shrink-0 text-jamin-gold-ink"
+                    />
                     {a}
                   </li>
                 ))}
@@ -491,7 +509,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
                 {utilities.map((u) => (
                   <li key={u} className="flex items-start gap-2.5 text-base text-ink-soft">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-canopy" />
+                    <SurveyIcon name="junction" size="h-4 w-4" className="mt-0.5 shrink-0 text-canopy" />
                     {u}
                   </li>
                 ))}

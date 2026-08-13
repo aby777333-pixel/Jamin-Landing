@@ -146,7 +146,16 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
       <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10">
-        <Link href="/" className="rj-lockup flex items-center" aria-label="Jamin Bazaar — home">
+        {/* ⚠️ `flex-col` and `items-start`, where this was a plain row. The
+            lockup gained a rule beneath it (see `.rj-lockup-rule`) which has to
+            sit under the image rather than beside it, and the column must not
+            stretch to the header's height or the rule floats. Purely
+            decorative: the link, its target and its label are unchanged. */}
+        <Link
+          href="/"
+          className="rj-lockup flex flex-col items-start justify-center"
+          aria-label="Jamin Bazaar — home"
+        >
           {/* The full lockup — mark, wordmark and the "signature for Fortune"
               rule. logo.png is the square app mark on its own and belongs on an
               icon, not in a header, where it reads as a favicon that wandered
@@ -162,6 +171,9 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             sizes="(max-width: 1024px) 108px, 130px"
             className="h-10 w-auto lg:h-12"
           />
+          {/* The logo already carries a gold rule under BAZAAR; this draws one,
+              from the left, on hover. `aria-hidden` — it says nothing. */}
+          <span className="rj-lockup-rule mt-0.5" aria-hidden="true" />
         </Link>
 
         <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">

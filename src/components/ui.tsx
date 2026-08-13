@@ -22,7 +22,14 @@ export function Container({
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="h-px w-10 bg-jamin-gold" />
+      {/* The rule now ends in a station mark rather than simply stopping — the
+          same lozenge the prose bullets use, so a section opening and a list
+          item are visibly the same hand. Decoration: `aria-hidden`, and the
+          label itself is unchanged. */}
+      <span className="flex items-center gap-1.5" aria-hidden="true">
+        <span className="h-px w-10 bg-jamin-gold" />
+        <span className="h-1 w-1 rotate-45 rounded-[1px] bg-jamin-gold" />
+      </span>
       <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
         {children}
       </span>

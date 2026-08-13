@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
+import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
 
 /**
  * §59 — the footer is a discovery layer, and §75 — its contact details must be
@@ -160,7 +161,7 @@ export async function SiteFooter() {
           </div>
 
           <div>
-            <FooterHeading>Projects</FooterHeading>
+            <FooterHeading icon="building">Projects</FooterHeading>
             <ul className="mt-phi2 space-y-3">
               <FooterLink href="/properties">All properties</FooterLink>
               <FooterLink href="/projects">Projects by stage</FooterLink>
@@ -174,7 +175,7 @@ export async function SiteFooter() {
           </div>
 
           <div>
-            <FooterHeading>Locations</FooterHeading>
+            <FooterHeading icon="station">Locations</FooterHeading>
             <ul className="mt-phi2 space-y-3">
               {facets.districts.map((f) => (
                 <FooterLink key={f.key} href={f.href}>
@@ -185,7 +186,7 @@ export async function SiteFooter() {
           </div>
 
           <div>
-            <FooterHeading>{desk.label ?? "Talk to Jamin"}</FooterHeading>
+            <FooterHeading icon="deed">{desk.label ?? "Talk to Jamin"}</FooterHeading>
             <ul className="mt-phi2 space-y-3">
               {tel && (
                 <li>
@@ -282,16 +283,27 @@ export async function SiteFooter() {
 /** h2, not h4. The footer sits on every page, and its column headings were
  *  jumping the outline from h2 straight to h4 on pages whose deepest heading
  *  was an h2 — flagged on /, /about, /contact and a property page. */
-function FooterHeading({ children }: { children: React.ReactNode }) {
+function FooterHeading({ icon, children }: { icon: SurveyIconName; children: React.ReactNode }) {
   return (
-    <h2 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">{children}</h2>
+    <h2 className="flex items-center gap-2 text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
+      {/* A drawn mark per column, in champagne so it reads as a rule rather
+          than as a second heading. `aria-hidden` inside the icon itself — the
+          heading text is the heading. */}
+      <SurveyIcon name={icon} size="h-4 w-4" className="shrink-0 text-champagne-500" />
+      {children}
+    </h2>
   );
 }
 
 function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <li>
-      <Link href={href} className="text-base text-ink-muted transition-colors hover:text-champagne-300">
+      {/* `rj-underline` draws the rule from the left rather than switching it
+          on. Purely a transition; the link is unchanged. */}
+      <Link
+        href={href}
+        className="rj-underline text-base text-ink-muted transition-colors hover:text-champagne-300"
+      >
         {children}
       </Link>
     </li>
