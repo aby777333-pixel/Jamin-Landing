@@ -328,17 +328,22 @@
      so it fades its LEFT edge at 22%. This one is for a picture that bleeds off
      the right of the WINDOW on a property header, where the edge facing the
      reader is also the left — but the requirement is different: the owner asked
-     for "more than half" of the frame to survive, so the ramp is longer and
-     softer and then stops. Solid from 30%, i.e. 70% of the picture at full
-     strength, with a knee at 12% so the dissolve reads as a burn into the
-     blueprint grid rather than a straight linear wipe.
+     for the frame to survive, so the ramp is longer and softer and then stops.
+
+     ⚠️ SOLID FROM 25%, i.e. 75% OF THE PICTURE AT FULL STRENGTH. It shipped at
+     30% on "make the images visible more than half" and the owner came back
+     with a number: "increase the image visibility more, like 75%". The knee
+     moved with it — 0.42 at 9% rather than 0.28 at 12% — because simply
+     shortening the ramp makes the dissolve read as a hard diagonal edge instead
+     of a burn into the blueprint grid. The percentages are of the IMAGE's own
+     width, not the viewport's.
 
      ⚠️ The prefixed line is written FIRST and the standard one last, exactly as
      `hero-fade` does. Lightning CSS treats the pair as one property and keeps
      what it sees last — the ordering is what stops the standard property being
      dropped. Do not reorder them, and do not add a third variant. */
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 12%, #000 30%, #000 100%);
-  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.28) 12%, #000 30%, #000 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.42) 9%, #000 25%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.42) 9%, #000 25%, #000 100%);
 }
 
 @utility glass {

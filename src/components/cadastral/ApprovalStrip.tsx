@@ -50,17 +50,38 @@ export function ApprovalStrip({ p }: { p: Property }) {
 
   return (
     <div className="cd-strip border-y border-line bg-canvas-alt">
-      {/* Scrolls rather than wraps on a phone: a document header that breaks
-          onto three ragged lines stops reading as a header. */}
+      {/* 🚨 IT SPANS THE FULL CONTENT WIDTH FROM `lg`, AND THE ENTRIES SHARE IT.
+          Reported 2026-08-13: "property statistics do not use the full available
+          page width… keep all five details evenly distributed". They were
+          `shrink-0` in a scroller, so the band ended wherever the content
+          happened to end — on a 1425px page the five entries occupied about 700
+          of it and the rest was empty ivory, which read as a truncated table
+          rather than a document header.
+
+          ⚠️ THE SCROLLER SURVIVES BELOW `lg`, and that is not laziness. A
+          document header that wraps onto three ragged lines stops reading as a
+          header, which is why it scrolls on a phone in the first place —
+          `flex-1` there would squeeze "789/3B2E2A1A2, 789/3B2E2A1A3C" into a
+          column two characters wide. So the entries flex only where there is
+          room to share, and `basis-0` is what makes the share EVEN rather than
+          proportional to each value's length.
+
+          ⚠️ `min-w-0` on the item, or a long survey number sets its own track
+          and pushes the band wider than the page — the same trap the footer's
+          district column and the account sidebar both paid for. */}
       <dl className="cd-noscroll flex items-stretch gap-0 overflow-x-auto">
         {entries.map((e, i) => (
           <div
             key={e.label}
-            className={`shrink-0 px-phi3 py-phi2 ${i > 0 ? "border-l border-jamin-gold/35" : ""}`}
+            className={`shrink-0 px-phi3 py-phi2 lg:min-w-0 lg:flex-1 lg:basis-0 lg:shrink ${
+              i > 0 ? "border-l border-jamin-gold/35" : ""
+            }`}
           >
             <dt className="ledger-label">{e.label}</dt>
             <dd
-              className={`mt-1 whitespace-nowrap text-base text-ink ${e.ledger ? "ledger" : ""}`}
+              className={`mt-1 text-base text-ink lg:whitespace-normal ${
+                e.ledger ? "ledger" : ""
+              } whitespace-nowrap`}
             >
               {e.value}
             </dd>

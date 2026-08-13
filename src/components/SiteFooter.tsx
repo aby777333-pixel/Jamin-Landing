@@ -236,6 +236,34 @@ export async function SiteFooter() {
           </p>
         </div>
 
+        {/* ⚠️ THE BUILD CREDIT, and the link is an ASSUMPTION worth reading.
+            Owner's instruction 2026-08-13, verbatim: "in the footer write site
+            powered by 777 Raptor …give a link and keep the whatzap number
+            7012608089". 777 Raptor has no website recorded anywhere in this
+            project, and the number arrived in the same breath as the request for
+            a link, so the link is a WhatsApp deep link to that number. If there
+            is a real site, this is a one-line change.
+
+            ⚠️ The number is HARD-CODED here, unlike every other contact on this
+            page. That is deliberate and it is the exception that proves the
+            rule: the desk's phone, WhatsApp and email above are read from
+            `platform_contacts.jamin_desk` so the app and the site can never
+            disagree about how to reach JAMIN. This is not Jamin's number — it is
+            the builder's — and putting it in the desk record would make it
+            answer sales calls. */}
+        <p className="mt-phi3 text-center text-tiny text-ink-faint">
+          Site powered by{" "}
+          <a
+            href="https://wa.me/917012608089"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-champagne-300 underline-offset-4 transition-colors hover:text-champagne-100 hover:underline"
+          >
+            777 Raptor
+          </a>{" "}
+          · WhatsApp 70126 08089
+        </p>
+
         {/* §6.9's closing line.
             ⚠️ §6.9 also asks for social icons in brushed silver. There are none
             here, deliberately: no social profile exists anywhere in the data or

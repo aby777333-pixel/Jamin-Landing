@@ -15,24 +15,37 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
+/**
+ * ⚠️ THE ICONS ARE DRAWN MARKS, NOT DECORATION, and the pairing is not
+ * arbitrary: `stamp` is an approval impression, `deed` a title document,
+ * `junction` a formed road meeting another, `ledger` a record kept as work
+ * proceeds. Each is the instrument the sentence beside it is about. Adding a
+ * fifth principle means finding a mark that passes the same test — see
+ * `SurveyIcon`, which exists because a Unicode glyph is rendered by whatever
+ * font the reader's device happens to own.
+ */
 const PRINCIPLES = [
   {
+    icon: "stamp",
     t: "Approved before it is offered",
     d: "Every layout carries planning-authority approval. We do not pre-sell land that is still waiting on paperwork.",
   },
   {
+    icon: "deed",
     t: "Clear and marketable title",
     d: "Title is verified up front, and the documents are yours to inspect — before you commit, not after.",
   },
   {
+    icon: "junction",
     t: "Built to be built on",
     d: "Wide internal roads, common water supply and demarcated boundaries, so construction can begin immediately.",
   },
   {
+    icon: "ledger",
     t: "Published, not promised",
     d: "Site progress is photographed and published as work proceeds. What you see is the site as it stands today.",
   },
-];
+] as const;
 
 export default async function AboutPage() {
   const all = await getProperties();
@@ -134,10 +147,34 @@ export default async function AboutPage() {
         </dl>
       </section>
 
-      <section className="mt-phi6 grid gap-phi4 sm:grid-cols-2">
+      {/* 🚨 FOUR CARDS IN A 2×2, WHERE THIS WAS FOUR PARAGRAPHS IN A GRID.
+          Reported 2026-08-13: "the four key points currently appear as plain
+          text, making the section look flat… convert them into four highlighted
+          cards in a 2×2 layout… subtle borders, rounded corners, soft shadows,
+          gold icons and accent lines". Every one of those is a token this site
+          already owns — `rounded-card`, `border-line`, `shadow-lift`,
+          `rule-gold`, `SurveyIcon` — so nothing new was invented for it.
+
+          ⚠️ `sm:grid-cols-2` and no `lg:grid-cols-4`. The report asked for 2×2
+          and 2×2 is right: these are four sentences of argument, not four
+          statistics, and at a quarter of the width each would set to five ragged
+          lines. The section keeps its measure. */}
+      <section className="mt-phi6 grid gap-phi3 sm:grid-cols-2">
         {PRINCIPLES.map((p) => (
-          <div key={p.t}>
-            <h2 className="text-xl text-ink">{p.t}</h2>
+          <div
+            key={p.t}
+            className="rounded-card border border-line bg-canvas p-phi3 shadow-lift transition-shadow duration-500 hover:shadow-raise sm:p-phi4"
+          >
+            <span
+              aria-hidden="true"
+              className="flex h-11 w-11 items-center justify-center rounded-[12px] bg-jamin-gold-soft text-jamin-gold-ink"
+            >
+              <SurveyIcon name={p.icon} className="h-[23px] w-[23px]" />
+            </span>
+            {/* The accent line the report asked for — `rule-gold` is the site's
+                own gradient hairline, the one under BAZAAR in the logo. */}
+            <span className="mt-phi3 block h-px w-12 rule-gold" aria-hidden="true" />
+            <h2 className="mt-phi3 text-xl text-ink">{p.t}</h2>
             <p className="mt-phi2 text-base leading-relaxed text-ink-muted">{p.d}</p>
           </div>
         ))}

@@ -94,21 +94,44 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
                   {purpose.note}
                 </span>
 
+                {/* 🚨 EVERY CARD ENDS IN THE SAME ACTION ROW, RULED OFF.
+                    Reported 2026-08-13 as "the CTA appears visually
+                    misaligned… it should sit at the bottom-right… the
+                    supporting text should remain above it without affecting the
+                    CTA position", and the cause was that the two states were
+                    different SHAPES: a live card ended in one line ("3
+                    developments →") and a closed one in a two-line sentence
+                    whose second line carried the call to action. The body above
+                    is `flex-1`, so both blocks did start at the bottom — and the
+                    action inside the taller block therefore sat a line lower
+                    than the action beside it.
+
+                    Now the qualifier is a line of body copy and the action is
+                    its own ruled row, so the four rows align by construction
+                    whatever the copy above them does. Right-aligned, per the
+                    report. */}
+                {!live && (
+                  <span className="mt-phi2 block text-tiny text-ink-faint">
+                    Not selling for this yet.
+                  </span>
+                )}
                 {/* ⚠️ The number is the evidence, so it stays plain — §8's rule
                     about not putting gold on a figure that is selling by
                     itself. */}
-                {live ? (
-                  <span className="mt-phi3 block text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-transform duration-500 group-hover:translate-x-1">
-                    <span className="ledger">{count}</span> development{count === 1 ? "" : "s"} →
-                  </span>
-                ) : (
-                  <span className="mt-phi3 block text-tiny text-ink-faint">
-                    Not selling for this yet —{" "}
-                    <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft">
-                      register interest →
-                    </span>
-                  </span>
-                )}
+                <span
+                  className={`mt-phi3 flex items-center justify-end border-t border-line pt-phi2 text-tiny font-semibold uppercase tracking-[0.12em] transition-transform duration-500 group-hover:translate-x-1 ${
+                    live ? "text-jamin-red-deep" : "text-ink-soft"
+                  }`}
+                >
+                  {live ? (
+                    <>
+                      <span className="ledger">{count}</span>
+                      &nbsp;development{count === 1 ? "" : "s"} →
+                    </>
+                  ) : (
+                    <>register interest →</>
+                  )}
+                </span>
               </Link>
             </li>
           );

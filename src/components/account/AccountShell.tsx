@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
@@ -40,6 +41,37 @@ export function AccountShell({ title, children }: { title: string; children: Rea
     if (!loading && !session) router.replace("/account/sign-in");
   }, [loading, session, router]);
 
+  /**
+   * 🚨 EVERY ACCOUNT SECTION OPENS AT ITS OWN TOP, AND THIS REVERSES AN EARLIER
+   * DECISION RATHER THAN ADDING TO IT.
+   *
+   * The nav links carry `scroll={false}` (see the note on them below) because
+   * Next's own scroll-to-top was yanking the horizontal tab strip back to its
+   * start on a phone. That fixed the strip and left the DOCUMENT wherever it
+   * was: open Leads from a scrolled Partner desk and Leads renders at the old
+   * offset. Reported 2026-08-13 with a screenshot of `/account/partner/leads`
+   * showing nothing but the Sign out button and the footer — the entire section
+   * scrolled past before it was ever seen. Priority: high, and rightly.
+   *
+   * ⚠️ SO THE SCROLL IS OURS, NOT NEXT'S. Doing it here rather than by removing
+   * `scroll={false}` keeps the two concerns separate: the link handler owns the
+   * strip's horizontal position, this owns the document's vertical one, and
+   * neither can undo the other because they move different axes. Handing it
+   * back to Next would restore the strip bug that `scroll={false}` exists to
+   * prevent.
+   *
+   * ⚠️ Keyed on `pathname`, so it fires on a section change and not on a
+   * re-render — a state update inside a section must never throw the reader
+   * back to the top of it.
+   *
+   * ⚠️ `behavior: "auto"`. A smooth 500px glide on every menu pick reads as the
+   * page being slow, and `prefers-reduced-motion` would have to be honoured
+   * anyway; an instant jump is what a new page is expected to do.
+   */
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [pathname]);
+
   if (loading) {
     return (
       <Container className="py-phi5">
@@ -58,6 +90,34 @@ export function AccountShell({ title, children }: { title: string; children: Rea
 
   return (
     <Container className="py-phi5">
+      {/* 🚨 THE ACCOUNT OPENS ON A PICTURE (owner, 2026-08-13). It is a band
+          rather than a full-bleed hero because everything under it is a working
+          surface — a shortlist, a visit list, a lead table — and a 78vh opener
+          would put the reader's own data below the fold on every section.
+
+          ⚠️ ITS OWN RATIO ON A PHONE, A BAND FROM `lg`. 16/9 is the frame's
+          native ratio, so nothing is cropped at 375; from `lg` it becomes 2.4:1,
+          which is `object-cover` cropping the HEIGHT. `object-bottom` decides
+          which part survives, and it is not a taste call — the artwork bakes its
+          own caption into the lower-left, so a centre crop slices the type in
+          half. Anchoring the bottom keeps the caption whole and spends the sky
+          instead. Any replacement frame with type at the top needs this flipped.
+
+          ⚠️ Brand imagery under the standing rule: `alt=""`, `aria-hidden`, and
+          never a caption of ours — the picture already carries its own. It is a
+          render of nowhere, not a Jamin site. */}
+      <div className="relative mb-phi4 aspect-[16/9] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken lg:aspect-[2.4/1]">
+        <Image
+          src="/section/account-1672.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="(max-width: 1280px) 100vw, 1200px"
+          className="object-cover object-bottom"
+        />
+      </div>
+
       {/* ⚠️ SIGN OUT IS NO LONGER HERE. It used to sit at the top right of this
           header, which is in the content column and scrolls — so the moment a
           reader moved down the page, the way out went with it. It now lives at
