@@ -237,7 +237,12 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               to fit puts the title back onto two lines. Below `xl` the copy
               takes the full width and there is no image — an honest "there is
               no room for both" rather than a bad version of both. */}
-          <div className="pb-phi4 xl:grid xl:grid-cols-[minmax(0,620px)_1fr] xl:items-end xl:gap-phi4">
+          {/* ⚠️ `items-center`, where this was `items-end`. Bottom-aligning the
+              copy was right while the picture was a 320px band — the two blocks
+              ended together. Against a 414–480px picture it leaves a hole above
+              the badges, which is the "large empty space on the right" complaint
+              arriving from the other side. */}
+          <div className="pb-phi4 xl:grid xl:grid-cols-[minmax(0,620px)_1fr] xl:items-center xl:gap-phi4">
           <header className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-2xl">
               <div className="flex flex-wrap items-center gap-2">
@@ -336,7 +341,33 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               photography is in the Gallery immediately below, which is where a
               reader goes to see the actual land. */}
           {headerArt && (
-            <div className="relative hidden min-h-[20rem] self-stretch xl:block" aria-hidden="true">
+            /* 🚨 THE HEIGHT IS THE WHOLE POINT — "can't see them properly"
+                (owner, 2026-08-13). The box was 320px and the frames are not:
+                measured at 1440, Udumalaipet is a 1.335:1 picture in a 2.08:1
+                box, so `object-cover` was throwing away **36% of its height**.
+                It was not merely small, it was cropped to a middle band, and
+                the 4:3 frame suffered worst while the 2:1 ones barely noticed.
+
+                At 666px of rendered width, showing that frame whole needs 499px
+                of height. `clamp(24rem, 46vh, 30rem)` gives 384–480px — 480 at
+                1080, 414 on a 900-tall window — which puts it at 96% of the
+                height on the tightest frame and 100% on every other. The wide
+                frames now crop horizontally instead, which costs nothing: they
+                bleed off the window edge anyway.
+
+                ⚠️ vh, not a fixed number, because this sits under a sticky
+                header on a page whose next block is the stats bar — on a short
+                laptop a hard 30rem would push that bar off the first screen.
+
+                ⚠️ An INLINE STYLE, not a `min-h-` arbitrary value. One
+                carrying a clamp with an unparenthesised sum takes the postcss
+                subprocess down with a stack overflow; the h1 above is written
+                the same way for the same reason. */
+            <div
+              className="relative hidden self-stretch xl:block"
+              style={{ minHeight: "clamp(24rem, 46vh, 30rem)" }}
+              aria-hidden="true"
+            >
               {/* 🚨 A `<picture>` WITH A MEDIA-GATED SOURCE, AND IT IS THE ONLY
                   THING THAT ACTUALLY STOPS THE DOWNLOAD.
 
