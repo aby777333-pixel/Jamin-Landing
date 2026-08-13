@@ -304,22 +304,51 @@ function ArticleCard({ post }: { post: JournalCard }) {
       className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      {/* ⚠️ Two reports pulled opposite ways here: one asked for a consistent
-          container, the other for images that are not cropped. `contain` inside
-          a FIXED box satisfies both — every card is the same height, and no
-          cover loses its headline. The padding and ground are what stop the
-          letterboxing reading as an accident. */}
-      <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken p-2">
+      {/* 🚨 2/1 AND `object-cover object-left`, AND EVERY PART OF THAT IS A
+          MEASUREMENT.
+
+          Two reports pulled opposite ways: one asked for a consistent
+          container, the other for covers that are not cropped. This shipped as
+          `object-contain` in a 1.618 box, which satisfied neither in the end —
+          the CONTAINER was identical but the PICTURE inside it was not, because
+          a contained image only touches the box on its long axis. The covers run
+          1.50:1 to 2.34:1, so a 2.34 cover sat 31% shorter than a 1.50 one with
+          a band of sunken canvas above and below it. Reported 2026-08-13 as
+          "different cards have different image heights", and it was.
+
+          `cover` is the only fit that makes the picture itself identical, so the
+          question became where to spend the crop. Measured over the published
+          covers rather than guessed:
+
+            box 1.618 + centre  the 2.34 covers lose 31% of their width, half
+                                off each side — "What Does a Property Buyer…"
+                                came back as "…oes a …perty Buyer". Unusable:
+                                these covers ARE headlines.
+            box 2/1  + centre   15% off a 2.34 cover, still clipping its first
+                                glyph.
+            box 2/1  + LEFT     the crop comes off the RIGHT only. Every
+                                headline and every JAMIN BAZAAR lockup survives
+                                on all six covers checked.
+
+          2/1 because it is the dominant native ratio in the set — most covers
+          are exactly 1774x887 and crop by nothing at all. `object-left` because
+          these are designed banners with the type on the left; a photograph
+          whose subject sits right would want the opposite, and if the covers
+          ever change character this is the line to re-check.
+
+          The `p-2` mat and the sunken ground went with the letterbox they
+          existed to excuse. */}
+      <div className="relative aspect-[2/1] overflow-hidden">
         {post.coverUrl ? (
           <Image
             src={post.coverUrl}
             alt={post.coverAlt ?? post.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-contain transition-transform duration-[1200ms] group-hover:scale-[1.03]"
+            className="object-cover object-left transition-transform duration-[1200ms] group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">
+          <div className="flex h-full items-center justify-center bg-canvas-sunken text-tiny uppercase tracking-brand text-ink-faint">
             Jamin Journal
           </div>
         )}

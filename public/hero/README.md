@@ -362,7 +362,7 @@ above asks for on pages whose subject is a real project:
 | surface | image | why not a render |
 |---|---|---|
 | /projects | 2nd photo of a development | index of real projects; hero-05 is needed on the homepage, where it literally illustrates "from sanctioned drawing to a plot you stand on" |
-| /projects/completed | 2nd photo of the delivered project | its subject IS a delivered project |
+| ~~/projects/completed~~ | ~~2nd photo of the delivered project~~ | ⚠️ **NO LONGER TRUE — it took hero-40 on 2026-08-13 at the owner's request.** The argument below still stands; it was overruled, not withdrawn. See the hero-40 entry. |
 | homepage closing band | 2nd photo of the delivered project | was hero-02, which is the /properties hero — the same frame twice in one visit |
 
 ⚠️ Always the **second** photograph, never `images[0]`. The first is the card
@@ -870,6 +870,78 @@ defect - the sign reads through the sheer plate - but it is why these were given
 `cinematic` rather than `paper`: the paper tone fades its left 22%, which is
 exactly where the sign is, and hero-31/33 already paid for that lesson.
 
+
+## 🚨 THE MOBILE BAND IS THE ARTWORK'S OWN RATIO, NOT 16/9 (2026-08-13)
+
+This file used to say a wider frame "only letterboxes onto the section's own
+charcoal, which is invisible". **It is not invisible.** It was reported as a
+black strip under the navbar on six pages at once — /properties,
+/projects/completed, /locations/coimbatore, /locations/salem,
+/locations/tiruppur and /journal — and every one of them is simply a frame wider
+than 16/9 sitting in a 16/9 box under `object-contain`. On a 375px phone
+hero-37 (2.33:1) rendered 161px tall in a 211px box: a 25px bar above the
+picture and another below it.
+
+`PageHero` now carries a `TOP_HEIGHT` map beside `TOP_WIDTH` and the band takes
+each frame's own ratio, so the picture fills it exactly — no bar, and still no
+crop, which is the pair of failures that band exists to avoid. Measured after,
+at 375: bars are 0px on all six.
+
+⚠️ **Keep TOP_HEIGHT in step with the files here**, and read the top rendition
+with an image tool rather than copying a number out of this register — several
+frames are TRIMMED and their file is not their source. A wrong value is a bar or
+a sliver of crop; nothing fails loudly.
+
+⚠️ A `photo` (a real photograph from the database) keeps the 16/9 box, because
+its dimensions are not knowable at build time. The only page still passing one
+is /projects.
+
+## 🚨 hero-40 -> /projects/completed (2026-08-13) — the register's own exception
+
+Owner-supplied: a lit avenue of finished villas at dusk, a family walking, the
+JAMIN BAZAAR wall at the right. 1921x819 native -> 768 / 1280 / 1921 WebP
+(53 / 132 / 258 KB).
+
+**This is the one page this file said a render must never go on.** /projects/
+completed is the surface whose subject genuinely IS a delivered project, so the
+rule above requires real photography, and it carried `secondaryImage()` of the
+handed-over development until now. The owner asked for this frame with that on
+the table, so the photograph is gone.
+
+⚠️ **The picture and the page describe different things.** It shows finished
+VILLAS; the listing beneath it holds one PLOTTED development — Udumalaipet, 400
+cents / 60 plots. Jamin has not built these houses and this is a render of
+nowhere. The standing rule therefore binds harder here than on any other hero,
+and it is now enforced by construction rather than by discipline: the page no
+longer passes `photo`, and an `art` is always `alt=""` + `aria-hidden`. It must
+never gain a caption, a location or a project name. Restoring the photograph is
+a two-line revert and the `secondaryImage` path is still live on /projects.
+
+⚠️ **`artPosition="right"`, for the OPPOSITE reason to hero-31/33.** Their board
+is at the far left and the anchor moves it out of `hero-fade`. hero-40's wall is
+at the far right, and the box shows 54% of the source, so a `left` anchor would
+slice the wall — the artefact hero-33 was trimmed to avoid.
+
+⚠️ **IT MOVED THE PLATE, 0.26 -> 0.42, AND THAT IS THE PAIR RULE FOR THE FOURTH
+TIME.** `rj-gilt-light-sheer` goes transparent at 1440; hero-31/33's overlap
+strip there is a pale faded edge, hero-40's is dark tarmac. The lead paragraph
+(20.35px regular, so AA is 4.5 and not the large-text 3.0) measured **4.02 at
+the darkest pixel** on the inherited value. Swept on the built page at 1440,
+compositing the served rendition through `hero-fade`'s mask and then the tint:
+
+    0.26 -> lead 4.02 · h1 7.09   <- inherited, fails
+    0.34 -> lead 4.56 · h1 7.96   <- the floor, by 0.06
+    0.42 -> lead 5.06 · h1 8.88   <- ships
+    0.74 -> lead 7.64 · h1 13.11  <- the opaque plate
+
+⚠️ On the `paper` tone the LEAD binds, not the eyebrow. The eyebrow sits left of
+the 58% band at every width and never touches the picture — 7.52 at every step
+of that sweep. That is the reverse of the cinematic tone, where the small gold
+eyebrow binds every time.
+
+⚠️ Applying the mask is not optional in that measurement: without it the same
+lead reads 1.01, because the whole overlap sits inside `hero-fade`'s
+transparent leftmost 22%.
 
 ## hero-38 -> /locations/erode · hero-39 -> /locations/tiruppur (2026-08-13)
 

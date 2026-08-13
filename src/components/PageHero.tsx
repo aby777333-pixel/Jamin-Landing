@@ -28,7 +28,40 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40;
+
+/**
+ * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
+ *
+ * The mobile hero band used to be a hard `aspect-[16/9]` box with
+ * `object-contain`, on the reasoning recorded in hero/README.md that "16/9 is
+ * the narrowest ratio in the register, so a wider frame only letterboxes onto
+ * the section's own charcoal, which is invisible". **It is not invisible.**
+ * Reported 2026-08-13 as a black strip under the navbar on /properties,
+ * /projects/completed, /locations/coimbatore, /locations/salem,
+ * /locations/tiruppur and /journal — six pages, one cause. Those carry frames
+ * at 2.33, 2.24, 2.00 and 2.25:1, so on a 375px phone the picture is 161px tall
+ * in a 211px box and the reader gets a ~25px bar above it and another below.
+ *
+ * The fix is to stop guessing the box: the band now takes the ARTWORK'S OWN
+ * ratio, so the picture fills it exactly — no bar, and still no crop, which is
+ * the pair of failures this band exists to avoid.
+ *
+ * ⚠️ Keep this in step with the files in public/hero. A wrong number here is a
+ * bar or a sliver of crop, not a crash, so nothing will fail loudly. Read the
+ * top rendition with an image tool rather than copying a figure out of the
+ * README — several frames are TRIMMED and their file is not their source.
+ */
+const TOP_HEIGHT: Record<HeroArt, number> = {
+  1: 850, 2: 768, 3: 914, 4: 916, 5: 863,
+  6: 941, 7: 941, 8: 941, 9: 941, 10: 941,
+  11: 914, 12: 941, 13: 941,
+  17: 745, 18: 941, 19: 941, 21: 879, 23: 922,
+  25: 793, 27: 887, 28: 941,
+  31: 720, 32: 887, 33: 720,
+  34: 800, 35: 887, 36: 887, 37: 821,
+  38: 819, 39: 836, 40: 819,
+};
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -123,6 +156,20 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      ⚠️ hero-17 is NOT freed by this: it stays the default for a district page
      with no art of its own, which today is Coimbatore. */
   37: 1916,
+  /* 🚨 hero-40 — /projects/completed from 2026-08-13, owner-supplied, and it is
+     the ONE PLACE public/hero/README.md says a render must never go. That page's
+     subject genuinely is a delivered project, so the register requires real
+     photography there, and until now it carried `secondaryImage()` of the
+     handed-over development. The owner asked for this frame anyway, with that
+     on the table.
+     ⚠️ What it shows and what the page lists are different things: a lit avenue
+     of finished VILLAS, above a listing whose one completed entry is a PLOTTED
+     development (Udumalaipet, 400 cents / 60 plots). It is a render of nowhere
+     and Jamin has not built these houses. So the standing rule binds harder here
+     than on any other hero: `alt=""`, `aria-hidden`, and never a caption, a
+     location or a project name — enforced by construction, since the page no
+     longer passes `photo` and an art is always decoration. */
+  40: 1921,
 };
 
 function artSrc(n: HeroArt) {
@@ -198,6 +245,19 @@ export function PageHero({
   const src = photo?.src ?? artwork.src;
   const srcSet = photo ? undefined : artwork.srcSet;
 
+  /**
+   * The mobile band's box, as a ratio rather than a guess. See TOP_HEIGHT.
+   *
+   * ⚠️ A `photo` keeps 16/9, because its dimensions live in the database and
+   * cannot be known at build time. That is a knowing compromise, not an
+   * oversight: the only page still passing one is /projects, which is NOT among
+   * the six reported, and `object-contain` means the worst case there stays a
+   * letterbox rather than becoming a crop. If a photograph ever needs the same
+   * treatment, the ratio has to travel with it from `lib/properties`.
+   */
+  const bandRatio = photo ? "16/9" : `${TOP_WIDTH[art]}/${TOP_HEIGHT[art]}`;
+  const bandStyle = { "--hero-band": bandRatio } as React.CSSProperties;
+
   if (tone === "cinematic") {
     return (
       <section className="relative isolate overflow-hidden bg-charcoal">
@@ -228,8 +288,16 @@ export function PageHero({
 
             ⚠️ It also puts the picture FIRST on a phone, which is what the
             homepage banner already does and what the second report asked for —
-            see the note on the paper band below. */}
-        <div className="relative aspect-[16/9] w-full lg:absolute lg:inset-0 lg:aspect-auto">
+            see the note on the paper band below.
+
+            🚨 THE BOX IS THE ARTWORK'S OWN RATIO, NOT 16/9. A fixed 16/9 box was
+            the black strip reported under the navbar on six pages — the frames
+            here run to 2.33:1, and `object-contain` paid for "never cropped"
+            with a bar of charcoal top and bottom. See TOP_HEIGHT. */}
+        <div
+          className="relative aspect-[var(--hero-band)] w-full lg:absolute lg:inset-0 lg:aspect-auto"
+          style={bandStyle}
+        >
           {/* A render is decoration and stays out of the accessibility tree; a
               photograph of a real project is content and gets a real alt. */}
           <Image
@@ -339,13 +407,18 @@ export function PageHero({
           the copy. The homepage banner already worked that way and is the one
           the owner designed by hand, so it is the one the rest follows.
 
-          ⚠️ `aspect-[16/9]` + `object-contain`, where this was `h-44 sm:h-56`
+          ⚠️ An ASPECT BOX + `object-contain`, where this was `h-44 sm:h-56`
           + `object-cover object-right`. A fixed height cannot be right for a
           set whose frames run 1.78:1 to 3.31:1 — at `sm:h-56` a 640px-wide
           phone was cropping a 1.78 render by 38%, and `object-right` then chose
-          which 62% to keep. 16/9 is the narrowest ratio in the register, so
-          nothing is cropped horizontally and the wider frames letterbox onto
-          the section's own ivory, which is invisible.
+          which 62% to keep.
+
+          🚨 That box was 16/9 until 2026-08-13, on the reasoning that a wider
+          frame would "letterbox onto the section's own ivory, which is
+          invisible". It is not invisible — it was reported as a strip under the
+          navbar, and on the charcoal of the cinematic tone it reads as a black
+          band. The box is the artwork's own ratio now, so a frame of any width
+          fills it exactly: no bar, and still nothing cropped.
 
           ⚠️ Still a SECOND element rather than the single re-positioned one the
           cinematic tone uses. It has to be: the desktop render is 58% wide,
@@ -353,7 +426,7 @@ export function PageHero({
           something a full-width phone band should carry. The extra fetch is
           real and is the price of the two treatments being genuinely
           different pictures of the same file. */}
-      <div className="relative aspect-[16/9] w-full lg:hidden">
+      <div className="relative aspect-[var(--hero-band)] w-full lg:hidden" style={bandStyle}>
         <Image
           src={src}
           alt=""

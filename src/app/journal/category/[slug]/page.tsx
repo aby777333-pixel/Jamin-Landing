@@ -102,7 +102,13 @@ export default async function JournalCategoryPage({
             href={journalHref(p)}
             className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
           >
-            <div className="relative aspect-[1.618/1] overflow-hidden bg-canvas-sunken">
+            {/* ⚠️ 2/1 + `object-left`, matching `ArticleCard` — the reasoning
+                and the sweep over the real covers are written up there. This
+                grid was 1.618 + centre `cover`, which cropped 31% off the
+                widest covers and took their headlines with it. Keep the two in
+                step: a reader moves between /journal and a category page and
+                the cards must not be two different components. */}
+            <div className="relative aspect-[2/1] overflow-hidden bg-canvas-sunken">
               {p.cover_url ? (
                 <Image
                   src={p.cover_url}
@@ -110,7 +116,7 @@ export default async function JournalCategoryPage({
                   fill
                   priority={i < 3}
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover transition-transform duration-[1200ms] group-hover:scale-[1.06]"
+                  className="object-cover object-left transition-transform duration-[1200ms] group-hover:scale-[1.06]"
                 />
               ) : (
                 <div className="flex h-full items-center justify-center text-tiny uppercase tracking-brand text-ink-faint">

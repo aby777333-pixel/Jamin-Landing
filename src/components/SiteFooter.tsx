@@ -23,7 +23,18 @@ export async function SiteFooter() {
     /* §6.9 — the page descends into onyx. `.rj-footer` re-scopes the colour
        tokens rather than restyling children, so LedgerCount and cadastral's
        `.ledger-label` follow without either being touched. */
-    <footer className="rj-footer mt-phi7">
+    /* 🚨 `mt-phi5 lg:mt-phi7`, and the phone value is the bug fix.
+       `mt-phi7` is 9rem — 144px of bare canvas above the footer, on every page,
+       at every width. On a desktop that is breathing room between a long page
+       and its closing block. On a phone it is a screen-and-a-bit of nothing,
+       and it compounds with whatever bottom padding the last section carries:
+       /projects/completed ended a single card 199px above the footer and /vault
+       ended its closing line 288px above it. Reported 2026-08-13 as "excessive
+       blank space appears between the paragraph section and footer" on both.
+       55px is enough separation here because the footer does not rely on the
+       gap to announce itself — it changes ground colour to onyx, which is a
+       harder edge than any amount of margin. */
+    <footer className="rj-footer mt-phi5 lg:mt-phi7">
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>

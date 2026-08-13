@@ -265,54 +265,68 @@ export default async function VaultPage() {
           brighter than the picture it replaces, which is the whole point of
           spending the contrast locally.
 
-          ⚠️ The `lg:hidden` veil below is NOT scaled with these — it exists to
-          fix a measured mobile failure and reducing it would put that failure
-          straight back. */}
-      <section className="relative isolate flex min-h-[clamp(30rem,78vh,44rem)] items-center overflow-hidden bg-onyx-900">
-        <Image
-          src="/hero/hero-30-1916.webp"
-          alt=""
-          aria-hidden="true"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div
-          className="pointer-events-none absolute inset-0"
-          aria-hidden="true"
-          style={{
-            background:
-              "linear-gradient(to right, rgba(10,10,9,0.53) 0%, rgba(10,10,9,0.43) 34%, rgba(10,10,9,0.23) 64%, rgba(10,10,9,0.28) 100%), " +
-              "linear-gradient(to bottom, rgba(10,10,9,0.37) 0%, rgba(10,10,9,0.13) 38%, rgba(10,10,9,0.35) 100%)",
-          }}
-        />
-        {/* ⚠️ NARROW SCREENS NEED A FLAT VEIL ON TOP, and the reason is the crop
-            rather than the design. `object-cover` on a 2.19:1 photograph in a
-            tall box shows a narrow CENTRE slice — so below `lg` the horizontal
-            gradient's whole argument (dark left for the words, open right for
-            the rest) is off-screen, and what lands under the copy is whatever
-            happens to sit in the middle of the frame.
-
-            ⚠️ RAISED 0.18 → 0.28 FOR hero-29, and this is the half of the
-            picture swap that is easy to miss. Desktop got LIGHTER — the new
-            frame is dark forest where the words are — but the centre slice a
-            phone crops to is the brightest part of it, the rain-mist at the
-            end of the road. Same picture, opposite correction. At 375 the gold
-            eyebrow measured 4.23 on the inherited 0.18, below the line; 0.28
-            puts it at 4.92. Re-measure this at 375 on every hero swap: a
-            desktop sweep tells you nothing about it.
-
-            ✅ Held at 0.28 for hero-30 rather than assumed: with the plate at
-            0.46 the phone crop (the palace and the sunset, the brightest part
-            of the painting) measures gold 8.06 at p95 and 5.88 at the worst
-            pixel. It is now the SAFEST width rather than the tightest, so this
-            veil has headroom to come down if the crop is ever reworked. */}
-        <div
-          className="pointer-events-none absolute inset-0 lg:hidden"
-          aria-hidden="true"
-          style={{ background: "rgba(10,10,9,0.28)" }}
-        />
+          ⚠️ Everything above describes the DESKTOP composition. On a phone the
+          copy no longer sits on the painting at all — see the note on the
+          picture wrapper below. */}
+      {/* 🚨 THE PHONE SEES THE WHOLE PAINTING NOW (2026-08-13).
+          /vault was the last hero on the site still built as words-over-picture
+          at every width, and it was the documented exception to the
+          one-structure rule the other ten pages adopted on 2026-08-12. The UI
+          report flagged it twice — "the hero background image is not fully
+          visible and important parts of the image are being cropped… the Vault
+          hero therefore looks inconsistent with the visual treatment of the
+          other pages" — and offered to let it stand if it was deliberate. It
+          was deliberate, and it was still wrong: `object-cover` in a
+          `min-h-[78vh]` box on a 375px phone shows a 375-wide slice of a frame
+          that has been scaled to 1477 wide. **The reader was seeing 25% of the
+          painting.** No `object-position` can fix that; the picture is simply
+          wider than the hole, which is the same finding that moved every other
+          hero.
+          So below `lg` the picture becomes a band in its own ratio and the copy
+          sits under it on the section's own onyx — identical in structure to
+          `PageHero`'s cinematic tone, and identical in consequence: white on
+          onyx is ~15:1, so the phone stops being a contrast case entirely.
+          ⚠️ ONE `<Image>`, not two. A `display:none` image is still fetched, so
+          the obvious `lg:hidden` band + `hidden lg:block` backdrop build costs
+          every phone a second full-size hero download. The WRAPPER changes job
+          at the breakpoint instead; `fill` is satisfied either way because both
+          states are positioned. */}
+      <section className="relative isolate overflow-hidden bg-onyx-900 lg:flex lg:min-h-[clamp(30rem,78vh,44rem)] lg:items-center">
+        <div className="relative aspect-[1916/821] w-full lg:absolute lg:inset-0 lg:aspect-auto">
+          <Image
+            src="/hero/hero-30-1916.webp"
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          {/* ⚠️ `hidden lg:block`. The scrim is a legibility device for type
+              sitting ON the picture; below `lg` nothing sits on it, so leaving
+              it there would darken a band that has no words in it — spending
+              the painting for nothing. Same rule as `veil` in PageHero. */}
+          <div
+            className="pointer-events-none absolute inset-0 hidden lg:block"
+            aria-hidden="true"
+            style={{
+              background:
+                "linear-gradient(to right, rgba(10,10,9,0.53) 0%, rgba(10,10,9,0.43) 34%, rgba(10,10,9,0.23) 64%, rgba(10,10,9,0.28) 100%), " +
+                "linear-gradient(to bottom, rgba(10,10,9,0.37) 0%, rgba(10,10,9,0.13) 38%, rgba(10,10,9,0.35) 100%)",
+            }}
+          />
+          {/* ⚠️ THE FLAT MOBILE VEIL IS GONE, AND THAT IS THE SAME CHANGE, NOT A
+              SEPARATE ONE. It existed because `object-cover` in a tall box
+              cropped a phone to the frame's centre slice, so the horizontal
+              gradient's argument was off-screen and the eyebrow landed on
+              whatever sat in the middle — measured at 4.23 on hero-29's
+              inherited 0.18, which is what raised it to 0.28. There is no
+              centre slice any more and no copy over the picture, so the veil
+              has nothing left to protect and would only mute the band.
+              ⚠️ If the copy is ever moved back on top of the picture below
+              `lg`, this veil has to come back WITH it — do not restore one
+              without the other. */}
+        </div>
         {/* The only particles on the site, over the picture rather than on a
             black panel, so they read as late light in the air. */}
         <GoldDust />
@@ -810,8 +824,13 @@ export default async function VaultPage() {
           cost clarity, and the verification paragraph in particular is the one
           that stops a premium presentation from implying a legal opinion
           nobody has given. */}
+      {/* ⚠️ `pb-phi5 lg:pb-phi7` below. This was `pb-phi7` at every width, and
+          stacked on the footer's own 9rem top margin it left 288px of empty
+          canvas under the closing line on a phone — half of the "excessive
+          empty space before the footer" report. The other half was the footer's
+          own margin, fixed in SiteFooter. */}
       {settings.legal ? (
-        <Container className="pb-phi7">
+        <Container className="pb-phi5 lg:pb-phi7">
           <div className="rounded-xl border border-line p-phi4">
             <p className="rj-eyebrow text-ink-faint">Please note</p>
             <div className="mt-phi3 space-y-phi3 text-tiny leading-relaxed text-ink-muted">
@@ -822,10 +841,29 @@ export default async function VaultPage() {
             </div>
           </div>
 
-          <p className="mt-phi5 text-center text-lg leading-relaxed text-ink-muted">
-            Exceptional property doesn&rsquo;t always need a listing.
-            <br className="hidden sm:block" /> Sometimes it needs the right introduction.
-          </p>
+          {/* ⚠️ THE CLOSING LINE IS A COMPOSED BLOCK NOW, not a centred
+              paragraph. Reported as "the paragraph is centered with a narrow
+              text width, causing awkward line breaks… the content feels
+              disconnected from the rest of the page", and both halves were
+              true for the same reason: it was a bare `<p>` with no measure, so
+              on a phone it wrapped to four ragged lines at whatever width the
+              container happened to be, and nothing tied it to the section
+              above it.
+
+              `max-w-[34rem] mx-auto` gives it a measure instead of a viewport,
+              `text-balance` evens the lines rather than filling each one and
+              orphaning the remainder, and the gold rule above is the site's own
+              `rule-gold` — the same mark that closes the footer and opens every
+              hero eyebrow — which is what connects it rather than leaving it
+              floating. The `<br>` stays desktop-only: at 34rem the two
+              sentences break naturally on a phone. */}
+          <div className="mt-phi5 flex flex-col items-center">
+            <span className="h-px w-24 rule-gold" aria-hidden="true" />
+            <p className="mt-phi3 max-w-[34rem] text-balance text-center text-lg leading-relaxed text-ink-muted">
+              Exceptional property doesn&rsquo;t always need a listing.
+              <br className="hidden sm:block" /> Sometimes it needs the right introduction.
+            </p>
+          </div>
         </Container>
       ) : null}
     </>

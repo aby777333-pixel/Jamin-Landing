@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
-import { getProperties, secondaryImage } from "@/lib/properties";
+import { getProperties } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 import { SITE_URL } from "@/lib/supabase";
 import { seoTitle } from "@/lib/seo";
@@ -65,9 +65,24 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   };
 
   // One image per stage, so the pages are visually distinct rather than copies
-  // of the same header. `completed` is deliberately absent: it opens with a
-  // photograph of a delivered project instead, which is both truer to its
-  // subject and what releases hero-10 back to /contact.
+  // of the same header.
+  //
+  // 🚨 `completed` HAS AN ENTRY NOW, AND IT REVERSES A DELIBERATE RULE.
+  // Until 2026-08-13 it deliberately had none: it opened with `secondaryImage()`
+  // of the delivered development, because public/hero/README.md says a render
+  // must NEVER appear on this page — its subject genuinely is a handed-over
+  // project, and real photography is what belongs there. The owner asked for
+  // hero-40 with that on the table, so the photograph is gone and the page now
+  // opens on brand imagery like every other stage.
+  //
+  // ⚠️ Two things follow, and they are why this is written down rather than
+  // just done. The frame shows a lit avenue of finished VILLAS while the
+  // listing under it holds one PLOTTED development (Udumalaipet, 400 cents /
+  // 60 plots) — the picture and the page are not describing the same thing.
+  // And because `photo` is no longer passed, the image is decoration by
+  // construction: `alt=""`, `aria-hidden`, no caption, ever. Restoring the
+  // photograph is a two-line revert; the `secondaryImage` path is still live on
+  // /projects and needs no work to come back.
   //
   // `current` ("Upcoming" in the app) now has hero-11, supplied 2026-08-08.
   // It previously had none, and the page would have fallen back to hero-05 and
@@ -77,7 +92,12 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // skyline render. This is the direction hero/README.md already prefers — a
   // page whose subject genuinely IS a Jamin project should carry a real
   // photograph rather than brand imagery of nowhere.
-  const ART_BY_PHASE: Record<string, HeroArt> = { ongoing: 31, current: 11, future: 33 };
+  const ART_BY_PHASE: Record<string, HeroArt> = {
+    ongoing: 31,
+    current: 11,
+    future: 33,
+    completed: 40,
+  };
 
   /**
    * 🚨 THE SIGN IS AT THE FAR LEFT OF BOTH NEW FRAMES, AND `paper` FADES THE
@@ -131,16 +151,21 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    * where a second wordmark duplicates the header. Cropping by position keeps
    * the original whole for the phone and for any future use.
    */
-  const ART_POSITION_BY_PHASE: Record<string, string> = { ongoing: "right", future: "right" };
-
-  // The SECOND photograph, not the cover: the same project is carded in the
-  // grid directly below this hero, and the cover is what that card shows. Falls
-  // back to the render if there is no photograph at all, so a thin record
-  // degrades to the old header rather than to an empty hero.
-  const delivered = phase === "completed" ? items.find((p) => secondaryImage(p)) : undefined;
-  const photo = delivered
-    ? { src: secondaryImage(delivered)!, alt: `${delivered.title}, a completed Jamin development` }
-    : undefined;
+  /**
+   * ⚠️ `completed` anchors RIGHT for the opposite reason to the other two.
+   *
+   * On hero-31 and hero-33 the board is at the far LEFT and the anchor moves it
+   * out of the fade. hero-40's wall is at the far RIGHT (source x ~1370–1921 of
+   * 1921), and the box crops to about 83% of the source width, so a `left`
+   * anchor would slice the wall at 83% — a sign cut in half, which is exactly
+   * the artefact hero-33 was trimmed to avoid. Anchoring right keeps it whole
+   * and drops the far-left pavement instead, which carries nothing.
+   */
+  const ART_POSITION_BY_PHASE: Record<string, string> = {
+    ongoing: "right",
+    future: "right",
+    completed: "right",
+  };
 
   return (
     <>
@@ -148,16 +173,14 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      {/* ⚠️ Same tone and size for every stage.
-          Giving `completed` a photograph earlier also flipped it to
-          `cinematic`, which moved its heading ON TO the image while Ongoing and
-          Future kept theirs above it — three sibling pages with three different
-          content structures. The photograph was the point; the tone change was
-          an accident of how it was wired. `paper` keeps the hierarchy identical
-          across the section, and the photograph still replaces the render. */}
+      {/* ⚠️ Same tone and size for every stage. Giving `completed` a photograph
+          once flipped it to `cinematic`, which moved its heading ON TO the image
+          while Ongoing and Future kept theirs above it — three sibling pages
+          with three different content structures. `paper` keeps the hierarchy
+          identical across the section, and it stays that way now that the
+          photograph has been replaced by hero-40. */}
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
-        photo={photo}
         artPosition={ART_POSITION_BY_PHASE[phase] ?? "left"}
         /* See-through copy plate, at the owner's request 2026-08-12. `gilt-light`
            is 0.74 with a 14px backdrop blur; `rj-gilt-light-sheer` drops the blur
@@ -171,7 +194,35 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
            against 4.07 at the opaque one — so the narrow widths keep 0.74. Read
            the sweep on `.rj-gilt-light-sheer` before touching either number. */
         sheer
-        sheerAlpha={0.26}
+        /* 🚨 PER PHASE NOW, AND hero-40 IS WHY — the pair rule again: a plate's
+           contrast belongs to the plate AND the picture, never to the plate
+           alone. 0.26 was swept against hero-31 and hero-33, whose overlap strip
+           at 1440 is a pale, faded edge. hero-40 is dusk: the same strip is dark
+           tarmac and shadowed kerb, and the lead paragraph (20.35px regular, so
+           AA is 4.5 and not the 3.0 large-text allowance) measured **4.02 at the
+           darkest pixel** carried over unchanged. It would have shipped
+           invisibly, because swapping the art looks like a one-line change.
+
+           Swept on the built page at 1440 — the width where this plate goes
+           sheer — compositing the served rendition through `hero-fade`'s mask
+           and then the tint, worst pixel inside each text box:
+
+               0.26 → lead 4.02 · h1 7.09   ← hero-31/33's value, fails here
+               0.34 → lead 4.56 · h1 7.96   ← the floor, and only by 0.06
+               0.42 → lead 5.06 · h1 8.88   ← ships
+               0.50 → lead 5.65 · h1 9.82
+               0.74 → lead 7.64 · h1 13.11  ← the opaque plate
+
+           0.42 rather than the 0.34 floor because a 0.06 margin is not a margin
+           in a model that is a comparison rather than an audit. The eyebrow is
+           7.52 at every step: it sits left of the band at every width and never
+           touches the picture, which is why the LEAD binds on this tone where
+           the eyebrow binds on the cinematic one.
+
+           ⚠️ Applying the mask is not optional in this measurement. Without it
+           the same lead reads 1.01 — `hero-fade` makes the leftmost 22% of the
+           image box transparent, and the whole overlap sits inside that. */
+        sheerAlpha={phase === "completed" ? 0.42 : 0.26}
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}
