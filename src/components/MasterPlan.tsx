@@ -515,8 +515,25 @@ export function MasterPlan({
 
       {/* the drawing's own particulars */}
       {(plan.approvalNo || plan.areaStatement?.length) && (
-        <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2">
-          <dl className="space-y-2 text-base">
+        /* ⚠️ A DIVIDED PAIR, and the divider is the point.
+           Reported as "the information should be clearly divided into left and
+           right sections… ensure both sections have clear and equal visual
+           space… use a simple divider or spacing between the two". It was
+           already `lg:grid-cols-2`, so the split existed; what it lacked was any
+           mark saying where one section ends and the other begins, and at `lg`
+           the two 253px columns were narrow enough that the reader had to infer
+           it from alignment alone.
+           `lg:gap-phi5` + a hairline on the right column gives the boundary;
+           below `lg` the columns stack and the rule would be a line across the
+           middle of nothing, so it is scoped to `lg` and the Area statement's
+           own heading carries the separation on a phone. */
+        <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2 lg:gap-phi5">
+          {/* ⚠️ `@container`, so PlanRow can respond to THIS COLUMN's width
+              rather than the viewport's. The column is 242px at 1024 and 337px
+              at 1440 on a page whose main content sits beside a sticky aside —
+              a viewport breakpoint cannot see that difference and would pick the
+              wrong layout at one of the two. */}
+          <dl className="@container space-y-2 text-base">
             {plan.approvalNo && <PlanRow label="Approval no." value={plan.approvalNo} />}
             {plan.authority && <PlanRow label="Sanctioned by" value={plan.authority} />}
             {plan.surveyNos && <PlanRow label="Survey numbers" value={plan.surveyNos} />}
@@ -530,7 +547,7 @@ export function MasterPlan({
           </dl>
 
           {plan.areaStatement?.length ? (
-            <div>
+            <div className="lg:border-l lg:border-line lg:pl-phi5">
               {/* h3: this sits under the "The layout" h2, and h4 would skip a level. */}
               <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
                 Area statement
@@ -730,11 +747,37 @@ function SheetSection({ label, children }: { label: string; children: React.Reac
   );
 }
 
+/**
+ * ⚠️ A TWO-TRACK GRID, NOT `flex flex-wrap justify-between`.
+ *
+ * The report's line is "keep labels and corresponding values aligned within
+ * their respective columns", and wrapping flex cannot do that: when a value is
+ * too long for the space left beside its label it becomes a new flex line, and
+ * `justify-between` on a single item puts it at flex-start — so "Directorate of
+ * Town and Country Planning" dropped to a full-width line hard against the left
+ * margin while "1:1000" stayed right-aligned two rows below. Measured at 1024,
+ * where the containing column is 253px, FOUR of the five rows did that; the
+ * left column read as a ragged stack rather than a set of pairs.
+ *
+ * With a grid the value keeps its own track and wraps INSIDE it, right-aligned,
+ * at every width — which is also what the reference design in the report shows.
+ * `minmax(0,auto)` on the label lets a long label shrink rather than pushing the
+ * value out of the box.
+ *
+ * ⚠️ IT PAIRS ONLY WHEN THE COLUMN CAN AFFORD IT — `@[19rem]`, a CONTAINER
+ * query on the `dl`, not a viewport breakpoint. Forced side-by-side at every
+ * width just moves the damage: at 1024 the column is 242px, the label eats 110
+ * of it and "214/1B, 214/2, 215/1" came back as three lines and "Directorate of
+ * Town and Country Planning" as four. Under 304px the pair stacks — label over
+ * value, both left — which is the same information in two clean lines. The
+ * threshold is the width at which a two-line value becomes the exception rather
+ * than the rule; re-measure it if the labels are ever rewritten longer.
+ */
 function PlanRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-line pb-2">
+    <div className="grid gap-x-phi3 border-b border-line pb-2 @[19rem]:grid-cols-[minmax(0,auto)_minmax(0,1fr)] @[19rem]:items-baseline">
       <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">{label}</dt>
-      <dd className="text-base text-ink">{value}</dd>
+      <dd className="mt-0.5 text-base text-ink @[19rem]:mt-0 @[19rem]:text-right">{value}</dd>
     </div>
   );
 }

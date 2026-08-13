@@ -95,8 +95,27 @@ export function AccountShell({ title, children }: { title: string; children: Rea
             is 72px and becomes 80px at `lg`, so a hard-coded 6rem is wrong at
             one of the two — the same token every other sticky aside on this
             site offsets by. */}
+        {/* 🚨 `min-w-0` IS THE FIX FOR THE WHOLE-PAGE HORIZONTAL SCROLL, and it
+            has to be on THIS element — the grid ITEM — not on the nav inside it.
+
+            A grid item's default `min-width: auto` is the min-content width of
+            its contents, and a horizontal scroller contributes its full track
+            rather than zero. So the nav never scrolled: the column simply grew
+            to fit all eight tabs, measured **848px inside a 375px viewport**,
+            and every card in the content column stretched to match. Reported
+            2026-08-13 as "content extends beyond the right edge… the page
+            requires horizontal scrolling", with the tab strip and the cards both
+            hanging off the right — one cause, both symptoms.
+
+            ⚠️ It is worst for a PARTNER, which is why it can be missed: a buyer
+            sees four tabs, a partner sees eight. Test this signed in as a
+            partner, not as a buyer.
+
+            ⚠️ The content column at the foot of this grid already had `min-w-0`
+            for exactly this reason. Two items, one rule — a grid is only as
+            narrow as its widest un-pinned item. */}
         <div
-          className="flex flex-col gap-phi3 lg:sticky lg:z-10 lg:max-h-[calc(100dvh-var(--header-h)-2.5rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
+          className="flex min-w-0 flex-col gap-phi3 lg:sticky lg:z-10 lg:max-h-[calc(100dvh-var(--header-h)-2.5rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
           style={{ top: "calc(var(--header-h) + 1.25rem)" }}
         >
         {/* `overscroll-contain` on the mobile scroller stops a horizontal flick

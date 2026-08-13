@@ -136,6 +136,54 @@ export function VisitBooking({
   const [done, setDone] = useState<{ ref?: string; when?: string } | null>(null);
   const doneRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * 🚨 THE CALENDAR IS CLOSED UNTIL IT IS ASKED FOR (2026-08-13).
+   *
+   * It used to render the whole month grid on load. Reported as "the full
+   * calendar is displayed immediately… it takes up a large amount of space… it
+   * makes the booking form unnecessarily long", and that is exactly right: a
+   * six-row month is ~300px of the tallest step in a five-step form, spent
+   * before the reader has decided they want to book at all.
+   *
+   * It is now a field that opens a floating panel. `absolute`, so it OVERLAYS —
+   * the report is explicit that opening it must not push the rest of the form
+   * down, and an in-flow panel would move the time slots and every field under
+   * it on every open.
+   */
+  const [calOpen, setCalOpen] = useState(false);
+  const calWrapRef = useRef<HTMLDivElement>(null);
+  const calFieldRef = useRef<HTMLButtonElement>(null);
+
+  /**
+   * ⚠️ ONE handler for outside-click AND Escape, and it tests the WRAPPER, not
+   * the panel. The panel and its trigger are two elements; testing only the
+   * panel closes it on `pointerdown` on the trigger and the trigger's own click
+   * then re-opens it, so the field becomes impossible to close by clicking it.
+   * The same containment mistake is written up against the plot sheet and the
+   * header in this codebase — test every container, not the obvious one.
+   *
+   * ⚠️ `pointerdown`, not `click`: a `click` listener fires after the button's
+   * own handler and after any re-render, and on a touch device it arrives late
+   * enough to feel broken.
+   */
+  useEffect(() => {
+    if (!calOpen) return;
+    const onDown = (e: PointerEvent) => {
+      if (!calWrapRef.current?.contains(e.target as Node)) setCalOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      setCalOpen(false);
+      calFieldRef.current?.focus();
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [calOpen]);
+
   useEffect(() => {
     captureAttribution();
   }, []);
@@ -315,7 +363,59 @@ export function VisitBooking({
       {/* ---- 2. the date ---- */}
       <div>
         <StepLabel n={fixedProperty ? 1 : 2}>Pick a date</StepLabel>
-        <div className="mt-phi2 rounded-xl border border-line bg-canvas p-phi3">
+        {/* ⚠️ `relative` on the wrapper is what makes the panel below overlay
+            instead of pushing: it is the positioning context, and it is also the
+            subtree the outside-click handler tests. */}
+        <div className="relative mt-phi2" ref={calWrapRef}>
+          <button
+            type="button"
+            ref={calFieldRef}
+            onClick={() => setCalOpen((v) => !v)}
+            aria-haspopup="dialog"
+            aria-expanded={calOpen}
+            className="flex w-full items-center gap-3 rounded-xl border border-line bg-canvas px-phi3 py-3 text-left text-base transition-colors hover:border-ink/30 focus:border-jamin-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-jamin-gold"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-[18px] w-[18px] shrink-0 text-jamin-gold-ink"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            >
+              <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+              <path d="M3.5 9.5h17M8 3.5v3M16 3.5v3" />
+            </svg>
+            {/* ⚠️ `min-w-0` — this is a flex item holding a long date string. */}
+            <span className={`min-w-0 flex-1 truncate ${date ? "text-ink" : "text-ink-faint"}`}>
+              {date ? longDate(date) : "Select a date"}
+            </span>
+            <svg
+              viewBox="0 0 24 24"
+              className={`h-4 w-4 shrink-0 text-ink-faint transition-transform duration-300 ${calOpen ? "rotate-180" : ""}`}
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.6"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M6 9.5l6 6 6-6" />
+            </svg>
+          </button>
+
+          {calOpen && (
+          <div
+            role="dialog"
+            aria-label="Choose a date"
+            /* ⚠️ `absolute` + `z-20`: it overlays the slots and the fields below
+               rather than displacing them, which is the whole point of the
+               report. It is NOT portalled — `main` is a stacking context on this
+               site, so a portalled panel would need to clear the z-40 header;
+               anchored here it only has to beat its own siblings. */
+            className="absolute left-0 right-0 top-full z-20 mt-2 rounded-xl border border-line bg-canvas p-phi3 shadow-raise sm:max-w-sm"
+          >
           {!shownMonth ? (
             /* Rendered on the server and for the first paint. A calendar cannot
                honestly draw itself before it knows what day it is. */
@@ -375,6 +475,11 @@ export function VisitBooking({
                       onClick={() => {
                         setDate(iso);
                         setSlot(null);
+                        /* The report's flow: select → close → the field shows
+                           the date. Focus returns to the field so a keyboard
+                           reader is not dropped at the top of the document. */
+                        setCalOpen(false);
+                        calFieldRef.current?.focus();
                       }}
                       className={`aspect-square rounded-[10px] text-base transition-all duration-200 ${
                         selected
@@ -392,6 +497,8 @@ export function VisitBooking({
                 })}
               </div>
             </>
+          )}
+          </div>
           )}
         </div>
       </div>

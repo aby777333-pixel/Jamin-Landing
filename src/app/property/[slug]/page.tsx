@@ -12,6 +12,7 @@ import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { SurveyReveal } from "@/components/cadastral/SurveyReveal";
 import { SITE_URL } from "@/lib/supabase";
 import { seoDescription, seoTitle } from "@/lib/seo";
@@ -28,6 +29,7 @@ import {
   plotStatus,
   propertyHref,
   typeLabel,
+  type Property,
   type PropertyDetail,
 } from "@/lib/properties";
 
@@ -243,23 +245,28 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               </div>
               <h1 className="mt-phi3 text-4xl text-ink">{p.title}</h1>
               <p className="mt-phi2 text-lg text-ink-muted">{locationLine(p)}</p>
-            </div>
 
-            <div className="text-right">
-              <div className="ledger text-2xl text-ink">{formatPrice(p)}</div>
-              {/* Only where there is something left to price. On a delivered
-                  project this line invited an enquiry about stock that is
-                  gone. */}
-              {p.price == null && isSellable(p) && (
-                <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
-                  Our sales desk confirms the current rate — we don&rsquo;t publish estimates.
-                </p>
-              )}
-              {p.price == null && !isSellable(p) && (
-                <p className="mt-1 max-w-[15rem] text-tiny leading-relaxed text-ink-faint">
-                  Every plot here is handed over. Ask us what is selling now.
-                </p>
-              )}
+              {/* 🚨 THE STATUS CARD — directly under the location, which is where
+                  the report asked for it and where it belongs: price and
+                  availability are facts ABOUT this address, and they used to sit
+                  in a separate right-aligned column that read as unrelated
+                  furniture.
+
+                  Reported as "'Sold out' and 'Price on request' feel
+                  disconnected from the property information… presented as plain
+                  text… does not feel consistent with the premium design". The
+                  old block was a bare `text-right` div: a ledger figure with a
+                  grey sentence under it, floating opposite the title.
+
+                  ⚠️ ONE STRUCTURE, THREE STATES. Mark, headline, supporting
+                  lines — the content changes, the shape never does, which is the
+                  report's "keep the same card structure across different
+                  property statuses". `StatusCard` at the foot of this file holds
+                  the three. Subtle tints and a hairline rather than decoration,
+                  per the same brief. */}
+              <div className="mt-phi3 max-w-md">
+                <StatusCard p={p} />
+              </div>
             </div>
           </header>
 
@@ -640,16 +647,39 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               this page because they are the clearest picture of how a Jamin development is
               planned — and the next one is planned the same way.
             </p>
-            <div className="mt-phi4 flex flex-wrap gap-3">
+            {/* ⚠️ A GRID, NOT `flex flex-wrap`. Reported as "both buttons
+                appear small and centered… excessive empty space on both sides…
+                the CTAs do not feel like primary actions", and the cause was
+                that content-sized pills in a wrap container take exactly as much
+                room as their labels — "See what is selling" is 22 characters, so
+                on a phone it made a button about two thirds of the card wide
+                with nothing beside it.
+
+                One column, `max-w-2xl` so the pair lines up with the heading and
+                the paragraph above rather than stretching to a 1200px slab on a
+                desktop, and `w-full` + `text-center` inside each cell so both
+                are the same width, the same height and the same radius, with the
+                label optically centred. Colours and radius are untouched, which
+                the report asked for explicitly.
+
+                ⚠️ `auto-rows-fr` + `h-full` is what makes the two the same
+                HEIGHT, and it is not cosmetic. At 375 the card's inner box is
+                267px and "Tell us what you are after" wraps to two lines while
+                "See what is selling" does not — measured 47px against 67px, so
+                full-width alone left them visibly mismatched. Equal-fraction
+                rows give both cells the taller one's height, and the inner flex
+                centres each label in the space, which is the report's "center
+                the button text horizontally and vertically". */}
+            <div className="mt-phi4 grid max-w-2xl auto-rows-fr gap-3">
               <Link
                 href="/properties"
-                className="rounded-full bg-white px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-canvas"
+                className="flex h-full w-full items-center justify-center rounded-full bg-white px-6 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-canvas"
               >
                 See what is selling
               </Link>
               <Link
                 href="/contact"
-                className="glass-dark rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
+                className="glass-dark flex h-full w-full items-center justify-center rounded-full px-6 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
               >
                 Tell us what you are after
               </Link>
@@ -670,5 +700,84 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       )}
       </div>
     </article>
+  );
+}
+
+/**
+ * The status card that sits under the location line.
+ *
+ * ⚠️ ONE SHAPE, THREE STATES — mark, headline, supporting lines. The report
+ * asked for "the same card structure across different property statuses while
+ * changing the content accordingly", and that is worth holding to for a reason
+ * beyond consistency: a reader who has looked at one Jamin property should be
+ * able to find the price on the next one without reading, and a card that
+ * changes shape with its meaning defeats that.
+ *
+ * ⚠️ IT INVENTS NOTHING. The three states are exactly the three `formatPrice`
+ * already distinguishes, and where there is no published rate the card says so
+ * and points at the desk — the standing rule on this site is that it would
+ * rather say "not published yet" than quote a number it cannot stand behind.
+ *
+ * ⚠️ Tints, not decoration: `jamin-red-soft` for sold out (an end state),
+ * `jamin-gold-soft` for a rate that has to be asked for, `canopy-soft` where a
+ * real figure is published. All three are existing tokens with audited ink
+ * partners — do not reach for a colour this site does not already own.
+ */
+function StatusCard({ p }: { p: Property }) {
+  const priced = p.price != null && Number(p.price) > 0;
+  const selling = isSellable(p);
+
+  const state = !selling
+    ? {
+        icon: "stamp" as const,
+        tone: "border-jamin-red/25 bg-jamin-red-soft",
+        markTone: "bg-white/70 text-jamin-red-deep",
+        title: p.status === "sold" ? "Sold out" : "Not for sale",
+        lines: [
+          "Every plot here has been handed over.",
+          "The layout, the approvals and the documents stay on this page.",
+        ],
+      }
+    : priced
+      ? {
+          icon: "ledger" as const,
+          tone: "border-canopy/25 bg-canopy-soft",
+          markTone: "bg-white/70 text-canopy",
+          title: formatPrice(p),
+          lines: [
+            "The published rate for this development.",
+            "Confirmed by our sales desk at the time of booking.",
+          ],
+        }
+      : {
+          icon: "deed" as const,
+          tone: "border-jamin-gold/30 bg-jamin-gold-soft",
+          markTone: "bg-white/70 text-jamin-gold-ink",
+          title: "Price on request",
+          lines: [
+            "Current pricing is available through our sales desk.",
+            "Contact us for the latest rate and availability.",
+          ],
+        };
+
+  return (
+    <div className={`flex items-start gap-phi3 rounded-card border p-phi3 ${state.tone}`}>
+      <span
+        aria-hidden="true"
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-card ${state.markTone}`}
+      >
+        <SurveyIcon name={state.icon} className="h-[22px] w-[22px]" />
+      </span>
+      {/* ⚠️ `min-w-0` — a flex item's default minimum is its content, and the
+          second line is long enough to push this card past its column. */}
+      <div className="min-w-0">
+        <p className="ledger text-xl leading-none text-ink">{state.title}</p>
+        {state.lines.map((l) => (
+          <p key={l} className="mt-1.5 text-tiny leading-relaxed text-ink-muted">
+            {l}
+          </p>
+        ))}
+      </div>
+    </div>
   );
 }
