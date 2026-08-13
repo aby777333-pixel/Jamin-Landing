@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { supabase } from "@/lib/supabase";
+import { DaypartMark } from "@/components/cadastral/DaypartMark";
 import { captureAttribution, currentRef } from "@/lib/attribution";
 
 /**
@@ -23,11 +24,62 @@ import { captureAttribution, currentRef } from "@/lib/attribution";
  * server-side with "Please choose a visiting time", which is a baffling error
  * to hit after you have chosen one.
  */
+/**
+ * 🚨 THE SLOTS CARRY A TIME OF DAY, AND THE COLOUR IS EXISTING PALETTE ONLY.
+ *
+ * Owner's brief 2026-08-13: once a date is chosen, the four times should stop
+ * being four identical outlines and start reading as morning, midday, afternoon
+ * and evening — "mild bright… bright and sun… little milder, lazy… mild
+ * relaxing" — with a drawn mark each.
+ *
+ * ⚠️ NO NEW COLOUR AND NO NEW FONT. Every tint below is a token this site
+ * already owns, used at low alpha: gold-soft for first light, the fill gold for
+ * noon, earth for the sandy afternoon, canopy for the cool of the evening. The
+ * sequence warms and then cools, which is what a day does; it is not four
+ * decorative hues.
+ *
+ * ⚠️ THE SELECTED STATE STAYS RED. Red is this site's single selection colour
+ * and the one thing on this form that must never be ambiguous — a slot tinted
+ * in its own hour would compete with it. So the palette plays on the AVAILABLE
+ * state and hands over the moment a slot is chosen; the mark simply turns white
+ * and goes with it.
+ *
+ * ⚠️ `ring` on hover rather than `border`, so the box never changes size and
+ * the four never shift by a pixel against each other.
+ */
 const SLOTS = [
-  { label: "Morning · 9–11 am", hour: 9 },
-  { label: "Midday · 11 am–1 pm", hour: 11 },
-  { label: "Afternoon · 2–4 pm", hour: 14 },
-  { label: "Evening · 4–6 pm", hour: 16 },
+  {
+    label: "Morning · 9–11 am",
+    hour: 9,
+    part: "morning",
+    /* First light: the palest warm the site has. */
+    tint: "border-jamin-gold/25 bg-jamin-gold-soft text-ink-soft hover:bg-jamin-gold/12 hover:ring-1 hover:ring-jamin-gold/40",
+    mark: "text-jamin-gold-ink",
+  },
+  {
+    label: "Midday · 11 am–1 pm",
+    hour: 11,
+    part: "midday",
+    /* Overhead — the brightest step, and the only one that uses the fill gold. */
+    tint: "border-jamin-gold/40 bg-jamin-gold/14 text-ink-soft hover:bg-jamin-gold/22 hover:ring-1 hover:ring-jamin-gold/55",
+    mark: "text-jamin-gold-ink",
+  },
+  {
+    label: "Afternoon · 2–4 pm",
+    hour: 14,
+    part: "afternoon",
+    /* The heat lying flat: earth, the palette's sand. */
+    tint: "border-earth/28 bg-earth/10 text-ink-soft hover:bg-earth/16 hover:ring-1 hover:ring-earth/40",
+    mark: "text-earth",
+  },
+  {
+    label: "Evening · 4–6 pm",
+    hour: 16,
+    part: "evening",
+    /* Cooling off: canopy, the one green in the set. */
+    tint: "border-canopy/25 bg-canopy-soft text-ink-soft hover:bg-canopy/12 hover:ring-1 hover:ring-canopy/40",
+    mark: "text-canopy",
+  },
 ] as const;
 
 /** How far ahead the desk will take a booking. Mirrors the RPC's 90 days. */
@@ -510,20 +562,37 @@ export function VisitBooking({
           {SLOTS.map((s) => {
             const open = slotOpen(s.hour);
             return (
+              /* Three states, and the middle one is the new part: an
+                 unavailable slot stays grey and inert, a chosen slot is red,
+                 and a slot you COULD take now wears its own hour. Before a date
+                 is picked every slot is in the first state, so choosing the date
+                 is what lights the row — which is exactly the moment the form
+                 becomes usable. */
               <button
                 key={s.label}
                 type="button"
                 disabled={!date || !open}
                 aria-pressed={slot === s.label}
                 onClick={() => setSlot(s.label)}
-                className={`rounded-card border px-phi2 py-2.5 text-tiny font-medium transition-all duration-300 ${
+                className={`flex items-center justify-center gap-2 rounded-card border px-phi2 py-2.5 text-tiny font-medium transition-all duration-300 ${
                   slot === s.label
                     ? "border-jamin-red bg-jamin-red text-white"
                     : !date || !open
                       ? "cursor-not-allowed border-line bg-canvas-alt text-ink-faint/60"
-                      : "border-line bg-canvas text-ink-soft hover:border-ink/30"
+                      : `${s.tint} hover:-translate-y-px`
                 }`}
               >
+                <DaypartMark
+                  part={s.part}
+                  size="h-4 w-4"
+                  className={`shrink-0 transition-colors duration-300 ${
+                    slot === s.label
+                      ? "text-white"
+                      : !date || !open
+                        ? "text-ink-faint/50"
+                        : s.mark
+                  }`}
+                />
                 {s.label}
               </button>
             );

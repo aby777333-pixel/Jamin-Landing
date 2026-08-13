@@ -87,8 +87,13 @@ export function VaultDock({
           className="fixed bottom-24 left-5 right-5 z-40 rounded-xl border border-champagne-500/40 bg-canvas p-phi3 shadow-raise print:hidden sm:right-auto sm:w-[21rem]"
         >
           <p className="rj-eyebrow text-jamin-gold-ink">Speak to The Vault</p>
+          {/* ⚠️ "An executive", not "a relationship manager" — owner's wording,
+              2026-08-13. It is also the more honest of the two: a relationship
+              manager is a titled role this business does not staff, and naming
+              a role nobody holds is the kind of small claim the rest of this
+              site refuses to make. */}
           <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
-            A relationship manager, not a call centre. Private enquiries, personal attention.
+            An executive, not a call centre. Private enquiries, personal attention.
           </p>
 
           <div className="mt-phi3 space-y-1">

@@ -458,12 +458,25 @@ export function PropertiesMap({
           const on = active === p.id;
           return (
             <li key={p.id}>
+              {/* 🚨 EACH ROW WARMS TO ITS OWN STAGE ON HOVER (owner, 2026-08-13:
+                  "on mouse over can we have different subtle colours").
+                  ⚠️ The colour is not decoration and it is not new: it is the
+                  STAGE this development is at, in tokens the site already owns —
+                  canopy for land secured, gold for work in progress, earth for
+                  what is finished and handed over. Four identical grey rows told
+                  the reader nothing; four that warm differently tell them where
+                  each project is before they read a word.
+                  ⚠️ The SELECTED row stays `border-ink bg-canvas`. Selection and
+                  stage are two different facts and must not share a channel —
+                  the same reason the time slots keep red when chosen. */}
               <Link
                 href={propertyHref(p)}
                 onMouseEnter={() => setActive(p.id)}
                 onFocus={() => setActive(p.id)}
-                className={`block rounded-card border px-phi3 py-phi2 transition-colors ${
-                  on ? "border-ink bg-canvas" : "border-line bg-canvas-alt hover:border-ink-faint"
+                className={`block rounded-card border px-phi3 py-phi2 transition-colors duration-300 ${
+                  on
+                    ? "border-ink bg-canvas"
+                    : `border-line bg-canvas-alt hover:border-ink-faint ${phaseHover(p)}`
                 }`}
               >
                 <div className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
@@ -484,4 +497,28 @@ export function PropertiesMap({
       </ul>
     </div>
   );
+}
+
+/**
+ * The hover tint for a project row, keyed to the stage it is at.
+ *
+ * ⚠️ EXISTING TOKENS ONLY, and each one is chosen rather than assigned:
+ * `canopy` for land secured and planning under way (green, nothing built yet),
+ * `jamin-gold` for work in progress (the site's colour for a thing happening
+ * now), `earth` for delivered and handed over (the ground, settled). A stage
+ * with no match falls through to the neutral hover the row already had, so a
+ * new phase in the database cannot produce a colour nobody chose.
+ */
+function phaseHover(p: { project_phase?: string | null }): string {
+  switch (p.project_phase) {
+    case "future":
+    case "current":
+      return "hover:border-canopy/30 hover:bg-canopy-soft";
+    case "ongoing":
+      return "hover:border-jamin-gold/35 hover:bg-jamin-gold-soft";
+    case "completed":
+      return "hover:border-earth/30 hover:bg-earth/8";
+    default:
+      return "";
+  }
 }
