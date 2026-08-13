@@ -11,8 +11,30 @@ it and the other two exist as a source if a layout ever needs them.
 
 | file | where | what it is |
 |---|---|---|
-| `purpose-*.webp` | homepage → "Find the right plot for your purpose" | a plotted layout at golden hour: formed roads, kerbs, street lights, plots marked out |
-| `where-we-build-*.webp` | homepage → "Find land near you" | paddy under a low sun, a house in the middle of it |
+| `purpose-gate-*.webp` | homepage → "Find the right plot for your purpose" | the gate, owner-supplied 2026-08-12 |
+| `where-we-build-gate-*.webp` | homepage → "Find land near you" | a Jamin entrance wall, gardeners planting, a roller and a backhoe on the unmade road — owner-supplied 2026-08-13 |
+| `purpose-*.webp` | — | UNUSED. A plotted layout at golden hour, replaced 2026-08-12 |
+| `where-we-build-*.webp` | — | UNUSED. Paddy under a low sun with a house in it, replaced 2026-08-13 |
+
+## ⚠️ A REPLACEMENT GETS A NEW FILENAME, NEVER THE OLD PATH
+
+`next/image` keys its optimised output by source path, so overwriting a file in
+place lets a warm build keep serving the old picture from a deploy that looks
+correct. Both swaps above are therefore new names beside the originals, and the
+originals stay in the folder unused rather than being deleted.
+
+## ⚠️ `where-we-build-gate` IS ALSO hero-39, ON /locations/tiruppur
+
+The first time one picture carries two surfaces. `public/hero/README.md` opens
+with "one image per page — no render appears twice", and this is a deliberate
+exception the owner made on 2026-08-13 with the frame already live on the
+district page. It is not a licence to reuse frames generally: if it ever reads
+as a repeat, hero-36 is in the spare pile, already swept at the same 0.52, and
+gives Tiruppur its own picture back in one line.
+
+⚠️ It also raises the provenance risk in this slot rather than leaving it where
+the paddy had it — see below. The frame carries the JAMIN BAZAAR lockup and
+looks like documentary evidence of a site under construction.
 
 ## 🚨 BRAND IMAGERY, AND THE RULE BITES HARDER HERE THAN ON A HERO
 
@@ -24,7 +46,12 @@ each one sits directly above:
 - `purpose` sits above four cards that link to real Jamin developments, and it
   depicts exactly what those developments are — a formed, plotted layout. A
   reader could take it for one of them in a heartbeat.
-- `where-we-build` sits above a map of real Jamin sites with real pins on it.
+- `where-we-build` sits above a map of real Jamin sites with real pins on it,
+  and since 2026-08-13 the frame in that slot **names itself** — the JAMIN
+  BAZAAR lockup is in shot, with workers, a roller and a backhoe around it. It
+  is the strongest provenance case in this folder and the same standing as
+  hero-19 and hero-21: it is a render, it is drawn to look like evidence, and it
+  sits one scroll above a map of places that really exist.
 
 So: `alt=""`, `aria-hidden="true"`, and **never a caption, a project name or a
 location**. If either is ever wanted with words attached, the words have to come

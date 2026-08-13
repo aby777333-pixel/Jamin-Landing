@@ -278,14 +278,32 @@ export default async function HomePage() {
       {facets.districts.length > 0 && (
         <Container className="py-phi6">
           {/* Same empty-right-half problem as the purpose section above, and the
-              photograph the owner supplied for it on 2026-08-11 — paddy under a
-              low sun with a house in the middle of it.
+              photograph the owner chose for it — a Jamin entrance wall with a
+              layout being built behind it: gardeners planting, a roller and a
+              backhoe on the unmade road. Owner-supplied 2026-08-13, replacing
+              the paddy-at-low-sun frame that had been here since 08-11.
 
-              ⚠️ Brand imagery: a render of nowhere, `alt=""`, `aria-hidden`,
-              never captioned. It sits directly above a map of real Jamin
-              developments, so the temptation to label it will be strong and the
-              answer is still no. Hidden below `lg`, where the column is full
-              width anyway. */}
+              ⚠️ A NEW FILENAME, not a new file at the old path. `next/image`
+              keys its optimised output by source path, so overwriting
+              `where-we-build-1672.webp` would let a warm build keep serving the
+              old picture from a deploy that looks correct. Same trap recorded
+              against hero-27 and against purpose-gate.
+
+              ⚠️ IT IS THE SAME PICTURE AS hero-39 ON /locations/tiruppur, which
+              breaks the register's one-frame-one-surface rule for the first
+              time. Owner's choice, made with the frame already live there. The
+              two are a scroll apart for anyone who lands here and then opens
+              Tiruppur, so if it ever reads as a repeat the cheap fix is to give
+              that district page hero-36 back — it is in the spare pile, already
+              swept at the same 0.52, and nothing else has claimed it.
+
+              🚨 Brand imagery, and the rule binds HARDER than it did on the
+              paddy: this frame carries the JAMIN BAZAAR lockup and is drawn to
+              look like documentary evidence of a site under construction, and
+              it sits directly above a map of real Jamin developments with real
+              pins on it. `alt=""`, `aria-hidden`, and never a caption, a
+              location or a project name. Hidden below `lg`, where the column is
+              full width anyway. */}
           <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
@@ -298,7 +316,7 @@ export default async function HomePage() {
 
             <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
               <Image
-                src="/section/where-we-build-1672.webp"
+                src="/section/where-we-build-gate-1881.webp"
                 alt=""
                 aria-hidden="true"
                 fill
