@@ -823,6 +823,12 @@ at x 470; it actually ends at 498, and a cut at 494 would have left a 4px seam.
 
 ## hero-34/35/36 -> the district pages (2026-08-12)
 
+⚠️ **SUPERSEDED IN PART 2026-08-13** — hero-34 (Erode) and hero-36 (Tiruppur)
+were replaced by hero-38 and hero-39 the next day and are now SPARE. Only
+hero-35 (Salem) is still on a page. Everything below is the record of that
+shoot and is still the reference for the sweep; the live numbers are in the
+hero-38/39 entry above.
+
 Owner-supplied, one shoot: golden-hour Jamin layouts with the marble JAMIN
 BAZAAR sign. hero-34 Erode, hero-35 Salem, hero-36 Tiruppur. Coimbatore keeps
 hero-17 at the owner's request, which is why ART_BY_DISTRICT has no entry for it.
@@ -864,6 +870,48 @@ defect - the sign reads through the sheer plate - but it is why these were given
 `cinematic` rather than `paper`: the paper tone fades its left 22%, which is
 exactly where the sign is, and hero-31/33 already paid for that lesson.
 
+
+## hero-38 -> /locations/erode · hero-39 -> /locations/tiruppur (2026-08-13)
+
+Owner-supplied, replacing hero-34 and hero-36 the day after they shipped. Salem
+keeps hero-35 and Coimbatore keeps hero-17, so the district set is now three
+pictures from two different shoots. Untrimmed:
+
+| id | native | widths (KB) | subject |
+|---|---|---|---|
+| hero-38 | 1921x819 | 768 / 1280 / 1921 (66 / 163 / 308) | palm avenue and formed roads, a backhoe at work, a woman planting a bed, the JAMIN BAZAAR hoarding at the right |
+| hero-39 | 1881x836 | 768 / 1280 / 1881 (65 / 169 / 320) | timber-and-stone entrance wall with the JAMIN BAZAAR lockup, gardeners planting, a roller and an excavator on the unmade road at the right |
+
+WARNING: THEY ARE A DIFFERENT SHOOT FROM 34/35/36 AND WERE SWEPT AS ONE. That
+register entry ends "if a district frame is ever swapped for one from a
+different shoot, sweep it on its own", and this is that case. The value did not
+move — `SHEER_ALPHA` is still 0.52 — but it is now held by a measurement of
+these frames rather than by inheritance. The full table is in
+`src/app/locations/[district]/page.tsx`; the short version is that the new
+frames are hazier and flatter, so they read lower at p95 and HIGHER at the worst
+pixel (hero-38 4.56 at 1024 against hero-34's 4.53), and the worst pixel is what
+binds. **A picture and its `sheerAlpha` are one change, not two** — that rule
+held here even though the answer came back unchanged.
+
+⚠️ **Neither needs a trim, and the swap RETIRES two trims.** hero-34 was cut at
+source x 1422 to lose a "ROYAL CHETTINADU ENCLAVE" plaque — a development name
+not in the catalogue, on the page whose job is to list the catalogue — and both
+34 and 36 also bake a "PLOT 125" plaque into the marble. Every one of those
+goes with the picture; the only baked words left on 38 and 39 are the brand's
+own lockup. That makes these the lowest-risk frames the district pages have
+carried, and it is why they are exported at full native width.
+
+⚠️ Same standing rule as everything else in this folder, and it binds hard here
+because both frames are drawn to look like documentary evidence of work in
+progress, exactly as hero-21 is: `alt=""`, `aria-hidden`, never a caption, never
+a location, never a project name, never on a property card or in a gallery.
+
+⚠️ `cinematic`, not `paper`, for the same reason 34/35/36 were: the board sits
+in the left half of hero-39 and `paper` fades its leftmost 22% — the mistake
+hero-31 and hero-33 already paid for. The copy plate does sit over hero-39's
+lockup; the sign reads through the sheer tint, which is the treatment working.
+
+hero-34 and hero-36 return to the spare pile. hero-35 is untouched.
 
 ## hero-37 -> /properties (2026-08-12)
 

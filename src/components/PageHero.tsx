@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39;
 
 /** The widest rendition that exists for each source image. */
 const TOP_WIDTH: Record<HeroArt, number> = {
@@ -105,6 +105,20 @@ const TOP_WIDTH: Record<HeroArt, number> = {
   34: 1422,
   35: 1774,
   36: 1774,
+  /* hero-38 (Erode) and hero-39 (Tiruppur) — owner-supplied 2026-08-13,
+     replacing 34 and 36 on those two district pages. Same subject as the shoot
+     they replace (a Jamin layout with the JAMIN BAZAAR board in frame) but a
+     WORKING site rather than a finished gateway: planting, kerbing, a backhoe,
+     a roller, cement stacked on a pallet.
+     ⚠️ They are NOT from the 34/35/36 shoot, so they do not inherit its
+     `SHEER_ALPHA` — the sweep is on the district page. 38 in particular is the
+     brightest district frame the site has carried (hazy white sky across the
+     whole top third).
+     ⚠️ Neither is trimmed and neither needs to be: 34's "ROYAL CHETTINADU
+     ENCLAVE" plaque and the "PLOT 125" plaque are both gone with the picture,
+     so the only baked words left are the brand's own. */
+  38: 1921,
+  39: 1881,
   /* hero-37 — the aerial gate, /properties from 2026-08-12, owner-supplied.
      ⚠️ hero-17 is NOT freed by this: it stays the default for a district page
      with no art of its own, which today is Coimbatore. */

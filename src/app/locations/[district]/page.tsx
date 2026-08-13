@@ -41,34 +41,62 @@ export const dynamicParams = false;
  * a picture for it would be worse than this fallback, because every district
  * would then look like the same page.
  */
+/**
+ * ⚠️ 2026-08-13: Erode and Tiruppur took NEW owner artwork (34 → 38, 36 → 39),
+ * Salem kept hero-35. The two new frames are a working site — planting, kerbing,
+ * a backhoe, a roller — where 34/35/36 are a finished ceremonial gateway, and
+ * they are NOT from that shoot, so `SHEER_ALPHA` below was re-swept against them
+ * rather than inherited. 34 and 36 return to the spare pile.
+ */
 const ART_BY_DISTRICT: Record<string, HeroArt> = {
-  erode: 34,
+  erode: 38,
   salem: 35,
-  tiruppur: 36,
+  tiruppur: 39,
 };
 const DEFAULT_ART: HeroArt = 17;
 
 /**
  * ⚠️ 0.52, SWEPT — NOT carried over from `/properties`, which runs the same
- * treatment at 0.12.
+ * treatment at 0.12, and NOT inherited across the 2026-08-13 artwork swap.
  *
- * hero-17 is a trimmed banner that is dark where the copy sits. These three are
- * bright golden-hour photographs with a lot of sky, and they measure about 2.5×
- * lighter under the plate: at 0.12 the gold eyebrow reads 1.72–1.88 at the
- * worst pixel, which is not a near miss. Swept on each frame at 1280 (plate
- * region, gold eyebrow — it binds every time, white runs ~1.1× clear):
+ * hero-17 was a trimmed banner that is dark where the copy sits. These frames
+ * are bright daylight photographs with a lot of sky, and they measure about
+ * 2.5× lighter under the plate: at 0.12 the gold eyebrow read 1.72–1.88 at the
+ * worst pixel, which is not a near miss.
  *
- *     0.12 → Erode 1.72 · Salem 1.76 · Tiruppur 1.88   ← /properties' value
- *     0.34 → Erode 2.87 · Salem 2.93 · Tiruppur 3.12
- *     0.42 → Erode 3.54 · Salem 3.62 · Tiruppur 3.83
- *     0.52 → Erode ~4.6 · Salem ~4.7 · Tiruppur ~4.9   ← ships
+ * RE-SWEPT 2026-08-13 when Erode and Tiruppur changed picture. The value did
+ * not move, and that is a measured result rather than an assumption — the two
+ * new frames are hazier and flatter than the golden-hour gateway they replace,
+ * so they lose p95 but gain at the worst pixel, which is the number that binds.
+ * Champagne-50 eyebrow (it binds every time, white runs ~1.1× clear), over the
+ * plate rect, at the two widths where copy genuinely composites over the
+ * photograph — geometry taken off the live page:
  *
- * One value for three frames rather than three, and that is a departure from
- * the per-frame rule this codebase normally follows — justified here because
- * they are one shoot at one time of day and measure within 0.3 of each other at
- * every step. The number satisfies the DARKEST of them (Erode). At 375 the
- * worst pixel is around 4.1; `.rj-sheer-copy`'s four-layer halo covers the
- * remainder, which is the job it exists for.
+ *                       1024 p95 / worst      1280 p95 / worst
+ *     0.42  hero-38     4.77 / 3.43           5.13 / 4.14
+ *           hero-39     4.66 / 3.60           5.50 / 3.92
+ *           hero-35     4.73 / 3.51           4.90 / 3.62
+ *     0.52  hero-38     6.11 / 4.56  ← binds  6.51 / 5.39
+ *           hero-39     5.98 / 4.76           6.90 / 5.15
+ *           hero-35     6.06 / 4.66           6.25 / 4.79
+ *     0.58  hero-38     7.11 / 5.47           7.53 / 6.36
+ *           hero-39     6.98 / 5.69           7.92 / 6.10
+ *
+ * 0.42 fails all three. 0.52 clears AA on every frame at both widths, and its
+ * binding case (hero-38 at 1024, 4.56) sits a whisker ABOVE the 4.53 that
+ * hero-34 shipped at, so the swap does not spend any of the margin that was
+ * already audited. Over the eyebrow's own box every frame reads 6.1–7.8 — the
+ * plate-rect figure is the conservative proxy this register measures by.
+ *
+ * ⚠️ 1024 is the tight width, NOT 375. Below `lg` the cinematic tone puts the
+ * picture in a band ABOVE the copy and the words sit on the section's own
+ * charcoal, so no photograph is behind them at all — see the correction under
+ * hero-34/35/36 in public/hero/README.md.
+ *
+ * One value for three frames rather than three. That departs from the per-frame
+ * rule this codebase normally follows, and it survives the swap for the same
+ * reason it was granted: they measure within 0.3 of each other at every step,
+ * and the number satisfies the tightest of them.
  */
 const SHEER_ALPHA = 0.52;
 
