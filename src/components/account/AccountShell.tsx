@@ -3,10 +3,30 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { Container, SectionLabel, Skeleton } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { isPartner } from "@/lib/partner";
+
+/**
+ * 🚨 DELIBERATELY OUTSIDE THE COMPONENT — see the long note on the effect that
+ * reads it. The shell is remounted by every account navigation, so a `useRef`
+ * cannot carry anything across one. This can, and it still resets on a real
+ * page load, which is the line we actually want drawn.
+ *
+ *   navigated  false until the first shell has mounted. Distinguishes "arrived
+ *              here" from "picked a menu item", so a fresh load still opens on
+ *              the picture the account was designed to open on.
+ *   scrollY    where the reader was when they CLICKED, captured before the old
+ *              page is torn down and the browser clamps the scroll.
+ *   stripLeft  the horizontal menu's scroll position, restored into the new
+ *              <nav> element on mount.
+ */
+const navState = { navigated: false, scrollY: 0, stripLeft: 0 };
+
+/** `useLayoutEffect` warns when React renders this on the server, and the
+ *  scroll must be set before paint or the jump is visible. */
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const BUYER_NAV = [
   { href: "/account", label: "Overview" },
@@ -103,11 +123,52 @@ export function AccountShell({ title, children }: { title: string; children: Rea
    * anyway; an instant jump is what a new page is expected to do.
    */
   const gridRef = useRef<HTMLDivElement>(null);
-  const navigated = useRef(false);
+  const stripRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (!navigated.current) {
-      navigated.current = true;
+  /**
+   * 🚨 THIS RUNS ON MOUNT, NOT ON A PATHNAME CHANGE, AND THE STATE THAT DRIVES
+   * IT LIVES OUTSIDE THE COMPONENT. Both follow from one fact that the previous
+   * two attempts missed: **this shell remounts on every account navigation.**
+   *
+   * `AccountShell` is rendered by each page's view — `AccountOverview`,
+   * `ShortlistView`, `PartnerLeads` and five others each open with it — and NOT
+   * by `app/account/layout.tsx`, which only supplies `AuthProvider`. So going
+   * from Overview to Shortlist unmounts one shell and mounts a different one.
+   * Every `useRef` resets, every DOM node is new, and a `useEffect` keyed on
+   * `pathname` fires as a MOUNT effect rather than as an update.
+   *
+   * That single fact explains both halves of the 2026-08-14 report:
+   *
+   *   "the horizontal navigation resets to the first position" — the <nav> is a
+   *   brand new element, and a fresh scroller starts at scrollLeft 0. The
+   *   onClick handler that used to restore it was writing to the element being
+   *   unmounted.
+   *
+   *   "the page jumps back to the hero" — the outgoing page's height vanishes
+   *   before the incoming one is laid out, so the browser CLAMPS scrollY to the
+   *   new maximum. Nothing scrolled the page; the page got shorter underneath
+   *   the reader.
+   *
+   * It also silently disabled the fix shipped that morning: its mount guard was
+   * a `useRef(false)`, which a remount resets, so the guard returned early
+   * every single time and the scroll never ran at all.
+   *
+   * ⚠️ MODULE SCOPE IS LOAD-BEARING. `navState` survives a remount because it
+   * belongs to the module, and resets on a real page load because a new
+   * document re-evaluates it. That is exactly the distinction wanted: a fresh
+   * arrival at /account/visits should open on the picture, and a menu pick in
+   * an already-open session should not.
+   *
+   * ⚠️ The scroll target is captured on CLICK, before the old page is torn
+   * down. Reading `window.scrollY` after mounting would read the browser's
+   * already-clamped value and the reader's real position would be gone.
+   */
+  useIsoLayoutEffect(() => {
+    const strip = stripRef.current;
+    if (strip) strip.scrollLeft = navState.stripLeft;
+
+    if (!navState.navigated) {
+      navState.navigated = true;
       return;
     }
     const grid = gridRef.current;
@@ -118,10 +179,14 @@ export function AccountShell({ title, children }: { title: string; children: Rea
       ) || 72;
     /* The gap the sticky column already leaves itself, so the section lands
        level with the menu beside it rather than a few pixels above it. */
-    const sectionTop =
-      window.scrollY + grid.getBoundingClientRect().top - headerH - 20;
+    const sectionTop = window.scrollY + grid.getBoundingClientRect().top - headerH - 20;
+    /* ⚠️ `Math.min` against the position captured at CLICK time, so this only
+       ever scrolls UP. A reader at the picture does not move; a reader deep
+       inside Leads comes up to where the section starts, with the whole menu on
+       screen — which is the 2026-08-13 report and the 2026-08-14 one answered
+       by the same line. */
     window.scrollTo({
-      top: Math.max(0, Math.min(window.scrollY, sectionTop)),
+      top: Math.max(0, Math.min(navState.scrollY, sectionTop)),
       behavior: "auto",
     });
   }, [pathname]);
@@ -247,10 +312,27 @@ export function AccountShell({ title, children }: { title: string; children: Rea
           style={{ top: "calc(var(--header-h) + 1.25rem)" }}
         >
         {/* `overscroll-contain` on the mobile scroller stops a horizontal flick
-            from turning into a page scroll. */}
+            from turning into a page scroll.
+
+            ⚠️ `onScroll` RECORDS THE POSITION CONTINUOUSLY rather than only on
+            a click, because the reader can flick this strip and then pick a tab
+            that was already in view — in which case the click handler never
+            sees the scroll that mattered. Cheap: one number, no React state, so
+            it cannot cause a render.
+
+            ⚠️ THE CARD IS THE REPORT'S "dedicated filter card". It asked for
+            the navigation to be recognisable as a navigation component instead
+            of blending into the page, and on a phone this strip sat directly
+            under the account header with nothing marking where one ended and
+            the other began. A hairline and the alt canvas are enough to say
+            it; a heavier treatment would compete with the content beside it. */}
         <nav
+          ref={stripRef}
+          onScroll={(e) => {
+            navState.stripLeft = e.currentTarget.scrollLeft;
+          }}
           aria-label="Account"
-          className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain lg:flex-col lg:overflow-visible"
+          className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain rounded-card border border-line bg-canvas-alt p-2 lg:flex-col lg:overflow-visible"
         >
           {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : [])].map((n) => {
             const on = pathname === n.href;
@@ -266,18 +348,20 @@ export function AccountShell({ title, children }: { title: string; children: Rea
                    pinned. */
                 scroll={false}
                 aria-current={on ? "page" : undefined}
-                /* ⚠️ Next scrolls the focused element into view on navigation,
-                   which yanked this horizontal strip back to the start every
-                   time a tab was chosen. The strip keeps its own position and
-                   the page still lands at the top, which is what `scroll` on the
-                   Link governs — not this. */
+                /* ⚠️ THIS CAPTURES, IT NO LONGER RESTORES. The previous handler
+                   read the strip's `scrollLeft` and wrote it back a frame
+                   later, on the element it had just read — which is the element
+                   React is about to unmount. It could never have worked once
+                   the shell started remounting; the strip that needs the value
+                   does not exist yet. The mount effect puts it back instead.
+
+                   The scroll position is captured HERE for the same reason:
+                   after the swap the browser has already clamped it to the new
+                   document height, and the reader's real position is gone. */
                 onClick={(e) => {
+                  navState.scrollY = window.scrollY;
                   const strip = e.currentTarget.parentElement;
-                  if (!strip) return;
-                  const left = strip.scrollLeft;
-                  requestAnimationFrame(() => {
-                    strip.scrollLeft = left;
-                  });
+                  if (strip) navState.stripLeft = strip.scrollLeft;
                 }}
                 className={`shrink-0 rounded-card px-phi3 py-2.5 text-base transition-colors ${
                   on ? "bg-ink text-canvas" : "text-ink-soft hover:bg-canvas-alt hover:text-ink"

@@ -381,34 +381,81 @@ export default async function VaultPage() {
               {hero.lead ?? VAULT_FALLBACK.hero.lead}
             </p>
 
-            <div className="mt-phi5 flex flex-wrap gap-3">
+            {/* 🚨 SIX WAYS IN, RANKED — reported 2026-08-14 as "the four
+                secondary options appear only as simple text links" and the
+                section reading as too plain. They were `rj-underline` links in
+                a wrapped row, which is the right treatment for a line of prose
+                and the wrong one for the four things this page most wants a
+                visitor to do. Now there are two tiers and both are controls:
+                two full-width primaries, then a bordered group of four rows.
+
+                ⚠️ NO NEW COLOUR — the mockup added icons and this does not,
+                which the report explicitly allows ("icons are optional but the
+                design"). Every value here already existed on this page: filled
+                `jamin-red` for buy, a `champagne-300` outline for rent, and the
+                secondary group is `champagne-500/30` hairlines over the plate
+                with `white/5` on hover. That is the whole of the dark/gold/red
+                theme the report asks to keep, and nothing else was reached for.
+
+                ⚠️ The arrows sit in their own `<span aria-hidden>` and move on
+                hover. They are decoration: each row's label already says where
+                it goes, and a screen reader reading "arrow" six times in a
+                column of six links is noise. */}
+            <div className="mt-phi5 flex flex-col gap-3">
               <Link
                 href="/vault/request?intent=buy"
-                className="rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+                className="group flex items-center justify-between gap-4 rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
               >
-                I want to buy
+                <span>I want to buy</span>
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                  &rarr;
+                </span>
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="rounded-full border border-champagne-300 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="group flex items-center justify-between gap-4 rounded-full border border-champagne-300 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
               >
-                I want to rent
+                <span>I want to rent</span>
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+                  &rarr;
+                </span>
               </Link>
             </div>
 
-            <div className="mt-phi3 flex flex-wrap gap-x-phi4 gap-y-2 text-tiny uppercase tracking-[0.12em]">
-              <Link href="/vault/offer?intent=sell" className="rj-underline text-white/80">
-                I want to sell
-              </Link>
-              <Link href="/vault/offer?intent=lease" className="rj-underline text-white/80">
-                I want to lease my property
-              </Link>
-              <Link href="/vault/request?intent=codevelop" className="rj-underline text-white/80">
-                I want to co-develop a property
-              </Link>
-              <Link href="#desks" className="rj-underline text-champagne-300">
-                Speak privately to The Vault
-              </Link>
+            {/* One bordered group rather than four bordered rows: the divider
+                between them is a single hairline, so the set reads as one
+                control surface and not as four competing buttons under two
+                real ones. `divide-y` draws it between children only, which is
+                what keeps the group's own rounded corners clean. */}
+            <div className="mt-phi3 divide-y divide-champagne-500/20 overflow-hidden rounded-xl border border-champagne-500/30">
+              {[
+                { href: "/vault/offer?intent=sell", label: "I want to sell", tone: "text-white/80" },
+                {
+                  href: "/vault/offer?intent=lease",
+                  label: "I want to lease my property",
+                  tone: "text-white/80",
+                },
+                {
+                  href: "/vault/request?intent=codevelop",
+                  label: "I want to co-develop a property",
+                  tone: "text-white/80",
+                },
+                { href: "#desks", label: "Speak privately to The Vault", tone: "text-champagne-300" },
+              ].map((r) => (
+                <Link
+                  key={r.href}
+                  href={r.href}
+                  className={`group flex items-center justify-between gap-4 px-phi3 py-3 text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
+                >
+                  <span>{r.label}</span>
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    &rarr;
+                  </span>
+                </Link>
+              ))}
             </div>
 
             <div className="rj-fret mt-phi5 max-w-xs" aria-hidden="true" />
@@ -811,10 +858,37 @@ export default async function VaultPage() {
           Discretion said once, quietly, rather than asserted on every card. */}
       <section className="border-y border-line py-phi6">
         <Container>
-          <ul className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-            {promise.map((line) => (
-              <li key={line} className="border-t border-line pt-phi3 text-lg leading-relaxed text-ink-soft">
-                {line}
+          {/* ⚠️ NUMBERED, AND THE NUMBER IS THE FIX. Reported 2026-08-14 as
+              five separate text blocks with uneven spacing, "stretched and less
+              structured" — which is what a one-column stack of unequal
+              sentences under identical hairlines looks like on a phone. Each
+              rule read as the start of a section rather than as a divider, and
+              nothing said the five were one list.
+
+              `01`–`05` in the ledger face, with the line held off them by a
+              vertical hairline, says it in the page's own vocabulary: this is
+              the same treatment `LedgerCount` and the plot schedule already
+              use, so it is not a new device.
+
+              ⚠️ The count comes from the DATA. `promise` is `vault_settings`
+              and the console can hold three lines or six — the fallback ships
+              three. Never hard-code `05`.
+
+              ⚠️ Tighter only where it was reported. `gap-phi2` on a phone
+              closes the stretch; from `sm` the grid is two and three columns,
+              where the old rhythm was never the complaint. */}
+          <ul className="grid gap-phi2 sm:grid-cols-2 sm:gap-phi3 lg:grid-cols-3">
+            {promise.map((line, i) => (
+              <li key={line} className="flex gap-phi3 border-t border-line pt-phi3">
+                <span
+                  aria-hidden="true"
+                  className="ledger shrink-0 text-tiny uppercase tracking-[0.12em] text-jamin-gold-ink"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="border-l border-line pl-phi3 text-lg leading-relaxed text-ink-soft">
+                  {line}
+                </span>
               </li>
             ))}
           </ul>

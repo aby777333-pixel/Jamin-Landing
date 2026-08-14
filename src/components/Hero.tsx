@@ -206,14 +206,20 @@ export function Hero({
               longer depends on the wash reaching it, so it is free to run past
               where the wash gives out. */}
           <div
-            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
+            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 text-center sm:p-phi4 sm:text-left"
             /* The banner is light everywhere the copy sits, so the plate can go
                a long way down before the ink is in trouble — and the white halo
                is what carries it the rest of the way. */
             style={{ "--rj-sheer-alpha": 0.24 } as React.CSSProperties}
           >
-            <div className="flex items-center gap-3">
-              <span className="h-px w-12 rule-gold" />
+            {/* ⚠️ CENTRED ON A PHONE ONLY — `sm:` puts everything back. The
+                report (2026-08-14) is a screenshot of a 285px card, and at that
+                width a left rag with a full-width button under it does read as
+                unbalanced. From `sm` up this plate is an editorial block set
+                against a 3.3:1 banner whose composition the notes above tune
+                line by line; centring it there would undo that for a complaint
+                nobody made about it. Say the word if it should carry up. */}
+            <div className="flex items-center justify-center gap-3 sm:justify-start">
               {/* `gold-deep`, not `gold-ink`. This one line was what pinned the
                   plate's opacity — see the sweep in `gilt-light`. */}
               <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-deep">
@@ -256,19 +262,32 @@ export function Hero({
               schedule published before you visit.
             </p>
 
-            <div className="mt-phi4 flex flex-wrap gap-3">
+            {/* ⚠️ `flex-col` UNTIL `sm`, WHICH IS WHAT MAKES THEM FULL WIDTH —
+                not a `w-full` on each control. A flex column stretches its
+                items across the cross axis by default, so the buttons fill the
+                card on a phone and go back to being sized by their labels the
+                moment the row returns. Reported 2026-08-14 as the CTAs being
+                "too narrow compared to the available card width", and at 285px
+                they were: "Book a site visit" is 17 characters and took barely
+                half the card.
+
+                ⚠️ `text-center` on each, because these are `<Link>`s and an
+                anchor is inline — stretching the BOX does not centre the label
+                inside it, and a full-width button with its text against the
+                left edge is worse than the narrow pill was. */}
+            <div className="mt-phi4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {/* Ink, not red. The header already carries the one filled red
                   control this view is allowed; a second would spend the accent. */}
               <Link
                 href="/properties"
-                className="rounded-full bg-ink px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-charcoal hover:shadow-raise"
+                className="rounded-full bg-ink px-7 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-charcoal hover:shadow-raise"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 See available plots
               </Link>
               <Link
                 href="/contact"
-                className="rounded-full border border-ink/20 bg-canvas/70 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas"
+                className="rounded-full border border-ink/20 bg-canvas/70 px-7 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 Book a site visit

@@ -448,18 +448,27 @@ export default async function HomePage() {
               the measure of the copy column, which was not what was reported
               and which the two-panel layout depends on. */}
           <div className="relative grid items-center gap-phi5 px-phi4 py-phi5 lg:grid-cols-2 lg:px-phi6 lg:py-phi6">
-            <div className="min-w-0 max-w-2xl">
+            {/* ⚠️ Centred on a phone only, and the buttons fill the card there
+                — the same rule as the hero plate, reported in the same round
+                and for the same reason. From `sm` this is the left half of a
+                two-panel band sitting beside a video, where centred body copy
+                would read as a pull-quote rather than as the lead into two
+                controls. */}
+            <div className="min-w-0 max-w-2xl text-center sm:text-left">
               <h2 className="text-3xl text-white">Walk the land before you decide.</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-white/85">
                 Pick a date and a time that suits you. We will show you the approvals, walk the plot
                 boundaries against the sanctioned plan, and answer the awkward questions. No payment,
                 no obligation.
               </p>
-              <div className="mt-phi4 flex flex-wrap gap-3">
+              <div className="mt-phi4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                {/* `ButtonLink`'s base is already `inline-flex justify-center`,
+                    so it centres its own label once the column stretches it —
+                    only the bare `<Link>` beside it needs `text-center`. */}
                 <ButtonLink href="/contact">Book a site visit</ButtonLink>
                 <Link
                   href="/properties"
-                  className="glass-dark inline-flex items-center rounded-full px-6 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
+                  className="glass-dark inline-flex items-center justify-center rounded-full px-6 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-500 hover:-translate-y-0.5"
                   style={{ transitionTimingFunction: "var(--ease-silk)" }}
                 >
                   Browse plots first

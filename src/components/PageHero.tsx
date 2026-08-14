@@ -295,7 +295,7 @@ export function PageHero({
             here run to 2.33:1, and `object-contain` paid for "never cropped"
             with a bar of charcoal top and bottom. See TOP_HEIGHT. */}
         <div
-          className="relative aspect-[var(--hero-band)] w-full lg:absolute lg:inset-0 lg:aspect-auto"
+          className="relative aspect-[var(--hero-band)] w-full xl:absolute xl:inset-0 xl:aspect-auto"
           style={bandStyle}
         >
           {/* A render is decoration and stays out of the accessibility tree; a
@@ -307,12 +307,12 @@ export function PageHero({
             fill
             priority={priority}
             sizes="100vw"
-            className="object-contain object-center lg:object-cover"
+            className="object-contain object-center xl:object-cover"
           />
           {/* The veil is a legibility device for type sitting ON the picture.
               Below `lg` nothing sits on it, so darkening it there would spend
               the photograph for nothing. */}
-          <div className="veil absolute inset-0 hidden lg:block" />
+          <div className="veil absolute inset-0 hidden xl:block" />
         </div>
 
         {/* `justify-center`, where this was `justify-end`. Bottom-anchoring was
@@ -426,7 +426,7 @@ export function PageHero({
           something a full-width phone band should carry. The extra fetch is
           real and is the price of the two treatments being genuinely
           different pictures of the same file. */}
-      <div className="relative aspect-[var(--hero-band)] w-full lg:hidden" style={bandStyle}>
+      <div className="relative aspect-[var(--hero-band)] w-full xl:hidden" style={bandStyle}>
         <Image
           src={src}
           alt=""
@@ -440,7 +440,7 @@ export function PageHero({
 
       {/* the render, bleeding off the right edge and dissolving into the page */}
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] lg:block"
+        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] xl:block"
         aria-hidden={photo ? undefined : "true"}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
