@@ -491,7 +491,7 @@ export function PageHero({
             <div className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">{lead}</div>
           )}
           {meta && (
-            <div className="glass mt-phi3 inline-flex rounded-full px-4 py-1.5 text-tiny text-ink-soft">
+            <div className="glass rj-crystal mt-phi3 inline-flex rounded-full px-4 py-1.5 text-tiny text-ink-soft">
               {meta}
             </div>
           )}

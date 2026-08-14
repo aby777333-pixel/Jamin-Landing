@@ -115,7 +115,7 @@ export default async function JournalCategoryPage({
                 losing their top edge, headline and lockup included. Both
                 surfaces move together or the same article is cropped two
                 different ways depending on how the reader arrived. */}
-            <div className="relative aspect-[2/1] overflow-hidden bg-canvas-sunken">
+            <div className="rj-sheen relative aspect-[2/1] overflow-hidden bg-canvas-sunken">
               {p.cover_url ? (
                 <Image
                   src={p.cover_url}

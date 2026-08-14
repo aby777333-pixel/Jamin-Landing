@@ -43,7 +43,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
       <div className="grid gap-2 sm:grid-cols-[1.618fr_1fr]">
         <button
           onClick={() => setOpen(0)}
-          className="group relative aspect-[1.618/1] overflow-hidden rounded-card bg-canvas-sunken sm:aspect-auto sm:h-full"
+          className="rj-sheen group relative aspect-[1.618/1] overflow-hidden rounded-card bg-canvas-sunken sm:aspect-auto sm:h-full"
           aria-label={`Open gallery for ${title}`}
         >
           <Image
@@ -62,7 +62,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
               <button
                 key={src}
                 onClick={() => setOpen(i + 1)}
-                className="group relative aspect-[1.618/1] overflow-hidden rounded-card bg-canvas-sunken"
+                className="rj-sheen group relative aspect-[1.618/1] overflow-hidden rounded-card bg-canvas-sunken"
                 aria-label={`Open image ${i + 2} of ${images.length}`}
               >
                 <Image
@@ -76,8 +76,18 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                     ratio over an unknown photograph — a bright image beneath
                     left the white count at roughly 3:1. 72% holds AA whatever
                     the photo turns out to be. */}
+                {/* ⚠️ `z-10` PUTS THE SCRIM ABOVE `rj-sheen`, and it is a
+                    contrast guard rather than a stacking preference. The sheen
+                    is a generated ::after, so it paints above every real child —
+                    including this scrim. Its band is white at 0.22, and over a
+                    bright photograph the 72% ink ground already sits near
+                    rgb(88); the band lifts it to ~rgb(125), where this white
+                    count measures about 4.2:1 and drops under AA for the second
+                    or so the sweep lasts. Transient or not, the number is the
+                    one thing here a reader has to be able to read. Above the
+                    sheen, the sweep passes beneath it untouched. */}
                 {i === 1 && images.length > 3 && (
-                  <span className="absolute inset-0 grid place-items-center bg-ink/72 text-base font-medium text-white backdrop-blur-[2px]">
+                  <span className="absolute inset-0 z-10 grid place-items-center bg-ink/72 text-base font-medium text-white backdrop-blur-[2px]">
                     +{images.length - 3} more
                   </span>
                 )}

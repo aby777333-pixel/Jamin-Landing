@@ -368,7 +368,7 @@ function ArticleCard({ post }: { post: JournalCard }) {
           right only. If a cover ever arrives with its subject at the bottom,
           this is the line to re-check, and re-render the comparison rather than
           reasoning about it. */}
-      <div className="relative aspect-[2/1] overflow-hidden">
+      <div className="rj-sheen relative aspect-[2/1] overflow-hidden">
         {post.coverUrl ? (
           <Image
             src={post.coverUrl}

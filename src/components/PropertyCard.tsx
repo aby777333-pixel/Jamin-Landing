@@ -112,7 +112,13 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           plots" label sat across the title and the location line — the overlap
           that was reported. Sized by the image box, they annotate the only
           thing on a card that has an extent. */}
-      <div className="relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
+      {/* `rj-sheen` — light travels across the photograph once when the card is
+          hovered or focused. It hangs on THIS box rather than the card root
+          because `cd-fold` already owns both of the root's pseudo-elements (the
+          dog-ear and its shadow), and because the sweep should be clipped to the
+          picture: the box is already `relative overflow-hidden`, which is
+          exactly what the class asks of its host. */}
+      <div className="rj-sheen relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
         <DimensionOverlay
           top={area}
           left={p.plots_total ? `${p.plots_total} plot${p.plots_total === 1 ? "" : "s"}` : null}

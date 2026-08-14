@@ -141,7 +141,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
          border-width change would shift the document half a pixel on every
          crossing of the threshold. */
       className={`sticky top-0 z-40 transition-all duration-500 ${
-        solid || panel ? `glass rj-hairline ${deep ? "is-deep" : ""}` : "bg-transparent"
+        /* `rj-crystal` rides with the glass and only while it is solid — at
+           scroll 0 the bar is transparent over the page's own canvas, and a
+           highlight on an edge that is not there reads as a stray line. */
+        solid || panel
+          ? `glass rj-crystal rj-hairline ${deep ? "is-deep" : ""}`
+          : "bg-transparent"
       }`}
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
@@ -528,7 +533,13 @@ function MegaPanel({ id, children }: { id: string; children: React.ReactNode }) 
        what a dropdown is: an overlay, not a section. */
     <div
       id={id}
-      className="rj-panel-in absolute inset-x-0 top-full hidden border-t border-line/70 glass shadow-raise xl:block"
+      /* ⚠️ `rj-crystal` overrides this element's `border-t` colour — it is the
+         one property the two share, and this file's CSS is unlayered so it
+         wins. That is wanted here rather than merely tolerated: the panel is
+         separated from the bar by the HEADER's own champagne hairline, which is
+         drawn as a ::after on the header itself, so this border was never what
+         held the two apart. It is free to become the lit edge instead. */
+      className="rj-panel-in absolute inset-x-0 top-full hidden border-t border-line/70 glass rj-crystal shadow-raise xl:block"
     >
       <div className="mx-auto flex max-w-[1280px] gap-phi5 px-10 py-phi5">{children}</div>
     </div>

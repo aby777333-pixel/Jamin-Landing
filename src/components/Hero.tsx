@@ -316,7 +316,7 @@ export function Hero({
               a rail and 35px for a plate, which is what padding is. Aligning the
               CONTENTS instead would require those two paddings to be equal —
               a chunky rail or a cramped plate. */}
-          <div className="glass mt-phi3 rounded-xl p-1.5">
+          <div className="glass rj-crystal mt-phi3 rounded-xl p-1.5">
             {/* The items SHARE the rail rather than queueing at its left edge:
                 `flex-1` from `sm` up divides the full width between however
                 many developments are selling, so three of them read as three

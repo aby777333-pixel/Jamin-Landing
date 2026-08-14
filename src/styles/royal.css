@@ -361,6 +361,70 @@
 }
 
 /**
+ * THE SHEEN — the glint's sibling, for PHOTOGRAPHS rather than metal.
+ *
+ * 🚨 IT EXISTS BECAUSE `.rj-glint` CANNOT BE REUSED HERE, AND THE REASON IS
+ * COLOUR. The glint's band is `rgba(224, 255, 240, 0.75)` — emerald, chosen in
+ * §6.3.2 because a green cast across gold is what a real stone set in metal
+ * throws, and because a white band on gold foil is invisible. Dragged across a
+ * photograph at that alpha it is a green flash over somebody's land. This site's
+ * standing instruction is to build richness from luminosity, not from new
+ * colour, so the band here is plain white at 0.22 — a third of the glint's
+ * strength, over twice its width, and half again as slow.
+ *
+ * ⚠️ DECLARES NO `position`. `.rj-glint` sets `position: relative`, which is
+ * safe on the small seal it was written for and is the exact declaration that
+ * silently unstuck the sticky navbar when `.rj-hairline` did it — this file is
+ * unlayered and beats every Tailwind utility. Every host of this class is
+ * already `relative overflow-hidden` for its own reasons, so the class asks for
+ * that rather than imposing it. If you apply it to a box that is neither, give
+ * the box those utilities; do not add them here.
+ *
+ * ⚠️ `z-index: 1` because `next/image` with `fill` is `position: absolute` at
+ * the same stacking level. Paint order alone would probably carry it, but
+ * "probably" over a photograph on every card is not a bet worth taking.
+ *
+ * ⚠️ `focus-within`, not `focus-visible`: the trigger is the card's `group`, and
+ * the thing that actually receives focus is the anchor INSIDE it, so a keyboard
+ * reader gets the same sheen a mouse does.
+ */
+.rj-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 34%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 66%
+  );
+  transform: translateX(-100%);
+}
+/* ⚠️ FOUR SELECTORS BECAUSE THE HOST IS SOMETIMES THE GROUP AND SOMETIMES ITS
+   CHILD, and a descendant combinator cannot match both. On a property or
+   article card the trigger is the card and the sheen hangs on the picture
+   inside it; in the gallery the button IS the picture, so `.group:hover
+   .rj-sheen` never matches and the last two carry it. `.rj-glint` is written
+   the same way for the same reason — if you add a third host shape, check
+   which of these actually fires before assuming it does. */
+.group:hover .rj-sheen::after,
+.group:focus-within .rj-sheen::after,
+.rj-sheen:hover::after,
+.rj-sheen:focus-visible::after {
+  animation: rj-sweep 1150ms var(--ease-silk) 1;
+}
+
+/* Tier 5 by §2's test: the card says everything it says without this. */
+@media (prefers-reduced-motion: reduce) {
+  .rj-sheen::after {
+    animation: none;
+    display: none;
+  }
+}
+
+/**
  * ── GLASS ─────────────────────────────────────────────────────────────────
  *
  * ⚠️ Capped, per §9, to the three surfaces that genuinely overlap imagery:
@@ -410,6 +474,51 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+/**
+ * ── CRYSTAL ───────────────────────────────────────────────────────────────
+ *
+ * Polished glass rather than milky frost: the top edge catches the light and a
+ * little of it falls inside. Rides ON TOP of `glass` — it does not replace it,
+ * and it introduces no colour. Both declarations are white at low alpha, so
+ * every ground it touches gets LIGHTER; the ink on these surfaces is dark, so
+ * contrast can only improve.
+ *
+ * 🚨 THREE THINGS THIS DELIBERATELY DOES NOT SET, EACH FOR A RECORDED REASON.
+ *
+ * `position` — `.rj-hairline` set it once and silently unstuck the sticky
+ * navbar on every page, because this file is UNLAYERED and therefore beats
+ * every Tailwind utility including `sticky`. That is why the rule below it
+ * carries `:not(.sticky):not(.fixed):not(.absolute)`. Nothing here needs
+ * positioning, so nothing here declares it. Do not add it.
+ *
+ * `box-shadow` — `glass` already owns it (a 1px contact shadow plus a 50px
+ * lift). Restating it here to append an inset highlight would fork the value
+ * into two files that must then be kept in step, and unlayered CSS would win
+ * silently the day they drift. The top edge is drawn with `border-top-color`
+ * instead, which `glass` also already owns and which nothing else competes for.
+ *
+ * `--glass-tint` / `backdrop-filter` — both are contrast-audited numbers. The
+ * tint is 0.90 because a frosted panel's effective background is whatever is
+ * behind it, and at 0.72 small red text over the hero fell to 4.05:1. Blur and
+ * saturation are what make it read as glass; transparency is what breaks it.
+ *
+ * ⚠️ LIGHT GLASS ONLY. `glass-dark` carries light text, so a white internal
+ * reflection would cut ITS contrast rather than raise it — and the dark tints
+ * have a history of never receiving the light one's audit (`--glass-tint-dark`
+ * was 0.42 and leaning on the blur until a CTA measured 2.64:1). A dark
+ * equivalent needs its own sweep before it exists; it is not this class with
+ * the alpha turned down.
+ */
+.rj-crystal {
+  border-top-color: rgba(255, 255, 255, 0.88);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.42),
+    rgba(255, 255, 255, 0.1) 30%,
+    rgba(255, 255, 255, 0) 58%
+  );
 }
 
 /**

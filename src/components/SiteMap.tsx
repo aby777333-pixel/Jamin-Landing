@@ -116,7 +116,7 @@ export function SiteMap({
 
         {/* The layout's name, on the map itself. A pin with no label makes you
             check the heading again to be sure which project you are looking at. */}
-        <span className="glass pointer-events-none absolute left-3 top-3 max-w-[70%] truncate rounded-full px-3 py-1.5 text-tiny font-medium text-ink">
+        <span className="glass rj-crystal pointer-events-none absolute left-3 top-3 max-w-[70%] truncate rounded-full px-3 py-1.5 text-tiny font-medium text-ink">
           {title}
         </span>
 
