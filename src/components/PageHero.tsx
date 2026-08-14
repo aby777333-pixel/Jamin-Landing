@@ -361,9 +361,34 @@ export function PageHero({
               cinematic hero drops below AA. The two changes ship together or
               not at all. */}
           <div
+            /* ⚠️ `rj-gilt-sheer-edge` is ADDITIVE. It shipped once as an
+               alternative and took `rj-gilt-sheer`’s `backdrop-filter: none`
+               and `box-shadow: none` with it, which put `gilt`’s blur and
+               shadow back and made the plate frosted. Both classes, always. */
+            /* ⚠️ `rj-gilt-sheer-edge` is ADDITIVE. It shipped once as an
+               alternative and took `rj-gilt-sheer`’s `backdrop-filter: none`
+               and `box-shadow: none` with it, which put `gilt`’s blur and
+               shadow back and made the plate frosted. Both classes, always.
+
+               🚨 AND `sheerEdge` NARROWS THE PLATE, which turned out to be the
+               lever the tint could not be. Asked repeatedly to make this card
+               see-through, the honest finding was that the TINT is already at
+               its floor — the lead measures 4.03:1 against 4.5 on hero-37’s own
+               sharp pixels at 0.52, so lightening it drops body copy under AA.
+               The WIDTH was free: measured at 1440, the headline stays at three
+               lines from 46rem all the way down to 38rem and only breaks to
+               four at 36rem, and the lead holds at eight lines throughout. So
+               46 → 38rem gives back 128px of photograph and costs nothing at
+               all. 36rem is the cliff; do not go past it.
+
+               ⚠️ Scoped to `sheerEdge` rather than applied to every cinematic
+               hero — the 46rem cap was set for a different headline on a
+               different page and those pages were not what was reported. */
             className={`gilt ${
-              sheer ? `${sheerEdge ? "rj-gilt-sheer-edge" : "rj-gilt-sheer"} rj-sheer-copy` : ""
-            } rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
+              sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""
+            } rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 ${
+              sheerEdge ? "xl:max-w-[38rem]" : "xl:max-w-[46rem]"
+            }`}
             style={
               sheer
                 ? ({

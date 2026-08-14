@@ -1575,36 +1575,6 @@
   }
 }
 
-/**
- * ── THE PLATE'S OPEN EDGE (2026-08-14) ────────────────────────────────────
- *
- * Owner: make the card see-through so the gate and the lockup behind it read.
- * This fades the plate out across its RIGHT edge instead of thinning the whole
- * tint, and the stop is a measurement rather than a taste.
- *
- * Every glyph on /properties ends by **77.6%** of the plate's width — measured
- * live at 1440 with Range.getClientRects() over the h1, the lead and the
- * eyebrow, longest run first. So from 80% out there is nothing to keep legible
- * and the tint can go to zero: the reveal costs **no contrast at all**.
- *
- * ⚠️ A SOFTER RAMP STARTING EARLIER WAS TRIED AND FAILS. Fading from 55%
- * dropped the h1 to 2.61:1 on hero-37's own pixels, against the 3:1 floor for
- * large text — the flat 0.52 only measures 4.06 there, so there is barely a
- * point of headroom to spend. If more of the picture is wanted, the copy has to
- * get narrower or the frame has to change; the tint cannot give it.
- *
- * ⚠️ `to right` is safe only because this hero's copy is left-aligned and the
- * subject sits right. On a plate whose text ran full width this would be wrong.
- */
-.rj-gilt-sheer-edge {
-  background: linear-gradient(
-    to right,
-    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) 0%,
-    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) 78%,
-    rgba(16, 14, 12, 0) 100%
-  );
-}
-
 .rj-gilt-sheer {
   background: rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14));
   /* ⚠️ NO BLUR, and no `saturate` either. Any backdrop-filter draws a hard
@@ -1620,6 +1590,47 @@
      corners and read as a gradient over the picture. A sheer plate keeps its
      hairline and nothing else. */
   box-shadow: none;
+}
+
+/**
+ * ── THE PLATE'S OPEN EDGE ─────────────────────────────────────
+ *
+ * Owner: make the card see-through so the gate and the lockup behind it read.
+ * Fades the plate out across its RIGHT edge instead of thinning the whole tint.
+ *
+ * 🚨 IT IS A MODIFIER, NOT A REPLACEMENT, AND THAT IS THE BUG IT SHIPPED
+ * WITH. It first went out as an ALTERNATIVE to `.rj-gilt-sheer` — the component
+ * chose one class or the other — which silently dropped the two resets above and
+ * let `gilt`'s `blur(14px)` and its deep outer shadow straight back in. The card
+ * came back frosted and heavy, the exact opposite of the request, and it was
+ * reported within the hour. It now rides WITH `.rj-gilt-sheer` and overrides
+ * only the background, so those resets cannot be lost again.
+ *
+ * ⚠️ It must stay declared AFTER `.rj-gilt-sheer` for its gradient to win —
+ * same specificity, so order is the whole mechanism.
+ *
+ * ⚠️ `to right` is safe only because this hero's copy is left-aligned and the
+ * subject sits right. On a plate whose text ran full width this would be wrong.
+ *
+ * ⚠️ THE HOLD IS 95%, NOT THE 78% IT FIRST SHIPPED WITH, and it moved because
+ * the PLATE moved. Narrowing the card to 38rem — which is what actually gave
+ * the photograph back — left the same words in a smaller box, so the longest
+ * run went from ending at 77.6% of the plate to ending at 94%. A fade starting
+ * at 78% would then cut straight across body copy. The two numbers are locked
+ * together: change the width and re-measure this, or the reveal starts eating
+ * text instead of margin.
+ *
+ * Which also means the fade is now a soft edge rather than a reveal — 5% of a
+ * 608px card. It is kept because it stops the plate ending on a hard line
+ * against the picture, not because it is doing the heavy lifting any more.
+ */
+.rj-gilt-sheer-edge {
+  background: linear-gradient(
+    to right,
+    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) 0%,
+    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) var(--rj-sheer-hold, 95%),
+    rgba(16, 14, 12, 0) 100%
+  );
 }
 
 /**

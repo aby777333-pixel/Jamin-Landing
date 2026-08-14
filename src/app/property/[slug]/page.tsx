@@ -969,7 +969,18 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  * four; re-render that sweep before adding another.
  */
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {
-  "jamin-new-project-jul-2026": { file: "jamin-new-project-jul-2026", widths: [960, 1440, 1717] },
+  /* ⚠️ `edappadi-2`, owner-supplied 2026-08-14, replacing the paddy-field frame.
+     A new filename rather than an overwrite, for the reason on Udumalaipet
+     below: `next/image` keys its optimised output by source path.
+
+     ⚠️ IT IS MUCH DARKER THAN WHAT IT REPLACES, and that is the thing to watch
+     on this page rather than the crop. The header art dissolves leftward into
+     the canvas under `rj-burn`, and the LOCATION line ends inside that wash —
+     `ink-muted` is only 4.95:1 on bare ivory to begin with, and the note on the
+     -5rem offset records it falling to 4.83 under the old, brighter picture. A
+     forest road in rain is darker at every pixel, so this was re-measured after
+     the swap rather than assumed. */
+  "jamin-new-project-jul-2026": { file: "edappadi-2", widths: [960, 1440, 1672] },
   "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
   "jamin-garden-shastri-nagar-erode": {
     file: "jamin-garden-shastri-nagar-erode",
