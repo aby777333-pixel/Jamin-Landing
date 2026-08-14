@@ -371,18 +371,42 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             cta="All properties"
           />
           <ul className="grid flex-1 gap-2 sm:grid-cols-2">
-            {facets.districts.map((f) => (
-              <li key={f.key}>
-                <Link href={f.href} className="group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1">
-                  <span className="flex items-baseline justify-between gap-3">
-                    <span className="text-base font-medium text-ink group-hover:text-jamin-red-deep">
-                      {f.label}
+            {facets.districts.map((f) => {
+              /* ⚠️ THE DISTRICT ENTRIES HAD NO ACTIVE STATE AT ALL, where the
+                 Projects panel beside them has had one since the note above was
+                 written. On /locations/erode the Locations TAB lit and the
+                 Erode row inside the open panel looked exactly like the seven
+                 districts the reader was not on. Reported 2026-08-14.
+
+                 ⚠️ Two URL shapes light it, for the same reason `onDistrict`
+                 tests two: the menu points at the district PAGE, but the older
+                 `/properties?district=…` filter still resolves and those links
+                 are in the wild. Matching only the first would leave the panel
+                 blank on a URL that is plainly a Locations destination.
+                 `f.key` is the raw district name, which is what the filter
+                 carries — the slug is only in the pathname form. */
+              const on =
+                location === f.href ||
+                search.includes(`district=${encodeURIComponent(f.key)}`);
+              return (
+                <li key={f.key}>
+                  <Link
+                    href={f.href}
+                    aria-current={on ? "page" : undefined}
+                    className={`group block rounded-xl px-4 py-3 transition-all duration-300 hover:bg-canvas-alt hover:translate-x-1 ${
+                      on ? "bg-canvas-alt" : ""
+                    }`}
+                  >
+                    <span className="flex items-baseline justify-between gap-3">
+                      <span className="text-base font-medium text-ink group-hover:text-jamin-red-deep">
+                        {f.label}
+                      </span>
+                      <span className="text-tiny text-ink-muted">{f.count}</span>
                     </span>
-                    <span className="text-tiny text-ink-muted">{f.count}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </MegaPanel>
       )}

@@ -433,7 +433,21 @@ export default async function HomePage() {
             the thing every browser blocks and every reader resents. */}
         <div className="relative isolate overflow-hidden rounded-xl bg-charcoal">
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px rule-red" />
-          <div className="relative grid items-center gap-phi5 px-phi4 py-phi6 lg:grid-cols-2 lg:px-phi6 lg:py-phi7">
+          {/* ⚠️ VERTICAL PADDING IS ONE RUNG DOWN THE SCALE FROM THE HORIZONTAL
+              (2026-08-14). It was `py-phi6 lg:py-phi7` — and phi7 is 9rem, so
+              the band carried 288px of empty charcoal on a desktop, against
+              content that is a heading, three lines and two buttons on one side
+              and a 16:9 video on the other. Reported as the section being
+              taller than it needs to be, and it was: the padding alone was
+              close to the height of the thing it framed.
+
+              phi5/phi6 rather than a hand-picked rem, because the whole system
+              is the golden-ratio scale — stepping off it here would make this
+              the one band whose rhythm does not match the sections above it.
+              The HORIZONTAL padding is deliberately left where it is: it sets
+              the measure of the copy column, which was not what was reported
+              and which the two-panel layout depends on. */}
+          <div className="relative grid items-center gap-phi5 px-phi4 py-phi5 lg:grid-cols-2 lg:px-phi6 lg:py-phi6">
             <div className="min-w-0 max-w-2xl">
               <h2 className="text-3xl text-white">Walk the land before you decide.</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-white/85">

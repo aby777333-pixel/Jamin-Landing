@@ -304,7 +304,7 @@ function ArticleCard({ post }: { post: JournalCard }) {
       className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      {/* 🚨 2/1 AND `object-cover object-left`, AND EVERY PART OF THAT IS A
+      {/* 🚨 2/1 AND `object-cover object-left-top`, AND EVERY PART OF THAT IS A
           MEASUREMENT.
 
           Two reports pulled opposite ways: one asked for a consistent
@@ -337,7 +337,37 @@ function ArticleCard({ post }: { post: JournalCard }) {
           ever change character this is the line to re-check.
 
           The `p-2` mat and the sunken ground went with the letterbox they
-          existed to excuse. */}
+          existed to excuse.
+
+          ⚠️ `-top` WAS ADDED 2026-08-14, AND IT OVERTURNS THE CLAIM ABOVE THAT
+          "every JAMIN BAZAAR lockup survives". That was true of the six covers
+          on the table at the time. Re-measured across all 29 published covers:
+
+            2.000  11 covers  1774x887   crop nothing
+            1.500   9 covers  1536x1024  lose 12.5% off the top AND the bottom
+            1.777   4 covers  1672x941   lose 5.6% off each
+            1.874   1 cover              lose 3.1% off each
+            >2.0    4 covers             crop off the RIGHT only, as before
+
+          So 14 of 29 were losing their top edge, because `object-left` sets
+          `left CENTER` — the horizontal anchor was chosen deliberately and the
+          vertical one came along as a default nobody picked. On a 1.5 cover
+          that centred band cut the headline in half: `what-is-dtcp-approval`
+          rendered as "IN PLAIN LANGUAGE" with the words "DTCP APPROVAL,"
+          outside the box, and `what-is-patta` as a bare "DO NOT MATCH?".
+          Reported 2026-08-14 as content clipping, priority high.
+
+          ⚠️ AND THE LOCKUP IS AT THE TOP ON THIS GENERATION OF COVERS, not the
+          bottom — five of the 1.5s carry JAMIN BAZAAR in the top-left corner,
+          so the centred crop was destroying the brand mark the old note thought
+          it was protecting. What `-top` spends instead is the bottom furniture:
+          icon strips, footer straplines, small print. Checked frame by frame
+          against every tall cover before taking it.
+
+          The horizontal half is UNCHANGED — wide covers still crop off the
+          right only. If a cover ever arrives with its subject at the bottom,
+          this is the line to re-check, and re-render the comparison rather than
+          reasoning about it. */}
       <div className="relative aspect-[2/1] overflow-hidden">
         {post.coverUrl ? (
           <Image
@@ -345,7 +375,7 @@ function ArticleCard({ post }: { post: JournalCard }) {
             alt={post.coverAlt ?? post.title}
             fill
             sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover object-left transition-transform duration-[1200ms] group-hover:scale-[1.03]"
+            className="object-cover object-left-top transition-transform duration-[1200ms] group-hover:scale-[1.03]"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-canvas-sunken text-tiny uppercase tracking-brand text-ink-faint">

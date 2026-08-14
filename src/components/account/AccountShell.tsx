@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Container, SectionLabel, Skeleton } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { isPartner } from "@/lib/partner";
@@ -42,8 +42,8 @@ export function AccountShell({ title, children }: { title: string; children: Rea
   }, [loading, session, router]);
 
   /**
-   * 🚨 EVERY ACCOUNT SECTION OPENS AT ITS OWN TOP, AND THIS REVERSES AN EARLIER
-   * DECISION RATHER THAN ADDING TO IT.
+   * 🚨 EVERY ACCOUNT SECTION OPENS AT ITS OWN TOP — AT THE TOP OF THE SECTION,
+   * NOT THE TOP OF THE PAGE. THE DIFFERENCE IS THE WHOLE POINT OF THIS EFFECT.
    *
    * The nav links carry `scroll={false}` (see the note on them below) because
    * Next's own scroll-to-top was yanking the horizontal tab strip back to its
@@ -60,6 +60,40 @@ export function AccountShell({ title, children }: { title: string; children: Rea
    * back to Next would restore the strip bug that `scroll={false}` exists to
    * prevent.
    *
+   * 🚨 IT WAS `scrollTo(0)` FOR ONE DAY AND THAT WAS TOO FAR (2026-08-14).
+   * The next report said the opposite of the last one: "clicking any sidebar
+   * option causes the page to jump back to the top", asking to land on the
+   * section "without an unwanted jump to the page top". Both reports are right,
+   * and they are not actually in conflict — the first was about landing BELOW
+   * the section, the second about landing ABOVE it. Page top is not section
+   * top: above the grid sit the picture band (2/1, so ~600px on a desktop) and
+   * the account header, and `scrollTo(0)` put all of that back on screen every
+   * time a menu item was picked, pushing the sidebar and the section the reader
+   * had just asked for under the fold.
+   *
+   * So it scrolls to the top of the CONTENT GRID, offset by the sticky header.
+   * That is the position where the section starts, the sidebar is pinned at its
+   * sticky offset, and the whole menu including Sign out is on screen — which
+   * is also the report's second clause, and it needs no change to the sidebar
+   * itself. The sidebar always fitted; it just started below the fold.
+   *
+   * ⚠️ `Math.min` — IT ONLY EVER SCROLLS UP. Clamping is what lets one rule
+   * serve both reports. A reader at the top looking at the picture clicks
+   * Shortlist and does not move (min(0, top) is 0); a reader deep inside Leads
+   * clicks Network and comes UP to the section start rather than being thrown
+   * past it. An unclamped scroll would drag the first reader DOWNWARD off the
+   * band the account deliberately opens on, which is a third bug and nobody has
+   * reported it because it has never shipped.
+   *
+   * ⚠️ Skips the first run. On a fresh load — or a deep link straight to
+   * /account/visits — the reader has not chosen anything yet, and the owner's
+   * decision of 2026-08-13 is that the account OPENS ON THE PICTURE. This must
+   * only answer a menu pick.
+   *
+   * ⚠️ `--header-h` read from the computed style, not hard-coded: it is 72px
+   * and 80px at `lg`, the same token the sticky column offsets by. Reading it
+   * keeps the two in step at both breakpoints.
+   *
    * ⚠️ Keyed on `pathname`, so it fires on a section change and not on a
    * re-render — a state update inside a section must never throw the reader
    * back to the top of it.
@@ -68,8 +102,28 @@ export function AccountShell({ title, children }: { title: string; children: Rea
    * page being slow, and `prefers-reduced-motion` would have to be honoured
    * anyway; an instant jump is what a new page is expected to do.
    */
+  const gridRef = useRef<HTMLDivElement>(null);
+  const navigated = useRef(false);
+
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "auto" });
+    if (!navigated.current) {
+      navigated.current = true;
+      return;
+    }
+    const grid = gridRef.current;
+    if (!grid) return;
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 72;
+    /* The gap the sticky column already leaves itself, so the section lands
+       level with the menu beside it rather than a few pixels above it. */
+    const sectionTop =
+      window.scrollY + grid.getBoundingClientRect().top - headerH - 20;
+    window.scrollTo({
+      top: Math.max(0, Math.min(window.scrollY, sectionTop)),
+      behavior: "auto",
+    });
   }, [pathname]);
 
   if (loading) {
@@ -144,7 +198,10 @@ export function AccountShell({ title, children }: { title: string; children: Rea
         </div>
       </header>
 
-      <div className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
+      {/* The ref is the scroll target for the effect above — the top of this
+          grid is where a section begins, and it is deliberately BELOW the
+          picture band and the account header rather than at the page top. */}
+      <div ref={gridRef} className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
         {/* ⚠️ THE STICKY LIVES ON THIS WRAPPER, NOT ON THE <nav>. The nav and
             the sign-out control have to travel together — pinning only the nav
             is what left the button behind in the first place.
