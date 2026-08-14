@@ -199,6 +199,7 @@ export function PageHero({
      "left" below, where it always was; `cinematic` falls back to its own
      `object-center` class. Passing a value now reaches both. */
   artPosition,
+  sheerEdge = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -244,6 +245,10 @@ export function PageHero({
    * the empty ground beside her and walks the subject leftward into the frame.
    */
   artPosition?: string;
+  /** Fade the cinematic plate out across its right edge, so the artwork
+   *  behind it reads. Only for heroes whose copy is left-aligned and whose
+   *  subject sits right — see the note on `.rj-gilt-sheer-edge`. */
+  sheerEdge?: boolean;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -356,7 +361,9 @@ export function PageHero({
               cinematic hero drops below AA. The two changes ship together or
               not at all. */}
           <div
-            className={`gilt ${sheer ? "rj-gilt-sheer rj-sheer-copy" : ""} rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
+            className={`gilt ${
+              sheer ? `${sheerEdge ? "rj-gilt-sheer-edge" : "rj-gilt-sheer"} rj-sheer-copy` : ""
+            } rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 xl:max-w-[46rem]`}
             style={
               sheer
                 ? ({

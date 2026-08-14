@@ -947,15 +947,46 @@
   );
 }
 
+/**
+ * 🚨 THIRD PASS, 2026-08-14 — "make this max see-through". AND THE ALPHAS WERE
+ * NEVER THE THING IN THE WAY: at `xl` the top stop has been 0.04 since the
+ * second pass, which is as good as clear. What made it read as a solid slab is
+ * `rj-glass-onyx`'s `blur(22px)`, which turns the gate and the road behind it
+ * into a smear — the reader sees *through* the panel and finds nothing worth
+ * seeing. `rj-gilt-sheer` learned this on the cinematic heroes and dropped its
+ * filter for exactly the same reason.
+ *
+ * ⚠️ BUT THE BLUR WAS DOING CONTRAST WORK, and removing it outright FAILS.
+ * Measured on hero-20's own pixels under the eyebrow's rect, sharp rather than
+ * averaged: the brightest patch there is rgb(232,185,141) — direct sun on the
+ * road — against a local mean of 76. Champagne-300 needs:
+ *
+ *     backdrop                       α for 4.5:1
+ *     sharp worst   232,185,141        0.604   ← blur removed entirely
+ *     half-blurred  154,131,109        0.406   ← what ships
+ *     local mean     76, 76, 76        0.000   ← what blur(22px) was hiding
+ *
+ * So the trade is bought, not taken: blur 22px → 10px puts the backdrop about
+ * halfway back to the mean, which LOWERS the alpha the eyebrow needs from 0.481
+ * to 0.406 — the panel gets lighter and sharper at the same time.
+ *
+ * ⚠️ THE FOOT IS STILL PINNED BY THE NOTE and always will be. It sits at 71.4%,
+ * over the section's own ivory, where blur is a no-op — blurring a flat colour
+ * returns the flat colour. `bone` on rgb(253,252,249) needs α ≥ 0.616, and the
+ * ramp reaches 0.646 there. That 0.03 is the entire margin. The 75% stop is the
+ * one to leave alone; lightening it is what fails, not the top.
+ */
 @media (min-width: 1280px) {
   .rj-console.rj-glass-onyx {
     background: linear-gradient(
       to bottom,
       rgba(18, 17, 16, 0.04) 0%,
-      rgba(18, 17, 16, 0.48) 18%,
-      rgba(18, 17, 16, 0.68) 75%,
-      rgba(18, 17, 16, 0.74) 100%
+      rgba(18, 17, 16, 0.44) 18%,
+      rgba(18, 17, 16, 0.66) 75%,
+      rgba(18, 17, 16, 0.7) 100%
     );
+    /* Half the blur, so the arch behind it is a thing you can recognise. */
+    backdrop-filter: blur(10px) saturate(1.25);
   }
 }
 
@@ -1542,6 +1573,36 @@
   .rj-gilt-light-sheer {
     background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.26));
   }
+}
+
+/**
+ * ── THE PLATE'S OPEN EDGE (2026-08-14) ────────────────────────────────────
+ *
+ * Owner: make the card see-through so the gate and the lockup behind it read.
+ * This fades the plate out across its RIGHT edge instead of thinning the whole
+ * tint, and the stop is a measurement rather than a taste.
+ *
+ * Every glyph on /properties ends by **77.6%** of the plate's width — measured
+ * live at 1440 with Range.getClientRects() over the h1, the lead and the
+ * eyebrow, longest run first. So from 80% out there is nothing to keep legible
+ * and the tint can go to zero: the reveal costs **no contrast at all**.
+ *
+ * ⚠️ A SOFTER RAMP STARTING EARLIER WAS TRIED AND FAILS. Fading from 55%
+ * dropped the h1 to 2.61:1 on hero-37's own pixels, against the 3:1 floor for
+ * large text — the flat 0.52 only measures 4.06 there, so there is barely a
+ * point of headroom to spend. If more of the picture is wanted, the copy has to
+ * get narrower or the frame has to change; the tint cannot give it.
+ *
+ * ⚠️ `to right` is safe only because this hero's copy is left-aligned and the
+ * subject sits right. On a plate whose text ran full width this would be wrong.
+ */
+.rj-gilt-sheer-edge {
+  background: linear-gradient(
+    to right,
+    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) 0%,
+    rgba(16, 14, 12, var(--rj-sheer-alpha, 0.14)) 78%,
+    rgba(16, 14, 12, 0) 100%
+  );
 }
 
 .rj-gilt-sheer {

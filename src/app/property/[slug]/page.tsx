@@ -975,11 +975,25 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
     file: "jamin-garden-shastri-nagar-erode",
     widths: [960, 1440, 1799],
   },
-  /* No slug in the database — this is the id the URL actually uses. */
+  /* No slug in the database — this is the id the URL actually uses.
+     ⚠️ `udumalaipet-2`, owner-supplied 2026-08-14, replacing `udumalaipet`.
+     A NEW FILENAME rather than an overwrite: `next/image` keys its optimised
+     output by source path, so writing over the old file lets a warm build keep
+     serving the old picture from a deploy that looks correct. The previous
+     renditions stay in the folder, unused.
+
+     ⚠️ AND ITS `focus` WENT WITH IT. The old frame was 1440x1080 — 1.333 — and
+     needed `50% 80%` to stop the tea stall being cut off the bottom. This one
+     is 1672x941, **1.777**, so the same box crops far less of it: 85% of the
+     height survives at 1440 and 68% at a 2000-wide window, against 51% before.
+     Rendered top / 30% / centre / 80% at the widest case before dropping it —
+     at 80% the JAMIN BAZAAR arrow is jammed against the top edge with no
+     margin, and at centre it has headroom while the road curve and the stall
+     both still read. Centre is the default, so the override is gone rather than
+     set to 50%. */
   "c0e9c29e-8865-45ba-b852-1ab993fb1664": {
-    file: "udumalaipet",
-    widths: [960, 1440, 1448],
-    focus: "50% 80%",
+    file: "udumalaipet-2",
+    widths: [960, 1440, 1672],
   },
 };
 

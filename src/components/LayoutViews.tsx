@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { LayoutRelief } from "@/components/LayoutRelief";
 import { MasterPlan, PlanParticulars } from "@/components/MasterPlan";
 import { PlotSchedule } from "@/components/PlotSchedule";
 import type { Plot, PlotPlan } from "@/lib/properties";
@@ -41,7 +42,7 @@ export function LayoutViews({
   title: string;
 }) {
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
-  const [view, setView] = useState<"plan" | "blocks">(hasPlan ? "plan" : "blocks");
+  const [view, setView] = useState<"plan" | "relief" | "blocks">(hasPlan ? "plan" : "blocks");
 
   /**
    * ⚠️ FEET BY DEFAULT, and that is the point of the request rather than a
@@ -73,9 +74,14 @@ export function LayoutViews({
             <Segmented
               label="Layout view"
               value={view}
-              onChange={(v) => setView(v as "plan" | "blocks")}
+              onChange={(v) => setView(v as "plan" | "relief" | "blocks")}
+              /* ⚠️ Relief sits BETWEEN the two, because that is the order of
+                 abstraction: the drawing, the drawing tilted, then the list. It
+                 is offered on exactly the same condition as the plan — traced
+                 geometry — because it is the same geometry. */
               options={[
                 { value: "plan", label: "Plan" },
+                { value: "relief", label: "Relief" },
                 { value: "blocks", label: "Blocks" },
               ]}
             />
@@ -99,6 +105,8 @@ export function LayoutViews({
 
       {view === "plan" && plan ? (
         <MasterPlan plots={plots} plan={plan} title={title} unit={unit} />
+      ) : view === "relief" && plan ? (
+        <LayoutRelief plots={plots} plan={plan} unit={unit} />
       ) : (
         <PlotSchedule plots={plots} unit={unit} />
       )}

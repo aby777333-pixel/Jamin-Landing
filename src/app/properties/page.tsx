@@ -50,6 +50,11 @@ export default async function PropertiesPage() {
            quietly left as done. */
         artPosition="20% center"
         sheer
+        /* The plate fades out across its right fifth so the gate and the
+           lockup behind it read — every glyph here ends by 77.6% of the
+           plate's width, so the reveal costs no contrast. See the note on
+           `.rj-gilt-sheer-edge`. */
+        sheerEdge
         /* ⚠️ 0.52, up from hero-17's 0.12, and swept rather than carried.
            hero-17 was a trimmed banner that is dark exactly where the copy
            sits; this frame is an aerial under a bright sky and measures far
