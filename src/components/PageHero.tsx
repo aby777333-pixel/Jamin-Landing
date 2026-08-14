@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -61,6 +61,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   31: 720, 32: 887, 33: 720,
   34: 800, 35: 887, 36: 887, 37: 821,
   38: 819, 39: 836, 40: 819,
+  /* hero-41 — /journal from 2026-08-14. */
+  41: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -170,6 +172,22 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      location or a project name — enforced by construction, since the page no
      longer passes `photo` and an art is always decoration. */
   40: 1921,
+  /* hero-41 — /journal from 2026-08-14, owner-supplied, replacing hero-27's
+     desk in the meadow. Same desk, same valley, and a tyrannosaur coming over
+     the ridge behind it: the visual half of "when there's danger, Jamin stays
+     cool", which the lead beneath it now says in words.
+
+     ⚠️ IT IS THE ONE FRAME IN THIS REGISTER THAT CANNOT BE MISTAKEN FOR A
+     PLACE, which makes the standing rule easy for once rather than hard. There
+     is no provenance question to get wrong — nobody reads a dinosaur as a
+     development. It still ships `alt=""` and `aria-hidden` like every other
+     art, because it is decoration and the page says everything without it.
+
+     ⚠️ Its plate alpha was RE-SWEPT and went UP, not carried over. hero-27 was
+     overcast daylight and settled at 0.38; this frame puts a sunlit signboard
+     and a bright horizon directly under the copy. See the note on the /journal
+     call for the numbers. */
+  41: 1774,
 };
 
 function artSrc(n: HeroArt) {

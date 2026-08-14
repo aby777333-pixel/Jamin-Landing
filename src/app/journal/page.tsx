@@ -68,43 +68,54 @@ export default async function JournalPage() {
           hero-25 is a photograph with real tonal range, which is the case
           `veil` and the `gilt` plate exist for. */}
       <PageHero
-        art={27}
+        art={41}
         tone="cinematic"
         sheer
-        /* ⚠️ RE-SWEPT FOR hero-27, NOT CARRIED OVER. The banyan this replaced
-           allowed 0.02 — the lightest plate on the site — because it was deep
-           shade. hero-27 is the opposite frame: overcast daylight, bright sky,
-           pale grass, no shade anywhere. At 0.02 the white lead measures
-           2.41:1, which is not a near miss.
+        /* 🚨 RE-SWEPT FOR hero-41 (2026-08-14), AND CARRYING hero-27’s 0.38
+           OVER WOULD HAVE FAILED. That frame was overcast daylight; this one
+           puts a sunlit signboard and a bright horizon directly under the copy,
+           so the plate’s own footprint measures a p95 of rgb(221,188,155)
+           against the meadow’s much darker one.
 
-           Swept on the composited frame (photograph, then `veil`'s two
-           gradients, then the plate), plate region only, at the p95 this repo
+           Swept on the built page — photograph, then `veil`’s two gradients,
+           then the plate — over the plate region only, at the p95 this repo
            measures by:
 
-               0.34 → eyebrow 4.27 · white 4.61   ← eyebrow under AA
-               0.40 → eyebrow 4.89 · white 5.28
-               0.44 → eyebrow 5.36 · white 5.79
-               0.52 → eyebrow 6.49 · white 7.01   ← the site's audited default
+               0.38 → 4.09   ← hero-27’s value. UNDER AA on this frame.
+               0.44 → 4.76   ← ships: the lightest that clears
+               0.48 → 5.29
+               0.52 → 5.89   ← the site’s audited default
 
-           ⚠️ LIGHTENED AGAIN on request, 2026-08-11 — the owner asked for less
-           overlay. Re-swept on the built page rather than scaled by eye:
+           0.44 keeps a 0.26 margin, which is the same order this page has
+           always run at (0.38 kept 0.21 on the meadow). Anyone lightening it
+           has to change the ink first — the eyebrow binds, as on every
+           cinematic hero.
 
-               0.40 → eyebrow 4.89 · white 5.28
-               0.38 → eyebrow 4.71 · white 5.09   ← ships
-               0.36 → eyebrow 4.50 · white 4.86   ← exactly on the line
-               0.34 → eyebrow 4.29 · white 4.64   ← under
-
-           0.36 is the floor and it has NO margin; 0.38 keeps a little. Anyone
-           going lower has to change the ink first — champagne-50 at 9.9px is
-           what binds, not the white.
-
-           The eyebrow is champagne-50 at 9.9px and is the binding ink, as it is
-           on every cinematic hero. 0.44 keeps a margin on it while still
-           letting more of the meadow through than the default would. */
-        sheerAlpha={0.38}
+           ⚠️ At the single BRIGHTEST pixel under the plate (the signboard’s
+           white face, which blows to 255) nothing below 0.56 clears 4.5. That
+           is a handful of pixels rather than a glyph’s worth of ground, which
+           is exactly why this repo measures at p95 and not at the maximum —
+           but it is the reason this frame cannot go as light as the meadow. */
+        sheerAlpha={0.44}
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
-        lead="Patta, chitta, encumbrance, DTCP approval — buying land means meeting a set of documents most people see only once. These are our notes on them, written plainly and kept current."
+        /* ⚠️ THREE PARAGRAPHS, so `lead` is passed as JSX rather than a
+           string. `PageHero` types it as a `ReactNode` and renders it inside a
+           <div>, so the paragraphs are legitimate children — a string with
+           line breaks in it would have come out as one run of prose. */
+        lead={
+          <>
+            <p className="font-medium">When there’s danger, Jamin stays cool.</p>
+            <p className="mt-phi2">
+              When uncertainty surrounds a property, Jamin stays calm, careful and alert. We
+              help protect our buyers and sellers, even when the risks aren’t obvious.
+            </p>
+            <p className="mt-phi2">
+              Trusted by thousands to protect what matters most: their home, their land, and
+              their future.
+            </p>
+          </>
+        }
       />
       <Container className="py-phi5">
         {posts.length === 0 ? (
