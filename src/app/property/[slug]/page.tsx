@@ -986,7 +986,27 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
      It is also BRIGHTER than the frame it replaces, which reverses the concern
      recorded on -2: the copy is clear of the picture at 1440 either way, and a
      bright frame only helps the dark ink beside it. */
-  "jamin-new-project-jul-2026": { file: "edappadi-3", widths: [960, 1440, 1672] },
+  "jamin-new-project-jul-2026": {
+    file: "edappadi-3",
+    widths: [960, 1440, 1672],
+    /* 🚨 88%, BECAUSE THIS FRAME PUTS ITS SUBJECT ON THE FLOOR. Reported
+       2026-08-14: "can't see the bottom of the image" — the children under the
+       banyan were cut to their heads.
+
+       The box is much wider than the picture, so `cover` spends HEIGHT, and at
+       a 2000-wide window it spends a lot: measured 1026x396 = 2.594 against a
+       1.777 source, so only 68.5% of the height survives and a centred crop
+       takes 15.7% off the top AND 15.7% off the bottom. The children sit in the
+       last quarter of the frame, so the bottom cut is the one that hurts.
+
+       ⚠️ NOT `100%`, and the sign is why. Rendered centre / 75 / 88 / bottom at
+       the 2.594 worst case: at 100% the whole group is in shot but the JAMIN
+       BAZAAR board is jammed against the top edge with its hanging chains cut.
+       88% keeps the children AND leaves headroom above the board. The same
+       trade as every other frame in this file — subject versus lockup — just
+       decided on the vertical axis for once. */
+    focus: "50% 88%",
+  },
   "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
   "jamin-garden-shastri-nagar-erode": {
     file: "jamin-garden-shastri-nagar-erode",
