@@ -212,8 +212,12 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
               first LINE of the address, not to the centre of a block that may
               be two lines tall. */}
           <p className="mt-phi2 flex items-start gap-1.5 text-base tracking-[0.05em] text-ink-muted">
+            {/* ⚠️ `pin`, not `station` — owner's call 2026-08-14. The trig
+                station is the better drawing and the worse sign: at 14px an
+                outlined triangle with a dot in it is the warning glyph, and it
+                sat in front of a postal address. See the note in SurveyIcon. */}
             <SurveyIcon
-              name="station"
+              name="pin"
               size="h-3.5 w-3.5"
               className="mt-[0.15em] shrink-0 text-ink-faint"
             />

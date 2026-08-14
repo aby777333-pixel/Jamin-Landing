@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
+import { SurveyIcon } from "./cadastral/SurveyIcon";
 import { EmptyState, ButtonLink } from "./ui";
 import { DISTRICT_STONE, STAGE_STONE, STONE_FALLBACK } from "@/lib/stones";
 import {
@@ -309,16 +310,30 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           </div>
 
           <div className="flex items-center self-start rounded-full border border-line bg-canvas p-1 sm:self-auto">
-            {(["grid", "list", "map"] as const).map((v) => (
+            {/* ⚠️ The icon is DECORATION beside a label that stays — reported
+                2026-08-14 as the three controls being "less recognizable at a
+                glance", which is an argument for adding a mark, not for
+                removing the word. Icon-only would also cost the one thing this
+                switcher gets right: `capitalize` on a plain word needs no
+                tooltip and no guess. The mark is `aria-hidden`; the button's
+                accessible name is still its text. */}
+            {(
+              [
+                { v: "grid", icon: "grid" },
+                { v: "list", icon: "list" },
+                { v: "map", icon: "map" },
+              ] as const
+            ).map(({ v, icon }) => (
               <button
                 key={v}
                 type="button"
                 aria-pressed={f.view === v}
                 onClick={() => set({ view: v })}
-                className={`rounded-full px-3.5 py-1.5 text-tiny font-medium capitalize transition-colors ${
+                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-tiny font-medium capitalize transition-colors ${
                   f.view === v ? "bg-ink text-canvas" : "text-ink-soft hover:text-ink"
                 }`}
               >
+                <SurveyIcon name={icon} size="h-3.5 w-3.5" className="shrink-0" />
                 {v}
               </button>
             ))}

@@ -141,6 +141,37 @@ export function Hero({
             priority
             sizes="100vw"
             className="object-cover object-top"
+            /* 🚨 35%, NOT THE 50% `object-top` IMPLIES — and the card width is
+               deliberately NOT what moved. Reported 2026-08-14: the copy card
+               and the gateway's left pillar compete, the pillar sitting behind
+               the card.
+
+               hero-20 is 3.302:1 inside a 1.943 box, so `cover` throws away
+               **41.2% of its width** and object-position has real travel here —
+               unlike the /properties hero, whose frame leaves only 10.6% and
+               cannot be steered out of trouble at all. Lowering X shows more of
+               the picture's LEFT, which walks the gate to the RIGHT. Measured
+               against the card's right edge (55% of the banner at 1440, 61% at
+               1280, because the card is a fixed 42rem and the banner is the
+               viewport):
+
+                 50% (was)  pillar at ~42% — the card covers a third of the gate
+                 35%        pillar at ~52%, JAMIN BAZAAR whole at both widths
+                 22%        pillar clear, but the lockup clips off the right
+
+               35% is the balance: the card sits over open sky and fields at
+               1440, the pillar reaches its edge at 1280, and the brand mark
+               survives at both. Anything lower buys separation with the lockup,
+               which is the trade the Journal covers already taught us not to
+               make.
+
+               ⚠️ THE CARD'S 42rem IS NOT AVAILABLE AS A LEVER. The note on it
+               below records that a narrower measure makes taller copy, and this
+               section is content-sized on a 3.3:1 banner — every pixel of copy
+               height comes off the banner's SIDES. 36rem measured a 675px block
+               and cropped the banner to 56%. Steering the picture is free;
+               narrowing the card is not. */
+            style={{ objectPosition: "35% top" }}
           />
           {/* The mirror of `hero-fade`: instead of a dark scrim the page
               dissolves the image into its own canvas from the left. Over the
@@ -343,25 +374,61 @@ export function Hero({
                 Below `sm` they keep their minimum width and the rail scrolls,
                 because squeezing three cards into 375px reads as nothing. */}
             <div className="flex gap-1 overflow-x-auto sm:overflow-x-visible">
-              {slides.map((s) => (
-                <Link
-                  key={s.href}
-                  href={s.href}
-                  className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] p-1.5 transition-colors duration-300 hover:bg-canvas/70 sm:min-w-0 sm:flex-1 sm:shrink"
-                >
-                  <span className="relative h-10 w-14 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
-                    <Image src={s.image} alt="" fill sizes="56px" className="object-cover" />
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block text-micro uppercase tracking-[0.14em] text-jamin-red-deep">
-                      {s.eyebrow}
+              {slides.map((s) => {
+                /* ⚠️ SPLIT, NOT A NEW FIELD. `eyebrow` arrives already joined
+                   as "Ongoing · Salem" (see the homepage's `slides`), and the
+                   report asks for the STAGE to be told apart from the place.
+                   Splitting here keeps `Slide` the one-line contract it is and
+                   degrades safely: an eyebrow with no separator becomes the
+                   stage and no place, which is what a project with no district
+                   should show anyway. */
+                const [stage, ...place] = s.eyebrow.split(" · ");
+                return (
+                  <Link
+                    key={s.href}
+                    href={s.href}
+                    /* 🚨 A BORDER AND A CHEVRON, BECAUSE THE WHOLE CARD WAS
+                       ALREADY CLICKABLE AND DID NOT LOOK IT — reported
+                       2026-08-14 as "just looking project name". The hit area
+                       never changed; what was missing was any mark saying so.
+                       The resting border is what makes it read as an object,
+                       and the chevron is the affordance every other card on
+                       this site uses. */
+                    className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] border border-line/70 bg-canvas/40 p-1.5 transition-all duration-300 hover:border-jamin-gold hover:bg-canvas/80 sm:min-w-0 sm:flex-1 sm:shrink"
+                  >
+                    {/* 48x72, up from 40x56 — "increase the project thumbnail
+                        size slightly". `sizes` follows it or the browser keeps
+                        fetching the old rendition. */}
+                    <span className="rj-sheen relative h-12 w-[4.5rem] shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
+                      <Image src={s.image} alt="" fill sizes="72px" className="object-cover" />
                     </span>
-                    <span className="block truncate text-base text-ink transition-colors group-hover:text-jamin-red-deep">
-                      {s.title}
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-1.5">
+                        {/* The stage gets the pill; the place stays quiet
+                            beside it. Two levels where there was one run-on
+                            line in a single colour. */}
+                        <span className="rounded-full bg-jamin-red-soft px-1.5 py-px text-micro font-semibold uppercase tracking-[0.14em] text-jamin-red-deep">
+                          {stage}
+                        </span>
+                        {place.length > 0 && (
+                          <span className="truncate text-micro uppercase tracking-[0.14em] text-ink-faint">
+                            {place.join(" · ")}
+                          </span>
+                        )}
+                      </span>
+                      <span className="mt-0.5 block truncate text-base text-ink transition-colors group-hover:text-jamin-red-deep">
+                        {s.title}
+                      </span>
                     </span>
-                  </span>
-                </Link>
-              ))}
+                    <span
+                      aria-hidden="true"
+                      className="shrink-0 pr-1 text-ink-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-jamin-red-deep"
+                    >
+                      &rsaquo;
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -79,14 +79,42 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
             <li key={purpose.key} className="flex">
               <Link
                 href={href}
-                className={`group flex w-full flex-col rounded-xl border border-line ${purpose.tint} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift`}
+                /* ⚠️ A LIVE CARD CARRIES MORE WEIGHT AT REST, not only on
+                   hover — reported 2026-08-14 as the four cards having "almost
+                   the same visual priority, making it less obvious which
+                   options are available now". A resting ring and lift are the
+                   whole difference; tint, icon and copy are untouched, so this
+                   spends no new colour. */
+                className={`group flex w-full flex-col rounded-xl border ${purpose.tint} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift ${
+                  live ? "border-ink-faint/60 shadow-lift" : "border-line"
+                }`}
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
-                <span
-                  aria-hidden="true"
-                  className={`flex h-11 w-11 items-center justify-center rounded-[12px] bg-canvas/70 ${purpose.chip.split(" ").slice(1).join(" ")}`}
-                >
-                  <SurveyIcon name={purpose.icon as never} className="h-[23px] w-[23px]" />
+                {/* 🚨 THE STATUS IS STATED, NOT INFERRED. The card already said
+                    it twice — "Not selling for this yet." and "register
+                    interest →" — but both sat at the BOTTOM, so the answer to
+                    "can I buy this today?" was the last thing read rather than
+                    the first. The report asked for Build a Home and Investment
+                    to read AVAILABLE and Farm and Commercial COMING SOON; this
+                    says it on the same line as the icon.
+
+                    ⚠️ Derived from `count`, never hard-coded per card — a
+                    purpose starts selling the moment a development is tagged
+                    with it, and this label has to follow that on its own. */}
+                <span className="flex items-start justify-between gap-2">
+                  <span
+                    aria-hidden="true"
+                    className={`flex h-11 w-11 items-center justify-center rounded-[12px] bg-canvas/70 ${purpose.chip.split(" ").slice(1).join(" ")}`}
+                  >
+                    <SurveyIcon name={purpose.icon as never} className="h-[23px] w-[23px]" />
+                  </span>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.12em] ${
+                      live ? "bg-canopy-soft text-canopy" : "border border-line text-ink-faint"
+                    }`}
+                  >
+                    {live ? "Available" : "Coming soon"}
+                  </span>
                 </span>
 
                 <span className="mt-phi3 block text-xl text-ink">{purpose.label}</span>
@@ -110,11 +138,10 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
                     its own ruled row, so the four rows align by construction
                     whatever the copy above them does. Right-aligned, per the
                     report. */}
-                {!live && (
-                  <span className="mt-phi2 block text-tiny text-ink-faint">
-                    Not selling for this yet.
-                  </span>
-                )}
+                {/* The sentence that sat here said what the pill above now
+                    says, in the place a reader reaches last. Removed rather
+                    than kept, so all four cards keep the same SHAPE — the
+                    alignment fix recorded above depends on exactly that. */}
                 {/* ⚠️ The number is the evidence, so it stays plain — §8's rule
                     about not putting gold on a figure that is selling by
                     itself. */}

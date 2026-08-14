@@ -356,7 +356,7 @@ export default async function VaultPage() {
             frame directly over the house. It went unnoticed while the hero was
             an abstract drawn plate; with a photograph whose subject is dead
             centre it hides the one thing worth showing. */}
-        <Container className="relative w-full py-phi6">
+        <Container className="relative w-full py-phi5">
           {/* ⚠️ 0.46, and the sweep that chose it is in the section comment
               above — it is the hero-30 swap, not a taste change. The short
               version: under hero-29 the scrim carried the contrast and the
@@ -368,16 +368,16 @@ export default async function VaultPage() {
               and it is a flat tint with no backdrop-filter, so the painting
               runs through it unaltered rather than being frosted. */}
           <div
-            className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi4 sm:p-phi5"
+            className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
             style={{ "--rj-sheer-alpha": 0.46 } as React.CSSProperties}
           >
             <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
               {hero.eyebrow ?? "Jamin Bazaar"}
             </p>
-            <h1 className="mt-phi3 text-balance text-4xl text-white lg:text-5xl">
+            <h1 className="mt-phi2 text-balance text-4xl text-white lg:text-5xl">
               {hero.title ?? "The Vault"}
             </h1>
-            <p className="rj-voice mt-phi3 text-pretty text-xl text-white">
+            <p className="rj-voice mt-phi2 text-pretty text-xl text-white">
               {hero.lead ?? VAULT_FALLBACK.hero.lead}
             </p>
 
@@ -401,10 +401,10 @@ export default async function VaultPage() {
                 hover. They are decoration: each row's label already says where
                 it goes, and a screen reader reading "arrow" six times in a
                 column of six links is noise. */}
-            <div className="mt-phi5 flex flex-col gap-3">
+            <div className="mt-phi4 flex flex-col gap-3">
               <Link
                 href="/vault/request?intent=buy"
-                className="group flex items-center justify-between gap-4 rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+                className="group flex items-center justify-between gap-4 rounded-full bg-jamin-red px-7 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
               >
                 <span>I want to buy</span>
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -413,7 +413,7 @@ export default async function VaultPage() {
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="group flex items-center justify-between gap-4 rounded-full border border-champagne-300 px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="group flex items-center justify-between gap-4 rounded-full border border-champagne-300 px-7 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
               >
                 <span>I want to rent</span>
                 <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
@@ -427,7 +427,7 @@ export default async function VaultPage() {
                 control surface and not as four competing buttons under two
                 real ones. `divide-y` draws it between children only, which is
                 what keeps the group's own rounded corners clean. */}
-            <div className="mt-phi3 divide-y divide-champagne-500/20 overflow-hidden rounded-xl border border-champagne-500/30">
+            <div className="mt-phi2 divide-y divide-champagne-500/20 overflow-hidden rounded-xl border border-champagne-500/30">
               {[
                 { href: "/vault/offer?intent=sell", label: "I want to sell", tone: "text-white/80" },
                 {
@@ -458,7 +458,7 @@ export default async function VaultPage() {
               ))}
             </div>
 
-            <div className="rj-fret mt-phi5 max-w-xs" aria-hidden="true" />
+            <div className="rj-fret mt-phi4 max-w-xs" aria-hidden="true" />
           </div>
         </Container>
       </section>
@@ -703,20 +703,49 @@ export default async function VaultPage() {
                   palace-style residences. These rarely reach a portal — they change hands through
                   families, lawyers and long conversations, which is the way The Vault works anyway.
                 </p>
-                <ul className="mt-phi4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {heritage.items.map((c) => (
-                    <li key={c.slug} className="text-base text-ink-soft">
-                      {c.label}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-phi4 text-tiny leading-relaxed text-ink-faint">
-                  Heritage and culturally significant property carries its own rules on alteration,
-                  transfer and use. Those are established for the specific building, never assumed
-                  from the category.
-                </p>
               </div>
             </div>
+
+            {/* 🚨 THE CATEGORIES CAME OUT OF THE RIGHT COLUMN, and that is the
+                fix rather than a re-styling. They were a two-column list inside
+                the narrow half of a `1.618fr_1fr` grid, so ten labels of very
+                unequal length ran five rows deep in about a third of the band's
+                width — reported 2026-08-14 as "arranged unevenly across
+                multiple rows, leaving unnecessary empty space". The column was
+                the problem: no gap or alignment inside it could make ten items
+                look deliberate in that measure.
+
+                Full width below the band, five across, so today's ten fall into
+                the two equal rows the report asks for.
+
+                ⚠️ FIVE IS THE COLUMN COUNT, NOT THE ROW COUNT — the rows are
+                whatever the DATA makes them. `heritage.items` is
+                `vault_categories`, and adding an eleventh in the console is a
+                click; it will start a third row and that is correct. Nothing
+                here may hard-code ten.
+
+                ⚠️ 2 → 3 → 5 rather than straight to five: at 375 a five-column
+                grid gives each label 60px, and "Rare culturally significant
+                properties" is four words. */}
+            <ul className="mt-phi5 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
+              {heritage.items.map((c) => (
+                <li
+                  key={c.slug}
+                  className="flex h-full flex-col justify-center bg-canvas-alt px-phi3 py-phi3 text-center transition-colors hover:bg-canvas"
+                >
+                  <p className="text-base leading-snug text-ink-soft">{c.label}</p>
+                  {c.note ? (
+                    <p className="mt-1 text-tiny leading-relaxed text-ink-faint">{c.note}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-phi4 max-w-3xl text-tiny leading-relaxed text-ink-faint">
+              Heritage and culturally significant property carries its own rules on alteration,
+              transfer and use. Those are established for the specific building, never assumed from
+              the category.
+            </p>
           </Container>
         </section>
       ) : null}

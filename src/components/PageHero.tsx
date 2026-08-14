@@ -194,7 +194,11 @@ export function PageHero({
   sheer = false,
   sheerAlpha,
   sheerBlur,
-  artPosition = "left",
+  /* ⚠️ NO DEFAULT — the two tones want different ones and a shared
+     literal would silently move every cinematic hero. `paper` falls back to
+     "left" below, where it always was; `cinematic` falls back to its own
+     `object-center` class. Passing a value now reaches both. */
+  artPosition,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -308,6 +312,11 @@ export function PageHero({
             priority={priority}
             sizes="100vw"
             className="object-contain object-center xl:object-cover"
+            /* ⚠️ Only bites from `xl`, where the picture is `cover` and there
+               is a crop to steer. Below that it is `contain` in a box cut to the
+               artwork’s own ratio, so the whole frame is on screen and an
+               object-position has nothing to choose between. */
+            style={artPosition ? { objectPosition: artPosition } : undefined}
           />
           {/* The veil is a legibility device for type sitting ON the picture.
               Below `lg` nothing sits on it, so darkening it there would spend
@@ -454,7 +463,7 @@ export function PageHero({
           loading={priority ? "eager" : "lazy"}
           decoding="async"
           className="hero-fade h-full w-full object-cover"
-          style={{ objectPosition: artPosition }}
+          style={{ objectPosition: artPosition ?? "left" }}
         />
       </div>
 

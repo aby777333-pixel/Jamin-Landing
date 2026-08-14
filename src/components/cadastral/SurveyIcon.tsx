@@ -32,7 +32,27 @@ export type SurveyIconName =
      ground, which is the test this whole set has to pass. It is also the only
      icon here used at 14px rather than 24 — the 1.25px stroke survives the
      reduction because every shape in it is straight. */
-  | "station";
+  | "station"
+  /* 🚨 `pin` OVERRULES THE NOTE ABOVE, AND THE OWNER MADE THAT CALL
+     (2026-08-14). The argument for `station` still stands as drawing: a trig
+     station IS the mark a surveyor leaves, and a teardrop IS a borrowed mapping
+     convention. What the argument missed is how the shape reads at 14px on a
+     line of prose — an outlined triangle with a dot in it is the near-universal
+     glyph for a WARNING, and the report says exactly that: "looks like a
+     warning symbol rather than a location indicator". An icon that has to be
+     explained has already failed the line it sits on.
+     ⚠️ `station` is kept in the set rather than deleted. It is now unused, and
+     it is the right mark wherever a survey point is genuinely the subject —
+     just not in front of a postal address. */
+  | "pin"
+  /* The view switcher on /properties, added 2026-08-14 — the controls were
+     text-only and the report asked for icons. Same test as the rest of the set
+     where it can be met: `grid` is a layout sheet's plot blocks, `list` is the
+     plot SCHEDULE that accompanies it, and `map` is a folded survey sheet
+     rather than a globe. */
+  | "grid"
+  | "list"
+  | "map";
 
 const STROKE = {
   fill: "none",
@@ -148,11 +168,53 @@ export function SurveyIcon({
 
       {name === "station" && (
         /* A trig station: the triangle of the observation, the centre mark it
-           is set over, and the levelled ground line it is referenced to. */
+           is set over, and the levelled ground line it is referenced to.
+           ⚠️ UNUSED since 2026-08-14 — see the note on `pin` in the type. */
         <g {...STROKE}>
           <path d="M12 4.6 20 18.2H4Z" />
           <circle cx="12" cy="14.4" r="1.5" />
           <path d="M2.6 21.2h18.8" />
+        </g>
+      )}
+
+      {name === "pin" && (
+        /* An outlined location pin, drawn to this set's geometry rather than
+           borrowed: the head is a true circle so the 1.25px stroke stays even
+           at 14px, and the tip is two straight tangents rather than a bezier —
+           a curve that tight goes muddy at this size, which is the same reason
+           every other shape here is straight. */
+        <g {...STROKE}>
+          <path d="M12 21.2c0 0-6.6-7-6.6-11.4a6.6 6.6 0 0 1 13.2 0c0 4.4-6.6 11.4-6.6 11.4Z" />
+          <circle cx="12" cy="9.6" r="2.4" />
+        </g>
+      )}
+
+      {name === "grid" && (
+        /* Plot blocks on a layout sheet — four parcels divided by the road
+           reserve that separates them. */
+        <g {...STROKE}>
+          <rect x="3.8" y="3.8" width="6.6" height="6.6" rx="1" />
+          <rect x="13.6" y="3.8" width="6.6" height="6.6" rx="1" />
+          <rect x="3.8" y="13.6" width="6.6" height="6.6" rx="1" />
+          <rect x="13.6" y="13.6" width="6.6" height="6.6" rx="1" />
+        </g>
+      )}
+
+      {name === "list" && (
+        /* The plot schedule that accompanies the sheet: a number column, then
+           the entry against each. */
+        <g {...STROKE}>
+          <path d="M4.2 6.6h1.6M4.2 12h1.6M4.2 17.4h1.6" />
+          <path d="M9 6.6h10.8M9 12h10.8M9 17.4h7.2" />
+        </g>
+      )}
+
+      {name === "map" && (
+        /* A survey sheet folded into three panels, the way a plan is carried to
+           site — the creases are what make it a map rather than a page. */
+        <g {...STROKE}>
+          <path d="M3.6 6.2 9 4.2l6 2 5.4-2v13.6l-5.4 2-6-2-5.4 2Z" />
+          <path d="M9 4.2v15.6M15 6.2v15.6" strokeDasharray="0.1 2.6" />
         </g>
       )}
     </svg>

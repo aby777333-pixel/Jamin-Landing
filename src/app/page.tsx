@@ -124,7 +124,33 @@ export default async function HomePage() {
               not a colour — with the gold hairline the rest of the system opens
               a section with. Subtle enough that it reads as paper, not as a
               callout box. */}
-          <div className="flex h-full flex-col rounded-xl border border-line bg-canvas-alt p-phi4 lg:p-phi5">
+          {/* ⚠️ `p-phi4 lg:p-phi4` and `overflow-hidden`, down from `lg:p-phi5`
+              — reported 2026-08-14 as unused space in this panel. It is the
+              tall half of a two-column band, so its own padding was being added
+              to height it already had from the grid.
+
+              ⚠️ THE STAMP IS DRAWN, NOT FETCHED. The report asked for "a image
+              for the left side context", and the mockup shows an approval
+              stamp. `SurveyIcon name="stamp"` already IS that drawing — the
+              rubber impression with the tick — and this file's standing rule is
+              that one decorative mark should not cost a request. Oversized,
+              very faint, bottom-right, `aria-hidden`: it reads as watermarked
+              paper behind the copy rather than as an illustration beside it.
+              A photograph here would also have to obey the brand-imagery rule
+              (no caption, `alt=""`), which is a lot of freight for texture. */}
+          {/* ⚠️ `isolate` + `-z-10` on the mark, and both are required. A
+              positioned element paints ABOVE its static siblings, so an
+              absolute watermark declared first still lands on top of the
+              copy — even at 6% it would tint the headline. `isolate` opens a
+              stacking context on this panel so a negative z-index drops the
+              stamp behind the text without escaping to sit behind the panel's
+              own background. */}
+          <div className="relative isolate flex h-full flex-col overflow-hidden rounded-xl border border-line bg-canvas-alt p-phi4">
+            <SurveyIcon
+              name="stamp"
+              size="h-64 w-64"
+              className="pointer-events-none absolute -bottom-10 -right-8 -z-10 text-jamin-red/[0.06]"
+            />
             <span className="mb-phi3 block h-px w-16 rule-gold" aria-hidden="true" />
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
             <h2 className="mt-phi3 max-w-2xl text-2xl text-ink">
