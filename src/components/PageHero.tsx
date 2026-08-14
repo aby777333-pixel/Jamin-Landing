@@ -218,6 +218,7 @@ export function PageHero({
      `object-center` class. Passing a value now reaches both. */
   artPosition,
   sheerEdge = false,
+  plateXl = "46rem",
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -267,6 +268,20 @@ export function PageHero({
    *  behind it reads. Only for heroes whose copy is left-aligned and whose
    *  subject sits right — see the note on `.rj-gilt-sheer-edge`. */
   sheerEdge?: boolean;
+  /** 🚨 THE PLATE'S CAP FROM `xl`, AND IT IS PER-PAGE BECAUSE THE CLIFF IS.
+   *  Narrowing the card is what actually gives the photograph back, but how far
+   *  it can go is set by the HEADLINE, and every page has a different one.
+   *  Measured at 1440, line count of the h1:
+   *
+   *      /properties  "Plots in approved layouts across Tamil Nadu"
+   *                   3 lines down to 38rem, 4 at 36rem   → 38rem
+   *      /journal     "Land, and the things worth knowing before you decide."
+   *                   3 lines at 42rem, 4 at 40rem        → 42rem
+   *
+   *  So this is a union of literal strings rather than a number: Tailwind scans
+   *  source text, and a class it never sees written out is a class it never
+   *  generates. Re-measure before adding a value. */
+  plateXl?: "38rem" | "42rem" | "46rem";
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -405,7 +420,9 @@ export function PageHero({
             className={`gilt ${
               sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""
             } rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 ${
-              sheerEdge ? "xl:max-w-[38rem]" : "xl:max-w-[46rem]"
+              { "38rem": "xl:max-w-[38rem]", "42rem": "xl:max-w-[42rem]", "46rem": "xl:max-w-[46rem]" }[
+                plateXl
+              ]
             }`}
             style={
               sheer

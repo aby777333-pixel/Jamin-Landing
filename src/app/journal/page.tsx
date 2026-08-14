@@ -97,6 +97,13 @@ export default async function JournalPage() {
            is exactly why this repo measures at p95 and not at the maximum —
            but it is the reason this frame cannot go as light as the meadow. */
         sheerAlpha={0.44}
+        /* ⚠️ 42rem, NOT the 38rem /properties uses — the cliff is set by the
+           headline and this one is longer. Measured at 1440: "Land, and the
+           things worth knowing before you decide." holds three lines at 42rem
+           and breaks to four at 40. So this card gives back 64px of picture
+           where /properties gave back 128. Re-measure before changing it. */
+        sheerEdge
+        plateXl="42rem"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         /* ⚠️ THREE PARAGRAPHS, so `lead` is passed as JSX rather than a

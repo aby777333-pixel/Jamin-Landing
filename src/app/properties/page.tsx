@@ -55,6 +55,7 @@ export default async function PropertiesPage() {
            plate's width, so the reveal costs no contrast. See the note on
            `.rj-gilt-sheer-edge`. */
         sheerEdge
+        plateXl="38rem"
         /* ⚠️ 0.52, up from hero-17's 0.12, and swept rather than carried.
            hero-17 was a trimmed banner that is dark exactly where the copy
            sits; this frame is an aerial under a bright sky and measures far

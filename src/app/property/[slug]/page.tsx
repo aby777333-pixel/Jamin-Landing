@@ -980,7 +980,13 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
      -5rem offset records it falling to 4.83 under the old, brighter picture. A
      forest road in rain is darker at every pixel, so this was re-measured after
      the swap rather than assumed. */
-  "jamin-new-project-jul-2026": { file: "edappadi-2", widths: [960, 1440, 1672] },
+  /* ⚠️ `edappadi-3`, 2026-08-14, replacing `edappadi-2` the same evening — the
+     banyan and the paddy valley, where that was the misty forest road. Third
+     filename rather than a third overwrite, for the `next/image` reason below.
+     It is also BRIGHTER than the frame it replaces, which reverses the concern
+     recorded on -2: the copy is clear of the picture at 1440 either way, and a
+     bright frame only helps the dark ink beside it. */
+  "jamin-new-project-jul-2026": { file: "edappadi-3", widths: [960, 1440, 1672] },
   "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
   "jamin-garden-shastri-nagar-erode": {
     file: "jamin-garden-shastri-nagar-erode",
