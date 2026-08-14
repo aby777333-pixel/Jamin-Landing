@@ -397,16 +397,16 @@ export default async function VaultPage() {
             </div>
 
             <div className="mt-phi3 flex flex-wrap gap-x-phi4 gap-y-2 text-tiny uppercase tracking-[0.12em]">
-              <Link href="/vault/offer?intent=sell" className="text-white/80 underline-offset-4 hover:underline">
+              <Link href="/vault/offer?intent=sell" className="rj-underline text-white/80">
                 I want to sell
               </Link>
-              <Link href="/vault/offer?intent=lease" className="text-white/80 underline-offset-4 hover:underline">
+              <Link href="/vault/offer?intent=lease" className="rj-underline text-white/80">
                 I want to lease my property
               </Link>
-              <Link href="/vault/request?intent=codevelop" className="text-white/80 underline-offset-4 hover:underline">
+              <Link href="/vault/request?intent=codevelop" className="rj-underline text-white/80">
                 I want to co-develop a property
               </Link>
-              <Link href="#desks" className="text-champagne-300 underline-offset-4 hover:underline">
+              <Link href="#desks" className="rj-underline text-champagne-300">
                 Speak privately to The Vault
               </Link>
             </div>

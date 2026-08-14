@@ -258,7 +258,7 @@ export async function SiteFooter() {
             href="https://wa.me/917012608089"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-champagne-300 underline-offset-4 transition-colors hover:text-champagne-100 hover:underline"
+            className="rj-underline font-medium text-champagne-300 transition-colors hover:text-champagne-100"
           >
             777 Raptor
           </a>{" "}

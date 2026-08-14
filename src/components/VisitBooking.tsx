@@ -471,7 +471,10 @@ export function VisitBooking({
           {!shownMonth ? (
             /* Rendered on the server and for the first paint. A calendar cannot
                honestly draw itself before it knows what day it is. */
-            <div className="h-64 animate-pulse rounded-card bg-canvas-sunken" aria-hidden="true" />
+            <div
+              className="rj-shimmer relative h-64 overflow-hidden rounded-card bg-canvas-sunken"
+              aria-hidden="true"
+            />
           ) : (
             <>
               <div className="flex items-center justify-between">

@@ -260,6 +260,58 @@ blockquote {
   }
 }
 
+/* ── 8b. THE SHIMMER ──────────────────────────────────────────────────────
+ *
+ * A light travelling across a placeholder while its content loads.
+ *
+ * 🚨 THE THIRD MEMBER OF THE SWEEP FAMILY, AND royal.css ALREADY NAMED IT:
+ * `@keyframes rj-sweep` is commented "a sweep that runs the whole duration is a
+ * shimmer; a sweep that rests is a glint." That is why this cannot reuse
+ * `rj-sweep` — that keyframe crosses in its first fifth and then rests for the
+ * remaining 78%, which is right for a one-shot glint on a seal and reads as a
+ * stutter when it loops. This one runs end to end and loops evenly.
+ *
+ * It replaces `animate-pulse` on `Skeleton`. A pulse fades the whole block in
+ * and out, which reads as something blinking; a travelling highlight reads as
+ * something arriving, and the block itself stays put.
+ *
+ * ⚠️ DECLARES NO `position` — same rule as `.rj-sheen`. The host is given
+ * `relative overflow-hidden` in the component instead, because this file is
+ * unlayered and a `position` here would beat every Tailwind utility including
+ * `sticky`, which is how the navbar came unstuck once already.
+ *
+ * ⚠️ Tier 5: a placeholder says everything it says standing still, so reduced
+ * motion removes the band outright rather than freezing it mid-sweep.
+ */
+@keyframes rj-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+.rj-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 28%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 72%
+  );
+  transform: translateX(-100%);
+  animation: rj-shimmer 1600ms var(--ease-silk) infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rj-shimmer::after {
+    animation: none;
+    display: none;
+  }
+}
+
 /* ── 9. THE DECKLED EDGE ──────────────────────────────────────────────────
    Where the ivory page meets the onyx footer, a torn paper edge instead of a
    straight cut.

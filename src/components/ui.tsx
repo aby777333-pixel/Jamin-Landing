@@ -140,8 +140,14 @@ export function ButtonLink({
 /** Skeletons, not a spinner over the whole page. Shapes match what loads. */
 export function Skeleton({ className = "" }: { className?: string }) {
   return (
+    /* ⚠️ `rj-shimmer`, not `animate-pulse`. A pulse fades the whole block in
+       and out, which reads as something blinking at the reader; a light
+       travelling across a block that stays put reads as something arriving.
+       `relative overflow-hidden` is given HERE rather than by the class,
+       because ornament.css is unlayered and a `position` declared there would
+       beat every Tailwind utility — the trap that unstuck the navbar once. */
     <div
-      className={`animate-pulse rounded-md bg-canvas-sunken ${className}`}
+      className={`rj-shimmer relative overflow-hidden rounded-md bg-canvas-sunken ${className}`}
       aria-hidden="true"
     />
   );
