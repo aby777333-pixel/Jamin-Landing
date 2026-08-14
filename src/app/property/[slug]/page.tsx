@@ -437,9 +437,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                    ⚠️ It works only because the copy is raised above it — see
                    the `z-10` on the header. Without that the picture is the
                    later grid item and paints OVER the words. */
+                /* ⚠️ `objectPosition` rides here with the width, and for the
+                   same reason: an inline style, never a Tailwind arbitrary
+                   value. Undefined when the picture has no `focus`, which
+                   leaves the CSS default of `50% 50%` — so adding the field to
+                   one entry cannot move the other three. */
                 style={{
                   left: "-5rem",
                   width: "calc(100% + 5rem + 2.5rem + (100vw - min(100vw, 1280px)) / 2)",
+                  objectPosition: headerArt.focus,
                 }}
                 className="rj-burn absolute inset-y-0 h-full max-w-none object-cover"
               />
@@ -932,7 +938,37 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  * caption, a location or a project name. See the note at the render site for
  * why a countryside frame is defensible here where a formed layout would not be.
  */
-const HEADER_ART: Record<string, { file: string; widths: number[] }> = {
+/**
+ * 🚨 `focus` IS PER-PICTURE BECAUSE THE CROP IS PER-PICTURE. One global anchor
+ * cannot serve this set: the frames run 1.333 to 2.058, and the box they sit in
+ * is wider than all of them, so each loses a different share of its height and
+ * loses it from a different part of the composition.
+ *
+ * Measured live at 2000x860, where the box is 1026x396 = **2.594:1**:
+ *
+ *   udumalaipet        1.333  only 51.4% of the height survives  <- the problem
+ *   jamin-new-project  1.874  72.2%
+ *   varapatty          2.000  77.1%
+ *   shastri-nagar      2.058  79.3%
+ *
+ * ⚠️ The note on the height further up claims "96% of the height on the
+ * tightest frame". That was true where it was measured — 1440 wide, 1080 tall,
+ * a 666px box. It does NOT hold on a wide short window: the width grows with
+ * the viewport while the height is capped by `clamp(24rem, 46vh, 30rem)`, so
+ * the box gets both wider and shorter and Udumalaipet drops to barely half.
+ * Re-measure before trusting either number.
+ *
+ * ⚠️ ONLY UDUMALAIPET IS SHIFTED. Owner asked to see more of the bottom of that
+ * picture (2026-08-14) — at centre the banana canopy and the roof take the frame
+ * and the tea stall it is actually about is cut off at the bottom edge. All four
+ * anchors were rendered against all four frames before choosing: 80% puts the
+ * road curve, the seated men and the whole stall in shot. The other three are
+ * left at the default deliberately — the same 80% costs the new-project frame
+ * its clouds and mountains and Varapatty its hills, and none of them was what
+ * was reported. A per-picture value is the only thing that can be right for all
+ * four; re-render that sweep before adding another.
+ */
+const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {
   "jamin-new-project-jul-2026": { file: "jamin-new-project-jul-2026", widths: [960, 1440, 1717] },
   "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
   "jamin-garden-shastri-nagar-erode": {
@@ -940,16 +976,23 @@ const HEADER_ART: Record<string, { file: string; widths: number[] }> = {
     widths: [960, 1440, 1799],
   },
   /* No slug in the database — this is the id the URL actually uses. */
-  "c0e9c29e-8865-45ba-b852-1ab993fb1664": { file: "udumalaipet", widths: [960, 1440, 1448] },
+  "c0e9c29e-8865-45ba-b852-1ab993fb1664": {
+    file: "udumalaipet",
+    widths: [960, 1440, 1448],
+    focus: "50% 80%",
+  },
 };
 
-function headerArtFor(p: PropertyDetail): { src: string; srcSet: string } | null {
+function headerArtFor(
+  p: PropertyDetail,
+): { src: string; srcSet: string; focus?: string } | null {
   const art = (p.slug && HEADER_ART[p.slug]) || HEADER_ART[p.id];
   if (!art) return null;
   const url = (w: number) => `/property/header/${art.file}-${w}.webp`;
   return {
     src: url(art.widths[art.widths.length - 1]),
     srcSet: art.widths.map((w) => `${url(w)} ${w}w`).join(", "),
+    focus: art.focus,
   };
 }
 
