@@ -36,6 +36,31 @@ the other six rather than drawing its own plate. It is a family that gets a
 bigger frame, not a different kind of thing — an earlier note here said the key
 would do nothing, and that stopped being true when the band was rewired.
 
+## `humble-beginnings-1774.webp` — the plate beside co-develop
+
+Owner-supplied 2026-08-14. A rain-lit village at night: the Jamin Bazaar
+signboard under a lamp, children playing, and the line *"The truly elite are
+shaped by humble beginnings, not inherited privilege."* baked into the artwork.
+1774x887 PNG at 2.51 MB → WebP q80 at 214 KB, a 92% reduction.
+
+It exists to fill a hole rather than to decorate: `PATHS` is five cards in a
+four-column grid, so the second row runs one card and three empty columns. The
+plate spans those three and is **hidden below `lg`**, where the grid is two
+columns or one and the hole does not exist.
+
+⚠️ **Its height comes from the co-develop card beside it, not from the
+artwork.** At the capped container the cell is 895x447 — 2.003 against a native
+2.000, so nothing is cropped at all. At 1024 it is 1.574 and 21.3% of the width
+goes; `object-center` is the swept answer there, because the board has vine to
+its right that can be spent and centring keeps both the quote and the village.
+Re-render that three-way comparison if this picture is ever replaced.
+
+⚠️ **The words are IN the image**, so it takes `alt=""` and `aria-hidden` like
+everything else in this folder — and unlike the others it must never be given a
+caption, because a caption would state the line twice. It is also the one file
+here that would be wrong to reuse anywhere else: it is a signboard, so it reads
+as a place, and it is not one.
+
 ## `destination/` — the places
 
 Read from `vault_destinations.image_url`. A destination **is** a row, and the

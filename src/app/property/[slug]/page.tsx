@@ -828,10 +828,16 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-micro font-semibold uppercase tracking-[0.14em] text-white/80">
               {p.status === "sold" ? "Fully sold" : String(p.status)}
             </span>
-            <h2 className="mt-phi3 max-w-2xl text-2xl text-white">
+            {/* ⚠️ NO `max-w-2xl` ON EITHER OF THESE — owner's call, 2026-08-14:
+                the heading and the paragraph run the full width of the band and
+                the buttons centre under them. Both carried a 42rem cap before,
+                which is the measure the rest of the site sets its prose to, so
+                if a future round asks for "the text is too wide to read" this
+                is the line that changed and `max-w-2xl` is what it was. */}
+            <h2 className="mt-phi3 text-2xl text-white">
               {p.title} has sold out.
             </h2>
-            <p className="mt-phi3 max-w-2xl text-base leading-relaxed text-white/75">
+            <p className="mt-phi3 text-base leading-relaxed text-white/75">
               Every plot here is gone, so there is nothing for us to show you on site and no
               enquiry worth taking. We have left the layout, the approvals and the documents on
               this page because they are the clearest picture of how a Jamin development is
@@ -860,7 +866,17 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 rows give both cells the taller one's height, and the inner flex
                 centres each label in the space, which is the report's "center
                 the button text horizontally and vertically". */}
-            <div className="mt-phi4 grid max-w-2xl auto-rows-fr gap-3">
+            {/* ⚠️ `mx-auto` CENTRES THE PAIR, AND IT IS NOT THE BUG THE NOTE
+                ABOVE DESCRIBES. That report was about buttons that were small
+                AND centred — content-sized pills whose width was their label,
+                which is what made them stop reading as primary actions. The
+                width fix is the part that mattered and it stays: each control
+                is still `w-full` inside a 42rem block, so the pair is 672px
+                wide whatever the card does. Only the block's horizontal
+                position moved, owner's call 2026-08-14. Centring alone cannot
+                bring the old symptom back; dropping `w-full` or `max-w-2xl`
+                would. */}
+            <div className="mt-phi4 grid max-w-2xl auto-rows-fr gap-3 mx-auto">
               <Link
                 href="/properties"
                 className="flex h-full w-full items-center justify-center rounded-full bg-white px-6 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:bg-canvas"

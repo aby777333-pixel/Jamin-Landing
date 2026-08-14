@@ -482,6 +482,57 @@ export default async function VaultPage() {
                 </Link>
               </li>
             ))}
+
+            {/* ⚠️ THIS FILLS A HOLE THAT ONLY EXISTS AT `lg`, WHICH IS WHY IT
+                IS HIDDEN EVERYWHERE ELSE. `PATHS` is five cards in a
+                four-column grid, so the second row carries co-develop and three
+                empty columns — the gap the owner pointed at. At `sm` the grid
+                is two columns and the leftover cell is one narrow slot, where a
+                2:1 photograph would be a letterbox sliver; at base there is one
+                column and no hole at all. Adding it there would not be filling
+                a gap, it would be adding a section nobody asked for.
+
+                ⚠️ `aria-hidden` + `alt=""`, per the standing rule for brand
+                imagery: the picture carries its own words, so a caption of ours
+                would say it twice, and a screen reader reading "JAMIN BAZAAR,
+                the truly elite are shaped by humble beginnings" out of a list of
+                four ways into The Vault is noise in a list of controls. The
+                list still holds five real destinations.
+
+                ⚠️ Its height is NOT its own — it stretches to whatever the
+                co-develop card beside it measures, so the crop is set by that
+                card rather than by the artwork. Measured live rather than
+                assumed:
+
+                  >=1200 container   cell 895x447 = 2.003 against a native
+                                     2.000 source — NOTHING is cropped. The
+                                     three-track span plus two 21px gaps lands
+                                     on the artwork's own ratio, and the
+                                     co-develop card measures 447 beside it.
+                  1024               cell 695x442 = 1.574, so 21.3% of the
+                                     WIDTH goes.
+
+                ⚠️ `object-center`, and that is the swept answer rather than the
+                obvious one. The instinct is `object-right`, because the
+                signboard and the quote are the content and they sit right of
+                centre — but rendering all three anchors at the 1.574 worst case
+                shows the sign has vine and wall to its right that can be spent,
+                so centring keeps the board AND the whole quote while also
+                keeping the bicycle and the lit house that `object-right` throws
+                away. `object-left` clips the quote to "The truly elit…" and is
+                the only one that is plainly wrong. Re-render that comparison if
+                the artwork is ever swapped; the answer follows the picture. */}
+            <li aria-hidden="true" className="hidden lg:col-span-3 lg:flex">
+              <div className="relative w-full overflow-hidden rounded-xl border border-line bg-canvas-sunken">
+                <Image
+                  src="/vault/humble-beginnings-1774.webp"
+                  alt=""
+                  fill
+                  sizes="(min-width: 1024px) 66vw, 0px"
+                  className="object-cover object-center"
+                />
+              </div>
+            </li>
           </ul>
         </Container>
       </section>
