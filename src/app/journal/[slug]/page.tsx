@@ -6,6 +6,9 @@ import { Prose, extractHeadings } from "@/components/Prose";
 import { ZoomableImage } from "@/components/cadastral/ZoomableImage";
 import { TableOfContents } from "@/components/cadastral/TableOfContents";
 import { ReadingRule } from "@/components/ReadingRule";
+import { RunningHead } from "@/components/RunningHead";
+import { Marginalia } from "@/components/Marginalia";
+import { Colophon } from "@/components/Colophon";
 import { PropertyCard } from "@/components/PropertyCard";
 import {
   KIND_LABEL,
@@ -151,6 +154,10 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
         )}
       </nav>
 
+      {/* Verso the work, recto the chapter — for a guide that runs past twenty
+          screens and whose title scrolls away in the first one. */}
+      <RunningHead title={post.title} headings={headings} />
+
       <article className="mt-phi3">
         {/* ⚠️ FULL WIDTH ON PURPOSE, and it does NOT contradict §142's measure
             rule below. `max-w-3xl` here capped the headline at 48rem inside a
@@ -286,13 +293,20 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
             </div>
           </div>
 
-          {/* §143 — sticky table of contents on desktop */}
-          {headings.length > 2 && (
+          {/* §143 — sticky table of contents on desktop, and the marginalia
+              beneath it. Both live in the SAME gutter: a second margin would
+              take width off the measure, and the measure is what makes a long
+              guide readable. */}
+          {(headings.length > 2 || related.length > 0) && (
             <aside className="hidden lg:block">
-              <TableOfContents headings={headings} />
+              {headings.length > 2 && <TableOfContents headings={headings} />}
+              <Marginalia post={post} related={related} />
             </aside>
           )}
         </div>
+
+        {/* The publishing record, at the foot where a colophon belongs. */}
+        <Colophon post={post} />
       </article>
 
       {more.length > 0 && (

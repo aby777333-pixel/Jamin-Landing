@@ -3,6 +3,7 @@ import { PageHero } from "@/components/PageHero";
 import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { JournalIndex, type JournalCard } from "@/components/JournalIndex";
 import { CallbackBand } from "@/components/CallbackBand";
+import { Masthead } from "@/components/Masthead";
 import {
   KIND_LABEL,
   buildSearchIndex,
@@ -127,6 +128,18 @@ export default async function JournalPage() {
         }
       />
       <Container className="py-phi5">
+        {/* The nameplate. `count` is the published rows and `issue` is this
+            build's date — the same stamp the title block carries, in the
+            office's own timezone rather than the builder's. */}
+        <Masthead
+          count={posts.length}
+          issue={new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+          }).format(new Date())}
+        />
         {posts.length === 0 ? (
           <div className="mt-phi5">
             <EmptyState
