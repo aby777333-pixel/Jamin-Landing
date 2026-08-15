@@ -75,6 +75,12 @@ export type Property = {
   district: string | null;
   state: string | null;
   locality: string | null;
+  /* Added 2026-08-15 for /gazetteer. Revenue-administration place names, the
+     same kind of public address field as `city` and `district` and already
+     printed on every document a buyer sees. `taluk` is the level a Tamil Nadu
+     buyer actually searches by, and it appeared nowhere on the site. */
+  taluk: string | null;
+  village: string | null;
   location_text: string | null;
   lat: number | null;
   lng: number | null;
@@ -133,6 +139,7 @@ const PUBLIC_COLUMNS = [
   "id", "slug", "title", "project_name", "description", "property_type", "status",
   "project_phase", "listing_type", "price", "price_unit", "area_value", "area_unit",
   "plots_total", "plots_available", "city", "district", "state", "locality",
+  "taluk", "village",
   "location_text", "lat", "lng", "gmaps_url", "images", "videos", "drone_videos",
   "amenities", "approvals", "nearby_places", "brochure_url", "brochure_cover_url",
   "master_plan_url", "virtual_tour_url", "rera_number", "survey_number", "is_featured", "seo",

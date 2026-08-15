@@ -20,6 +20,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* Added with the route, not after it — the standing rule this list already
        carries for /vault. */
     { url: `${SITE_URL}/tools`, changeFrequency: "monthly", priority: 0.6 },
+    /* The index of places. Its whole value is that somebody searching a taluk
+       or a village name can land on it, so it has to be crawlable. */
+    { url: `${SITE_URL}/gazetteer`, changeFrequency: "weekly", priority: 0.6 },
     /* ⚠️ Added with the route, not after it. A new public page reachable from
        the primary nav but absent here is discoverable only by crawl, which is
        exactly the gap nobody notices until the page has been live for months. */

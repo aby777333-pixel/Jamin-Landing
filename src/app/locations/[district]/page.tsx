@@ -7,6 +7,7 @@ import { Container } from "@/components/ui";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 import { districtFromSlug, districtNames, districtSlug } from "@/lib/site";
+import { ThumbIndex } from "@/components/ThumbIndex";
 import { SITE_URL } from "@/lib/supabase";
 import { seoTitle } from "@/lib/seo";
 
@@ -181,6 +182,10 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           </>
         }
       />
+
+      {/* The fore-edge tabs. This is the one page where they earn their keep:
+          a reader here is already thinking in districts. */}
+      <ThumbIndex districts={districtNames(await getProperties())} current={name} />
 
       <Container className="py-phi5">
         <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
