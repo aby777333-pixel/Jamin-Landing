@@ -55,6 +55,20 @@ export function LayoutRelief({
   const [tilt, setTilt] = useState(54);
   const [relief, setRelief] = useState(30); // tenths of a metre
   const [hover, setHover] = useState<string | null>(null);
+  /**
+   * Zoom and pan.
+   *
+   * ⚠️ FOLDED INTO `S`/`ox`/`oy` INSIDE THE FIT, never applied as a canvas
+   * transform. This file's own rule is that the paint owns the transform and
+   * hit testing borrows it from `lastTransform`; a `ctx.scale()` wrapped round
+   * the drawing would leave the pointer projecting through the OLD numbers, and
+   * a hit test four pixels out is the bug nobody can see and everybody feels.
+   * Folded in, the pointer follows for nothing.
+   */
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  /** Shift-drag, middle-drag or two fingers pans; a plain drag still orbits. */
+  const panning = useRef(false);
 
   /* Only the plots that actually carry geometry. A schedule-only plot has
      nothing to extrude and must not be invented a rectangle. */
@@ -139,6 +153,25 @@ export function LayoutRelief({
       S = Math.min((w - pad * 2) / (x1 - x0 || 1), (h - pad * 2) / (y1 - y0 || 1));
       ox = pad - x0 * S + (w - pad * 2 - (x1 - x0) * S) / 2;
       oy = pad - y0 * S + (h - pad * 2 - (y1 - y0) * S) / 2;
+
+      /* ⚠️ Zoom about the CANVAS CENTRE, not about the origin. `x*S + ox` with
+         S scaled by k keeps the ORIGIN fixed and throws the drawing off frame.
+         Solving for the point that currently lands at the centre gives
+         `ox' = cx - (cx - ox) * k`, which keeps what the reader is looking at
+         under the same pixel. Pan is added afterwards, in screen space, because
+         that is the space the reader's finger is in. */
+      const fx = w / 2;
+      const fy = h / 2;
+      /* ⚠️ Pan is DERIVED away at 1x rather than reset in an effect. Zoomed
+         fully out the drawing already fits the frame, so an offset could only
+         push it off-centre with nothing to reveal. Ignoring it here means there
+         is no state to keep in sync — and this repo's eslint bans setState in
+         an effect body precisely to stop that pattern being reached for. */
+      const px = zoom > 1.001 ? pan.x : 0;
+      const py = zoom > 1.001 ? pan.y : 0;
+      ox = fx - (fx - ox) * zoom + px;
+      oy = fy - (fy - oy) * zoom + py;
+      S *= zoom;
     }
     /* 🚨 THE PAINT OWNS THE TRANSFORM AND HIT TESTING BORROWS IT. An earlier
        draft recomputed the same fit in a second effect so the pointer could
@@ -199,7 +232,49 @@ export function LayoutRelief({
       })
       .sort((a, b) => a.d - b.d);
 
-    for (const { p } of order) {
+    /**
+     * CONTACT SHADOWS — one pass, under everything.
+     *
+     * Each footprint drawn again on the ground, offset along a fixed light
+     * direction by the extrusion height. Painting them ALL first is what makes
+     * them read as shadows instead of smudges: a shadow that lands on top of
+     * the plot behind it is the giveaway, and a single pass beneath every prism
+     * cannot do that.
+     *
+     * ⚠️ IT IS A RENDERING LIGHT AND IS NEVER CALLED THE SUN. Where sun falls
+     * depends on latitude and on the sheet's TRUE BEARING, and nothing in
+     * `plot_plan` records that bearing — the same reason the north arrow is kept
+     * off this drawing. A "morning light" control would be a checkable claim
+     * about the land made from data we do not have. This is shading; it says
+     * nothing.
+     *
+     * ⚠️ The offset is computed THROUGH `proj`, so the shadows rotate with the
+     * model instead of sliding around the plots like a decal.
+     */
+    if (z > 0.4) {
+      const lift = proj(0, 0, z);
+      const flat = proj(0, 0, 0);
+      const sx = (flat.x - lift.x) * S + z * S * 0.34;
+      const sy = (flat.y - lift.y) * S + z * S * 0.16;
+      ctx.save();
+      ctx.globalAlpha = 0.13;
+      ctx.fillStyle = faint;
+      ctx.translate(sx, sy);
+      for (const { p } of order) {
+        trace(p.poly! as [number, number][], 0);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    /* Depth cueing. Real aerial perspective is atmospheric scattering; at this
+       scale it is a few per cent of a canvas-coloured wash over the far end,
+       and its whole job is to stop 27 identical slabs reading as a flat
+       pattern. */
+    const dLo = order.length ? order[0].d : 0;
+    const dSpan = order.length ? (order[order.length - 1].d - dLo) || 1 : 1;
+
+    for (const { p, d } of order) {
       const st = PLOT_STATUS[plotStatus(p)];
       const top = resolve(st.fill);
       const edge = resolve(st.stroke);
@@ -229,6 +304,19 @@ export function LayoutRelief({
       trace(poly as [number, number][], z);
       ctx.fillStyle = on ? edge : top;
       ctx.fill();
+      /* The wash: 0 at the near edge, strongest at the far one. Skipped on the
+         hovered plot, which must stay the brightest thing on the drawing
+         wherever it happens to sit. */
+      if (!on && dSpan > 0) {
+        const far = 1 - (d - dLo) / dSpan;
+        if (far > 0.01) {
+          ctx.save();
+          ctx.globalAlpha = 0.17 * far;
+          ctx.fillStyle = sunken;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
       ctx.strokeStyle = edge;
       ctx.lineWidth = on ? 1.8 : 1;
       ctx.stroke();
@@ -259,7 +347,7 @@ export function LayoutRelief({
       ctx.textBaseline = "bottom";
       ctx.fillText(fmtLength(metres, unit), x, y - 6);
     }
-  }, [plan, solid, yaw, tilt, relief, hover, unit, resolve]);
+  }, [plan, solid, yaw, tilt, relief, hover, unit, resolve, zoom, pan]);
 
   /* 🚨 NO `useInView` GATE HERE, AND REMOVING IT IS THE POINT. The obvious
      build wraps the paint in an intersection observer so an unseen canvas costs
@@ -280,6 +368,36 @@ export function LayoutRelief({
     ro.observe(host);
     return () => ro.disconnect();
   }, [draw]);
+
+  /**
+   * Wheel and trackpad-pinch zoom.
+   *
+   * 🚨 ATTACHED BY HAND WITH `{ passive: false }`, NOT AS `onWheel`. React
+   * registers wheel at the ROOT and passively, so `preventDefault` inside a
+   * JSX handler is ignored — the canvas would zoom AND the page would scroll
+   * out from under it, which is worse than no zoom at all. This is the one
+   * listener in the file that cannot be JSX.
+   *
+   * ⚠️ Multiplicative, not additive. Zoom is a ratio: a fixed step feels coarse
+   * when close in and glacial when far out, where a constant factor feels the
+   * same at every distance.
+   *
+   * ⚠️ `ctrlKey` is how a browser reports a trackpad PINCH, not a held control
+   * key — so pinch gets a larger factor because the gesture carries a smaller
+   * deltaY for the same intent.
+   */
+  useEffect(() => {
+    const c = cv.current;
+    if (!c) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const k = Math.exp((-e.deltaY * (e.ctrlKey ? 0.012 : 0.0022)));
+      setZoom((v) => Math.min(6, Math.max(1, v * k)));
+    };
+    c.addEventListener("wheel", onWheel, { passive: false });
+    return () => c.removeEventListener("wheel", onWheel);
+  }, []);
+
 
   const hit = (mx: number, my: number): Plot | null => {
     const c = cv.current;
@@ -335,6 +453,10 @@ export function LayoutRelief({
           className="block w-full cursor-grab touch-none active:cursor-grabbing focus-visible:outline focus-visible:outline-2 focus-visible:outline-jamin-gold"
           onPointerDown={(e) => {
             dragging.current = true;
+            /* Shift or the middle button pans; everything else orbits. Chosen
+               because orbiting is what a reader reaches for first and must stay
+               the default gesture. */
+            panning.current = e.shiftKey || e.button === 1;
             last.current = { x: e.clientX, y: e.clientY };
             e.currentTarget.setPointerCapture(e.pointerId);
           }}
@@ -343,15 +465,25 @@ export function LayoutRelief({
               const dx = e.clientX - last.current.x;
               const dy = e.clientY - last.current.y;
               last.current = { x: e.clientX, y: e.clientY };
-              setYaw((v) => ((v + dx * 0.45 + 180 + 360) % 360) - 180);
-              setTilt((v) => Math.max(0, Math.min(80, v + dy * 0.25)));
+              if (panning.current) {
+                setPan((v) => ({ x: v.x + dx, y: v.y + dy }));
+              } else {
+                setYaw((v) => ((v + dx * 0.45 + 180 + 360) % 360) - 180);
+                setTilt((v) => Math.max(0, Math.min(80, v + dy * 0.25)));
+              }
             } else {
               const p = hit(e.clientX, e.clientY);
               setHover(p ? p.plot : null);
             }
           }}
-          onPointerUp={() => (dragging.current = false)}
-          onPointerCancel={() => (dragging.current = false)}
+          onPointerUp={() => {
+            dragging.current = false;
+            panning.current = false;
+          }}
+          onPointerCancel={() => {
+            dragging.current = false;
+            panning.current = false;
+          }}
           onPointerLeave={() => {
             if (!dragging.current) setHover(null);
           }}
@@ -360,7 +492,15 @@ export function LayoutRelief({
             else if (e.key === "ArrowRight") setYaw((v) => v + 5);
             else if (e.key === "ArrowUp") setTilt((v) => Math.min(80, v + 4));
             else if (e.key === "ArrowDown") setTilt((v) => Math.max(0, v - 4));
-            else return;
+            /* Zoom and reset from the keyboard too — the canvas is focusable and
+               everything the pointer can do here has to be reachable without
+               one. */
+            else if (e.key === "+" || e.key === "=") setZoom((v) => Math.min(6, v * 1.2));
+            else if (e.key === "-" || e.key === "_") setZoom((v) => Math.max(1, v / 1.2));
+            else if (e.key === "0") {
+              setZoom(1);
+              setPan({ x: 0, y: 0 });
+            } else return;
             e.preventDefault();
           }}
         />
@@ -405,6 +545,70 @@ export function LayoutRelief({
               )}
             </dl>
           </div>
+        )}
+      </div>
+
+      {/**
+        * Camera presets.
+        *
+        * Three sliders are precise and slow, and a reader who just wants to see
+        * the site from above should not have to find 78 degrees by dragging.
+        * These are the three readings of a layout that are actually useful: the
+        * plan-like view, the standing view, and the low one that shows which
+        * plots the road fronts.
+        *
+        * ⚠️ NOT a "3D tour" and no camera animation. The site's rule is that
+        * this view exists to make the layout legible, not to sell a render, and
+        * a swooping camera is the latter. Each preset is a jump, and `Reset`
+        * puts the zoom and pan back with it.
+        */}
+      <div className="mt-phi3 flex flex-wrap items-center gap-2">
+        <span className="ledger-label mr-1 text-ink-faint">View</span>
+        {[
+          { k: "Aerial", yaw: -24, tilt: 78 },
+          { k: "Corner", yaw: -24, tilt: 54 },
+          { k: "Low", yaw: 62, tilt: 22 },
+        ].map((v) => {
+          const on = Math.round(yaw) === v.yaw && Math.round(tilt) === v.tilt;
+          return (
+            <button
+              key={v.k}
+              type="button"
+              aria-pressed={on}
+              onClick={() => {
+                setYaw(v.yaw);
+                setTilt(v.tilt);
+              }}
+              className={`min-h-[44px] rounded-full border px-3.5 py-1.5 text-tiny font-medium transition-colors ${
+                on
+                  ? "border-ink bg-ink text-canvas"
+                  : "border-line bg-canvas text-ink-soft hover:border-ink-faint"
+              }`}
+            >
+              {v.k}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => {
+            setYaw(-24);
+            setTilt(54);
+            setRelief(30);
+            setZoom(1);
+            setPan({ x: 0, y: 0 });
+          }}
+          className="min-h-[44px] rounded-full border border-line bg-canvas px-3.5 py-1.5 text-tiny font-medium text-ink-faint transition-colors hover:text-ink-soft"
+        >
+          Reset
+        </button>
+        {/* The zoom readout doubles as the affordance: nothing else on the
+            canvas says it can be zoomed, and a bare percentage is the cheapest
+            way to say so. Hidden at 1x so the row stays quiet until used. */}
+        {zoom > 1.001 && (
+          <span className="ledger tabular-nums text-tiny text-ink-faint">
+            {Math.round(zoom * 100)}%
+          </span>
         )}
       </div>
 
