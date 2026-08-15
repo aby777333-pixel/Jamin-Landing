@@ -316,8 +316,8 @@ export function plotStatusKey(plots: Plot[]): { status: PlotStatus; count: numbe
 }
 
 export function plotArea(p: Plot): string | null {
-  if (p.size_sqft) return `${Math.round(p.size_sqft).toLocaleString("en-IN")} sq ft`;
-  if (p.size_sqm) return `${p.size_sqm} sq m`;
+  if (p.size_sqft) return `${Math.round(p.size_sqft).toLocaleString("en-IN")}\u00a0sq\u00a0ft`;
+  if (p.size_sqm) return `${p.size_sqm}\u00a0sq\u00a0m`;
   return null;
 }
 
@@ -347,7 +347,12 @@ export function formatArea(p: Property): string | null {
   if (p.area_value == null) return null;
   const n = Number(p.area_value);
   const v = Number.isInteger(n) ? n.toLocaleString("en-IN") : n.toLocaleString("en-IN");
-  return `${v} ${p.area_unit ?? ""}`.trim();
+  /* ⚠️ U+00A0. "2,400 sq ft" must never break between the figure and its
+     unit — see the note on NB in lib/units.ts. `.trim()` still works: a
+     non-breaking space is not trimmed, so an empty `area_unit` would leave a
+     trailing one, which is why the join is conditional now. */
+  const unit = (p.area_unit ?? "").trim();
+  return unit ? `${v}\u00a0${unit}` : v;
 }
 
 /**

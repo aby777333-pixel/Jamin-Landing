@@ -31,16 +31,40 @@ export const SQFT_PER_SQM = FEET_PER_METRE * FEET_PER_METRE;
 const inIN = (n: number, digits = 0) =>
   n.toLocaleString("en-IN", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 
+/**
+ * A NON-BREAKING SPACE, and every measurement on this site goes through it.
+ *
+ * "500 m", "27 plots", "12.2 x 18.3 m" were all free to break across a line,
+ * which puts the number at the end of one line and its unit at the start of the
+ * next. On a page of prose that is untidy; on a page whose subject is
+ * dimensions it is a misreading waiting to happen, because a stranded "m" reads
+ * as the start of the next sentence.
+ *
+ * ⚠️ U+00A0, not `&nbsp;` — these strings are also handed to `Intl`, written
+ * into `alt` text and compared in tests, and an HTML entity would survive into
+ * all three as literal characters.
+ *
+ * ⚠️ NOT a thin space, and not as a thousands separator either. The ISO
+ * convention is a thin space between groups; this site prints `en-IN`, where a
+ * plot is "2,403 sq ft" in the lakh grouping every Indian reader expects.
+ * Grouping is already handled by `inIN` above — the separator is not the
+ * problem this fixes.
+ */
+const NB = "\u00a0";
+
 /** A length held in metres, printed in the reader's unit. */
 export function length(metres: number, unit: Unit): string {
-  if (unit === "m") return `${inIN(metres, 2)} m`;
-  return `${inIN(metres * FEET_PER_METRE, 1)} ft`;
+  if (unit === "m") return `${inIN(metres, 2)}${NB}m`;
+  return `${inIN(metres * FEET_PER_METRE, 1)}${NB}ft`;
 }
 
 /** An area held in square metres, printed in the reader's unit. */
 export function area(sqm: number, unit: Unit): string {
-  if (unit === "m") return `${inIN(sqm)} sq m`;
-  return `${inIN(Math.round(sqm * SQFT_PER_SQM))} sq ft`;
+  /* The unit itself is two words, so BOTH gaps are non-breaking — otherwise
+     "1,342 sq
+m" simply moves the problem one word along. */
+  if (unit === "m") return `${inIN(sqm)}${NB}sq${NB}m`;
+  return `${inIN(Math.round(sqm * SQFT_PER_SQM))}${NB}sq${NB}ft`;
 }
 
 /**
@@ -82,12 +106,17 @@ export function relabel(label: string, unit: Unit): string {
 export function dimensions(dimM: string, unit: Unit): string {
   const parts = dimM.split(/\s*([x×])\s*/i);
   const converted = parts.map((part) => {
-    if (/^[x×]$/i.test(part)) return ` ${part} `;
+    /* ⚠️ ALWAYS the multiplication sign, whatever the data held. `dim_m` is
+       authored as "12.2 x 18.3" with a lowercase letter x — a stand-in nobody
+       intended to be read as a letter, and it is now set beside real figures on
+       a drawing. Hair spaces either side: a full space around × makes the pair
+       read as two separate numbers. */
+    if (/^[x×]$/i.test(part)) return "\u200a\u00d7\u200a";
     const n = Number(part.replace(/,/g, ""));
     if (!Number.isFinite(n)) return part;
     return unit === "m" ? inIN(n, 2) : inIN(n * FEET_PER_METRE, 1);
   });
-  return `${converted.join("")} ${unit === "m" ? "m" : "ft"}`;
+  return `${converted.join("")}${NB}${unit === "m" ? "m" : "ft"}`;
 }
 
 /** For prose: "in feet" / "in metres". */

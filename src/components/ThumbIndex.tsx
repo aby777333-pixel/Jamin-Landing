@@ -53,7 +53,12 @@ export function ThumbIndex({
                pill beside it. `writing-mode` sets the label up the tab the way
                a spine does; `rotate-180` on the vertical text makes it read
                bottom-to-top, which is the direction a right-hand edge is read. */
-            className={`rj-deboss flex items-center rounded-l-md border border-r-0 border-line py-3 pl-1.5 pr-1 text-micro uppercase tracking-brand transition-colors ${
+            /* ⚠️ `min-h-[44px]` and a 44px-wide box: these are the smallest
+               targets added in this round and WCAG 2.5.8's floor is 44x44. The
+               label is vertical, so height comes from the text and only the
+               WIDTH needed asserting — `pl-2.5 pr-2` plus the border lands it
+               at 44 exactly. */
+            className={`rj-deboss flex min-h-[44px] items-center rounded-l-md border border-r-0 border-line py-3 pl-2.5 pr-2 text-micro uppercase tracking-brand transition-colors ${
               active
                 ? "bg-champagne-500/15 text-champagne-700"
                 : "bg-canvas-alt text-ink-faint hover:text-ink-muted"

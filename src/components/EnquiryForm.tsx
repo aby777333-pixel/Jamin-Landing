@@ -97,7 +97,14 @@ export function EnquiryForm({
     "w-full rounded-card border border-line bg-canvas px-phi3 py-2.5 text-base text-ink outline-none focus:border-ink-faint";
 
   return (
-    <form onSubmit={submit} className="space-y-phi2">
+    <form
+      onSubmit={submit}
+      /* A screen reader hears nothing at all during the RPC — the button label
+         changes to "Sending…" but nothing announces the region as busy, so the
+         reader is left waiting on silence. */
+      aria-busy={busy}
+      className="space-y-phi2"
+    >
       <div className={compact ? "" : "grid gap-phi2 sm:grid-cols-2"}>
         <div>
           <label htmlFor="eq-name" className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
@@ -107,6 +114,10 @@ export function EnquiryForm({
             id="eq-name"
             required
             autoComplete="name"
+            /* The phone keyboard's action key. Without it every field offers a
+               generic return; with it the reader is told whether they are
+               moving on or finishing. */
+            enterKeyHint="next"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className={field}
@@ -125,6 +136,7 @@ export function EnquiryForm({
               required
               inputMode="numeric"
               autoComplete="tel-national"
+              enterKeyHint="next"
               value={mobile}
               onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
               placeholder="98765 43210"
@@ -141,7 +153,9 @@ export function EnquiryForm({
         <input
           id="eq-email"
           type="email"
+          inputMode="email"
           autoComplete="email"
+          enterKeyHint="next"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={field}
@@ -155,6 +169,7 @@ export function EnquiryForm({
         <textarea
           id="eq-msg"
           rows={compact ? 2 : 3}
+          enterKeyHint="done"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={

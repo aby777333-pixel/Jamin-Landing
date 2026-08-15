@@ -677,8 +677,8 @@ function PlotSheet({
   const record: [string, string][] = [["Plot number", plot.plot]];
   if (plot.block) record.push(["Block", plot.block]);
   if (plot.size_sqft != null)
-    record.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")} sq ft`]);
-  if (plot.size_sqm != null) record.push(["Area (sanctioned)", `${plot.size_sqm} m²`]);
+    record.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")}\u00a0sq\u00a0ft`]);
+  if (plot.size_sqm != null) record.push(["Area (sanctioned)", `${plot.size_sqm}\u00a0m²`]);
   if (plot.dim_m) record.push(["Dimensions", fmtDims(plot.dim_m, unit)]);
   if (plot.facing) record.push(["Facing", plot.facing]);
   if (plot.road_m != null) record.push(["Road width", fmtLength(plot.road_m, unit)]);
@@ -739,7 +739,14 @@ function PlotSheet({
           {record.map(([k, v]) => (
             <div key={k} className="flex items-baseline justify-between gap-4 py-2.5">
               <dt className="text-base text-ink-muted">{k}</dt>
-              <dd className="text-right text-base font-medium text-ink">{v}</dd>
+              {/* ⚠️ `ledger` for tabular figures. The rows were already ruled;
+                  what they were not was ALIGNED — "2,403 sq ft" and "12.2 × 18.3 m"
+                  set in proportional figures put their digits in different
+                  places on every line, so a column of measurements read as a
+                  list of unrelated strings. Tabular figures are the whole reason
+                  this class exists, and the record of a plot is the most
+                  literally ledger-like thing on the site. */}
+              <dd className="ledger text-right text-base font-medium text-ink">{v}</dd>
             </div>
           ))}
         </dl>

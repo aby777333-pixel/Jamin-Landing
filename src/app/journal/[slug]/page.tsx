@@ -177,8 +177,13 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
             )}
           </div>
           <h1 className="mt-phi2 text-3xl text-ink lg:text-4xl">{post.title}</h1>
+          {/* `rj-standfirst` sets the FIRST LINE in small caps — the way a
+              magazine opens a piece, and free of markup because `::first-line`
+              follows the text however it re-wraps. */}
           {post.excerpt && (
-            <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">{post.excerpt}</p>
+            <p className="rj-standfirst mt-phi3 text-lg leading-relaxed text-ink-muted">
+              {post.excerpt}
+            </p>
           )}
 
           {/* §134 — who wrote it, who checked it, and when. */}

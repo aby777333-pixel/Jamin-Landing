@@ -524,3 +524,178 @@
     transform: none;
   }
 }
+
+/* ══ MICRO-DETAIL ══════════════════════════════════════════════════════════
+   Small things, each a few lines, that between them decide whether the site
+   reads as made or as assembled. Grouped here rather than scattered because
+   every one is a BASE-ELEMENT rule, and base rules are exactly what must not
+   be duplicated across four unlayered stylesheets.
+
+   ⚠️ NOTHING HERE MAY SET A PROPERTY A TAILWIND UTILITY NEEDS TO WIN. These
+   declarations are unlayered, so they beat every utility including `sticky` —
+   the trap that silently unstuck the navbar. Everything below is either a
+   property no utility in this repo sets (caret, accent, tap-highlight,
+   skip-ink, hyphens) or is scoped to a state no utility targets (`:autofill`,
+   `:user-invalid`). */
+
+html {
+  /* ⚠️ ONE DECLARATION REPLACING SIX. Anchor targets were landing under the
+     sticky header, and the fix so far has been `scroll-mt` on each element that
+     happened to be noticed — six of them. This covers every anchor on the site
+     including ones nobody has added yet, such as the gazetteer letter rail.
+     The per-element `scroll-mt` classes are left in place: they are harmless,
+     they document intent locally, and removing them is a separate change. */
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+
+  /* Android paints a translucent blue rectangle over any tapped element. On a
+     page whose tappable things are gold seals, survey polygons and photographs,
+     that is the platform drawing over the design. Removing it is only safe
+     because every one of those targets has its own active/focus-visible state —
+     the highlight is redundant here, not merely unwanted. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── The caret, the selection quieter cousin ───────────────────────────────
+   Selection was styled long ago; the insertion point never was, so it drew in
+   the platform pure black against `--color-ink`, which is not black. */
+input,
+textarea,
+[contenteditable] {
+  caret-color: var(--color-jamin-red);
+}
+
+/* ── Controls in the site own metal ────────────────────────────────────────
+   The consent checkbox has always been browser-blue on a page of champagne and
+   burgundy. `accent-color` restyles the native control without replacing it,
+   which keeps the platform focus, keyboard and screen-reader behaviour — the
+   reason this site does not ship a custom checkbox. */
+input[type="checkbox"],
+input[type="radio"],
+progress {
+  accent-color: var(--color-jamin-red);
+}
+
+/* ── Placeholders ──────────────────────────────────────────────────────────
+   ⚠️ `--color-ink-faint`, NOT lighter. A placeholder is real text a reader has
+   to be able to read, and the instinct to fade it further is how placeholders
+   end up below AA. This is the same token the marginalia runs at, which has
+   been audited on this ground. */
+::placeholder {
+  color: var(--color-ink-faint);
+  opacity: 1; /* Firefox applies its own 0.54 on top; without this it compounds. */
+}
+
+/* ── Chrome autofill yellow ────────────────────────────────────────────────
+   🚨 `background-color` CANNOT OVERRIDE IT. The UA style is applied at a level
+   no author declaration reaches, and the only lever that works is an inset
+   `box-shadow` large enough to cover the field, with the text colour forced
+   separately. This is a well-known hack and it is the ONLY thing that works —
+   anyone simplifying it back to `background` will silently restore the yellow.
+   ⚠️ The transition delay keeps the shadow from being animated away by the
+   browser own fade on first paint. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-ink);
+  box-shadow: 0 0 0 1000px var(--color-canvas) inset;
+  transition: background-color 100000s ease-in-out 0s;
+}
+
+/* ── Invalid, but only once they have finished typing ──────────────────────
+   ⚠️ `:user-invalid`, NEVER `:invalid`. `:invalid` matches from the first
+   keystroke, so a half-typed mobile number is marked wrong while the reader is
+   still typing it — the single most common way a form feels hostile.
+   `:user-invalid` waits for blur or submit, which is the moment the judgement
+   is actually fair. */
+input:user-invalid,
+textarea:user-invalid {
+  border-color: var(--color-jamin-red);
+}
+
+/* ── Links that do not run through their own descenders ────────────────────
+   Scoped to prose: skip-ink on a nav item or a button label does nothing
+   useful, and the rule is cheaper kept where the descenders actually are. */
+.prose a,
+p a {
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 0.18em;
+}
+
+/* ── Long Tamil place names ────────────────────────────────────────────────
+   "KamanaickenPalayam" and "Udumalaipettai" have no spaces and no natural break
+   point, and one of them already forced a `min-w-0` fix after setting a grid
+   track 373px wide. Hyphenation treats the cause.
+   ⚠️ `lang="en-IN"` on the html element is what makes this work — a hyphenation
+   dictionary is selected by language, so without the attribute the browser
+   silently does nothing. It is already set in layout.tsx; do not remove it.
+   ⚠️ Scoped to prose and to the surfaces that carry place names. Hyphenating a
+   headline is a different decision and this is not it. */
+.prose p,
+.prose li,
+.rj-hyphen {
+  hyphens: auto;
+}
+
+/* ── Inter character disambiguation ────────────────────────────────────────
+   🚨 FUNCTIONAL, NOT DECORATIVE, ON THIS SITE. `cv11` gives Inter the
+   single-storey a and, with `ss03`, disambiguates 1/l/I and 0/O. This site
+   prints survey numbers like "789/3B2E2A1A3C" and approval numbers like
+   "320/2025" — strings a reader may copy onto a legal enquiry, where a 1 read
+   as an l is a wrong document.
+   ⚠️ Applied to `.ledger` ONLY, the class that already means "this is a figure
+   of record". Site-wide it would change the texture of every paragraph for no
+   gain. Tabular figures are already carried by that class; this adds to them
+   rather than restating them. */
+.ledger {
+  font-feature-settings: "cv11", "ss03";
+}
+
+/* ── The standfirst ────────────────────────────────────────────────────────
+   One line, no markup: the opening line of an article lead sets in small caps
+   with tracking, the way a magazine opens a piece.
+   ⚠️ `::first-line` accepts only a short list of properties — font, colour,
+   spacing, decoration. Anything else here is silently ignored, which is why
+   there is no margin or transform in it. */
+.rj-standfirst::first-line {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.06em;
+  color: var(--color-ink);
+}
+
+/* ── Windows High Contrast ─────────────────────────────────────────────────
+   🚨 FORCED COLORS STRIPS EVERY FILL, AND THE PLOT MAP IS THE CASUALTY. In that
+   mode the browser replaces author colours with the user own palette, so the
+   plot-status tints all collapse to one colour — and the rule that colour is
+   never the ONLY carrier of a plot state is what breaks. The hatches survive
+   because they are geometry, but the borders have to be re-asserted or the
+   polygons lose their edges entirely.
+   `forced-color-adjust: none` is deliberately NOT used: overriding the user
+   palette is the opposite of honouring it. This only ensures structure. */
+@media (forced-colors: active) {
+  .rj-plot,
+  .rj-plan-road,
+  .rj-plan-osr {
+    stroke: CanvasText;
+  }
+  /* A focus ring in forced colours must use the system own highlight, since the
+     champagne token no longer exists. */
+  :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/* ── prefers-contrast: more ────────────────────────────────────────────────
+   ⚠️ The glass tints are the audited values from a long contrast sweep — 0.90
+   light, 0.72 dark, each with a recorded reason. A reader asking for more
+   contrast is asking for those to go further, NOT for a different design, so
+   this raises exactly those two tokens and nothing else. Any change to the blur
+   must re-check the dark tint, as it always must. */
+@media (prefers-contrast: more) {
+  :root {
+    --glass-tint: 0.97;
+    --glass-tint-dark: 0.88;
+  }
+}

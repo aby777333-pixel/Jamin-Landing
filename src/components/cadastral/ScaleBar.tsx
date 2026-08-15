@@ -39,9 +39,12 @@ export function niceDistance(maxMetres: number) {
 }
 
 function label(metres: number) {
+  /* ⚠️ U+00A0 between figure and unit. A scale bar that wraps to "500" over
+     "m" has stopped being a scale bar — and this one sits in a corner overlay
+     narrow enough that it genuinely can. */
   return metres >= 1000
-    ? `${Number((metres / 1000).toFixed(metres % 1000 === 0 ? 0 : 1))} km`
-    : `${metres} m`;
+    ? `${Number((metres / 1000).toFixed(metres % 1000 === 0 ? 0 : 1))}\u00a0km`
+    : `${metres}\u00a0m`;
 }
 
 export function ScaleBar({
@@ -92,7 +95,7 @@ export function ScaleBar({
           fill="none"
         />
       </svg>
-      <span className="ledger text-micro tracking-brand">{label(metres)}</span>
+      <span className="ledger tabular-nums text-micro tracking-brand">{label(metres)}</span>
     </div>
   );
 }

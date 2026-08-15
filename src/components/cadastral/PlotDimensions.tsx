@@ -111,7 +111,7 @@ export function PlotDimensions({ plot, unitsPerPx }: { plot: Plot; unitsPerPx: n
         fill="currentColor"
         className="ledger"
       >
-        {alongX} m
+        {`${alongX}\u00a0m`}
       </text>
       <text
         x={dimX + font * 0.95}
@@ -122,7 +122,7 @@ export function PlotDimensions({ plot, unitsPerPx }: { plot: Plot; unitsPerPx: n
         className="ledger"
         transform={`rotate(-90 ${dimX + font * 0.95} ${(y0 + y1) / 2})`}
       >
-        {alongY} m
+        {`${alongY}\u00a0m`}
       </text>
     </g>
   );

@@ -803,6 +803,44 @@
 }
 
 /**
+ * ⚠️ FOCUS MUST NOT LOOK LIKE HOVER, and until now it did — both landed on the
+ * rule above and produced an identical 1.5px stroke. That is a focus indicator
+ * in the letter of WCAG and not in the spirit of 2.4.11: a keyboard reader
+ * tabbing through 27 plots could not tell the focused one from one the pointer
+ * happened to be resting on, and on a touch device hover can stick.
+ *
+ * A dashed halo drawn OUTSIDE the fill, so it reads as a selection ring rather
+ * than as a thicker boundary — a plot's boundary is survey information and
+ * must not appear to change weight because somebody tabbed onto it.
+ *
+ * ⚠️ `paint-order: stroke` so the ring sits under the plot's own edge instead
+ * of eating it, and `vector-effect` so the ring keeps its width at every zoom
+ * step while the drawing scales — the plan has four zoom levels.
+ */
+.rj-plot-hit:focus-visible {
+  outline: none;
+}
+.rj-plot-hit:focus-visible .rj-plot {
+  stroke: var(--color-champagne-500);
+  stroke-width: 2.5;
+  stroke-dasharray: 4 2.5;
+  paint-order: stroke;
+  vector-effect: non-scaling-stroke;
+}
+
+/**
+ * The plan is the one surface a reader taps repeatedly, and a double-tap there
+ * means "the plot next to the last one" far more often than it means "zoom".
+ * `manipulation` drops the 300ms wait the browser spends deciding.
+ * ⚠️ It disables double-tap zoom ON THIS ELEMENT ONLY — the plan carries its own
+ * four-step zoom control, so nothing is taken away that is not replaced.
+ */
+.rj-plan-paper,
+.rj-plot-hit {
+  touch-action: manipulation;
+}
+
+/**
  * ── THE SEARCH CONSOLE (§6.2) ─────────────────────────────────────────────
  *
  * A glass panel with a real gradient border: a 1px padding box carrying the
