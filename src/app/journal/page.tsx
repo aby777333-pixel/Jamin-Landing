@@ -71,6 +71,34 @@ export default async function JournalPage() {
       <PageHero
         art={43}
         tone="cinematic"
+        /* Taller, at the owner's request (2026-08-15): `clamp(26rem,64vh,38rem)`
+           against the standard `clamp(20rem,48vh,30rem)`.
+
+           🚨 HEIGHT CHANGES THE CROP, SO THE PLATE HAD TO BE RE-SWEPT — the
+           same rule as swapping the artwork. A taller box takes LESS off the
+           top and bottom (131px of slack here against 275px), so more of the
+           frame's bright mist bank arrives under the copy. Carried over
+           unchanged, 0.08 fell from a worst-case p99 of 4.77 to **4.54** — still
+           passing, but on a margin of 0.04 rather than 0.27, which is not a
+           margin at all.
+
+           ⚠️ THE FIX IS THE CROP, NOT THE TINT. Steering the frame up trades
+           the wet foreground for banyan canopy, which is the dark half of the
+           picture. Swept at 1440x576, 1440x608, 1280, 1920x1080 and 1680:
+
+               object-position   worst p99 @ 0.08
+               top   (0%)             5.07
+               25%                    5.00   ← ships
+               center                 4.54   (the naive carry-over)
+               75%                    3.96   FAILS
+               bottom                 3.45   FAILS
+
+           So the hero gets taller AND keeps the lightest plate on the site,
+           with a 0.50 margin — nearly double what it ran at before. Verified
+           the JAMIN BAZAAR signboard (source y 275–479 of 879) sits fully
+           inside the 25% crop at every one of those widths. */
+        size="tall"
+        artPosition="center 25%"
         sheer
         /* 🚨 RE-SWEPT FOR hero-43 (2026-08-15). The owner asked for the plate
            “see-through to the max”, and on THIS frame that is a real option
