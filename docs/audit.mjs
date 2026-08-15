@@ -11,6 +11,20 @@ const PUBLIC_PAGES = [
   "/property/jamin-new-project-jul-2026",
   "/property/jamin-garden-varapatty",
   "/property/c0e9c29e-8865-45ba-b852-1ab993fb1664",
+  /* ⚠️ ADDED 2026-08-15 AFTER THIS LIST WENT STALE AND HID A REAL BUG. Six route
+     families shipped without ever being added here — /tools, /downloads,
+     /vault, /gazetteer, the district pages and every Journal article — so a
+     clean audit run meant "the pages I remembered are fine", not "the site is
+     fine". Add a route here the day it ships. */
+  "/tools", "/downloads", "/vault", "/gazetteer",
+  "/locations/erode", "/locations/salem", "/locations/tiruppur", "/locations/coimbatore",
+  /* A sample of Journal articles. The whole set is 39 and grows weekly, so the
+     audit takes a representative few rather than crawling the lot — the
+     canonical check below is the one that mattered, and it only needs to see
+     the shape the console produces. */
+  "/journal/does-plot-shape-affect-property-value-in-india-complete-buyers-guide",
+  "/journal/is-cheap-land-really-cheap-in-india-hidden-costs-every-buyer-must-know",
+  "/journal/how-to-buy-land-in-india-safely-12-costly-mistakes-to-avoid-2026",
 ];
 const PRIVATE_PAGES = ["/account", "/account/sign-in", "/account/partner", "/compare"];
 
@@ -24,6 +38,23 @@ const all = (html, re) => [...html.matchAll(re)].map((m) => m[1]);
 
 const issues = [];
 const note = (page, msg) => issues.push(`${page}  ${msg}`);
+
+/* Results are cached: many pages legitimately share a canonical host, and an
+   audit should not fetch the same URL forty times. */
+const canonSeen = new Map();
+const checkCanonical = async (page, href) => {
+  const url = href.startsWith("http") ? href : BASE + href;
+  if (!canonSeen.has(url)) {
+    try {
+      const r = await fetch(url, { redirect: "follow" });
+      canonSeen.set(url, r.status);
+    } catch {
+      canonSeen.set(url, 0);
+    }
+  }
+  const st = canonSeen.get(url);
+  if (st !== 200) note(page, `CANONICAL DOES NOT RESOLVE (${st || "unreachable"}) -> ${url}`);
+};
 
 for (const page of PUBLIC_PAGES) {
   const { status, html } = await get(page);
@@ -40,6 +71,12 @@ for (const page of PUBLIC_PAGES) {
   if (!desc) note(page, "MISSING meta description");
   else if (desc.length > 165) note(page, `meta description ${desc.length} chars`);
   if (!canon) note(page, "MISSING canonical");
+  /* 🚨 A CANONICAL THAT EXISTS IS NOT A CANONICAL THAT WORKS. This checked only
+     for presence, and 27 of 39 articles quietly declared themselves canonical
+     at a /blog/ URL this site has never served — telling crawlers the real
+     article was not the authoritative copy. Nothing on the page looked wrong
+     and the audit passed for weeks. Fetch it. */
+  else await checkCanonical(page, canon);
   if (robots && /noindex/.test(robots)) note(page, `PUBLIC PAGE IS NOINDEX (${robots})`);
   if (!og) note(page, "missing og:title");
 
