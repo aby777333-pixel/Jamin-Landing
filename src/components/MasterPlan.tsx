@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
+import { PlotDimensions } from "@/components/cadastral/PlotDimensions";
 import {
   area as fmtArea,
   dimensions as fmtDims,
@@ -468,6 +469,21 @@ export function MasterPlan({
                 </g>
               );
             })}
+
+            {/* Per-plot dimensions, drawn LAST so they sit above the plot fills
+                and the hatches rather than under them.
+
+                ⚠️ NOT a duplicate of `plan.dimensions` above. Those are the
+                SITE's extents, carried by the sanctioned drawing and always on
+                screen; these belong to one plot and appear only while it is
+                selected. Two scales of the same convention, which is how a real
+                sheet works.
+
+                The unit divisor matches the scale the rest of this svg is drawn
+                at — its `fontSize={6}` notes against Edappadi's 286-unit box —
+                so the annotation reads at the same optical weight as the plan's
+                own notes on any traced sheet, not just this one. */}
+            {selected && <PlotDimensions plot={selected} unitsPerPx={vw / 380} />}
           </svg>
         </div>
       </div>

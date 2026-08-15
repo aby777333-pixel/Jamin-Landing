@@ -7,14 +7,22 @@ import { approvalBadges, formatArea, type Property } from "@/lib/properties";
  * claims rigour, and a row of survey numbers and extents in tabular figures is
  * that claim rendered rather than asserted.
  *
- * ⚠️ ONLY FIELDS THAT EXIST. The design brief asks for an approval number and a
- * sanctioned date alongside these. Neither is in the schema: `approvals` is a
- * set of boolean flags (`{dtcp: true}`), not a number, and there is no
- * sanctioned-date column anywhere on `properties`. An approval number is a
- * legal claim about a specific sanction, so it is the last thing on this site
- * that should be improvised — the same rule that stops the pages inventing a
- * price. Add the columns and populate them and this component will carry them;
- * until then it carries what is true.
+ * ⚠️ ONLY FIELDS THAT EXIST. An approval number is a legal claim about a
+ * specific sanction, so it is the last thing on this site that should be
+ * improvised — the same rule that stops the pages inventing a price.
+ *
+ * 🚨 CORRECTED 2026-08-15: this note used to say the approval number "is not in
+ * the schema", reasoning from the COLUMN — `approvals` really is only a set of
+ * boolean flags (`{dtcp: true}`). But the number was in the data the whole
+ * time, inside the `legal` blob as `dtcp_approval_no` ("320/2025"), and the
+ * site that promises to publish the approval number was not publishing it.
+ * `ProvenanceRibbon` now states it where it is recorded.
+ * **Generalises: a jsonb column is schema too.** Before concluding a field does
+ * not exist, look inside the blobs — `legal`, `investment`, `utilities` and
+ * `plot_plan` all carry keys no type in this repo names.
+ *
+ * There is still no sanctioned-DATE anywhere, so that half stands. This strip
+ * keeps the flag wording rather than duplicating the ribbon's number.
  *
  * Every entry is dropped when its field is empty, and the strip removes itself
  * entirely rather than render a bar of dashes for a thin record.

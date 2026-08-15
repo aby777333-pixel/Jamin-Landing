@@ -118,6 +118,13 @@ export type PropertyDetail = Property & {
   google_earth_url: string | null;
   road_frontage: string | null;
   before_images: string[] | null;
+  /* Added 2026-08-15 for the chain of record. Both are statements the site
+     exists to publish, not internal fields: "Clear & marketable title",
+     "Zero encumbrances (marketable title)". Two rows carry them where only one
+     carries `legal`, which is why they are read directly rather than through
+     that blob. */
+  title_status: string | null;
+  encumbrance_status: string | null;
 };
 
 /** Every column the public site is allowed to read. Listed explicitly so a new
@@ -138,6 +145,7 @@ const DETAIL_COLUMNS = [
   PUBLIC_COLUMNS,
   "plot_layout", "plot_plan", "documents", "legal", "investment", "utilities",
   "street_view_url", "google_earth_url", "road_frontage", "before_images",
+  "title_status", "encumbrance_status",
 ].join(",");
 
 /** Udumalaipet has a NULL slug and Edappadi's is a leftover working title, so a

@@ -11,6 +11,8 @@ import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
+import { ProvenanceRibbon } from "@/components/cadastral/ProvenanceRibbon";
+import { SurveyWatermark } from "@/components/cadastral/SurveyWatermark";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { SurveyReveal } from "@/components/cadastral/SurveyReveal";
 import { SITE_URL } from "@/lib/supabase";
@@ -455,10 +457,22 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           </div>
 
           {/* The facts of record, as a document header. Renders only the fields
-              that exist — see the component. */}
-          <div className="mt-phi4 -mx-phi3 pb-phi4 lg:-mx-phi4">
+              that exist — see the component.
+
+              ⚠️ `relative isolate` is REQUIRED and belongs here, on the host,
+              not inside `SurveyWatermark`. An absolutely positioned mark paints
+              above its static siblings whatever its opacity; a stacking context
+              created inside the mark would not contain the strip it has to sit
+              under. `overflow-hidden` keeps the oversized numeral from widening
+              the page — it is deliberately larger than its box. */}
+          <div className="relative isolate overflow-hidden mt-phi4 -mx-phi3 pb-phi4 lg:-mx-phi4">
+            <SurveyWatermark surveyNumber={p.survey_number} />
             <ApprovalStrip p={p} />
           </div>
+
+          {/* The chain of record. Sits under the header it elaborates: the strip
+              states the facts, the ribbon shows they link. */}
+          <ProvenanceRibbon p={p} />
 
           <div className="mt-phi4">
             <Gallery images={images} title={p.title} />
