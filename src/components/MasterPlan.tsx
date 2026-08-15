@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
 import { PlotDimensions } from "@/components/cadastral/PlotDimensions";
+import { PlanMeasure } from "@/components/cadastral/PlanMeasure";
 import {
   area as fmtArea,
   dimensions as fmtDims,
@@ -78,6 +79,8 @@ export function MasterPlan({
   }, [drawn, armed]);
   const [zoomIx, setZoomIx] = useState(0);
   const [onlyAvailable, setOnlyAvailable] = useState(false);
+  /* Measure mode. Mutually exclusive with plot selection — see the toggle. */
+  const [measuring, setMeasuring] = useState(false);
   const frameRef = useRef<HTMLDivElement>(null);
   const sheetRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -196,6 +199,28 @@ export function MasterPlan({
           >
             Available only
           </button>
+          {/* ⚠️ A MODE, not an always-on behaviour. The plan's primary action is
+              selecting a plot, and a drag-to-measure surface laid permanently
+              over it would swallow every tap. Measuring is the rarer intent, so
+              it asks first. Only offered when the drawing records a scale —
+              without `metresPerUnit` there is nothing honest to report. */}
+          {plan.metresPerUnit ? (
+            <button
+              type="button"
+              onClick={() => {
+                setMeasuring((v) => !v);
+                setSelected(null);
+              }}
+              aria-pressed={measuring}
+              className={`rounded-full border px-3 py-1.5 text-tiny font-medium transition-colors ${
+                measuring
+                  ? "border-ink bg-ink text-canvas"
+                  : "border-line bg-canvas text-ink-soft hover:border-ink-faint"
+              }`}
+            >
+              Measure
+            </button>
+          ) : null}
           <div className="flex items-center rounded-full border border-line bg-canvas">
             <button
               type="button"
@@ -484,6 +509,16 @@ export function MasterPlan({
                 so the annotation reads at the same optical weight as the plan's
                 own notes on any traced sheet, not just this one. */}
             {selected && <PlotDimensions plot={selected} unitsPerPx={vw / 380} />}
+
+            {/* Last in the svg so its capture surface sits above every plot —
+                which is exactly why it is gated behind the mode toggle. */}
+            {measuring && (
+              <PlanMeasure
+                metresPerUnit={plan.metresPerUnit}
+                unit={unit}
+                scale={plan.scale}
+              />
+            )}
           </svg>
         </div>
       </div>
@@ -543,6 +578,21 @@ export function MasterPlan({
             ☝
           </span>
           Tap any plot on the plan for its dimensions, facing and road width.
+        </p>
+      )}
+
+      {/* 🚨 THE CAVEAT SHIPS WITH THE TOOL, VISIBLY, NOT ONLY IN <desc>.
+          `metresPerUnit` disagrees with the drawing's own three labelled
+          dimensions by +1.4% / −2.1% / −3.1%, so this readout is a scaled
+          estimate and a reader has to be told that before they act on it —
+          three per cent of a hundred metres is a plot boundary's worth. It also
+          points at the better answer: a plot's own `dim_m` is sanctioned, this
+          is not. See PlanMeasure for the full calibration. */}
+      {measuring && (
+        <p className="mt-phi2 text-tiny leading-relaxed text-ink-faint">
+          Drag across the plan to measure. Distances are scaled from the traced
+          drawing{plan.scale ? ` at ${plan.scale}` : ""} and are approximate — for a
+          sanctioned figure, tap a plot and read its own dimensions.
         </p>
       )}
 

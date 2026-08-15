@@ -2117,3 +2117,127 @@ header .glass,
     transform: scale(1) rotate(0deg);
   }
 }
+
+/**
+ * ── THE DEED SHEET ────────────────────────────────────────────────────────
+ *
+ * The existing print block above makes the page PRINTABLE — paper ground, real
+ * ink, plot colours that survive, URLs written out after external links. This
+ * makes it a DOCUMENT: nothing on the sheet that a reader cannot act on with a
+ * pen, and everything that is evidence kept together.
+ *
+ * Why it earns its keep: buyers print a property page and take it to a father,
+ * a brother, a lawyer. That printout is the site's argument leaving the site,
+ * and until now it carried a navigation bar, a sticky "Book a visit", an
+ * enquiry form and a chat dock — four controls that do nothing on paper and
+ * three of them costing a third of the first page.
+ *
+ * ⚠️ IT IS SCOPED TO NOTHING. There is no `.deed-sheet` wrapper, because every
+ * rule here is either "hide a control" or "do not split a record", and both are
+ * right on every page the reader chooses to print. A scoped version would mean
+ * remembering to add the class to each new route, which is the failure mode
+ * that leaves one page printing a navbar forever.
+ */
+@media print {
+  /* ── Controls do nothing on paper ─────────────────────────────────────
+     Every one of these is an affordance: it invites a tap. On a sheet it is
+     either a dead rectangle or, worse, a button somebody presses on the page.
+     ⚠️ `header` and `footer` are matched by TAG, not by class, so a future
+     component cannot quietly reintroduce chrome by being named differently. */
+  header,
+  footer,
+  .rj-footer,
+  nav[aria-label="Districts"],
+  nav[aria-label="Breadcrumb"],
+  form,
+  .rj-medallion,
+  [data-print="hide"] {
+    display: none !important;
+  }
+
+  /* The skip link, the reading rule and the scroll-to-top: all navigation. */
+  .rj-reading-rule,
+  .rj-scroll-btn {
+    display: none !important;
+  }
+
+  /* ── The page itself ──────────────────────────────────────────────────
+     ⚠️ A named `@page` margin, because the browser default leaves ~12mm and a
+     document that will be filed wants room for a punch and a thumb. `portrait`
+     is stated rather than assumed — a landscape default would break every
+     column measure on the sheet. */
+  @page {
+    size: A4 portrait;
+    margin: 16mm 14mm;
+  }
+
+  /* Anything that was sticky, fixed or absolutely placed is a layout device for
+     a screen. On paper it either overlaps the text or floats off the sheet. */
+  .sticky,
+  [style*="position:fixed"],
+  [style*="position: fixed"] {
+    position: static !important;
+  }
+
+  /* ── Records must not split ───────────────────────────────────────────
+     🚨 THIS IS THE WHOLE POINT OF THE SHEET. A chain of record broken across a
+     page boundary is no longer a chain — a reader sees "Survey · Sanction" on
+     one page and "Title · Encumbrance" on the next and cannot tell whether the
+     links were adjacent or whether something was left out. Same for the
+     approval strip and the plot schedule: these are the evidence. */
+  .cd-strip,
+  [aria-labelledby="provenance-heading"],
+  [aria-labelledby="colophon-heading"],
+  dl,
+  table,
+  tr {
+    break-inside: avoid;
+  }
+
+  /* A heading stranded at the foot of a sheet is the oldest typographic fault
+     there is. `break-after: avoid` keeps it with the first lines it introduces. */
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* Orphans and widows, which the browser default sets to 2 only for some
+     engines. Three is the printer's convention. */
+  p,
+  li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* ── The plan is the document ─────────────────────────────────────────
+     It gets its own sheet where it will not fit beside the record, and it is
+     never allowed to break: half a layout plan is worse than none, because a
+     reader cannot tell that plots are missing. */
+  .rj-plan-paper {
+    break-inside: avoid;
+    break-before: auto;
+  }
+
+  /* ── The print-only header ────────────────────────────────────────────
+     Hidden on screen, drawn on paper: what this sheet is, and when it was
+     taken. `PrintHeader` supplies the content; this is only its visibility. */
+  .rj-print-only {
+    display: block !important;
+  }
+
+  /* ⚠️ Photographs are already suppressed above (`[class*="hero"] img`). The
+     GALLERY is not, and a twelve-image gallery is eleven wasted sheets of
+     colour. The first image stays — it identifies the project at a glance —
+     and the rest go. */
+  [data-gallery] img:not(:first-of-type) {
+    display: none !important;
+  }
+}
+
+/* Hidden on screen, revealed by the block above. Kept OUTSIDE `@media print`
+   deliberately: a rule that only exists inside the print block would leave the
+   element visible on screen in any browser that fails to parse it. */
+.rj-print-only {
+  display: none;
+}

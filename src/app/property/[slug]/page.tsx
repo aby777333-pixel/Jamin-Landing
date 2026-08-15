@@ -13,6 +13,8 @@ import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
 import { ProvenanceRibbon } from "@/components/cadastral/ProvenanceRibbon";
 import { SurveyWatermark } from "@/components/cadastral/SurveyWatermark";
+import { PrintHeader } from "@/components/cadastral/PrintHeader";
+import { PassportButton } from "@/components/PassportButton";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { SurveyReveal } from "@/components/cadastral/SurveyReveal";
 import { SITE_URL } from "@/lib/supabase";
@@ -207,6 +209,21 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbs(p)) }}
+      />
+
+      {/* Invisible on screen, the masthead of the printed sheet. First in the
+          document so it is first on the paper — the hero above it is suppressed
+          in print, so nothing precedes this once the ink hits. `taken` is the
+          BUILD date, not the reader's clock: the page is statically generated,
+          and a live timestamp beside build-old data would overstate it. */}
+      <PrintHeader
+        p={p}
+        taken={new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          timeZone: "Asia/Kolkata",
+        }).format(new Date())}
       />
 
       {/* This page's hero is the project's OWN photography, not the brand
@@ -473,6 +490,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           {/* The chain of record. Sits under the header it elaborates: the strip
               states the facts, the ribbon shows they link. */}
           <ProvenanceRibbon p={p} />
+
+          {/* ⚠️ The sheet a buyer takes to a lawyer. Placed AFTER the chain of
+              record rather than up beside the title on purpose — a reader who
+              has just read the evidence is the one who wants to keep it, and a
+              print control offered before the record reads as a brochure
+              download. `print:hidden` lives on the button itself. */}
+          <div className="mt-phi4">
+            <PassportButton />
+          </div>
 
           <div className="mt-phi4">
             <Gallery images={images} title={p.title} />

@@ -1,0 +1,42 @@
+"use client";
+
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+
+/**
+ * "Passport" — the printed record of a project, on one sheet.
+ *
+ * 🚨 IT IS THE BROWSER'S OWN PRINT DIALOGUE, NOT A GENERATED PDF, AND THE LABEL
+ * SAYS SO. The app builds real PDFs through a Supabase edge function; this site
+ * cannot deploy edge functions (no access token on this machine) and pulling a
+ * PDF library into the client would add hundreds of kilobytes to a route whose
+ * whole argument is that it loads fast.
+ *
+ * What makes that an honest answer rather than a shortcut: the deed sheet in
+ * royal.css already lays this page out as a document — controls suppressed,
+ * records kept whole, A4 portrait with a filing margin, a print-only masthead.
+ * "Save as PDF" is the destination in every print dialogue on every platform,
+ * so the reader gets a real PDF; it is simply their renderer producing it
+ * rather than ours. It also works offline and costs nothing to serve.
+ *
+ * ⚠️ The button is `print:hidden` — a control that appears in its own output is
+ * the classic printed-page bug.
+ *
+ * ⚠️ No `onBeforePrint` state, no "preparing…" spinner. `window.print()` is
+ * synchronous and blocking; anything set before it would not paint until after
+ * the dialogue closed, which is the opposite of what a spinner is for.
+ */
+export function PassportButton() {
+  return (
+    <button
+      type="button"
+      onClick={() => window.print()}
+      className="rj-deboss inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-canvas-alt px-4 py-2 text-tiny font-medium text-ink-muted transition-colors hover:text-ink print:hidden"
+    >
+      <SurveyIcon name="deed" size="h-4 w-4" className="shrink-0 text-champagne-500" />
+      Print this record
+      {/* Named plainly. "Download passport" would promise a file this does not
+          produce, and the reader's own dialogue is where the choice between
+          paper and PDF actually gets made. */}
+    </button>
+  );
+}
