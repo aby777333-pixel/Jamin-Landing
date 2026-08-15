@@ -7,7 +7,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * link cannot do: notice when it did nothing.
  *
  * ⚠️ REPORTED AS "the EMAIL button is not working" (bug report 7). The markup
- * was never wrong — the live anchor is `mailto:info@jaminproperties.com`,
+ * was never wrong — the live anchor is a `mailto:` to whatever address
+ * `platform_contacts` holds (`info@jaminbazaar.in` since 2026-08-15),
  * unobstructed, `pointer-events: auto`, and it was verified in place. What
  * fails is the hand-off: if the operating system or the browser profile has no
  * handler registered for `mailto:`, the click is swallowed **silently**. No

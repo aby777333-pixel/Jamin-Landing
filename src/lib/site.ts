@@ -20,7 +20,17 @@ export type DeskContact = {
   email: string | null;
 };
 
-const FALLBACK_EMAIL = "info@jaminproperties.com";
+/**
+ * ⚠️ THE FALLBACK MUST TRACK THE DATABASE, or a transient read failure quietly
+ * republishes a dead address. Updated 2026-08-15 with `platform_contacts`
+ * (`info@jaminproperties.com` → `info@jaminbazaar.in`, and the desk number to
+ * +91 98844 00229). Stored lowercase: the local part is case-insensitive at
+ * every provider, and one spelling avoids the footer and the mailto disagreeing.
+ *
+ * ⏰ This constant exists only because `platform_contacts` can fail to load. It
+ * is NOT a second source of truth — change the row, then change this to match.
+ */
+const FALLBACK_EMAIL = "info@jaminbazaar.in";
 
 /** The help desk the app's Support screen also reads (`platform_contacts`). */
 export async function getDeskContact(): Promise<DeskContact> {
