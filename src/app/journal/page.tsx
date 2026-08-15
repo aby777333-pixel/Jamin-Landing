@@ -65,38 +65,43 @@ export default async function JournalPage() {
   return (
     <>
       {/* `cinematic` — the tone is a property of the artwork, not of the page.
-          hero-25 is a photograph with real tonal range, which is the case
+          hero-43 is a photograph with real tonal range, which is the case
           `veil` and the `gilt` plate exist for. */}
       <PageHero
-        art={41}
+        art={43}
         tone="cinematic"
         sheer
-        /* 🚨 RE-SWEPT FOR hero-41 (2026-08-14), AND CARRYING hero-27’s 0.38
-           OVER WOULD HAVE FAILED. That frame was overcast daylight; this one
-           puts a sunlit signboard and a bright horizon directly under the copy,
-           so the plate’s own footprint measures a p95 of rgb(221,188,155)
-           against the meadow’s much darker one.
+        /* 🚨 RE-SWEPT FOR hero-43 (2026-08-15). The owner asked for the plate
+           “see-through to the max”, and on THIS frame that is a real option
+           rather than a wish: hero-41 was a sunlit meadow whose footprint
+           measured a p95 of rgb(221,188,155), where hero-43 is a wet forest
+           platform in deep shade measuring rgb(20,47,30). Same request on the
+           old frame would have been refused.
 
-           Swept on the built page — photograph, then `veil`’s two gradients,
-           then the plate — over the plate region only, at the p95 this repo
-           measures by:
+           Swept the way this page always is — photograph, then `veil`’s two
+           gradients, then the plate — over the plate’s footprint only:
 
-               0.38 → 4.09   ← hero-27’s value. UNDER AA on this frame.
-               0.44 → 4.76   ← ships: the lightest that clears
-               0.48 → 5.29
-               0.52 → 5.89   ← the site’s audited default
+               0.00 → 7.83 at p95   the tint removed entirely
+               0.08 → 8.47 at p95   ships
+               0.44 → 12.00 at p95  hero-41’s value
 
-           0.44 keeps a 0.26 margin, which is the same order this page has
-           always run at (0.38 kept 0.21 on the meadow). Anyone lightening it
-           has to change the ink first — the eyebrow binds, as on every
-           cinematic hero.
+           ⚠️ AND p95 IS THE WRONG STATISTIC ON THIS FRAME, WHICH IS THE WHOLE
+           REASON THIS IS NOT 0. The mist at the track’s vanishing point is a
+           genuinely bright BANK, not the stray specular hits p95 exists to
+           discount, and it lands under the plate’s inner edge. Measured at p99
+           across 1440x900, 1440x1080, 1280, 1920x1080 and 1680:
 
-           ⚠️ At the single BRIGHTEST pixel under the plate (the signboard’s
-           white face, which blows to 255) nothing below 0.56 clears 4.5. That
-           is a handful of pixels rather than a glyph’s worth of ground, which
-           is exactly why this repo measures at p95 and not at the maximum —
-           but it is the reason this frame cannot go as light as the meadow. */
-        sheerAlpha={0.44}
+               0.00 → 4.23 worst   FAILS
+               0.04 → 4.49 worst   fails by 0.01
+               0.08 → 4.77 worst   ships, 0.27 of margin
+
+           1.38% of the footprint sits above the 4.5 limit at alpha 0 — an area,
+           so a reader would meet it. 0.08 keeps the same order of margin this
+           page has always run at (0.44 kept 0.26 on the meadow) while being
+           5.5x lighter, and it is below the utility’s own 0.14 default.
+           The eyebrow binds, as on every cinematic hero — `champagne-50`, not
+           the white h1. Anyone lightening this has to change the ink first. */
+        sheerAlpha={0.08}
         /* ⚠️ 42rem, NOT the 38rem /properties uses — the cliff is set by the
            headline and this one is longer. Measured at 1440: "Land, and the
            things worth knowing before you decide." holds three lines at 42rem
@@ -106,22 +111,19 @@ export default async function JournalPage() {
         plateXl="42rem"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
-        /* ⚠️ THREE PARAGRAPHS, so `lead` is passed as JSX rather than a
-           string. `PageHero` types it as a `ReactNode` and renders it inside a
-           <div>, so the paragraphs are legitimate children — a string with
-           line breaks in it would have come out as one run of prose. */
+        /* ONE LINE now, where this was three paragraphs (owner, 2026-08-15).
+           Still JSX rather than a bare string so the weight matches what the
+           opening line always carried — `PageHero` types `lead` as a
+           `ReactNode` and renders it in a <div>, so a <p> is a legitimate
+           child. ⚠️ Losing ~100px of copy makes the PLATE shorter, which is
+           why the alpha sweep above measures a 340px footprint and not the
+           480px the three paragraphs occupied: a shorter plate sits higher on
+           the frame, over different pixels. Re-sweep if this copy grows. */
         lead={
-          <>
-            <p className="font-medium">When there’s danger, Jamin stays cool.</p>
-            <p className="mt-phi2">
-              When uncertainty surrounds a property, Jamin stays calm, careful and alert. We
-              help protect our buyers and sellers, even when the risks aren’t obvious.
-            </p>
-            <p className="mt-phi2">
-              Trusted by thousands to protect what matters most: their home, their land, and
-              their future.
-            </p>
-          </>
+          <p className="font-medium">
+            India’s Complete Real Estate Knowledge Hub — From Plot to Property, Stay on the
+            Right Track
+          </p>
         }
       />
       <Container className="py-phi5">

@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -61,8 +61,10 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   31: 720, 32: 887, 33: 720,
   34: 800, 35: 887, 36: 887, 37: 821,
   38: 819, 39: 836, 40: 819,
-  /* hero-41 — /journal from 2026-08-14. */
+  /* hero-41 — /journal from 2026-08-14 to 2026-08-15. */
   41: 887,
+  /* hero-43 — /journal from 2026-08-15. Owner-supplied, no trim. */
+  43: 879,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -188,6 +190,13 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      and a bright horizon directly under the copy. See the note on the /journal
      call for the numbers. */
   41: 1774,
+  /* hero-43 — the banyan signboard on a wet forest platform. It is the DARKEST
+     frame in the register: mean rgb(20,47,30) under the plate's own footprint,
+     against hero-41's sunlit meadow. That is what lets /journal run the
+     lightest plate on any cinematic hero — see the sweep on its PageHero call.
+     ⚠️ It names itself on the board, so the no-caption rule binds as it does on
+     19 and 21. */
+  43: 1790,
 };
 
 function artSrc(n: HeroArt) {

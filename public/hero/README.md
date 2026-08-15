@@ -1016,3 +1016,40 @@ WARNING: a NEW FILENAME, not a new file at the old path. `next/image` keys its
 optimised output by source path, so overwriting purpose-1857.webp would let a
 warm build keep serving the old picture from a deploy that looks correct. Same
 trap recorded against hero-27. purpose-1857 is left in place, unused.
+
+## hero-43 -> /journal (2026-08-15), and the lightest plate on the site
+
+Owner-supplied, replacing hero-41 the day after it shipped. Untrimmed — the only
+baked words are the brand's own lockup on the signboard, so the same rule that
+made 38/39 low-risk applies here.
+
+| id | native | widths (KB) | subject |
+|---|---|---|---|
+| hero-43 | 1790x879 | 768 / 1280 / 1790 (69 / 189 / 316) | a wet forest platform under a banyan, railway track running to a misty vanishing point, a lone walking figure, the **JAMIN BAZAAR** signboard at the right |
+
+**It is the darkest frame in the register, and that is the point.** Under the
+plate's own footprint it measures a raw mean of rgb(20,47,30), against hero-41's
+sunlit meadow. The owner asked for the plate "see-through to the max"; that
+request was grantable here and would have been refused on hero-41, which put a
+lit signboard and a bright horizon directly under the copy. `sheerAlpha` went
+**0.44 -> 0.08**, 5.5x lighter and below the utility's own 0.14 default.
+
+WARNING: THE p95 THIS REPO NORMALLY MEASURES BY SAYS 0.00 IS FINE. IT IS NOT.
+The mist at the vanishing point is a bright BANK rather than the specular
+pinpricks p95 exists to discount, and it lands under the plate's inner edge.
+1.38% of the footprint sits above the 4.5 limit with the tint removed — an area
+a reader would actually meet. Swept at p99 across five viewports:
+
+    0.00 -> 4.23 worst   fails
+    0.04 -> 4.49 worst   fails by 0.01
+    0.08 -> 4.77 worst   ships, 0.27 of margin
+
+**Which statistic binds is a property of the frame, not of the repo.** A frame
+whose bright pixels form a region needs p99; one whose bright pixels are
+scattered highlights is correctly judged at p95. Read the picture before
+choosing. Full table in `src/app/journal/page.tsx`.
+
+WARNING: the /journal lead dropped from three paragraphs to one line in the same
+change, which makes the PLATE about 140px shorter and therefore moves it up over
+different pixels. The sweep above is measured on the SHORT plate. Growing that
+copy back is a re-sweep, not a copy edit.
