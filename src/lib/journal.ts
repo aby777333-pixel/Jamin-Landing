@@ -169,6 +169,39 @@ export function journalHref(p: Pick<JournalPost, "slug">) {
   return `/journal/${p.slug}`;
 }
 
+/**
+ * 🚨 27 OF 39 ARTICLES WERE DECLARING A CANONICAL URL THAT 404s.
+ *
+ * Found in a link audit of the live site, 2026-08-15. `seo.canonical` is
+ * authored in the admin console, and on most articles it was written against a
+ * `/blog/<slug>` convention this site has never had — the Journal is
+ * `/journal/<slug>`. Some pointed at `jaminproperties.com/blog/…` (404) and
+ * four at `jaminbazaar.com/blog/…` (the domain does not resolve at all).
+ *
+ * A canonical is not a link a reader clicks; it is an instruction to a search
+ * engine that says "the authoritative copy of this page lives here". Pointed at
+ * a dead URL it invites the crawler to drop the real article — so this was a
+ * quiet deindexing risk across two thirds of the site's largest content asset,
+ * and nothing on the page would ever have looked wrong.
+ *
+ * ⚠️ IT REJECTS ONLY WHAT IS PROVABLY DEAD, and that restraint is deliberate.
+ * A cross-domain canonical can be a legitimate editorial decision — an article
+ * syndicated from elsewhere should say so. This drops the value ONLY when it
+ * matches the known-dead `/blog/` shape, on any of the three hosts involved,
+ * and otherwise passes the author's choice through untouched.
+ *
+ * ⏰ The stored values are still wrong. Correcting them in the console is the
+ * real fix; this stops them reaching a crawler in the meantime.
+ */
+const DEAD_CANONICAL =
+  /^(?:https?:\/\/(?:www\.)?(?:jaminproperties\.com|jaminbazaar\.com|jamin-properties-web\.netlify\.app))?\/blog\/[a-z0-9-]+\/?$/i;
+
+export function canonicalFor(p: Pick<JournalPost, "slug" | "seo">): string {
+  const stored = p.seo?.canonical?.trim();
+  if (stored && !DEAD_CANONICAL.test(stored)) return stored;
+  return journalHref(p);
+}
+
 /** ⚠️ Pinned to IST, like every other date on the site. `published_at` is a
  *  timestamptz, so formatting it in the reader's own zone made an article
  *  published at 00:29 IST show as the previous day — and the console, which

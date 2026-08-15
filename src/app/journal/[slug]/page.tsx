@@ -15,6 +15,7 @@ import {
   getJournalPost,
   getJournalPosts,
   getJournalRedirect,
+  canonicalFor,
   journalHref,
   publishedLabel,
   readingMinutes,
@@ -46,7 +47,11 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: p.seo?.canonical ?? journalHref(p) },
+    /* ⚠️ `canonicalFor`, not `seo.canonical ?? journalHref` — 27 of 39 stored
+       canonicals point at a dead `/blog/` URL and were telling crawlers the
+       real article was not the authoritative copy. See the note on the helper;
+       a legitimate cross-domain canonical still passes through. */
+    alternates: { canonical: canonicalFor(p) },
     robots: p.seo?.noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       type: "article",
