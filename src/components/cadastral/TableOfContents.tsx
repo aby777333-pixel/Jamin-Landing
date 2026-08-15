@@ -61,7 +61,16 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
        by the viewport minus the sticky header, and `overscroll-contain` stops a
        flick that reaches the end of this list from carrying on into the
        article behind it. */
-    <nav className="sticky top-28 flex max-h-[calc(100vh-9rem)] flex-col" aria-label="On this page">
+    /* 🚨 THE STICKY AND THE HEIGHT CAP MOVED TO THE CALLER (2026-08-15), and
+       this is a bug fix, not a tidy-up. When `Marginalia` was added as a
+       SIBLING after this nav, this element pinned at `top-28` while the notes
+       below it scrolled — so the marginalia rode up through the pinned list and
+       the two overlapped, and past it, over the article. A sticky element and a
+       static sibling in one column can only avoid that by luck.
+       Both now live inside ONE height-capped sticky box in the article page;
+       this is a flex child of it, and `min-h-0 flex-1` is what lets the list's
+       own scroller keep working inside that box. */
+    <nav className="flex min-h-0 flex-1 flex-col" aria-label="On this page">
       <h2 className="ledger-label shrink-0">On this page</h2>
       <ul
         ref={listRef}

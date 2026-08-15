@@ -20,7 +20,12 @@
  */
 export function Masthead({ count, issue }: { count: number; issue: string }) {
   return (
-    <div className="mt-phi5 border-y border-ink/15 py-phi4">
+    /* ⚠️ NO TOP MARGIN. This is the first child of a `Container` that already
+       opens on `py-phi5` (3.4375rem), and carrying its own `mt-phi5` stacked
+       the two into ~110px of empty ivory between the hero and the rule — which
+       read as a broken page rather than as breathing room. Vertical space above
+       a nameplate belongs to whatever places it, not to the nameplate. */
+    <div className="border-y border-ink/15 py-phi4">
       <div className="flex flex-col items-center gap-2">
         {/* The standing line above the name, as a paper carries its place and
             its date. Real: the count is the published rows, the issue is the

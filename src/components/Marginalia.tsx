@@ -33,7 +33,15 @@ export function Marginalia({ post, related }: { post: JournalPost; related: Prop
   if (!tags.length && !related.length) return null;
 
   return (
-    <aside aria-labelledby="marginalia-heading" className="mt-phi4 border-t border-line pt-phi4">
+    /* ⚠️ `shrink-0` and its own scroller. It is now a flex child of the sticky
+       column the contents list shares, so without `shrink-0` a long list of
+       subjects would squeeze the list above it instead of scrolling itself.
+       `overflow-y-auto` bounds it rather than letting it push the box past the
+       viewport, which is what would put it back over the article. */
+    <aside
+      aria-labelledby="marginalia-heading"
+      className="mt-phi4 max-h-[45%] shrink-0 overflow-y-auto overscroll-contain border-t border-line pt-phi4"
+    >
       <h2 id="marginalia-heading" className="ledger-label text-ink-faint">
         In the margin
       </h2>

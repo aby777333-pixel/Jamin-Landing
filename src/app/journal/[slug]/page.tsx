@@ -303,9 +303,22 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
               take width off the measure, and the measure is what makes a long
               guide readable. */}
           {(headings.length > 2 || related.length > 0) && (
-            <aside className="hidden lg:block">
-              {headings.length > 2 && <TableOfContents headings={headings} />}
-              <Marginalia post={post} related={related} />
+            /* ⚠️ `min-w-0` on the grid ITEM. A grid item's default
+               `min-width: auto` is its content's minimum, and the subjects line
+               is a long unbroken run of tag names — the trap this repo has paid
+               for twice already. A wrap rule on the child cannot save it. */
+            <aside className="hidden min-w-0 lg:block">
+              {/* 🚨 ONE STICKY BOX HOLDING BOTH, which is the fix for the
+                  overlap reported 2026-08-15. Previously the contents list was
+                  itself `sticky top-28` and the marginalia was a static sibling
+                  under it: the list pinned, the notes scrolled up through it,
+                  and both then rode over the article. The cap and the pin now
+                  belong to this wrapper, so the two move as one object and the
+                  list scrolls inside it. */}
+              <div className="sticky top-28 flex max-h-[calc(100vh-9rem)] flex-col">
+                {headings.length > 2 && <TableOfContents headings={headings} />}
+                <Marginalia post={post} related={related} />
+              </div>
             </aside>
           )}
         </div>
