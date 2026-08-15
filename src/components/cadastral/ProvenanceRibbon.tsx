@@ -43,7 +43,16 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
      saying "approved" and making the reader take that on trust.
      ⚠️ Still never improvised. No number recorded → the flag's wording, exactly
      as before. */
-  const approvalNo = p.legal?.dtcp_approval_no?.trim();
+  /* ⚠️ TWO PLACES CARRY AN APPROVAL NUMBER AND NEITHER IS COMPLETE ON ITS OWN.
+     Erode records it in `legal.dtcp_approval_no` ("320/2025"); Edappadi records
+     it in the traced sheet as `plot_plan.approvalNo` ("LP/EDP/2026/0148") and
+     has no `legal` blob at all. Reading only the first published one project's
+     number and silently withheld the other's — on the site whose promise is
+     that it publishes the approval number. Checked in that order because
+     `legal` is the admin-authored field and the plan's copy is transcribed
+     from the drawing. */
+  const approvalNo =
+    p.legal?.dtcp_approval_no?.trim() || p.plot_plan?.approvalNo?.trim();
   if (approvals.length) {
     links.push({
       icon: "stamp",
