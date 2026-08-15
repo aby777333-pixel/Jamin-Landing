@@ -1,5 +1,6 @@
 "use client";
 
+import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { captureAttribution, currentCampaign, currentRef } from "@/lib/attribution";
@@ -71,7 +72,17 @@ export function EnquiryForm({
 
   if (done) {
     return (
-      <div className="rounded-card border border-canopy bg-canopy-soft p-phi3">
+      <div className="relative overflow-hidden rounded-card border border-canopy bg-canopy-soft p-phi3">
+        {/* The seal, struck once. `rj-foil-seal` is the text-bearing foil ramp —
+            the same one the DTCP chip uses — and `rj-stamp` presses it on
+            arrival. `aria-hidden`: the heading beside it already says the thing
+            in words, and a screen reader has no use for a picture of a stamp. */}
+        <span
+          aria-hidden="true"
+          className="rj-foil-seal rj-stamp pointer-events-none absolute -right-2 -top-2 flex h-16 w-16 rotate-[8deg] items-center justify-center rounded-full text-champagne-900 opacity-90"
+        >
+          <SurveyIcon name="stamp" size="h-7 w-7" />
+        </span>
         <h3 className="text-xl text-canopy">Thank you — we have it.</h3>
         <p className="mt-phi2 text-base leading-relaxed text-ink-soft">
           Someone from the Jamin desk will call you

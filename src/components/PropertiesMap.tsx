@@ -13,6 +13,7 @@ import {
 } from "@/lib/properties";
 import { NorthArrow } from "@/components/cadastral/NorthArrow";
 import { ScaleBar } from "@/components/cadastral/ScaleBar";
+import { PlanSkeleton } from "@/components/cadastral/PlanSkeleton";
 
 /**
  * The map view (§17, §76): every development on one frame, pin linked to card.
@@ -218,6 +219,13 @@ export function PropertiesMap({
            taller box simply shows more map — nothing else has to change. */
         className="rj-crosshair relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[24rem]"
       >
+        {/* The ground the tiles land on. Until now this frame was an empty
+            `bg-canvas-sunken` box while OSM fetched — a grey rectangle that says
+            nothing about what is coming. A layout tracing itself does, and the
+            tiles paint straight over it as they arrive, so it needs no state
+            and no cleanup. */}
+        <PlanSkeleton className="absolute inset-0 flex items-center justify-center p-6" />
+
         <div
           className="absolute left-1/2 top-1/2"
           style={{

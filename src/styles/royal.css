@@ -2042,3 +2042,40 @@ header .glass,
     }
   }
 }
+
+/**
+ * ── THE STAMP ─────────────────────────────────────────────────────────────
+ *
+ * A seal pressing once, for the moment an enquiry is received. One shot, on
+ * arrival, and then it is simply a seal — a stamp that repeats is a logo
+ * animating, which is the opposite of what a stamp means.
+ *
+ * The physics that make it read as pressed rather than as zooming: it comes in
+ * OVERSIZED and slightly rotated, lands past its resting size, and settles
+ * back. A stamp is struck by a hand that is not perfectly square to the paper,
+ * so the rotation resolving to zero is what sells it more than the scale does.
+ *
+ * ⚠️ Transform and opacity only. ⚠️ The element must not be `position: static`
+ * for the transform-origin to read correctly against its own box — the caller
+ * gives it a layout, this only animates it, and no `position` is declared here
+ * because an unlayered declaration would beat every Tailwind utility.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .rj-stamp {
+    animation: rj-stamp 520ms var(--ease-rise) both;
+  }
+}
+@keyframes rj-stamp {
+  0% {
+    opacity: 0;
+    transform: scale(1.9) rotate(-11deg);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.94) rotate(2.5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}

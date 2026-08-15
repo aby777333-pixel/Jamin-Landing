@@ -546,3 +546,46 @@ body > footer {
       12 12,
     crosshair;
 }
+
+/**
+ * THE TRACE — a drawing arriving on the sheet, for `PlanSkeleton`.
+ *
+ * Each line is dashed to its own length and the dash walked to zero, so the
+ * stroke draws rather than fades. `pathLength="1"` would be the tidy way to
+ * normalise this, but it is set per element and these are plain rects of
+ * different perimeters; a large `stroke-dasharray` covers every one of them
+ * without the caller having to know its own length.
+ *
+ * ⚠️ `stroke-dashoffset` is not transform or opacity, so this breaks §9's
+ * performance floor on paper. It is admissible for exactly one reason: this
+ * runs only while a surface is EMPTY and stops when the content arrives, so it
+ * never competes with scrolling or with the page's own animations. Nothing here
+ * may be reused on a live surface.
+ */
+.rj-trace-line {
+  fill: none;
+  stroke: var(--color-line);
+  stroke-width: 1;
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  animation: rj-trace 1100ms var(--ease-rise) forwards;
+}
+@keyframes rj-trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/**
+ * ⚠️ REDUCED MOTION GETS THE FINISHED DRAWING, NOT AN EMPTY BOX. The line work
+ * IS the placeholder's content here — unlike a shimmer, where removing the
+ * animation still leaves a grey block that reads as "loading". Cancelling the
+ * animation without also clearing the offset would leave every stroke hidden
+ * and the surface would look broken rather than still.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .rj-trace-line {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
