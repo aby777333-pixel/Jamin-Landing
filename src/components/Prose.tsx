@@ -144,7 +144,26 @@ type Block =
   | { t: "img"; src: string; alt: string }
   | { t: "doc"; href: string; label: string; kind: string }
   | { t: "table"; head: string[]; rows: string[][] }
+  | { t: "pre"; text: string }
   | { t: "hr" };
+
+/**
+ * A line that is part of a drawn diagram rather than prose.
+ *
+ * 🚨 THE READER HAD NO PREFORMATTED BLOCK AT ALL — not for fences, not for
+ * anything — so an ASCII diagram fell through to `p`, where `para.join(" ")`
+ * welded its rows into one paragraph and the proportional font scattered the
+ * box characters across four ragged lines. Reported 2026-08-15 on the
+ * building-envelope diagram in the plot-shape guide.
+ *
+ * ⚠️ Detected by CHARACTER, not by indentation. The usual Markdown rule is
+ * "four spaces = code", and it is useless here: the console's converter strips
+ * leading whitespace on the way in, so by the time a diagram reaches the
+ * database its indentation is already gone. Box-drawing characters survive
+ * that, and they never occur in ordinary prose — which is what makes this safe
+ * to trigger on without a fence.
+ */
+const BOX_DRAWING = /[\u2500-\u257f]/;
 
 /**
  * `| a | b |` → ["a", "b"]. Leading and trailing pipes are optional.
@@ -222,10 +241,49 @@ function healWeldedCallouts(md: string): string {
         return line;
       }
       // Code is quoted verbatim, and a table row is structure, not prose.
-      if (fenced || /^\s*\|/.test(line)) return line;
+      // A drawn diagram is neither — and the sentence-splitting rules below
+      // would happily insert a paragraph break inside one.
+      if (fenced || /^\s*\|/.test(line) || BOX_DRAWING.test(line)) return line;
       return WELD_RULES.reduce((acc, [re, to]) => acc.replace(re, to), line);
     })
     .join("\n");
+}
+
+
+/**
+ * Re-close a box whose inner padding was destroyed on the way in.
+ *
+ * 🚨 THIS REPAIRS DAMAGED CONTENT, AND IT IS A DELIBERATE, NARROW CHOICE.
+ * The console's converter collapses runs of spaces, so a diagram authored as
+ * "|          SETBACK          |" reaches the database as "| SETBACK |". The
+ * characters survive; the padding does not. Rendered honestly in monospace that
+ * is a box with a ragged right edge - better than the reflowed prose it
+ * replaced, and still visibly broken.
+ *
+ * The repair is bounded to the one case where intent is unambiguous: a line
+ * that BEGINS and ENDS with a vertical rule is a row of a box, and a box's
+ * right edge is straight. Such lines are padded to the width of the widest line
+ * in the block. Nothing else is touched - no centring is guessed, no characters
+ * are added or removed, and any line that does not both open and close with a
+ * rule is left exactly as written.
+ *
+ * ⚠️ IT IS NOT A SUBSTITUTE FOR FIXING THE CONVERTER. This restores the frame,
+ * not the author's spacing: labels sit left where they were centred. The real
+ * fix is upstream in admin.html's htmlToMarkdown, after which the affected
+ * articles have to be re-pasted - the same conclusion the lost Markdown
+ * markers reached.
+ */
+function squareUp(lines: string[]): string[] {
+  const RULE = /[\u2502\u2503\u2551|]/;
+  const isRow = (t: string) => t.length > 1 && RULE.test(t[0]) && RULE.test(t[t.length - 1]);
+  const rows = lines.filter((l) => isRow(l.trimEnd()));
+  if (rows.length < 2) return lines;
+  const width = Math.max(...lines.map((l) => l.trimEnd().length));
+  return lines.map((l) => {
+    const t = l.trimEnd();
+    if (t.length >= width || !isRow(t)) return l;
+    return t.slice(0, -1) + " ".repeat(width - t.length) + t[t.length - 1];
+  });
 }
 
 function parse(md: string): Block[] {
@@ -233,6 +291,18 @@ function parse(md: string): Block[] {
   const lines = healWeldedCallouts(md ?? "").replace(/\r\n/g, "\n").split("\n");
   let para: string[] = [];
   let list: { ordered: boolean; items: string[] } | null = null;
+
+  /* A run of diagram lines is gathered verbatim — no joining, no welding, no
+     inline markdown. `pre` is the only block whose text is its own content. */
+  let pre: string[] | null = null;
+  const flushPre = () => {
+    if (pre) {
+      /* Trailing blank lines inside a diagram are padding, not structure. */
+      while (pre.length && !pre[pre.length - 1].trim()) pre.pop();
+      if (pre.length) blocks.push({ t: "pre", text: squareUp(pre).join("\n") });
+      pre = null;
+    }
+  };
 
   const flushPara = () => {
     if (para.length) {
@@ -248,7 +318,25 @@ function parse(md: string): Block[] {
   };
 
   for (let li = 0; li < lines.length; li++) {
-    const line = lines[li].trim();
+    const raw = lines[li];
+    const line = raw.trim();
+
+    /* ⚠️ THE DIAGRAM TEST COMES FIRST, before the blank-line rule, because a
+       drawn box legitimately contains blank-looking rows and losing them
+       collapses the figure. While a run is open every line is taken verbatim —
+       `raw`, not `line`, so what indentation survived the console is kept. */
+    if (pre) {
+      if (BOX_DRAWING.test(raw) || (raw.trim() && pre.length)) {
+        pre.push(raw);
+        continue;
+      }
+      flushPre();
+    } else if (BOX_DRAWING.test(raw)) {
+      flushPara();
+      flushList();
+      pre = [raw];
+      continue;
+    }
 
     if (!line) {
       flushPara();
@@ -343,6 +431,7 @@ function parse(md: string): Block[] {
     flushList();
     para.push(line);
   }
+  flushPre();
   flushPara();
   flushList();
   return blocks;
@@ -508,6 +597,22 @@ export function Prose({ markdown }: { markdown: string }) {
                   <span className="block text-tiny text-ink-muted">{b.kind} · download</span>
                 </span>
               </a>
+            );
+          case "pre":
+            return (
+              /* ⚠️ `overflow-x-auto` ON THE WRAPPER, not on the <pre>. A diagram
+                 is wider than the measure by definition, and this repo's rule is
+                 that wide content scrolls inside its own box — the page body
+                 must never scroll sideways.
+                 ⚠️ NO inline markdown here. `pre` is the one block whose text is
+                 its own content: running the emphasis pass over it would eat a
+                 `*` in a drawing and re-flow what the whole block exists to
+                 preserve. */
+              <div key={i} className="-mx-phi2 overflow-x-auto px-phi2">
+                <pre className="w-fit min-w-full rounded-card border border-line bg-canvas-sunken p-phi3 font-mono text-tiny leading-snug text-ink-soft">
+                  {b.text}
+                </pre>
+              </div>
             );
           case "hr":
             return <hr key={i} className="border-line" />;
