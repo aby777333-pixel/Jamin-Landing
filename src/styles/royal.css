@@ -751,6 +751,10 @@
   --plan-road-fill: #f2ede4;
   --plan-road-line: #d8d0c2;
   --plan-road-existing: #ede6da;
+  /* The wider internal road: a half-step deeper than the standard band, so the
+     two read as a hierarchy rather than as two unrelated colours. */
+  --plan-road-wide: #e8e0d2;
+  --plan-road-wide-line: #c4b9a6;
   --plan-tick: #9aa0ab;
 }
 
@@ -2240,4 +2244,29 @@ header .glass,
    element visible on screen in any browser that fails to parse it. */
 .rj-print-only {
   display: none;
+}
+
+/**
+ * ── ROAD HIERARCHY ────────────────────────────────────────────────────────
+ *
+ * The plan already separates an INTERNAL road from the EXISTING public one.
+ * What it did not separate is the internal roads from EACH OTHER, and this
+ * layout has two widths — 9.00 m and 12.00 m — which is a difference buyers
+ * ask about before almost anything else. Both rendered in one flat fill, so
+ * the drawing knew the answer and would not show it.
+ *
+ * ⚠️ THE THRESHOLD IS A DATA QUESTION, NOT A STYLE ONE. `data-wide` is set by
+ * the component from `widthM`, never guessed from the band's drawn thickness —
+ * a band is a rectangle in sheet units and its pixel width changes with zoom,
+ * so reading the geometry would make the classification move as the reader
+ * scales the plan.
+ *
+ * ⚠️ Colour is NOT the only carrier, the same rule the plot statuses follow: a
+ * wide road also takes a darker edge. On a printed sheet, where the fills go,
+ * the edge is what survives.
+ */
+.rj-plan-road[data-wide="true"] {
+  fill: var(--plan-road-wide);
+  stroke: var(--plan-road-wide-line);
+  stroke-width: 0.9;
 }

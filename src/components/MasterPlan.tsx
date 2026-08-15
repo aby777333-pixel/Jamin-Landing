@@ -321,6 +321,14 @@ export function MasterPlan({
                     width={Math.abs(x2 - x1)}
                     height={Math.abs(y2 - y1)}
                     className="rj-plan-road"
+                    /* ⚠️ Classified from `widthM`, the sanctioned figure, and
+                       never from the band's drawn thickness — a band is a
+                       rectangle in sheet units, so its pixel width changes with
+                       the plan's four zoom steps and a geometric test would
+                       re-classify the same road as the reader scaled it.
+                       The threshold sits above this layout's 9 m standard, so a
+                       road only reads as "wide" where the drawing says it is. */
+                    data-wide={r.widthM != null && r.widthM >= 10 ? "true" : undefined}
                     strokeWidth={0.5}
                   />
                   {r.label && (

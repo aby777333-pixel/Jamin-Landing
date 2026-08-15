@@ -79,10 +79,17 @@ export function LayoutViews({
                  abstraction: the drawing, the drawing tilted, then the list. It
                  is offered on exactly the same condition as the plan — traced
                  geometry — because it is the same geometry. */
+              /* ⚠️ RENAMED 2026-08-15 — the labels were drawing-office words.
+                 "Relief" is a cartographer's term for elevation and "Blocks"
+                 names the data structure, not what the reader gets; between
+                 them they made a buyer's most useful control read as CAD.
+                 The VALUES are unchanged (`plan` / `relief` / `blocks`), so the
+                 URL state, the analytics and every existing link still resolve
+                 — this is a label change and nothing else. */
               options={[
-                { value: "plan", label: "Plan" },
-                { value: "relief", label: "Relief" },
-                { value: "blocks", label: "Blocks" },
+                { value: "plan", label: "Approved plan" },
+                { value: "relief", label: "3D view" },
+                { value: "blocks", label: "Plot list" },
               ]}
             />
           ) : (
