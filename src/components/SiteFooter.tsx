@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
+import { TitleBlock } from "@/components/cadastral/TitleBlock";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
 
@@ -275,6 +276,20 @@ export async function SiteFooter() {
         <p className="mt-phi4 text-center text-micro text-bone-soft">
           Built on trust. Designed for generations.
         </p>
+
+        {/* ⚠️ `issued` is evaluated HERE, in a server component, so it is the
+            date this build was made. Passing it in rather than letting the
+            client island read its own clock is the whole correctness argument —
+            see the note in TitleBlock. `en-GB` + Asia/Kolkata so the sheet is
+            stamped in the office's own timezone rather than the builder's. */}
+        <TitleBlock
+          issued={new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            timeZone: "Asia/Kolkata",
+          }).format(new Date())}
+        />
       </div>
     </footer>
   );

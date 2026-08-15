@@ -227,7 +227,7 @@ export function MasterPlan({
         <div ref={drawRef} className="relative" style={{ width: `${zoom * 100}%` }}>
           <svg
             viewBox={`${vx} ${vy} ${vw} ${vh}`}
-            className="block h-auto w-full"
+            className="rj-crosshair block h-auto w-full"
             role="img"
             aria-label={`Approved layout plan for ${title}, ${geo.length} plots`}
           >

@@ -517,3 +517,32 @@ body > footer {
     transition-duration: 0.01ms !important;
   }
 }
+
+/**
+ * THE RETICLE — a surveyor's crosshair, for surfaces that are plans.
+ *
+ * Admissible under this set's one rule: every shape here traces to a land
+ * document or a survey instrument, and a reticle is what you look through in a
+ * theodolite. It is NOT a decoration to sprinkle on the site — it belongs only
+ * where the surface genuinely is a drawing being read: the master plan, the
+ * plot layouts, the maps. On ordinary prose it would be a costume.
+ *
+ * ⚠️ TWO STROKES, DARK OVER LIGHT, AND BOTH ARE LOAD-BEARING. A cursor is
+ * composited over whatever the page happens to be showing, and these surfaces
+ * run from near-white paper to a dark satellite tile. A single-stroke reticle
+ * disappears on one of them; the outer light stroke is what keeps it findable
+ * on the dark, and the inner dark stroke does the same on the paper.
+ *
+ * ⚠️ The hotspot MUST be stated (`12 12`, the centre). Omitted, the browser
+ * uses the top-left corner and the crosshair sits down and to the right of the
+ * point it claims to mark — on a plan, that is a lie about a coordinate.
+ *
+ * ⚠️ `crosshair` is kept as the fallback keyword, not `pointer`. If the image
+ * fails to load the surface still reads as measurable rather than clickable.
+ */
+.rj-crosshair {
+  cursor:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24'><g fill='none' stroke='%23fdfcf9' stroke-width='3'><path d='M12 1v7M12 16v7M1 12h7M16 12h7'/><circle cx='12' cy='12' r='3.5'/></g><g fill='none' stroke='%2325211c' stroke-width='1.25'><path d='M12 1v7M12 16v7M1 12h7M16 12h7'/><circle cx='12' cy='12' r='3.5'/></g></svg>")
+      12 12,
+    crosshair;
+}

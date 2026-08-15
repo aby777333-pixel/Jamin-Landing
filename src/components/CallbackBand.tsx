@@ -32,7 +32,7 @@ export async function CallbackBand({
   const desk = await getDeskContact();
 
   return (
-    <section className="mt-phi6 border-y border-line bg-canvas-alt py-phi5" id="desk">
+    <section className="rj-deboss mt-phi6 border-y border-line bg-canvas-alt py-phi5" id="desk">
       <Container>
         <div className="grid gap-phi4 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-phi5">
           <div>

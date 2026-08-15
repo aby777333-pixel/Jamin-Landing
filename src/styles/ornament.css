@@ -398,3 +398,62 @@ html {
     var(--color-jamin-gold)
   );
 }
+
+/* ── 15. DEBOSS ON THE IVORY ──────────────────────────────────────────────
+   §13 gives the onyx footer its letterpress. The light ground — which is 25 of
+   the site's 26 routes — never got the same treatment, so a panel on ivory sits
+   ON the page where the footer sits IN it.
+
+   This presses it in: the light comes from above, so the top edge takes the
+   shadow and the bottom edge takes the highlight. Getting that order backwards
+   is what makes a surface read as a raised button instead of an impression.
+
+   ⚠️ NOT FOR GLASS. `glass` owns `box-shadow` — see the note on `.rj-crystal`
+   in royal.css — and restating it here would fork the value across two files,
+   where the unlayered one wins silently once they drift. Deboss is for opaque
+   ivory panels only.
+
+   ⚠️ Colour comes through `color-mix` on the tokens rather than a literal, so
+   a palette swap carries it. No `position`: an unlayered declaration would
+   beat every Tailwind utility including `sticky`. */
+.rj-deboss {
+  box-shadow:
+    inset 0 1px 2px color-mix(in srgb, var(--color-ink) 9%, transparent),
+    inset 0 -1px 0 color-mix(in srgb, var(--color-ivory-50) 92%, transparent);
+  border-color: color-mix(in srgb, var(--color-ink) 8%, transparent);
+}
+
+/* ── 16. WEIGHT ON SCROLL ─────────────────────────────────────────────────
+   Inter is variable and it is the only face on the site, so weight is free
+   where a second font file would not be.
+
+   🚨 ONE ELEMENT PER PAGE, AND THAT IS A HARD RULE, NOT A STYLE PREFERENCE.
+   §9's performance floor allows transform and opacity; `font-variation-settings`
+   is neither, and a weight change relays out the text it applies to. It is
+   admissible here ONLY because the surfaces that use it are single, isolated,
+   full-measure headings whose line breaks do not move across the range — check
+   that before adding a third use, because a heading that re-wraps mid-scroll
+   is a far worse artefact than the effect is worth.
+
+   The range is deliberately narrow (300 -> 360). Wide swings read as a glitch;
+   this reads as the letterforms taking on weight as the reader commits. */
+.rj-weight-shift {
+  font-variation-settings: "wght" 300;
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rj-weight-shift {
+      animation: rj-weight-shift auto linear both;
+      animation-timeline: view();
+      animation-range: entry 20% cover 45%;
+    }
+    @keyframes rj-weight-shift {
+      from {
+        font-variation-settings: "wght" 300;
+      }
+      to {
+        font-variation-settings: "wght" 360;
+      }
+    }
+  }
+}

@@ -11,6 +11,8 @@ import {
   propertyHref,
   type Property,
 } from "@/lib/properties";
+import { NorthArrow } from "@/components/cadastral/NorthArrow";
+import { ScaleBar } from "@/components/cadastral/ScaleBar";
 
 /**
  * The map view (§17, §76): every development on one frame, pin linked to card.
@@ -214,7 +216,7 @@ export function PropertiesMap({
            `min-h` protects the case where the list is one item long.
            `PropertiesMap` measures its own frame and refits the zoom, so a
            taller box simply shows more map — nothing else has to change. */
-        className="relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[24rem]"
+        className="rj-crosshair relative aspect-[4/3] overflow-hidden rounded-card border border-line bg-canvas-sunken sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[24rem]"
       >
         <div
           className="absolute left-1/2 top-1/2"
@@ -385,7 +387,11 @@ export function PropertiesMap({
                 {approvals.map((a) => (
                   <span
                     key={a}
-                    className="rj-foil-seal inline-flex items-center rounded-full px-2 py-0.5 tracking-[0.1em] text-champagne-900"
+                    /* `rj-sweep rj-foil-scroll` — this seal has no `rj-glint`,
+                       so until now it was gold that never once caught the
+                       light. The scroll timeline gives it the same one-shot
+                       band on every device instead of only where hover exists. */
+                    className="rj-foil-seal rj-sweep rj-foil-scroll inline-flex items-center rounded-full px-2 py-0.5 tracking-[0.1em] text-champagne-900"
                   >
                     {a}
                   </span>
@@ -437,6 +443,17 @@ export function PropertiesMap({
             </div>
           );
         })()}
+
+        {/* Drawing-office furniture. Both are TRUE here: these are Web Mercator
+            tiles, which are north-up by construction and never rotated, and the
+            bar is computed from this frame's own fitted `z` and centre latitude
+            rather than drawn to a fixed width. `pointer-events-none` so neither
+            steals a click meant for a pin, and both sit bottom-LEFT because the
+            OSM attribution owns bottom-right and must not be obscured. */}
+        <div className="pointer-events-none absolute bottom-1.5 left-2 flex items-end gap-3 text-ink-muted mix-blend-multiply">
+          <NorthArrow />
+          <ScaleBar latitude={centreLat} zoom={z} />
+        </div>
 
         <span className="absolute bottom-0 right-0 bg-canvas/85 px-2 py-0.5 text-[10px] text-ink-muted">
           ©{" "}

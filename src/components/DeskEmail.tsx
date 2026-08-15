@@ -125,7 +125,7 @@ export function DeskEmail({
         /* `w-full` so it takes its own line in the wrapping row of buttons
            rather than squeezing in beside them. */
         <div
-          className="w-full rounded-xl border border-line bg-canvas-alt p-phi3"
+          className="rj-deboss w-full rounded-xl border border-line bg-canvas-alt p-phi3"
           aria-live="polite"
         >
           <p className="text-tiny text-ink-muted">

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { NorthArrow } from "@/components/cadastral/NorthArrow";
+import { ScaleBar } from "@/components/cadastral/ScaleBar";
 
 /**
  * Where the land actually is (§17).
@@ -76,7 +78,7 @@ export function SiteMap({
 
   return (
     <div>
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken shadow-lift sm:aspect-[2/1]">
+      <div className="rj-crosshair relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken shadow-lift sm:aspect-[2/1]">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
@@ -119,6 +121,17 @@ export function SiteMap({
         <span className="glass rj-crystal pointer-events-none absolute left-3 top-3 max-w-[70%] truncate rounded-full px-3 py-1.5 text-tiny font-medium text-ink">
           {title}
         </span>
+
+        {/* Same furniture as `PropertiesMap`, and true for the same reason:
+            Web Mercator, never rotated, so up is north. This map's ZOOM is a
+            fixed 15 rather than fitted, so the bar is computed from that and
+            from this property's own latitude — the `cos(lat)` term is what
+            keeps two projects at different latitudes from claiming the same
+            ground distance for the same bar. Bottom-left; OSM owns bottom-right. */}
+        <div className="pointer-events-none absolute bottom-1.5 left-2 flex items-end gap-3 text-ink-muted mix-blend-multiply">
+          <NorthArrow />
+          <ScaleBar latitude={lat} zoom={ZOOM} />
+        </div>
 
         <span className="absolute bottom-0 right-0 rounded-tl-md bg-canvas/90 px-2 py-0.5 text-[10px] text-ink-muted">
           ©{" "}

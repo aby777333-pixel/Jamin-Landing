@@ -1999,3 +1999,46 @@ header .glass,
     display: none;
   }
 }
+
+/**
+ * ── THE SWEEP, DRIVEN BY THE READER ───────────────────────────────────────
+ *
+ * A modifier on `.rj-sweep`, never a class of its own. The sweep's mechanism —
+ * `position: relative`, `overflow: hidden`, and a `::after` band that slides —
+ * stays defined in exactly one place; this only re-times it. Writing it as a
+ * standalone utility would have meant restating that structure, and two copies
+ * of a position/overflow pair is precisely the drift that let a duplicate
+ * `.rj-underline` silently win on colour and duration.
+ *
+ * Why it exists: the timed sweep fires whether or not anybody is looking, and
+ * `.rj-glint` — its one-shot cousin — is bound to hover, which does not exist
+ * on a phone. Gold that only ever catches the light for a mouse is not gold.
+ * Scroll is the one input every reader has.
+ *
+ * ⚠️ STILL TRANSFORM ONLY. The band slides; nothing repaints a gradient. The
+ * scroll timeline runs off the compositor, so this is cheaper than the infinite
+ * animation it replaces, not dearer.
+ *
+ * ⚠️ `animation-duration: auto` is REQUIRED with a scroll timeline and is not
+ * a tidy-up — a named duration silently reverts the animation to time-driven
+ * while leaving the timeline declaration in place, which looks like it works
+ * on a fast scroll and does nothing on a slow one.
+ *
+ * Falls back to the timed sweep wherever `view()` is unsupported, and to no
+ * motion at all under `prefers-reduced-motion` (guarded further down with the
+ * rest of the material layer).
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .rj-sweep.rj-foil-scroll::after {
+      animation-name: rj-sweep;
+      animation-duration: auto;
+      animation-timing-function: var(--ease-silk);
+      animation-iteration-count: 1;
+      animation-timeline: view();
+      /* Crosses while the surface is arriving, then rests — the same shape as
+         the timed keyframes, mapped onto the reader's own movement. */
+      animation-range: entry 15% cover 55%;
+    }
+  }
+}
