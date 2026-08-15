@@ -42,12 +42,24 @@ export default async function JournalPage() {
 
   const used = new Set(posts.map((p) => p.blog_categories?.slug).filter(Boolean));
 
-  /* ⚠️ The editor's featured article is sorted to the FRONT here, on the
-     server, and that is the whole contract with JournalIndex: it treats
-     `posts[0]` as the lead. Doing it here keeps `is_featured` out of the
-     payload and keeps the editorial decision on the server side, where the
-     rest of the article's ordering already lives. */
-  const ordered = [...posts].sort((a, b) => Number(b.is_featured) - Number(a.is_featured));
+  /* 🚨 THE NEWEST ARTICLE ALWAYS LEADS (owner, 2026-08-15).
+
+     This used to sort `is_featured` to the front, so a pinned article held the
+     lead slot indefinitely while newer work appeared below it — the reported
+     case was the UDS guide leading while the agricultural-land piece, published
+     the same day, sat underneath.
+
+     `getJournalPosts()` already returns newest-first, so the lead is simply
+     `posts[0]` and no re-sort is needed. The contract with `JournalIndex` is
+     unchanged: it still treats `posts[0]` as the lead story and knows nothing
+     about how that order was decided.
+
+     ⚠️ `is_featured` is deliberately NOT removed from the schema or the console.
+     The pin still records an editorial preference and the console now says
+     plainly that it no longer holds the lead — restoring the old behaviour is
+     one sort away, and dropping the column would have thrown that choice away
+     to save a line. */
+  const ordered = posts;
 
   const cards: JournalCard[] = ordered.map((p) => ({
     id: p.id,

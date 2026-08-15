@@ -122,7 +122,13 @@ export async function getJournalPosts(limit = 50): Promise<JournalPost[]> {
   const { data, error } = await supabase
     .from("blog_posts")
     .select(LIST_COLUMNS)
-    .order("published_at", { ascending: false })
+    /* ⚠️ `nullsFirst: false` is NOT tidiness — it protects the lead slot.
+       Postgres sorts NULLs FIRST on a DESC order, so a published article whose
+       `published_at` was never set would sort ahead of everything and take the
+       lead story on the Journal home page. No row is in that state today (all
+       40 published articles carry a date), which is exactly why it would have
+       gone unnoticed until the day one did. */
+    .order("published_at", { ascending: false, nullsFirst: false })
     .limit(limit);
   if (error) throw new Error(`journal posts query failed: ${error.message}`);
   return (data ?? []) as unknown as JournalPost[];
