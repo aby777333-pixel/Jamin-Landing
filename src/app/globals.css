@@ -219,6 +219,26 @@
      White on red measures 4.78:1; white on ruby measures 8.14:1. */
   --color-cta: #e11b22;
   --color-cta-deep: #a81219;
+
+  /* ── The lit 3D view (`LayoutVR`) ──────────────────────────────────────────
+     🚨 A LANDSCAPE NEEDS ITS OWN COLOURS, NOT THE DOCUMENT'S. The first build
+     of that view reused the paper palette — warm white ground, ivory surfaces —
+     and a pixel readback showed the ground at rgb(210,210,210) against a sky of
+     rgb(203,208,213): the site was within seven points of its own sky and read
+     as one grey wash. These tokens exist because `--color-canvas` is correct for
+     a sheet of paper under a lamp and wrong for open ground under the sun.
+     They live here, not as hexes in the component, so the scene stays on the
+     same footing as every other colour on this site. */
+  --vr-sky-day: #7fb2e0;
+  --vr-sky-dusk: #d98b4e;
+  --vr-sky-night: #0d1220;
+  /* Red earth. Salem district is laterite country and this is what the ground
+     actually looks like beside these plots. */
+  --vr-earth: #9d6b44;
+  --vr-formation: #b9ab97;   /* formed, unmetalled road surface */
+  --vr-plot: #cfe3cd;        /* bare levelled parcel, faintly grassed */
+  --vr-tree: #3f6b3a;
+  --vr-lamp: #ffc873;
 }
 
 @layer base {

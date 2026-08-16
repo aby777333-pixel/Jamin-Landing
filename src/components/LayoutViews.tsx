@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { LayoutRelief } from "@/components/LayoutRelief";
 import { MasterPlan, PlanParticulars } from "@/components/MasterPlan";
@@ -31,18 +32,40 @@ import { unitWord, type Unit } from "@/lib/units";
  * with no traced geometry has one view, and a control offering a second is the
  * dead control this site's standing rule forbids.
  */
+/**
+ * ⚠️ three.js NEVER ENTERS THIS BUNDLE. `LayoutVR` is the only file that imports
+ * it, and it arrives through `next/dynamic` with `ssr: false` — so a reader who
+ * never opens the Sun & shadow view never downloads ~150 KB of renderer, and the
+ * static prerender this site is built on is untouched. Importing `LayoutVR`
+ * statically anywhere would silently undo that.
+ */
+const LayoutVR = dynamic(() => import("@/components/LayoutVR").then((m) => m.LayoutVR), {
+  ssr: false,
+  loading: () => (
+    <div
+      className="animate-pulse rounded-xl border border-line bg-canvas-alt"
+      style={{ height: "clamp(320px, 58vw, 580px)" }}
+    />
+  ),
+});
+
 export function LayoutViews({
   plots,
   plan,
   title,
+  lat = null,
+  lng = null,
 }: {
   plots: Plot[];
   /** Absent when the drawing was never traced — then there is only one view. */
   plan?: PlotPlan | null;
   title: string;
+  /** For the sun's real position. Falls back to Edappadi inside `LayoutVR`. */
+  lat?: number | null;
+  lng?: number | null;
 }) {
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
-  const [view, setView] = useState<"plan" | "relief" | "blocks">(hasPlan ? "plan" : "blocks");
+  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun">(hasPlan ? "plan" : "blocks");
 
   /**
    * ⚠️ FEET BY DEFAULT, and that is the point of the request rather than a
@@ -74,7 +97,7 @@ export function LayoutViews({
             <Segmented
               label="Layout view"
               value={view}
-              onChange={(v) => setView(v as "plan" | "relief" | "blocks")}
+              onChange={(v) => setView(v as "plan" | "relief" | "blocks" | "sun")}
               /* ⚠️ Relief sits BETWEEN the two, because that is the order of
                  abstraction: the drawing, the drawing tilted, then the list. It
                  is offered on exactly the same condition as the plan — traced
@@ -86,9 +109,16 @@ export function LayoutViews({
                  The VALUES are unchanged (`plan` / `relief` / `blocks`), so the
                  URL state, the analytics and every existing link still resolve
                  — this is a label change and nothing else. */
+              /* ⚠️ "Sun & shadow" sits AFTER "3D view" and is named for what it
+                 answers, not for its technology. Two entries both called 3D
+                 would make the reader guess; nobody wants "WebGL", everybody
+                 understands wanting to know where the shade falls. It stays a
+                 separate entry rather than replacing the relief because the flat
+                 view needs no WebGL and is the better read on a cheap phone. */
               options={[
                 { value: "plan", label: "Approved plan" },
                 { value: "relief", label: "3D view" },
+                { value: "sun", label: "Sun & shadow" },
                 { value: "blocks", label: "Plot list" },
               ]}
             />
@@ -114,6 +144,8 @@ export function LayoutViews({
         <MasterPlan plots={plots} plan={plan} title={title} unit={unit} />
       ) : view === "relief" && plan ? (
         <LayoutRelief plots={plots} plan={plan} unit={unit} />
+      ) : view === "sun" && plan ? (
+        <LayoutVR plots={plots} plan={plan} lat={lat} lng={lng} />
       ) : (
         <PlotSchedule plots={plots} unit={unit} />
       )}

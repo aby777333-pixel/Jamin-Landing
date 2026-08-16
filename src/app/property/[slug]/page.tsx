@@ -545,7 +545,13 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   choice to be theirs. `LayoutViews` shows the switch only where
                   there is genuinely a second view, so an untraced project still
                   renders exactly one thing and no dead control. */}
-              <LayoutViews plots={plots} plan={hasGeometry ? p.plot_plan : null} title={p.title} />
+              <LayoutViews
+                plots={plots}
+                plan={hasGeometry ? p.plot_plan : null}
+                title={p.title}
+                lat={p.lat}
+                lng={p.lng}
+              />
 
               {p.master_plan_url && (
                 <a
