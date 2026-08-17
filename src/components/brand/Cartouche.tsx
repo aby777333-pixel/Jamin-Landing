@@ -33,8 +33,15 @@ export function Cartouche({ compact = false }: { compact?: boolean }) {
         }}
       >
         <span
-          className="inline-flex items-center bg-canvas-alt"
+          className="inline-flex items-center"
+          /* ⚠️ THE RAW PAPER TOKEN, NOT bg-canvas-alt — reported 2026-08-17:
+             on /vault the theme scope remaps canvas-alt to onyx, which put
+             the lockup's near-black BAZAAR wordmark on a dark chip (the
+             logo-full.png dark-ground problem the memory of this repo already
+             records). --color-jp-sand-050 is a Cartouche literal no theme
+             rescopes, so the chip stays paper on every ground. */
           style={{
+            background: "var(--color-jp-sand-050)",
             borderRadius: 999,
             padding: compact ? "3px 12px" : "5px 16px",
             transition: "all 220ms var(--ease-silk)",
@@ -56,8 +63,8 @@ export function Cartouche({ compact = false }: { compact?: boolean }) {
           the lozenge read as APPLIED to the page rather than laid out on it. */}
       <span
         aria-hidden="true"
-        className="bg-canvas-alt"
         style={{
+          background: "var(--color-jp-sand-050)",
           alignSelf: "flex-end",
           width: "42%",
           height: compact ? 4 : 6,

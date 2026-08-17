@@ -578,6 +578,24 @@
   animation: kenburns 18s var(--ease-silk) forwards;
 }
 
+/* The breathing frame (owner 2026-08-17: "make a zoom in zoom out") — a slow
+   in-and-out unlike `kenburns`, which travels once and stops. 16s per
+   direction keeps it below the threshold where motion reads as motion rather
+   than as life; the global reduced-motion rule collapses it like everything
+   else. Apply to the IMG inside an overflow-hidden box, never the box. */
+@utility breathe {
+  animation: breathe 16s ease-in-out infinite alternate;
+}
+
+@keyframes breathe {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.09);
+  }
+}
+
 @keyframes rise {
   to {
     opacity: 1;

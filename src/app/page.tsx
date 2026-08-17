@@ -497,7 +497,7 @@ export default async function HomePage() {
                 aria-hidden="true"
                 fill
                 sizes="(max-width: 1280px) 50vw, 640px"
-                className="object-cover object-center"
+                className="breathe object-cover object-center"
               />
             </div>
           </div>
