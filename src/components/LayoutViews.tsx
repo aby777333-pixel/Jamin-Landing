@@ -115,10 +115,18 @@ export function LayoutViews({
                  understands wanting to know where the shade falls. It stays a
                  separate entry rather than replacing the relief because the flat
                  view needs no WebGL and is the better read on a cheap phone. */
+              /* ⚠️ "3D view" AND "Sun & shadow" ARE HIDDEN, NOT REMOVED —
+                 owner 2026-08-17: "hide the 3D and sun and shadow for later
+                 use." Everything behind them stays live: the `relief` and
+                 `sun` VALUES still render below (a deep link or stored state
+                 still resolves), LayoutRelief and LayoutVR stay in the
+                 bundle-split imports, and restoring the two entries is
+                 uncommenting two lines. Only the OPTIONS are gone, so a new
+                 visitor sees plan and plot list. */
               options={[
                 { value: "plan", label: "Approved plan" },
-                { value: "relief", label: "3D view" },
-                { value: "sun", label: "Sun & shadow" },
+                // { value: "relief", label: "3D view" },
+                // { value: "sun", label: "Sun & shadow" },
                 { value: "blocks", label: "Plot list" },
               ]}
             />
