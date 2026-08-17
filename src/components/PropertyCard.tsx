@@ -67,12 +67,18 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
    * empty third.
    */
   const areaP = areaParts(p);
-  const facts: { label: string; value: string }[] = [];
+  const facts: { label: string; value: string; verified?: boolean }[] = [];
   if (areaP) facts.push({ label: areaP.unit || "Extent", value: areaP.value });
   if (p.plots_total)
     facts.push({ label: p.plots_total === 1 ? "Plot" : "Plots", value: String(p.plots_total) });
   if (sellable && p.plots_total != null && p.plots_available != null)
-    facts.push({ label: "Available", value: `${p.plots_available} / ${p.plots_total}` });
+    facts.push({
+      label: "Available",
+      value: `${p.plots_available} / ${p.plots_total}`,
+      /* Anti-beige item 4: availability is the card's RESOLVED FACT and takes
+         the teal — once per card, on the figure a buyer acts on. */
+      verified: true,
+    });
 
   return (
     /* `h-full` + column flex is what keeps a row of cards level. A grid item
@@ -209,8 +215,18 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
             {/* `ink`, not `stone` — the label is a word, and two of the stones
                 are illegible as words. See STAGE_STONE. Routed through the card's
                 `--rj-stage-ink` so an onyx Crown card can override it. */}
+            {/* Anti-beige item 5: the stage word is a WASH PILL in its own
+                stone now, so live inventory pops off the grid instead of
+                whispering. The ink still routes through --rj-stage-ink so a
+                Crown card's onyx override keeps working. */}
             {stage && (
-              <span style={{ color: "var(--rj-stage-ink, var(--rj-stone-ink))" }}>
+              <span
+                className="rounded-full px-2 py-0.5"
+                style={{
+                  color: "var(--rj-stage-ink, var(--rj-stone-ink))",
+                  background: `color-mix(in srgb, ${stage.stone} 14%, transparent)`,
+                }}
+              >
                 {stage.label}
               </span>
             )}
@@ -286,7 +302,9 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
               <div key={f.label} className={`min-w-0 ${i === 0 ? "pr-phi2" : "px-phi2"} last:pr-0`}>
                 {/* ⚠️ §8: an availability count never turns gold. A number that
                     sells itself stops being a number. */}
-                <dd className="ledger truncate text-lg text-ink">{f.value}</dd>
+                <dd className={`ledger truncate text-lg ${f.verified ? "text-canopy" : "text-ink"}`}>
+                  {f.value}
+                </dd>
                 <dt className="ledger-label truncate">{f.label}</dt>
               </div>
             ))}

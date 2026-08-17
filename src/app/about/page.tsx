@@ -195,6 +195,25 @@ export default async function AboutPage() {
         </Link>
       </section>
       </Container>
+      {/* Anti-beige item 6: a thin full-bleed strip of the spare stone-pillar
+          gate (hero-53) breaks the long sand read before the desk — imagery
+          is the site's strongest non-beige asset and it only lived in heroes.
+          Brand imagery under the standing rule: alt="", aria-hidden, never a
+          caption. */}
+      <div className="relative h-40 w-full overflow-hidden border-y border-line lg:h-56" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/hero/hero-53-1774.webp"
+          srcSet="/hero/hero-53-768.webp 768w, /hero/hero-53-1280.webp 1280w, /hero/hero-53-1774.webp 1774w"
+          sizes="100vw"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+          style={{ objectPosition: "50% 42%" }}
+        />
+      </div>
+
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

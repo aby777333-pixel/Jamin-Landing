@@ -103,9 +103,16 @@ function Num({
   );
 }
 
+/* Anti-beige item 4: a calculator's answer is a RESOLVED FACT, so the panel
+   wears the teal — a teal border and the headline figure in teal ink, once
+   per calculator, exactly the discipline the Cartouche spec reserves teal
+   for. canopy measures 7.76:1 on the sand grounds. */
 function Result({ rows, note }: { rows: [string, string, string?][]; note?: string }) {
   return (
-    <div className="mt-phi4 rounded-xl border border-line bg-canvas-alt p-phi3">
+    <div
+      className="mt-phi4 rounded-xl border bg-canvas-alt p-phi3"
+      style={{ borderColor: "var(--color-canopy)" }}
+    >
       <dl>
         {rows.map(([k, v, sub], i) => (
           <div
@@ -114,7 +121,9 @@ function Result({ rows, note }: { rows: [string, string, string?][]; note?: stri
           >
             <dt className={i ? "text-base text-ink-muted" : "text-base text-ink"}>{k}</dt>
             <dd className="text-right">
-              <span className={`ledger ${i ? "text-base text-ink" : "text-2xl text-ink"}`}>{v}</span>
+              <span className={`ledger ${i ? "text-base text-ink" : "text-2xl font-semibold text-canopy"}`}>
+                {v}
+              </span>
               {sub ? <span className="block text-tiny text-ink-faint">{sub}</span> : null}
             </dd>
           </div>

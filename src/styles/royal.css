@@ -1242,6 +1242,13 @@
 .rj-lift:hover,
 .rj-lift:focus-within {
   transform: translateY(calc(var(--lift) * -1));
+  /* Anti-beige item 8: the lifted card throws a shadow tinted by its OWN
+     stone (--rj-stone is per-district data, set inline by the card), so a row
+     of cards lifts in slightly different light. ⚠️ Unlayered, so this BEATS
+     the Tailwind hover:shadow-raise on the same element — that is the intent,
+     and the fallback tint is warm ink so an element without a stone still
+     lifts warm, never grey. */
+  box-shadow: 0 24px 56px -20px color-mix(in srgb, var(--rj-stone, var(--color-ink)) 30%, transparent);
 }
 
 /**

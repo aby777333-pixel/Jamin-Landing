@@ -206,6 +206,24 @@ export default async function JournalPage() {
           />
         )}
       </Container>
+
+      {/* Anti-beige item 6: the spare brick-and-white gate (hero-54) as a thin
+          full-bleed strip before the desk — same treatment as /about's, same
+          standing rule: alt="", aria-hidden, never a caption. */}
+      <div className="relative h-40 w-full overflow-hidden border-y border-line lg:h-56" aria-hidden="true">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/hero/hero-54-1672.webp"
+          srcSet="/hero/hero-54-768.webp 768w, /hero/hero-54-1280.webp 1280w, /hero/hero-54-1672.webp 1672w"
+          sizes="100vw"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+          style={{ objectPosition: "50% 45%" }}
+        />
+      </div>
+
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

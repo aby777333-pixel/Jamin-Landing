@@ -621,7 +621,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           ) : null}
 
           {/* ---- legal & documents (§15, §78) ---- */}
+          {/* ⚠️ THE ONE DARK SECTION ON THE SITE'S LIGHT PAGES (anti-beige
+              round, item 1): the paperwork descends into the ink field so it
+              reads as the vault — the same `data-theme="vault"` TOKEN re-scope
+              the /vault division and the footer already ride, never a
+              per-element restyle. `bg-canvas` resolves to onyx inside the
+              scope; every ink, hairline and glyph flips with it, including
+              the two cadastral components this file does not own. */}
           {(legal.length > 0 || downloads.length > 0 || p.rera_number) && (
+            <div data-theme="vault" className="overflow-hidden rounded-xl bg-canvas p-phi4">
             <Block
               id="legal"
               title="Approvals & documents"
@@ -667,6 +675,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 current position with the issuing authority before you commit to a purchase.
               </p>
             </Block>
+            </div>
           )}
 
           {investment.length > 0 && sellable && (

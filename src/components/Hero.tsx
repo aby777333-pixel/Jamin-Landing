@@ -65,7 +65,11 @@ export type Slide = {
    on a quarter-strength plate over a dark red roofline), and the crop steers
    centre rather than 35% (the trident and its name are the centre of the
    frame). The hero-20 notes below are kept for the day the banner returns. */
-const ART = { id: "46", w: 1773 };
+/* hero-61 (2026-08-17 late): the richer Trident dusk frame — the JAMIN
+   TRIDENT letters and fountain centre-frame, the lockup wall right —
+   replacing hero-46 the same day. 1581x995 (1.59:1), noticeably TALLER than
+   46's 2:1, so the banner crop spends less height. */
+const ART = { id: "61", w: 1581 };
 
 export function Hero({
   slides,
@@ -256,23 +260,21 @@ export function Hero({
               card gives up comes back as banner width. The 42rem measure is
               untouched for the reason recorded above: narrowing it makes the
               copy TALLER, which is the expensive direction. */}
+          {/* ⚠️ 0.62 AT EVERY WIDTH, AND NO HALO — owner 2026-08-17 late:
+              "increase the background of the caption tab, and remove the text
+              shadow", reversing the same morning's max-sheer + halo request.
+              The plate carries the ink again (rj-sheer-copy-ink is OFF this
+              plate — that class is exactly the four-layer shadow that was
+              asked off), so its alpha is back to a working value: 0.62 sits
+              between the sheer 0.12 and the audited-opaque 0.74, visibly a
+              tab, still letting the Trident dusk through. Both vars, as
+              before, so it does not snap opaque below 1440. */}
           <div
-            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 text-center sm:text-left"
-            /* ⚠️ 0.12 AT EVERY WIDTH, DOWN FROM 0.85 — owner 2026-08-17: "make
-               it see through to the max, add shadow to the text". BOTH sheer
-               vars are set because `rj-gilt-light-sheer` switches to
-               `--rj-sheer-alpha-narrow` below 1440, and a see-through plate
-               that snaps opaque on a laptop is not what was asked. Safe on
-               THIS hero specifically: below `xl` the banner is a band above
-               the copy, so the near-invisible plate sits on the page's own
-               canvas. What carries the ink now is `rj-sheer-copy-ink`'s
-               four-layer warm halo — the text shadow the owner asked for,
-               already swept for exactly this job. Remove the halo and the ink
-               is bare on the photograph. */
+            className="gilt-light rj-gilt-light-sheer reveal max-w-2xl rounded-2xl p-phi3 text-center sm:text-left"
             style={
               {
-                "--rj-sheer-alpha": 0.12,
-                "--rj-sheer-alpha-narrow": 0.12,
+                "--rj-sheer-alpha": 0.62,
+                "--rj-sheer-alpha-narrow": 0.62,
               } as React.CSSProperties
             }
           >

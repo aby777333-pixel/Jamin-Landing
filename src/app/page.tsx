@@ -230,7 +230,38 @@ export default async function HomePage() {
       </Container>
 
       {/* ---- from plan to plot: the motif, made literal ---- */}
-      <section className="relative overflow-hidden border-y border-line bg-canvas-alt">
+      {/* Anti-beige item 7: THE RED STAT BAND — the one full-strength signal
+          field between the hero and the Sweep, carrying only figures the
+          catalogue itself asserts (the same numbers the footer trio and the
+          sign-in card read). White on #C90202 is the audited 6.01 AA pair. */}
+      {live.length > 0 && (
+        <section className="bg-cta py-phi5 text-white">
+          <Container>
+            <dl className="grid grid-cols-3 gap-phi3 text-center">
+              {[
+                [live.length, `Development${live.length === 1 ? "" : "s"} selling`],
+                [live.reduce((n, p) => n + (p.plots_available ?? 0), 0), "Plots available"],
+                [districts.length, `District${districts.length === 1 ? "" : "s"}`],
+              ]
+                .filter(([v]) => Number(v) > 0)
+                .map(([v, label]) => (
+                  <div key={String(label)} className="min-w-0">
+                    <dd className="ledger text-4xl font-extrabold text-white">{v}</dd>
+                    <dt className="mt-1 text-micro font-semibold uppercase tracking-brand text-white/80">
+                      {label}
+                    </dt>
+                  </div>
+                ))}
+            </dl>
+          </Container>
+        </section>
+      )}
+
+      {/* Anti-beige item 2: the alternating bands step DOWN into sand-300 now
+          — canvas-alt regraded LIGHTER than the page field, so the old
+          alternation had quietly inverted into near-nothing. Sunken restores
+          a real printed rhythm: field, recess, field. */}
+      <section className="relative overflow-hidden border-y border-line bg-canvas-sunken">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
         <Container className="relative py-phi6">
           <div className="grid items-center gap-phi5 lg:grid-cols-[1fr_1.1fr]">
@@ -389,7 +420,7 @@ export default async function HomePage() {
           "coming soon". The app links on this site are withdrawn until the
           Play Store listing exists, so borrowing the app's tools was not an
           option — they are rebuilt for the web. */}
-      <section className="border-y border-line bg-canvas-alt py-phi6">
+      <section className="border-y border-line bg-canvas-sunken py-phi6">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-xl">

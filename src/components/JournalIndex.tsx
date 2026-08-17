@@ -396,12 +396,45 @@ function ArticleCard({ post }: { post: JournalCard }) {
   );
 }
 
+/* Anti-beige item 3: each Journal category wears its own stone — a wash pill
+   with the category's ink, keyed DETERMINISTICALLY from the name so a new
+   console-authored category gets a stable colour without a code change. The
+   named ones are pinned to read meaningfully; the hash covers the rest. Every
+   ink here is an audited text cousin, never a fill. */
+const CATEGORY_STONE: Record<string, { stone: string; ink: string }> = {
+  "buying land": { stone: "var(--color-emerald)", ink: "var(--color-emerald-deep)" },
+  "legal guides": { stone: "var(--color-sapphire)", ink: "var(--color-sapphire)" },
+  "location guides": { stone: "var(--color-amethyst)", ink: "var(--color-amethyst)" },
+  "investment": { stone: "var(--color-jamin-gold)", ink: "var(--color-jamin-gold-ink)" },
+};
+const STONE_POOL: { stone: string; ink: string }[] = [
+  { stone: "var(--color-ruby)", ink: "var(--color-ruby)" },
+  { stone: "var(--color-emerald)", ink: "var(--color-emerald-deep)" },
+  { stone: "var(--color-sapphire)", ink: "var(--color-sapphire)" },
+  { stone: "var(--color-amethyst)", ink: "var(--color-amethyst)" },
+  { stone: "var(--color-topaz)", ink: "var(--color-jamin-gold-ink)" },
+];
+function categoryStone(name: string) {
+  const key = name.trim().toLowerCase();
+  if (CATEGORY_STONE[key]) return CATEGORY_STONE[key];
+  let h = 5381;
+  for (let i = 0; i < key.length; i++) h = (h * 33 + key.charCodeAt(i)) >>> 0;
+  return STONE_POOL[h % STONE_POOL.length];
+}
+
 function Meta({ post }: { post: JournalCard }) {
+  const cat = post.categoryName ? categoryStone(post.categoryName) : null;
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Badge tone="gold">{post.kindLabel}</Badge>
-      {post.categoryName && (
-        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+      {post.categoryName && cat && (
+        <span
+          className="rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.14em]"
+          style={{
+            color: cat.ink,
+            background: `color-mix(in srgb, ${cat.stone} 13%, transparent)`,
+          }}
+        >
           {post.categoryName}
         </span>
       )}
