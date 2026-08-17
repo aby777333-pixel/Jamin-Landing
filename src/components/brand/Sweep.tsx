@@ -23,9 +23,16 @@ export async function Sweep({
   lead?: string;
 }) {
   const desk = await getDeskContact();
-  const phone = desk.mobile ?? "+91 98844 00229";
+  const raw = desk.mobile ?? "+91 98844 00229";
   const email = desk.email ?? "info@jaminbazaar.in";
-  const tel = phone.replace(/[^\d+]/g, "");
+  const tel = raw.replace(/[^\d+]/g, "");
+  /* Displayed with the country code set apart and the Indian 5-5 split
+     (owner 2026-08-17: "give spacing, one after the country code") — the
+     database keeps the raw string, the tel: link uses digits only, and only
+     the DISPLAY is grouped. A number that is not +91-and-ten-digits prints
+     exactly as recorded. */
+  const m = tel.match(/^\+91(\d{5})(\d{5})$/);
+  const phone = m ? `+91 ${m[1]} ${m[2]}` : raw;
 
   return (
     <section aria-label="Contact the desk" className="relative overflow-hidden">
