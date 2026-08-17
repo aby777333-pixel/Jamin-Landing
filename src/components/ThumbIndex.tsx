@@ -39,7 +39,7 @@ export function ThumbIndex({
   return (
     <nav
       aria-label="Districts"
-      className="fixed right-0 z-20 hidden -translate-y-1/2 flex-col gap-1 xl:flex"
+      className="fixed right-0 z-20 hidden -translate-y-1/2 flex-col gap-2 xl:flex"
       style={{ top: "calc(var(--header-h) + 50vh - var(--header-h) / 2)" }}
     >
       {districts.map((d) => {
@@ -66,24 +66,24 @@ export function ThumbIndex({
                label is vertical, so height comes from the text and only the
                WIDTH needed asserting — `pl-2.5 pr-2` plus the border lands it
                at 44 exactly. */
-            className={`rj-deboss flex min-h-[44px] items-center rounded-l-md border border-r-0 border-line py-3 pl-2.5 pr-2 text-micro uppercase tracking-brand transition-colors ${
-              active ? "text-ink" : "text-ink-faint hover:text-ink-muted"
+            /* ⚠️ REWORKED 2026-08-17 late — reported: "the place tabs are not
+               visible and not aligned or spaced or colorized properly". Three
+               fixes together: the wash mixes with the CANVAS again (over a
+               photograph a transparent wash disappeared entirely — the blur
+               stays for the frosted read, but the tab needs its own paper);
+               every tab is the same fixed width (`w-11 justify-center`) so the
+               column aligns; and the label sets in full ink at 600 with
+               breathing room, never the faint. */
+            className={`rj-deboss flex w-11 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 py-4 font-semibold text-micro uppercase tracking-brand transition-all hover:w-12 ${
+              active ? "text-ink" : "text-ink-soft hover:text-ink"
             }`}
             style={{
               writingMode: "vertical-rl",
               rotate: "180deg",
-              /* The stone tints the tab and draws a 3px bar on the viewport
-                 edge (visually the right edge; after the 180° rotation that is
-                 this box's left). Active tabs deepen the tint rather than
-                 changing colour — same hue, more of it.
-                 ⚠️ SEE-THROUGH (owner 2026-08-17): the mix is with TRANSPARENT
-                 now, not with the canvas, and a light blur frosts whatever the
-                 tab hangs over — hero photograph included — so the page reads
-                 through the tab the way it does through the copy plates. */
-              background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, transparent)`,
+              background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, var(--color-canvas))`,
               backdropFilter: "blur(8px)",
-              boxShadow: `inset 3px 0 0 0 ${stone}`,
-              borderColor: `color-mix(in srgb, ${stone} 40%, transparent)`,
+              boxShadow: `inset 3px 0 0 0 ${stone}, 0 6px 18px -8px rgba(41,31,21,0.35)`,
+              borderColor: `color-mix(in srgb, ${stone} 45%, var(--color-line))`,
             }}
           >
             {d}

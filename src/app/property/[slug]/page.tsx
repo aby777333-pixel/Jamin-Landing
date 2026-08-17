@@ -552,6 +552,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 title={p.title}
                 lat={p.lat}
                 lng={p.lng}
+                /* The branded printed sheet (owner-supplied 2026-08-17) —
+                   keyed by slug like HEADER_ART; a project without one simply
+                   never shows the view. */
+                sheet={PRINTED_SHEET[p.slug ?? p.id] ?? null}
               />
 
               {p.master_plan_url && (
@@ -1006,6 +1010,13 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  * was reported. A per-picture value is the only thing that can be right for all
  * four; re-render that sweep before adding another.
  */
+/** The BRANDED PRINTED SHEETS (owner-supplied 2026-08-17): the sanctioned
+ *  drawing as issued, per project, for LayoutViews' "Printed sheet" view.
+ *  Only Edappadi has one today; a missing entry hides the view. */
+const PRINTED_SHEET: Record<string, { src: string; width: number; height: number }> = {
+  "jamin-new-project-jul-2026": { src: "/plan/edappadi-sheet-1260.webp", width: 1260, height: 1784 },
+};
+
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {
   /* ⚠️ `edappadi-2`, owner-supplied 2026-08-14, replacing the paddy-field frame.
      A new filename rather than an overwrite, for the reason on Udumalaipet

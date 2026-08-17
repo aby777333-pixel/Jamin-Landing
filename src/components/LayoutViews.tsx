@@ -55,6 +55,7 @@ export function LayoutViews({
   title,
   lat = null,
   lng = null,
+  sheet = null,
 }: {
   plots: Plot[];
   /** Absent when the drawing was never traced — then there is only one view. */
@@ -63,9 +64,15 @@ export function LayoutViews({
   /** For the sun's real position. Falls back to Edappadi inside `LayoutVR`. */
   lat?: number | null;
   lng?: number | null;
+  /** The BRANDED PRINTED SHEET (owner-supplied, 2026-08-17): the sanctioned
+   *  drawing as issued, offered as its own zoomable view beside the traced
+   *  interactive plan. An IMAGE, never clickable — the raster and the trace
+   *  cannot be registered (measured, three incompatible scales), so the
+   *  functions stay on the traced view where the geometry is real. */
+  sheet?: { src: string; width: number; height: number } | null;
 }) {
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
-  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun">(hasPlan ? "plan" : "blocks");
+  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun" | "sheet">(hasPlan ? "plan" : "blocks");
 
   /**
    * ⚠️ FEET BY DEFAULT, and that is the point of the request rather than a
@@ -97,7 +104,7 @@ export function LayoutViews({
             <Segmented
               label="Layout view"
               value={view}
-              onChange={(v) => setView(v as "plan" | "relief" | "blocks" | "sun")}
+              onChange={(v) => setView(v as "plan" | "relief" | "blocks" | "sun" | "sheet")}
               /* ⚠️ Relief sits BETWEEN the two, because that is the order of
                  abstraction: the drawing, the drawing tilted, then the list. It
                  is offered on exactly the same condition as the plan — traced
@@ -127,6 +134,7 @@ export function LayoutViews({
                 { value: "plan", label: "Approved plan" },
                 // { value: "relief", label: "3D view" },
                 // { value: "sun", label: "Sun & shadow" },
+                ...(sheet ? [{ value: "sheet", label: "Printed sheet" }] : []),
                 { value: "blocks", label: "Plot list" },
               ]}
             />
@@ -148,7 +156,24 @@ export function LayoutViews({
         </div>
       )}
 
-      {view === "plan" && plan ? (
+      {view === "sheet" && sheet ? (
+        /* The sheet as issued — pinch/scroll zoom via the browser's own image
+           behaviours inside a scrollable frame; ZoomableImage would portal a
+           lightbox, but a drawing wants to stay in the flow beside its
+           controls. */
+        <div className="overflow-auto rounded-xl border border-line bg-canvas" style={{ maxHeight: "min(78vh, 900px)" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={sheet.src}
+            width={sheet.width}
+            height={sheet.height}
+            alt={`${title} — the sanctioned layout drawing as issued`}
+            className="h-auto w-full"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ) : view === "plan" && plan ? (
         <MasterPlan plots={plots} plan={plan} title={title} unit={unit} />
       ) : view === "relief" && plan ? (
         <LayoutRelief plots={plots} plan={plan} unit={unit} />
