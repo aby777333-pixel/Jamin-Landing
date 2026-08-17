@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Cartouche } from "@/components/brand/Cartouche";
+import { ModeToggle } from "@/components/ModeToggle";
 import { usePathname } from "next/navigation";
 import { useQueryString } from "@/lib/url-state";
 import { useEffect, useId, useRef, useState } from "react";
@@ -304,8 +305,13 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           >
             Book a visit
           </Link>
+
+          {/* CARBON toggle — light and dark, one boolean on <html>. */}
+          <ModeToggle />
         </nav>
 
+        <span className="flex items-center gap-3 xl:hidden">
+        <ModeToggle />
         <button
           onClick={() => setOpen((v) => !v)}
           className="xl:hidden"
@@ -322,6 +328,7 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             />
           </span>
         </button>
+        </span>
       </div>
 
       {/* ---- mega panels (desktop) ---- */}

@@ -165,6 +165,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* CARBON boot (dark mode): applies the stored choice before first
+            paint so a dark reader never sees a flash of sand. Inline and
+            three lines on purpose — a component would run after hydration. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'try{if(localStorage.getItem("jp-mode")==="dark")document.documentElement.dataset.mode="dark"}catch(e){}',
+          }}
+        />
         {/* Once for the document. Never per section — see the component. */}
         <PaperGrain />
         {/* The bound edge (Gilded Register §9): the book's gilded spine down

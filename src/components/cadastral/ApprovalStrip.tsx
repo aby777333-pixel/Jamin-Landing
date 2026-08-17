@@ -31,14 +31,16 @@ export function ApprovalStrip({ p }: { p: Property }) {
   const approvals = approvalBadges(p);
   const area = formatArea(p);
 
-  const entries: { label: string; value: string; ledger?: boolean }[] = [];
+  /* `verified` marks the RESOLVED FACTS — sanction and availability — which
+     set in the teal, the once-per-surface payoff ink (anti-beige item 4). */
+  const entries: { label: string; value: string; ledger?: boolean; verified?: boolean }[] = [];
 
   /** The three that make this a record of sanction rather than a stat line.
    *  Plot counts alone are already on the card and in the availability chip. */
   const hasSubstance = approvals.length > 0 || !!p.survey_number?.trim() || !!area;
 
   if (approvals.length) {
-    entries.push({ label: "Sanction", value: `${approvals.join(" · ")} approved` });
+    entries.push({ label: "Sanction", value: `${approvals.join(" · ")} approved`, verified: true });
   }
   if (p.survey_number?.trim()) {
     entries.push({ label: "Survey nos", value: p.survey_number.trim(), ledger: true });
@@ -48,7 +50,7 @@ export function ApprovalStrip({ p }: { p: Property }) {
     entries.push({ label: "Plots", value: String(p.plots_total), ledger: true });
   }
   if (p.plots_available != null && p.plots_total) {
-    entries.push({ label: "Available", value: String(p.plots_available), ledger: true });
+    entries.push({ label: "Available", value: String(p.plots_available), ledger: true, verified: true });
   }
 
   // ⚠️ A band reading only "Plots 1 · Available 1" is two ways of saying one
@@ -60,7 +62,11 @@ export function ApprovalStrip({ p }: { p: Property }) {
     /* ⚠️ `rj-seal` is ornament and nothing else — the mark, embossed at 4.5%
        into the band that carries the facts of record, the way a watermark sits
        on a document. It adds no information and is `pointer-events: none`. */
-    <div className="cd-strip rj-seal border-y border-line bg-canvas-alt">
+    /* Gilded (owner 2026-08-17 late, "enhance and beautify this part"): the
+       certificate rule crowns the record band, and each cell carries a stone
+       tick — teal where the fact is RESOLVED, bronze where it is structural. */
+    <div className="cd-strip rj-seal border-b border-line bg-canvas-alt">
+      <div className="rj-royal-rule" aria-hidden="true" />
       {/* 🚨 IT SPANS THE FULL CONTENT WIDTH FROM `lg`, AND THE ENTRIES SHARE IT.
           Reported 2026-08-13: "property statistics do not use the full available
           page width… keep all five details evenly distributed". They were
@@ -88,11 +94,16 @@ export function ApprovalStrip({ p }: { p: Property }) {
               i > 0 ? "border-l border-jamin-gold/35" : ""
             }`}
           >
+            <span
+              aria-hidden="true"
+              className="mb-1.5 block h-0.5 w-8 rounded-full"
+              style={{ background: e.verified ? "var(--color-emerald-deep)" : "var(--color-jamin-gold)" }}
+            />
             <dt className="ledger-label">{e.label}</dt>
             <dd
-              className={`mt-1 text-base text-ink lg:whitespace-normal ${
+              className={`mt-1 text-base lg:whitespace-normal ${
                 e.ledger ? "ledger" : ""
-              } whitespace-nowrap`}
+              } whitespace-nowrap ${e.verified ? "text-canopy" : "text-ink"}`}
             >
               {e.value}
             </dd>

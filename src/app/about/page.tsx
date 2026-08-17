@@ -200,7 +200,7 @@ export default async function AboutPage() {
           is the site's strongest non-beige asset and it only lived in heroes.
           Brand imagery under the standing rule: alt="", aria-hidden, never a
           caption. */}
-      <div className="relative h-40 w-full overflow-hidden border-y border-line lg:h-56" aria-hidden="true">
+      <div className="relative h-56 w-full overflow-hidden border-y border-line lg:h-80" aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/hero/hero-53-1774.webp"
@@ -210,7 +210,7 @@ export default async function AboutPage() {
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover"
-          style={{ objectPosition: "50% 42%" }}
+          style={{ objectPosition: "50% 32%" }}
         />
       </div>
 

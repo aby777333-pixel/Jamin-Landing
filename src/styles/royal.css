@@ -2397,3 +2397,54 @@ header .glass,
   box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   color: var(--color-champagne-50);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CARBON — the dark mode (owner 2026-08-17 late: "different shades of
+   metallic, carbon dark… a toggle"). The same token re-scope the Vault and
+   the footer ride, widened to the whole document via [data-mode="dark"] on
+   <html>. The metals STAY — champagne, bronze and the signal red read richer
+   on carbon than they ever did on sand, which is the metallic register the
+   owner asked for. Inks map to their audited dark-ground cousins (the vault
+   scope's own lesson: dark-tuned inks must invert too, or they vanish).
+   ══════════════════════════════════════════════════════════════════════════ */
+[data-mode="dark"] {
+  --color-canvas: #161310;
+  --color-canvas-alt: #1e1a15;
+  --color-canvas-sunken: #272119;
+  --color-line: rgba(232, 225, 210, 0.14);
+  --color-line-red: rgba(201, 2, 2, 0.28);
+  --color-ink: var(--color-bone);
+  --color-ink-soft: var(--color-bone-soft);
+  --color-ink-muted: var(--color-plat-300);
+  --color-ink-faint: var(--color-plat-500);
+  /* The dark-tuned inks invert to their light cousins — the vault's audited
+     mappings, carried verbatim, plus the Cartouche-era inks it predates. */
+  --color-champagne-700: var(--color-champagne-300);
+  --color-cta-deep: var(--color-champagne-300);
+  --color-jamin-gold-ink: var(--color-jamin-gold-light);
+  --color-jamin-gold-deep: var(--color-jamin-gold-light);
+  --color-jamin-red-deep: #e8887c;
+  --color-canopy: #86b8ae;
+  --color-burgundy: #dc9188;
+  /* The washes go to their carbon equivalents so chips keep their coding. */
+  --color-jamin-red-soft: #3a1613;
+  --color-canopy-soft: #17302b;
+  --color-jamin-gold-soft: #2d2519;
+  --color-canvas-sunken: #272119;
+  /* Frosted surfaces re-ground on carbon. */
+  --glass-tint: rgba(24, 20, 16, 0.88);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+
+  transition:
+    background-color 600ms var(--ease-silk),
+    color 600ms var(--ease-silk);
+}
+
+/* ⚠️ The paper-tone heroes print into the page with `mix-blend-multiply`,
+   which on a carbon ground multiplies the picture into black. In dark mode
+   they render normally, slightly dimmed so they sit into the ground instead
+   of glowing off it. Unlayered, so it beats the utility — deliberately. */
+[data-mode="dark"] .mix-blend-multiply {
+  mix-blend-mode: normal;
+  opacity: 0.94;
+}

@@ -99,7 +99,19 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
                 className="pointer-events-none absolute right-full top-[1.125rem] hidden h-px w-[calc(var(--spacing-phi3,1rem))] bg-line lg:block"
               />
             )}
-            <span className="rj-foil-seal flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-champagne-900">
+            {/* The FINAL link resolves in teal — the chain's payoff, the same
+                once-per-surface move the record strip and the calculators
+                make (anti-beige item 4). */}
+            <span
+              className={`rj-foil-seal flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                i === links.length - 1 ? "text-white" : "text-champagne-900"
+              }`}
+              style={
+                i === links.length - 1
+                  ? { background: "var(--color-emerald-deep)", boxShadow: "inset 0 0 0 2px var(--color-jamin-gold-light)" }
+                  : undefined
+              }
+            >
               <SurveyIcon name={l.icon} size="h-4 w-4" />
             </span>
             <div className="min-w-0">
