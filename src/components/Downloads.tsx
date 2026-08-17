@@ -86,7 +86,7 @@ export function DownloadList({ items }: { items: DownloadItem[] }) {
               </span>
               <span
                 aria-hidden="true"
-                className="text-tiny text-ink-faint transition-transform duration-500 group-hover:translate-y-0.5"
+                className="text-tiny text-jamin-red-deep transition-transform duration-500 group-hover:translate-y-0.5"
               >
                 ↓
               </span>

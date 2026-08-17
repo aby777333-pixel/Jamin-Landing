@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63;
+  | 62 | 63 | 64;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -79,6 +79,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   /* hero-62 (Erode) / hero-63 (Coimbatore) — owner-supplied 2026-08-17
      night, named for their pages. */
   62: 929, 63: 941,
+  /* hero-64 — JAMIN REGENT ("Regent.png", 2026-08-17 night). */
+  64: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -257,6 +259,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      in the set to hold the lower alpha. Standing rule as ever: alt="",
      aria-hidden, never a caption. */
   62: 1693, 63: 1672,
+  /* hero-64 — the JAMIN REGENT gate ("Regent.png"): construction beyond a
+     ceremonial arch, lockup TOP-CENTRE, a layout board at right →
+     /projects/future. ⚠️ It NAMES a community not in the catalogue on a page
+     that lists the catalogue — the owner supplied it for this page with the
+     hero-33/40 precedent standing: alt="", aria-hidden, never a caption.
+     Unlike 31/33 its lockup is centred, so paper's right anchor keeps it
+     whole without a trim. */
+  64: 1672,
 };
 
 function artSrc(n: HeroArt) {

@@ -96,7 +96,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   const ART_BY_PHASE: Record<string, HeroArt> = {
     ongoing: 31,
     current: 11,
-    future: 33,
+    /* hero-64 (JAMIN REGENT, owner-named 2026-08-17) replaces hero-33 —
+       its lockup is CENTRED, so the right anchor keeps it whole untrimmed. */
+    future: 64,
     completed: 40,
   };
 

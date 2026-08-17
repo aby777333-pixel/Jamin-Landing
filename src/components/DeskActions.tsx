@@ -33,23 +33,34 @@ export async function DeskActions({
 
   if (!tel && !wa && !desk.email) return null;
 
+  /* COLORIZED (owner 2026-08-17 night, "check all pages and colorize"): the
+     three pills were beige outlines that vanished into the sand on every page
+     that carries the desk. Each now wears a wash and border of a meaningful
+     system colour — CALL in the signal red (the action), WHATSAPP in the
+     trust teal (the conversation), EMAIL in bronze (the record). Text stays
+     the audited dark inks; the colour is the ground, never the word. */
   const base =
-    "inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-line bg-canvas px-4 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-colors hover:border-ink-faint";
+    "inline-flex flex-1 items-center justify-center gap-2 rounded-full border px-4 py-3 text-tiny font-semibold uppercase tracking-[0.12em] transition-all hover:-translate-y-0.5";
+  const tone = {
+    call: "border-jamin-red-deep/40 bg-jamin-red-soft text-jamin-red-deep hover:border-jamin-red-deep",
+    wa: "border-canopy/40 bg-canopy-soft text-canopy hover:border-canopy",
+    mail: "border-jamin-gold bg-jamin-gold-soft text-jamin-gold-ink hover:border-jamin-gold-ink",
+  };
 
   return (
     <div className="flex flex-wrap gap-2">
       {tel && (
-        <a href={tel} className={base}>
+        <a href={tel} className={`${base} ${tone.call}`}>
           Call
         </a>
       )}
       {wa && (
-        <a href={wa} target="_blank" rel="noopener noreferrer" className={base}>
+        <a href={wa} target="_blank" rel="noopener noreferrer" className={`${base} ${tone.wa}`}>
           WhatsApp
         </a>
       )}
       {desk.email && (
-        <DeskEmail email={desk.email} className={base} context={context} url={url} />
+        <DeskEmail email={desk.email} className={`${base} ${tone.mail}`} context={context} url={url} />
       )}
     </div>
   );
