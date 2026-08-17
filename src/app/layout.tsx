@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Newsreader, IBM_Plex_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 /* After globals: the cadastral layer adds to the foundation, it never
    overrides an audited decision made there. */
@@ -35,35 +35,30 @@ import { SITE_URL } from "@/lib/supabase";
  *  - The material change in this redesign is doing the work regardless. What
  *    reads as expensive is the champagne-against-onyx discipline, the gem
  *    banding and the hairlines — not the face the headline is set in. */
-/** JAMIN CARTOUCHE (2026-08-17) — three faces, three jobs, replacing the
- *  one-typeface Inter rule the previous briefs converged on. This brief is a
- *  different animal: the reference creative's identity IS the heavy grotesk
- *  headline against a book-serif body, so the contrast between families is the
- *  brand this time, not a discipline to avoid.
+/** CARTOUCHE TYPE PATCH (2026-08-17, supersedes the three-face round of the
+ *  same day): INTER IS THE ONLY TYPEFACE AGAIN — one variable file, 100–900.
+ *  Every distinction the three families carried now comes from weight, size,
+ *  tracking, case, colour and OpenType features inside the one family:
  *
- *  - Archivo (display): H1–H3, buttons, uppercase labels — the heavy caps.
- *  - Newsreader (body): paragraphs, long-form — the printed page.
- *  - IBM Plex Mono (data): survey numbers, sheet serials, eyebrows — the
- *    drawing-sheet register. `.ledger` now resolves here too.
+ *  - display: weight 800–900 + negative tracking (+ uppercase where a hero
+ *    already sets it) — replaces Archivo. Inter has no width axis; every
+ *    `wdth` declaration is deleted, never simulated with scaleX.
+ *  - body: weight 400 at 1.7 leading — replaces Newsreader.
+ *  - data: `.ledger` and the serials — SLASHED ZERO (`zero`) + tabular
+ *    numerals (`tnum`) + 0.06–0.11em tracking + uppercase, which is what
+ *    keeps "DTCP 320/2025" and "JG-SLM-061" reading as figures of record
+ *    now that no mono face is doing it for free. Replaces IBM Plex Mono.
  *
- *  ⚠️ The CSS variable --font-body deliberately keeps its name (it is
- *  referenced by globals.css and dozens of components); it simply resolves to
- *  Newsreader now. --font-display and --font-mono are new. */
-const display = Archivo({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-display",
-  display: "swap",
-  axes: ["wdth"],
-});
-const body = Newsreader({
+ *  ⚠️ The variable keeps the --font-body name: it is the one name every
+ *  stylesheet already references, and renaming it would touch four files to
+ *  produce identical pixels.
+ *  ⚠️ Tamil (patch §7): no decision needed HERE — this site has no `ta`
+ *  locale and no Tamil script anywhere in source or data (verified in the
+ *  Maharaja round); the Noto Sans Tamil exception activates only if Tamil
+ *  content ever ships. */
+const body = Inter({
   subsets: ["latin", "latin-ext"],
   variable: "--font-body",
-  display: "swap",
-});
-const mono = IBM_Plex_Mono({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500"],
-  variable: "--font-mono",
   display: "swap",
 });
 
@@ -167,7 +162,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          primary; every control resolves through --color-cta, so nothing else
          in the tree has to know which one is active. */
       data-palette="heritage"
-      className={`${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
+      className={`${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/* Once for the document. Never per section — see the component. */}

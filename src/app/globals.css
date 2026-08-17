@@ -285,7 +285,17 @@
   body {
     background: var(--color-canvas);
     color: var(--color-ink);
+    /* ⚠️ THE ONLY font-family DECLARATION ON THE SITE (type patch, 2026-08-17)
+       — Inter carries every role; everything else inherits. `case` lifts
+       hyphens, quotes and parentheses to cap height in the uppercase settings
+       the display scale uses; `calt` is Inter's contextual alternates.
+       `font-synthesis: none` makes a missing variation fail visibly in review
+       instead of shipping as smeared faux bold. No italics anywhere — emphasis
+       on this site is weight 600 or bronze ink, never slant. */
     font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    font-optical-sizing: auto;
+    font-feature-settings: "calt" 1, "case" 1;
+    font-synthesis: none;
   }
   /* One typeface. The brief asks for Inter throughout, so the hierarchy is
      carried by weight, scale, tracking and space rather than by contrast
@@ -297,40 +307,39 @@
      -0.008em while headings were set in Marcellus, because negative tracking
      closes a Roman capital face's counters. If a display serif is ever tried
      again, that value has to move with it. */
-  /* CARTOUCHE type roles (2026-08-17). The display face is a HEAVY grotesk —
-     that is what makes this palette read as this brand and not as a generic
-     warm-minimal template (spec §10). -0.022em replaces Inter's -0.032em;
-     Archivo's counters close sooner. */
+  /* CARTOUCHE TYPE PATCH (2026-08-17) — Inter only; the heavy register stays
+     but the family goes. Weight 800 at Inter's sampled tracking curve
+     (-0.028em for the 36–55px band most headings live in; the hero's larger
+     steps ride the same rule acceptably). ⚠️ NO `wdth` — Inter has no width
+     axis, and simulating one with scaleX destroys stem weights.
+     ⚠️ Line-height stays MIXED-CASE safe (1.02/1.18): the patch's 0.90 is for
+     the uppercase display treatment, and forcing caps on every h1/h2 site-wide
+     would re-break every headline line-count this codebase has measured
+     (plateXl, the home banner) — case stays a per-surface decision, exactly
+     where it already is. */
   h1,
   h2 {
-    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 750;
-    font-variation-settings: "wdth" 106;
-    letter-spacing: -0.022em;
-    line-height: 0.96;
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.02;
   }
   h3,
   h4 {
-    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
     font-weight: 650;
-    font-variation-settings: "wdth" 102;
-    letter-spacing: -0.012em;
+    letter-spacing: -0.014em;
     line-height: 1.18;
   }
-  /* Every uppercase label — eyebrows, buttons, chips — sets in the display
-     face; a serif in tracked caps reads as a wine label, not a drawing sheet.
-     Safe as a base rule: no Tailwind utility in this repo sets font-family,
-     so nothing is beaten (the unlayered-CSS trap does not apply inside a
-     layer, and this contests nothing anyway). */
-  .uppercase {
-    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
-  }
-  /* …except the eyebrow proper (`tracking-brand` is the site-wide eyebrow
-     marker) and every figure of record, which take the MONO — the register of
-     the sanctioned drawing. Declared after .uppercase so it wins the tie. */
-  .tracking-brand,
+  /* THE DATA VOICE (type patch §3) — what the mono face used to supply for
+     free, Inter supplies through features: SLASHED ZERO + tabular lining
+     numerals + a restrained 0.06em of tracking. `.ledger` is this site's
+     standing "figure of record" class, so every survey number, serial,
+     extent, price and date already routes through here. cv11/ss03 stay — the
+     1/l/I and 0/O disambiguation this codebase measured for legal strings —
+     and `zero` now does the heavy lifting on top of them. */
   .ledger {
-    font-family: var(--font-mono), ui-monospace, monospace;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    font-variant-numeric: tabular-nums lining-nums slashed-zero;
   }
   /* Never trap keyboard users just because the design is quiet.
      §6.10 asks the ring to take the active section's stone. It does that by
@@ -366,7 +375,10 @@
 }
 
 @utility tracking-brand {
-  letter-spacing: 0.34em;
+  /* 0.18em, down from 0.34em (type patch §3) — the eyebrow's ceiling. Wide-
+     tracked Inter above 0.18em is not a monospace impression, it is a
+     legibility failure and the tell of a system faking its lost mono. */
+  letter-spacing: 0.18em;
 }
 
 /* ── the 2026 art direction ───────────────────────────────────────────────
@@ -725,7 +737,11 @@ p a {
    gain. Tabular figures are already carried by that class; this adds to them
    rather than restating them. */
 .ledger {
-  font-feature-settings: "cv11", "ss03";
+  /* ⚠️ Extended by the type patch: `font-feature-settings` is the low-level
+     property and beats `font-variant-numeric` wherever the two disagree, so
+     the slashed zero and tabular figures are restated HERE — dropping them
+     from this line silently reverts every serial to ring zeros. */
+  font-feature-settings: "cv11", "ss03", "zero" 1, "tnum" 1, "lnum" 1;
 }
 
 /* ── The standfirst ────────────────────────────────────────────────────────

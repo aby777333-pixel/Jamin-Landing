@@ -66,9 +66,14 @@
  * and O apart on a document people are asked to trust.
  */
 .ledger {
-  font-variant-numeric: tabular-nums slashed-zero;
-  font-feature-settings: "tnum" 1, "zero" 1;
-  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums lining-nums slashed-zero;
+  /* ⚠️ THIS IS THE WINNING .ledger RULE — cadastral loads after globals, so
+     features left out of this line are silently dead site-wide. cv11/ss03
+     (the 1/l/I and 0/O disambiguation the micro-detail round measured for
+     legal strings) lived only in globals' copy and had been beaten here since
+     the day this rule shipped; merged 2026-08-17 with the type patch. */
+  font-feature-settings: "tnum" 1, "zero" 1, "lnum" 1, "cv11" 1, "ss03" 1;
+  letter-spacing: 0.06em;
 }
 
 /** A ledger label: the small caps-tracked heading above a figure. */

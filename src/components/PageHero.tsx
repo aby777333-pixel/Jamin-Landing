@@ -483,7 +483,8 @@ export function PageHero({
             }
           >
             {eyebrow && (
-              <div className="flex items-center gap-3">
+              /* Right-aligned (owner 2026-08-17): tabs and captions sit right. */
+              <div className="flex items-center justify-end gap-3">
                 {/* Gilt, where this was a plain white hairline — the same rule
                     that sits under BAZAAR in the logo. Gold as a RULE may be the
                     fill gold; gold as a WORD may not, so the label takes
@@ -610,7 +611,8 @@ export function PageHero({
           }
         >
           {eyebrow && (
-            <div className="flex items-center gap-3">
+            /* Right-aligned (owner 2026-08-17): tabs and captions sit right. */
+            <div className="flex items-center justify-end gap-3">
               <span className="h-px w-12 rule-gold" />
               {/* `gold-deep`, not `gold-ink` — this line sets the plate's
                   opacity. See the sweep recorded in `gilt-light`. */}

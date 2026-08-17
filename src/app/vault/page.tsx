@@ -371,7 +371,8 @@ export default async function VaultPage() {
             className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
             style={{ "--rj-sheer-alpha": 0.46 } as React.CSSProperties}
           >
-            <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
+            {/* text-right (owner 2026-08-17): captions sit right. */}
+            <p className="rj-eyebrow text-right" style={{ color: "var(--color-champagne-300)" }}>
               {hero.eyebrow ?? "Jamin Bazaar"}
             </p>
             <h1 className="mt-phi2 text-balance text-4xl text-white lg:text-5xl">

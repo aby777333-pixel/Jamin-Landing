@@ -46,7 +46,7 @@ export async function Sweep({
             <p
               className="text-tiny uppercase"
               style={{
-                fontFamily: "var(--font-mono), monospace",
+                fontWeight: 600,
                 letterSpacing: "0.14em",
                 color: "rgba(255,255,255,0.85)",
               }}
@@ -57,10 +57,12 @@ export async function Sweep({
           <a
             href={`tel:${tel}`}
             className="mt-phi2 block text-3xl font-extrabold uppercase text-white no-underline sm:text-4xl"
+            /* Inter 800 with tabular figures — a phone number is a figure of
+               record, and tnum keeps its digits on an even pitch. */
             style={{
-              fontFamily: "var(--font-display), sans-serif",
               letterSpacing: "-0.01em",
               lineHeight: 0.95,
+              fontFeatureSettings: "'tnum' 1, 'zero' 1",
             }}
           >
             {phone}

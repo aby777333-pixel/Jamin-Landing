@@ -609,6 +609,14 @@ export function Prose({ markdown }: { markdown: string }) {
                  `*` in a drawing and re-flow what the whole block exists to
                  preserve. */
               <div key={i} className="-mx-phi2 overflow-x-auto px-phi2">
+                {/* ⚠️ `font-mono` SURVIVES THE INTER-ONLY TYPE PATCH, and it is
+                    the one deliberate carve-out (the patch's own §7 makes the
+                    same shape of exception for script coverage). These blocks
+                    hold BOX-DRAWING site diagrams whose columns align by
+                    character grid — `| SETBACK |` frames that proportional
+                    metrics physically cannot square, however the features are
+                    set. It is the PLATFORM mono stack: no font file ships, no
+                    request is made, the one-webfont rule holds. */}
                 <pre className="w-fit min-w-full rounded-card border border-line bg-canvas-sunken p-phi3 font-mono text-tiny leading-snug text-ink-soft">
                   {b.text}
                 </pre>

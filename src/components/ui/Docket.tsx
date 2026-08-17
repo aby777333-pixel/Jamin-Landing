@@ -43,9 +43,14 @@ export function Docket({
               <span
                 key={line}
                 className="truncate text-micro uppercase"
+                /* The serial voice (type patch §3): Inter 500 with SLASHED
+                   ZERO + tabular figures at 0.11em — no mono face exists on
+                   this site any more, and these features are what keep
+                   JG-SLM-061 reading as a figure of record. */
                 style={{
-                  fontFamily: "var(--font-mono), monospace",
-                  letterSpacing: "0.12em",
+                  fontWeight: 500,
+                  letterSpacing: "0.11em",
+                  fontFeatureSettings: "'tnum' 1, 'zero' 1, 'case' 1",
                   color: onDark ? "var(--color-jamin-gold-light)" : "var(--color-jamin-gold-ink)",
                 }}
               >
@@ -58,10 +63,7 @@ export function Docket({
               <span
                 key={line}
                 className="truncate text-base font-semibold"
-                style={{
-                  fontFamily: "var(--font-display), sans-serif",
-                  color: onDark ? "#fff" : "var(--color-ink)",
-                }}
+                style={{ color: onDark ? "#fff" : "var(--color-ink)" }}
               >
                 {line}
               </span>

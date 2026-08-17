@@ -270,7 +270,9 @@ export function Hero({
                 against a 3.3:1 banner whose composition the notes above tune
                 line by line; centring it there would undo that for a complaint
                 nobody made about it. Say the word if it should carry up. */}
-            <div className="flex items-center justify-center gap-3 sm:justify-start">
+            {/* `sm:justify-end` (owner 2026-08-17): captions sit right. Phones
+                keep the centred treatment the 285px-card report asked for. */}
+            <div className="flex items-center justify-center gap-3 sm:justify-end">
               {/* `gold-deep`, not `gold-ink`. This one line was what pinned the
                   plate's opacity — see the sweep in `gilt-light`. */}
               <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-deep">

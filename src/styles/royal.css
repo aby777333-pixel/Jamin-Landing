@@ -147,12 +147,16 @@
  * outright. 700 measures 6.24:1 on canvas.
  */
 .rj-eyebrow {
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  /* Family inherited — the type patch allows exactly one font-family
+     declaration (body) and 0.18em is its tracking ceiling; 0.24em was over. */
   font-size: 10.5px;
-  font-weight: 500;
-  letter-spacing: 0.24em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-champagne-700);
+  /* Owner 2026-08-17: "all the tabs and captions everywhere: move to the
+     right." Central here so every rj-eyebrow moves at once. */
+  text-align: right;
 }
 
 /**
@@ -163,8 +167,10 @@
  * editorial from UI here is line-height and weight, not a second family.
  */
 .rj-voice {
-  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  font-weight: 300;
+  /* Family inherited (type patch). 380, up from 300 — the patch's lead
+     weight: 300 goes thin and fragile at body sizes, and 380 is the closest
+     Inter gets to the lighter colour a serif lead used to provide. */
+  font-weight: 380;
   line-height: 1.62;
 }
 

@@ -21,7 +21,12 @@ export function Container({
 /** The small gold-ruled eyebrow that opens every section. */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    <div className="flex items-center gap-3">
+    /* ⚠️ RIGHT-ALIGNED (owner, 2026-08-17): "all the tabs and captions
+       everywhere: move to the right." `justify-end` walks the caption to its
+       container's right edge on every section that uses it; the rule still
+       leads INTO the label reading left-to-right, so the mark keeps its
+       direction while the pair changes side. */
+    <div className="flex items-center justify-end gap-3">
       {/* The rule now ends in a station mark rather than simply stopping — the
           same lozenge the prose bullets use, so a section opening and a list
           item are visibly the same hand. Decoration: `aria-hidden`, and the
