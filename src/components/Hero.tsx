@@ -240,7 +240,14 @@ export function Hero({
             `xl` lift below are ONE breakpoint in four places: the banner must
             be full-bleed, tall, and cleared at exactly the widths where the
             console straddles it. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi3 lg:px-10 xl:min-h-[clamp(24rem,60vh,36rem)] xl:pb-[var(--rj-console-clear)]">
+        {/* ⚠️ FULL VIEWPORT HEIGHT (owner 2026-08-17 night): the hero fills the
+            first screen less the sticky header — `svh` so a phone's collapsing
+            URL bar cannot make it overflow. The height-costs-width arithmetic
+            that governed every previous value belonged to the 3.3:1 banner;
+            hero-61 is 1.59:1, so a viewport box is WIDTH-bound on any desktop
+            and the full frame width stays in shot regardless. The console
+            still straddles the foot via the same pb var. */}
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi3 lg:px-10 xl:min-h-[calc(100svh-var(--header-h))] xl:pb-[var(--rj-console-clear)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
