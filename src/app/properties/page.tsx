@@ -27,35 +27,34 @@ export default async function PropertiesPage() {
            district page without art of its own, which today means Coimbatore. */
         art={37}
         tone="cinematic"
-        size="tall"
-        /* ⚠️ 20%, AND IT IS A PARTIAL ANSWER — say so before someone re-reads
-           the report and thinks this closed it. Asked 2026-08-14 to "move the
-           entire background image slightly to the right" so the copy card has
-           clean space behind it. Lowering X shows more of the picture's left,
-           which walks the gate right; this is the same lever the homepage
-           banner uses, and there it moves the gate ten points.
-
-           Here it moves it about two. hero-37 is 2.334:1 in a 2.09 box, so
-           `cover` has only **10.6% of horizontal slack** — the whole range from
-           0% to 100% shifts the frame by ~5% of the picture's width. Rendered
-           all four before choosing: the gate barely stirs.
-
-           🚨 THE REAL CONSTRAINT IS THE FRAME, NOT THE CSS. The gateway is
-           symmetric and occupies roughly 22%–78% of this picture, so no
-           object-position and no card width clears it — the card would have to
-           end at 22% of the viewport to sit beside it, which is narrower than
-           the headline. Fixing this properly means a re-cut frame with the gate
-           right of centre, exactly as hero-31, hero-33 and hero-34 were trimmed
-           for their own baked elements. Flagged to the owner rather than
-           quietly left as done. */
-        artPosition="20% center"
+        /* `full`, up from `tall` (2026-08-17) — the owner's report: "hero does
+           not fill the expected viewport height / large white space below".
+           ⚠️ The taller box is also what UNLOCKED artPosition below: at `tall`
+           heights this 2.334:1 frame was width-bound in the box and had ~10.6%
+           of horizontal slack; at 85vh the box is ~1.9–2.1:1, cover becomes
+           HEIGHT-bound, and the crop gains real horizontal travel. */
+        size="full"
+        /* ⚠️ `left center`, was 20% — and the old note here ("the gate barely
+           stirs") described the `tall` geometry, where cover left almost no
+           slack. Height-bound at `full`, anchoring left shows the picture from
+           its left edge and walks the symmetric gate (22%–78% of the frame) to
+           the RIGHT of the copy card: gate centre lands at ~57–60% of the
+           viewport at 1280–1440, clear of the card's right edge. The card
+           still overlaps the gate's left arch — that is the frame, not the
+           CSS; a re-cut with the gate right of centre remains the only full
+           answer and stays flagged to the owner. */
+        artPosition="left center"
         sheer
         /* The plate fades out across its right fifth so the gate and the
            lockup behind it read — every glyph here ends by 77.6% of the
            plate's width, so the reveal costs no contrast. See the note on
            `.rj-gilt-sheer-edge`. */
         sheerEdge
-        plateXl="38rem"
+        /* 42rem, up from 38 (2026-08-17) — the report asked for the card a
+           little larger. 38rem was chosen when narrowing was the only way to
+           give the photograph back; the taller box does that job now, and at
+           42rem the headline still sets in three lines (the cliff is 36). */
+        plateXl="42rem"
         /* ⚠️ 0.52, up from hero-17's 0.12, and swept rather than carried.
            hero-17 was a trimmed banner that is dark exactly where the copy
            sits; this frame is an aerial under a bright sky and measures far

@@ -193,10 +193,16 @@ export function Hero({
               the wash has to come back with it. */}
         </div>
 
-        {/* 54vh, not 100. A hero that fills the viewport hides the fact that
-            there is a site under it. Capped at 30rem, which on this frame is a
-            second constraint as well as a taste one: every extra pixel of height
-            is taken off the sides of the banner. */}
+        {/* ⚠️ LOWERED 2026-08-17, from clamp(30rem,82vh,46rem) — this is the
+            "if the red sweep ever has to come back into frame, this number is
+            the first thing to lower" note below being cashed in. The owner's
+            report: the hero is too zoomed in and the RIGHT of the banner — the
+            palms and the red sweep — is cropped off. The section is
+            content-sized on a 3.3:1 frame, so the card was slimmed in the same
+            change (padding, button spacing, top padding): height is the zoom
+            control and the card is the height. ~59% of the banner's width
+            before; ~72% after at 1440, which is the figure the note on ART
+            gives for "the whole arch and the red sweep". */}
         {/* ⚠️ Raised 2026-08-09 on request, from clamp(22rem,54vh,30rem). It is
             a real trade, not a free one: this banner is 3.3:1 and `object-cover`
             sizes it to the box HEIGHT, so a taller hero shows LESS of the
@@ -222,7 +228,7 @@ export function Hero({
             `xl` lift below are ONE breakpoint in four places: the banner must
             be full-bleed, tall, and cleared at exactly the widths where the
             console straddles it. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi4 lg:px-10 xl:min-h-[clamp(30rem,82vh,46rem)] xl:pb-[var(--rj-console-clear)]">
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi3 lg:px-10 xl:min-h-[clamp(24rem,60vh,36rem)] xl:pb-[var(--rj-console-clear)]">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
@@ -236,8 +242,14 @@ export function Hero({
               What makes the wider measure safe is the plate itself: the copy no
               longer depends on the wash reaching it, so it is free to run past
               where the wash gives out. */}
+          {/* ⚠️ `p-phi3` at every width now, not `sm:p-phi4` — half of the
+              2026-08-17 zoom-out. The report also called the card "slightly
+              oversized", and on this content-sized section every pixel the
+              card gives up comes back as banner width. The 42rem measure is
+              untouched for the reason recorded above: narrowing it makes the
+              copy TALLER, which is the expensive direction. */}
           <div
-            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 text-center sm:p-phi4 sm:text-left"
+            className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 text-center sm:text-left"
             /* The banner is light everywhere the copy sits, so the plate can go
                a long way down before the ink is in trouble — and the white halo
                is what carries it the rest of the way. */
@@ -306,19 +318,19 @@ export function Hero({
                 anchor is inline — stretching the BOX does not centre the label
                 inside it, and a full-width button with its text against the
                 left edge is worse than the narrow pill was. */}
-            <div className="mt-phi4 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <div className="mt-phi3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               {/* Ink, not red. The header already carries the one filled red
                   control this view is allowed; a second would spend the accent. */}
               <Link
                 href="/properties"
-                className="rounded-full bg-ink px-7 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-charcoal hover:shadow-raise"
+                className="rounded-full bg-ink px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-charcoal hover:shadow-raise"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 See available plots
               </Link>
               <Link
                 href="/contact"
-                className="rounded-full border border-ink/20 bg-canvas/70 px-7 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas"
+                className="rounded-full border border-ink/20 bg-canvas/70 px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 Book a site visit

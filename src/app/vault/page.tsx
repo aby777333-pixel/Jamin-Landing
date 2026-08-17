@@ -381,53 +381,39 @@ export default async function VaultPage() {
               {hero.lead ?? VAULT_FALLBACK.hero.lead}
             </p>
 
-            {/* 🚨 SIX WAYS IN, RANKED — reported 2026-08-14 as "the four
-                secondary options appear only as simple text links" and the
-                section reading as too plain. They were `rj-underline` links in
-                a wrapped row, which is the right treatment for a line of prose
-                and the wrong one for the four things this page most wants a
-                visitor to do. Now there are two tiers and both are controls:
-                two full-width primaries, then a bordered group of four rows.
+            {/* 🚨 SIX WAYS IN, AS A 2×3 GRID — reported 2026-08-17: the six
+                CTAs stacked as a single column made the hero nearly two
+                scrolls tall, and the report asks for "2 in a row (2×3 grid)"
+                with the button text CENTRED. The two-tier ranking survives the
+                re-flow: the first ROW is the two primaries (filled `jamin-red`
+                buy, `champagne-300` outline rent) and the remaining four keep
+                the quieter `champagne-500/30` hairline treatment — same tiers,
+                a third of the height.
 
-                ⚠️ NO NEW COLOUR — the mockup added icons and this does not,
-                which the report explicitly allows ("icons are optional but the
-                design"). Every value here already existed on this page: filled
-                `jamin-red` for buy, a `champagne-300` outline for rent, and the
-                secondary group is `champagne-500/30` hairlines over the plate
-                with `white/5` on hover. That is the whole of the dark/gold/red
-                theme the report asks to keep, and nothing else was reached for.
+                ⚠️ NO NEW COLOUR — every value here already existed on this
+                page, which is the same restraint the 2026-08-14 pass held to.
 
-                ⚠️ The arrows sit in their own `<span aria-hidden>` and move on
-                hover. They are decoration: each row's label already says where
-                it goes, and a screen reader reading "arrow" six times in a
-                column of six links is noise. */}
-            <div className="mt-phi4 flex flex-col gap-3">
+                ⚠️ The arrows are GONE with the centring, not overlooked: a
+                centred label with a right-pinned arrow reads as mis-set, an
+                inline arrow un-centres the text it sits after, and each label
+                already says where it goes.
+
+                ⚠️ Below `sm` the grid collapses back to one column — six
+                half-width tap targets at 375px would be under the 44px
+                minimum this site keeps to. */}
+            <div className="mt-phi4 grid gap-3 sm:grid-cols-2">
               <Link
                 href="/vault/request?intent=buy"
-                className="group flex items-center justify-between gap-4 rounded-full bg-jamin-red px-7 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+                className="rounded-full bg-jamin-red px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
               >
-                <span>I want to buy</span>
-                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-                  &rarr;
-                </span>
+                I want to buy
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="group flex items-center justify-between gap-4 rounded-full border border-champagne-300 px-7 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="rounded-full border border-champagne-300 px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
               >
-                <span>I want to rent</span>
-                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
-                  &rarr;
-                </span>
+                I want to rent
               </Link>
-            </div>
-
-            {/* One bordered group rather than four bordered rows: the divider
-                between them is a single hairline, so the set reads as one
-                control surface and not as four competing buttons under two
-                real ones. `divide-y` draws it between children only, which is
-                what keeps the group's own rounded corners clean. */}
-            <div className="mt-phi2 divide-y divide-champagne-500/20 overflow-hidden rounded-xl border border-champagne-500/30">
               {[
                 { href: "/vault/offer?intent=sell", label: "I want to sell", tone: "text-white/80" },
                 {
@@ -437,7 +423,7 @@ export default async function VaultPage() {
                 },
                 {
                   href: "/vault/request?intent=codevelop",
-                  label: "I want to co-develop a property",
+                  label: "I want to co-develop",
                   tone: "text-white/80",
                 },
                 { href: "#desks", label: "Speak privately to The Vault", tone: "text-champagne-300" },
@@ -445,15 +431,9 @@ export default async function VaultPage() {
                 <Link
                   key={r.href}
                   href={r.href}
-                  className={`group flex items-center justify-between gap-4 px-phi3 py-3 text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
+                  className={`rounded-full border border-champagne-500/30 px-5 py-3 text-center text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
                 >
-                  <span>{r.label}</span>
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  >
-                    &rarr;
-                  </span>
+                  {r.label}
                 </Link>
               ))}
             </div>

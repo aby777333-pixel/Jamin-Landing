@@ -49,11 +49,19 @@ export const dynamicParams = false;
  * a backhoe, a roller — where 34/35/36 are a finished ceremonial gateway, and
  * they are NOT from that shoot, so `SHEER_ALPHA` below was re-swept against them
  * rather than inherited. 34 and 36 return to the spare pile.
+ *
+ * ⚠️ 2026-08-17: Salem and Tiruppur moved to hero-44/45 — MIRRORED cuts of
+ * 35/39 with the text-bearing regions restored, because both sources bake the
+ * JAMIN BAZAAR board into the LEFT of the frame, directly under the copy
+ * plate. The owner's report asked for text left, board right, with a clear
+ * gap, and the frames are width-bound in the hero box, so no `artPosition`
+ * could move the board a single pixel. See the register entry in
+ * public/hero/README.md; 35 and 39 stay on disk as the un-mirrored sources.
  */
 const ART_BY_DISTRICT: Record<string, HeroArt> = {
   erode: 38,
-  salem: 35,
-  tiruppur: 39,
+  salem: 44,
+  tiruppur: 45,
 };
 const DEFAULT_ART: HeroArt = 17;
 
@@ -99,6 +107,13 @@ const DEFAULT_ART: HeroArt = 17;
  * rule this codebase normally follows, and it survives the swap for the same
  * reason it was granted: they measure within 0.3 of each other at every step,
  * and the number satisfies the tightest of them.
+ *
+ * ⚠️ RE-CHECKED FOR THE 2026-08-17 MIRRORS (44/45), because a mirror changes
+ * which pixels sit under the plate — the pair rule again. By the comparative
+ * method (same assumed geometry, original against mirror, worst pixel and p95
+ * at 1024 and 1280): hero-44 reads within 0.02 of the audited hero-35 at every
+ * step, and hero-45 within 0.11/0.25 of hero-39 — inside the 0.3 spread this
+ * entry already accepts across the set. 0.52 stands.
  */
 const SHEER_ALPHA = 0.52;
 
@@ -170,6 +185,11 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
         size="tall"
         sheer
         sheerAlpha={ART_BY_DISTRICT[district] ? SHEER_ALPHA : 0.12}
+        /* 38rem (2026-08-17) — the report asked for a clear gap between the
+           copy and the entrance board now on the RIGHT of 44/45. District
+           headlines are the shortest on the site, so the narrow cap costs no
+           line breaks, and every rem it gives back is gap. */
+        plateXl="38rem"
         eyebrow={`${name} district`}
         title={`Jamin plots in ${name}`}
         lead={

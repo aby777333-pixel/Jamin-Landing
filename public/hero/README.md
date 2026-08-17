@@ -1017,6 +1017,43 @@ optimised output by source path, so overwriting purpose-1857.webp would let a
 warm build keep serving the old picture from a deploy that looks correct. Same
 trap recorded against hero-27. purpose-1857 is left in place, unused.
 
+## hero-44 -> /locations/salem · hero-45 -> /locations/tiruppur (2026-08-17)
+
+MIRRORED cuts of hero-35 and hero-39, made for the owner's report asking for
+"text left, entrance board right, with a clear gap" on the district heroes.
+Both source frames bake the JAMIN BAZAAR board into the LEFT of the picture —
+exactly where the cinematic copy plate sits — and both are width-bound in the
+hero box at every desktop width, so `object-position` has ZERO horizontal
+travel: no CSS could move the board a pixel. The hero-28 mirror precedent
+almost applied, except that these frames carry readable text, which a plain
+flip reverses.
+
+So the flip is done with the text put back:
+
+- **hero-44** (from hero-35, 1774x887): the sign panel (logo + wordmark +
+  "signature for Fortune") is restored by a feathered rect re-flip; the
+  "PLOT 118 - 125" plaque is at a real angle, so its original quad is
+  perspective-warped onto the mirrored quad (a rect re-flip left sloped ghost
+  text); the small yellow "118" kerb marker is a tiny rect re-flip.
+- **hero-45** (from hero-39, 1881x836): one feathered rect re-flip around the
+  lockup on the timber wall. The horizontal wood grain hides the seam.
+
+WARNING: `SHEER_ALPHA` was re-checked, not inherited — a mirror changes what
+sits under the plate, which is the pair rule. By the comparative method this
+file allows (same assumed geometry, original vs mirror): hero-44 within 0.02
+of the audited hero-35 at every step; hero-45 within 0.11 at the worst pixel
+and 0.25 at p95 of hero-39 — inside the 0.3 spread the district entry already
+accepts. 0.52 stands.
+
+WARNING: regenerate from the hero-35/39 renditions with the scripts recorded
+in the session that made them, never by flipping alone — a plain flip mirrors
+the wordmark, the plaque and the marker. 35 and 39 stay on disk as sources
+(35 was live on Salem until this change; 39 on Tiruppur).
+
+The plate no longer covers the board on either page, which also retires the
+"the sign reads through the sheer plate" note as the thing making the overlap
+acceptable — there is no overlap left to excuse.
+
 ## hero-43 -> /journal (2026-08-15), and the lightest plate on the site
 
 Owner-supplied, replacing hero-41 the day after it shipped. Untrimmed — the only

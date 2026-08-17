@@ -28,7 +28,7 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -65,6 +65,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   41: 887,
   /* hero-43 — /journal from 2026-08-15. Owner-supplied, no trim. */
   43: 879,
+  /* hero-44/45 — MIRRORED cuts of 35/39; same dimensions as their sources. */
+  44: 887,
+  45: 836,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -197,6 +200,20 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      ⚠️ It names itself on the board, so the no-caption rule binds as it does on
      19 and 21. */
   43: 1790,
+  /* hero-44 (Salem) / hero-45 (Tiruppur) — MIRRORED cuts of hero-35 and
+     hero-39 (2026-08-17), made because the JAMIN BAZAAR board is baked into
+     the LEFT of both source frames, exactly where the copy plate sits — the
+     owner's report asked for text left, board right, with a clear gap, and no
+     `artPosition` can move a baked element (the frames are width-bound in the
+     hero box, so there is no horizontal slack at all).
+     ⚠️ NOT plain flips. Both frames carry readable text — the lockup, and on
+     35 the PLOT plaque and a kerb marker — so the flip would mirror it. The
+     text-bearing regions are restored in the export: rect re-flips for the
+     sign panel and marker, a perspective quad-warp for 35's angled plaque.
+     Regenerate from public/hero's own 35/39 renditions with the script in the
+     register entry, never by flipping alone. See public/hero/README.md. */
+  44: 1774,
+  45: 1881,
 };
 
 function artSrc(n: HeroArt) {
@@ -249,7 +266,9 @@ export function PageHero({
   /** Small factual line under the copy — counts, never claims. */
   meta?: ReactNode;
   priority?: boolean;
-  size?: "standard" | "tall";
+  /** `full` fills most of a desktop viewport — asked for on /properties
+   *  (2026-08-17, "hero does not fill the expected viewport height"). */
+  size?: "standard" | "tall" | "full";
   tone?: "paper" | "cinematic";
   /** ⚠️ A far more see-through plate, for frames where the picture is the
    *  point. It is NOT free: it needs white copy and a heavy blur to hold AA —
@@ -379,17 +398,22 @@ export function PageHero({
             — the optical centre of a block of type sits slightly above the
             geometric one, so a little more room below keeps it from reading
             low. */}
-        {/* ⚠️ The `min-h` is `lg:` only now. It exists to give a full-bleed
-            photograph room to be a photograph; below `lg` there is no
-            photograph behind this block, so a forced 48vh box would just be
-            empty charcoal under three lines of type. The vertical rhythm on a
-            phone is now the same `py-phi5` every other section on the site
-            opens with, which is half of what the second report asked for. */}
+        {/* ⚠️ The `min-h` is `xl:` now, and the breakpoint is the FIX, not a
+            taste change. It exists to give a full-bleed photograph room to be
+            a photograph — and the photograph is only full-bleed from `xl`,
+            where the wrapper above goes absolute. It used to be `lg:`, which
+            left 1024–1279 with the band-then-copy structure PLUS a 26rem+
+            box under it: a screen of bare charcoal below three lines of type,
+            reported 2026-08-17 as "large white space appears below the hero".
+            Below `xl` the vertical rhythm is now the same `py-phi5` every
+            other section opens with, exactly as it already was below `lg`. */}
         <Container
           className={`relative flex flex-col justify-center py-phi5 ${
-            size === "tall"
-              ? "lg:min-h-[clamp(26rem,64vh,38rem)] lg:pb-phi7 lg:pt-phi6"
-              : "lg:min-h-[clamp(20rem,48vh,30rem)] lg:pb-phi6 lg:pt-phi5"
+            size === "full"
+              ? "xl:min-h-[clamp(30rem,85vh,52rem)] xl:pb-phi7 xl:pt-phi6"
+              : size === "tall"
+                ? "xl:min-h-[clamp(26rem,64vh,38rem)] xl:pb-phi7 xl:pt-phi6"
+                : "xl:min-h-[clamp(20rem,48vh,30rem)] xl:pb-phi6 xl:pt-phi5"
           }`}
         >
           {/* The measure opens up on a wide screen. At 42rem a headline like
