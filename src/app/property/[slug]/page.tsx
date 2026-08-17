@@ -639,11 +639,17 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                corner, beside the verify-with-the-authority line, where it
                reads as the closing press of the record instead of crowding
                the heading. */
-            <div data-theme="vault" className="relative overflow-hidden rounded-xl bg-canvas px-phi4 pb-phi4 pt-phi3">
-              <div className="rj-royal-rule absolute inset-x-0 top-0" aria-hidden="true" />
+            <div data-theme="vault" className="relative overflow-hidden rounded-xl bg-canvas">
+              {/* In FLOW at the very top — the absolute version left a sliver
+                  of ground showing through its gap band ("still the spacing is
+                  not right"); as the first flow child the rule sits tight on
+                  the box's clipped top edge with the padding starting under
+                  it, not around it. */}
+              <div className="rj-royal-rule" aria-hidden="true" />
               <span className="rj-wax absolute bottom-5 right-5 hidden sm:flex" aria-hidden="true">
                 <SurveyIcon name="stamp" className="h-8 w-8" />
               </span>
+              <div className="px-phi4 pb-phi4 pt-phi3">
             <Block
               id="legal"
               title="Approvals & documents"
@@ -689,6 +695,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 current position with the issuing authority before you commit to a purchase.
               </p>
             </Block>
+              </div>
             </div>
           )}
 
@@ -1021,7 +1028,9 @@ const PRINTED_SHEET: Record<string, { src: string; width: number; height: number
      2026-08-17 late ("not this printed… this one") over the branded DTCP
      card shipped an hour earlier. The DTCP card renditions stay on disk at
      /plan/edappadi-sheet-* for a one-line swap back. */
-  "jamin-new-project-jul-2026": { src: "/plan/edappadi-illustrated-1055.webp", width: 1055, height: 1491 },
+  /* v2 (22:28): the corrected 61-unit sheet — plots and totals now agree
+     with the record. New filename per the next/image cache rule. */
+  "jamin-new-project-jul-2026": { src: "/plan/edappadi-illustrated-2-1055.webp", width: 1055, height: 1491 },
 };
 
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {

@@ -74,7 +74,7 @@ export function ThumbIndex({
                every tab is the same fixed width (`w-11 justify-center`) so the
                column aligns; and the label sets in full ink at 600 with
                breathing room, never the faint. */
-            className={`rj-deboss flex w-11 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 py-4 font-semibold text-micro uppercase tracking-brand transition-all hover:w-12 ${
+            className={`rj-deboss flex w-12 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 py-6 font-semibold text-micro uppercase tracking-brand transition-all hover:w-[3.25rem] ${
               active ? "text-ink" : "text-ink-soft hover:text-ink"
             }`}
             style={{

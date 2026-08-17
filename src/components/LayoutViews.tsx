@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { LayoutRelief } from "@/components/LayoutRelief";
 import { MasterPlan, PlanParticulars } from "@/components/MasterPlan";
 import { PlotSchedule } from "@/components/PlotSchedule";
@@ -84,6 +85,9 @@ export function LayoutViews({
    * the plan are never unit-converted.
    */
   const [unit, setUnit] = useState<Unit>("ft");
+  /** The printed sheet's lightbox (owner 2026-08-17: "add a click to pop
+   *  up, and close button"). */
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   /** Only worth offering where a stored metre figure actually appears. */
   const hasMetricFigures =
@@ -157,22 +161,60 @@ export function LayoutViews({
       )}
 
       {view === "sheet" && sheet ? (
-        /* The sheet as issued — pinch/scroll zoom via the browser's own image
-           behaviours inside a scrollable frame; ZoomableImage would portal a
-           lightbox, but a drawing wants to stay in the flow beside its
-           controls. */
-        <div className="overflow-auto rounded-xl border border-line bg-canvas" style={{ maxHeight: "min(78vh, 900px)" }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={sheet.src}
-            width={sheet.width}
-            height={sheet.height}
-            alt={`${title} — the sanctioned layout drawing as issued`}
-            className="h-auto w-full"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
+        <>
+          {/* Click to open the lightbox; the inline frame stays scrollable for
+              readers who never click. */}
+          <button
+            type="button"
+            onClick={() => setSheetOpen(true)}
+            aria-haspopup="dialog"
+            className="block w-full cursor-zoom-in overflow-auto rounded-xl border border-line bg-canvas text-left"
+            style={{ maxHeight: "min(78vh, 900px)" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={sheet.src}
+              width={sheet.width}
+              height={sheet.height}
+              alt={`${title} — the sanctioned layout drawing as issued`}
+              className="h-auto w-full"
+              loading="lazy"
+              decoding="async"
+            />
+          </button>
+          {/* ⚠️ PORTALLED to <body> — body > main is a stacking context, so an
+              overlay left inside it paints UNDER the sticky header. Same
+              lesson as the plot sheet and the gallery lightbox. */}
+          {sheetOpen &&
+            createPortal(
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={`${title} — layout drawing`}
+                className="fixed inset-0 z-[60] flex items-start justify-center overflow-auto bg-ink/85 p-4 backdrop-blur-sm"
+                onClick={() => setSheetOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSheetOpen(false)}
+                  aria-label="Close the drawing"
+                  className="fixed right-4 top-4 z-[61] flex h-11 w-11 items-center justify-center rounded-full bg-cta text-xl text-white shadow-raise transition-transform hover:scale-105"
+                >
+                  ×
+                </button>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={sheet.src}
+                  width={sheet.width}
+                  height={sheet.height}
+                  alt=""
+                  className="my-auto h-auto w-auto max-w-none cursor-zoom-out rounded-lg"
+                  style={{ maxHeight: "none", width: "min(96vw, 1055px)" }}
+                />
+              </div>,
+              document.body,
+            )}
+        </>
       ) : view === "plan" && plan ? (
         <MasterPlan plots={plots} plan={plan} title={title} unit={unit} />
       ) : view === "relief" && plan ? (

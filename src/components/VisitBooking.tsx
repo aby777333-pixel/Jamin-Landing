@@ -52,32 +52,34 @@ const SLOTS = [
     label: "Morning · 9–11 am",
     hour: 9,
     part: "morning",
-    /* First light: the palest warm the site has. */
-    tint: "border-jamin-gold/25 bg-jamin-gold-soft text-ink-soft hover:bg-jamin-gold/12 hover:ring-1 hover:ring-jamin-gold/40",
+    /* First light: gold, at full wash — the regrade flattened the old /25
+       steps into near-identical beige (owner 2026-08-17: "colorize
+       everywhere"), so each daypart now wears its colour plainly. */
+    tint: "border-jamin-gold bg-jamin-gold-soft text-jamin-gold-ink hover:ring-1 hover:ring-jamin-gold",
     mark: "text-jamin-gold-ink",
   },
   {
     label: "Midday · 11 am–1 pm",
     hour: 11,
     part: "midday",
-    /* Overhead — the brightest step, and the only one that uses the fill gold. */
-    tint: "border-jamin-gold/40 bg-jamin-gold/14 text-ink-soft hover:bg-jamin-gold/22 hover:ring-1 hover:ring-jamin-gold/55",
-    mark: "text-jamin-gold-ink",
+    /* Overhead — the peak of the day takes the signal red wash. */
+    tint: "border-jamin-red-deep/40 bg-jamin-red-soft text-jamin-red-deep hover:ring-1 hover:ring-jamin-red-deep",
+    mark: "text-jamin-red-deep",
   },
   {
     label: "Afternoon · 2–4 pm",
     hour: 14,
     part: "afternoon",
-    /* The heat lying flat: earth, the palette's sand. */
-    tint: "border-earth/28 bg-earth/10 text-ink-soft hover:bg-earth/16 hover:ring-1 hover:ring-earth/40",
-    mark: "text-earth",
+    /* The heat lying flat: bronze, a step deeper than the morning. */
+    tint: "border-jamin-gold bg-jamin-gold/25 text-jamin-gold-ink hover:ring-1 hover:ring-jamin-gold-ink",
+    mark: "text-jamin-gold-ink",
   },
   {
     label: "Evening · 4–6 pm",
     hour: 16,
     part: "evening",
-    /* Cooling off: canopy, the one green in the set. */
-    tint: "border-canopy/25 bg-canopy-soft text-ink-soft hover:bg-canopy/12 hover:ring-1 hover:ring-canopy/40",
+    /* Cooling off: the teal, the day resolving. */
+    tint: "border-canopy/40 bg-canopy-soft text-canopy hover:ring-1 hover:ring-canopy",
     mark: "text-canopy",
   },
 ] as const;

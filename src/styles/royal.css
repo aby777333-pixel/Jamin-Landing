@@ -2448,3 +2448,40 @@ header .glass,
   mix-blend-mode: normal;
   opacity: 0.94;
 }
+
+/* ⚠️ DARK MODE'S LIGHT-PLATE INVERSION (owner 2026-08-17: "in dark mode some
+   text are distorted") — the paper-tone hero plates are LIGHT surfaces built
+   for ink type, and the carbon scope flips the ink to bone without flipping
+   the plate: bone on a light sheer plate, under a LIGHT halo, is the glow
+   that was reported. In dark mode the light plates become dark plates, the
+   ink halo becomes a shadow, and the ink-filled buttons swap their label to
+   carbon so bone-on-bone never occurs. Specificity beats the originals
+   (attribute + class); the media query mirrors the original's breakpoint. */
+[data-mode="dark"] .gilt-light {
+  background: rgba(24, 20, 16, 0.85);
+  border-color: rgba(180, 137, 97, 0.4);
+}
+[data-mode="dark"] .rj-gilt-light-sheer {
+  background: rgba(24, 20, 16, var(--rj-sheer-alpha-narrow, 0.78));
+}
+@media (min-width: 1440px) {
+  [data-mode="dark"] .rj-gilt-light-sheer {
+    background: rgba(24, 20, 16, var(--rj-sheer-alpha, 0.4));
+  }
+}
+[data-mode="dark"] .rj-sheer-copy-ink,
+[data-mode="dark"] .rj-sheer-copy-ink h1,
+[data-mode="dark"] .rj-sheer-copy-ink p,
+[data-mode="dark"] .rj-sheer-copy-ink div,
+[data-mode="dark"] .rj-sheer-copy-ink span,
+[data-mode="dark"] .rj-sheer-copy-ink a {
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.85),
+    0 2px 12px rgba(0, 0, 0, 0.6),
+    0 0 28px rgba(0, 0, 0, 0.4);
+}
+/* An ink-filled control keeps its INVERSE in the dark: the ground flips to
+   bone via the token, so the label flips to carbon with it. */
+[data-mode="dark"] .bg-ink {
+  color: var(--color-onyx-800);
+}
