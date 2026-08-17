@@ -118,8 +118,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
   /* §6.1: 0.11em rather than the 0.14em this carried before — the gem dot now
      opens each tab, and the wider tracking pushed the label far enough from its
      own dot that the two stopped reading as one object. */
+  /* ⚠️ `text-[0.7rem]` (owner 2026-08-17: "check the proportions, minimize
+     the text") — one step below text-tiny (0.786rem) without falling to
+     micro (0.618rem, too small for a primary nav). The smaller labels also
+     buy back width the 1280px row needs. */
   const trigger =
-    "group relative inline-flex items-center gap-2 text-tiny font-medium uppercase tracking-[0.11em] text-ink-soft transition-colors hover:text-ink";
+    "group relative inline-flex items-center gap-2 text-[0.7rem] font-medium uppercase tracking-[0.11em] text-ink-soft transition-colors hover:text-ink";
 
   return (
     /* ⚠️ The mouse-leave lives on the HEADER, not on the nav bar inside it.
@@ -151,7 +155,11 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
       }`}
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
-      <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-4 lg:px-10">
+      {/* `gap-8` (owner 2026-08-17: "the logo is still touching the home
+          symbol") — justify-between spaces logo and nav only with the width
+          left over, and at xl exactly there is none. The gap is the FLOOR:
+          32px of air between the lozenge and HOME at every width. */}
+      <div className="mx-auto flex max-w-[1280px] items-center justify-between gap-8 px-5 py-4 lg:px-10">
         {/* ⚠️ `flex-col` and `items-start`, where this was a plain row. The
             lockup gained a rule beneath it (see `.rj-lockup-rule`) which has to
             sit under the image rather than beside it, and the column must not
@@ -182,7 +190,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <Cartouche compact={deep} />
         </Link>
 
-        <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">
+        {/* ⚠️ `gap-4` until 2xl — the row's 32px logo-to-nav floor (above) has
+            to come from somewhere at exactly 1280px, and it comes from here:
+            tighter item gaps at xl, the old gap-6 back once the viewport pays
+            for it. Without this the nav overflowed the viewport by ~47px at
+            1280 and the page grew a horizontal scrollbar. */}
+        <nav className="hidden items-center gap-4 xl:flex 2xl:gap-6" aria-label="Primary">
           {/* The wordmark has always linked home and carries an aria-label
               saying so, but a tester on the sign-in page could not find a way
               back — a convention only helps the people who already know it. */}

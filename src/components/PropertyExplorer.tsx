@@ -12,6 +12,7 @@ import {
   formatArea,
   formatPrice,
   isSellable,
+  locationLine,
   phaseLabel,
   propertyHref,
   type Property,
@@ -140,23 +141,22 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     set({ compare: next });
   }
 
-  /* "Pick one more" DOES something now (owner 2026-08-17: "pick another one
-     is not working") — with one property in the tray it used to be a
-     pointer-events-none link styled like a CTA, a button that ate the click.
-     It now returns the visitor to the top of the listings to pick the second
-     property. Offset by `--header-h`, read not hard-coded, the same pattern
-     VisitBooking uses; smooth unless the visitor prefers reduced motion. */
-  function pickAnother() {
-    const el = boxRef.current;
-    if (!el) return;
-    const headerH =
-      parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-      ) || 72;
-    const top = el.getBoundingClientRect().top + window.scrollY - headerH - 16;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
-  }
+  /* "Pick one more" OFFERS THE OTHER PROJECTS (owner 2026-08-17, second
+     report: "it should give other projects to pick") — the first fix scrolled
+     back to the listings, which still made the visitor do the finding. The
+     button now opens a picker right above the tray listing every development
+     not yet in the comparison; one tap adds it. Closes on pick, on re-tap,
+     and on any press outside it. */
+  const [pickOpen, setPickOpen] = useState(false);
+  const pickRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!pickOpen) return;
+    const close = (e: PointerEvent) => {
+      if (pickRef.current && !pickRef.current.contains(e.target as Node)) setPickOpen(false);
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, [pickOpen]);
 
   /* ⚠️ `inline-flex`, so each chip can carry the same 6px gem the nav tabs do.
      The filters ARE tabs — they select a district or a stage, which is exactly
@@ -584,13 +584,57 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             ) : (
               /* A real button in gold guidance dress, not a dead link — the
                  gold says "next step", the red above says "go". */
-              <button
-                type="button"
-                onClick={pickAnother}
-                className="rounded-full border border-jamin-gold bg-jamin-gold-soft/70 px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-all hover:bg-jamin-gold/25"
-              >
-                Pick one more
-              </button>
+              <div ref={pickRef} className="relative">
+                <button
+                  type="button"
+                  aria-expanded={pickOpen}
+                  aria-haspopup="true"
+                  onClick={() => setPickOpen((v) => !v)}
+                  className="rounded-full border border-jamin-gold bg-jamin-gold-soft/70 px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-all hover:bg-jamin-gold/25"
+                >
+                  Pick one more
+                </button>
+                {pickOpen && (
+                  <div className="absolute bottom-[calc(100%+0.5rem)] right-0 z-40 max-h-80 w-80 max-w-[calc(100vw-2.5rem)] overflow-y-auto rounded-card border border-line bg-canvas p-2 shadow-raise">
+                    <p className="px-3 pb-1.5 pt-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+                      Add to the comparison
+                    </p>
+                    {all
+                      .filter((p) => !compared.includes(p.id))
+                      .map((p) => {
+                        const stone = DISTRICT_STONE[p.district ?? ""] ?? STONE_FALLBACK;
+                        return (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              toggleCompare(p.id);
+                              setPickOpen(false);
+                            }}
+                            className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors"
+                            style={
+                              {
+                                "--rj-stone": stone,
+                                background: `color-mix(in srgb, ${stone} 8%, transparent)`,
+                                marginTop: 4,
+                              } as React.CSSProperties
+                            }
+                          >
+                            <span className="rj-dot is-on shrink-0" aria-hidden="true" />
+                            <span className="min-w-0">
+                              <span className="block truncate text-tiny font-medium text-ink">
+                                {p.title}
+                              </span>
+                              <span className="block truncate text-micro uppercase tracking-[0.1em] text-ink-faint">
+                                {locationLine(p)}
+                              </span>
+                            </span>
+                          </button>
+                        );
+                      })}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </div>

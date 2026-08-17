@@ -31,7 +31,9 @@ export function Cartouche({ compact = false }: { compact?: boolean }) {
         className="inline-flex shrink-0 items-center bg-cta"
         style={{
           borderRadius: "999px 999px 8px 999px",
-          padding: compact ? "5px 14px 5px 8px" : "8px 20px 8px 12px",
+          /* Right pad trimmed 20→14 (owner 2026-08-17: crowding HOME) — the
+             width gives, the 72px presence stays. */
+          padding: compact ? "5px 14px 5px 8px" : "8px 14px 8px 10px",
           height: compact ? 48 : 72,
           boxShadow: "0 10px 26px -14px rgba(201, 2, 2, 0.42)",
           transition: "all 220ms var(--ease-silk)",

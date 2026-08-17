@@ -74,16 +74,30 @@ export function ThumbIndex({
                every tab is the same fixed width (`w-11 justify-center`) so the
                column aligns; and the label sets in full ink at 600 with
                breathing room, never the faint. */
-            className={`rj-deboss flex w-12 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 py-6 font-semibold text-micro uppercase tracking-brand transition-all hover:w-[3.25rem] ${
+            /* ⚠️ CLEANED 2026-08-17 latest — reported: "the text touches the
+               border", and the cause is a TRAP: Tailwind 4's `py-*` is
+               `padding-block`, and in a `vertical-rl` element the block axis
+               runs HORIZONTALLY — the old `py-6` was silently padding the
+               tab's sides (24px each into a 48px fixed width, overflowing it)
+               while the label's ends sat 1px off the rounded corners. The
+               padding is now a PHYSICAL inline style, which no writing mode
+               remaps: 24px at the label's ends, 6px against the stone
+               edge-bar, 12px on the far side (padding and bar rotate
+               together, so they stay adjacent). `w-14` gives the glyph column
+               air on both long edges, and the border's stone mix comes up
+               45→60% so the edge draws cleanly over any photograph. NEVER put
+               a px/py utility back on this element. */
+            className={`rj-deboss flex w-14 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 font-semibold text-micro uppercase tracking-brand transition-all hover:w-[3.75rem] ${
               active ? "text-ink" : "text-ink-soft hover:text-ink"
             }`}
             style={{
               writingMode: "vertical-rl",
               rotate: "180deg",
+              padding: "24px 12px 24px 6px",
               background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, var(--color-canvas))`,
               backdropFilter: "blur(8px)",
               boxShadow: `inset 3px 0 0 0 ${stone}, 0 6px 18px -8px rgba(41,31,21,0.35)`,
-              borderColor: `color-mix(in srgb, ${stone} 45%, var(--color-line))`,
+              borderColor: `color-mix(in srgb, ${stone} 60%, var(--color-line))`,
             }}
           >
             {d}
