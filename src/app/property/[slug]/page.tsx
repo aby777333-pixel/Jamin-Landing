@@ -633,12 +633,15 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               scope; every ink, hairline and glyph flips with it, including
               the two cadastral components this file does not own. */}
           {(legal.length > 0 || downloads.length > 0 || p.rera_number) && (
-            <div data-theme="vault" className="relative overflow-hidden rounded-xl bg-canvas p-phi4">
-              {/* Gilded Register §2 + §4: the certificate rule crowns the
-                  vault band, and the registrar's wax seal presses its corner
-                  — the one place the two metals meet. Both decoration. */}
+            /* ⚠️ Spacing re-tuned 2026-08-17 late (owner: "spacing is not
+               right") — the band's inner top drops a step (pt-phi3, the rule
+               riding flush above it) and the wax seal moves to the FOOT
+               corner, beside the verify-with-the-authority line, where it
+               reads as the closing press of the record instead of crowding
+               the heading. */
+            <div data-theme="vault" className="relative overflow-hidden rounded-xl bg-canvas px-phi4 pb-phi4 pt-phi3">
               <div className="rj-royal-rule absolute inset-x-0 top-0" aria-hidden="true" />
-              <span className="rj-wax absolute right-6 top-6 hidden sm:flex" aria-hidden="true">
+              <span className="rj-wax absolute bottom-5 right-5 hidden sm:flex" aria-hidden="true">
                 <SurveyIcon name="stamp" className="h-8 w-8" />
               </span>
             <Block
@@ -1014,7 +1017,11 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  *  drawing as issued, per project, for LayoutViews' "Printed sheet" view.
  *  Only Edappadi has one today; a missing entry hides the view. */
 const PRINTED_SHEET: Record<string, { src: string; width: number; height: number }> = {
-  "jamin-new-project-jul-2026": { src: "/plan/edappadi-sheet-1260.webp", width: 1260, height: 1784 },
+  /* ⚠️ The ILLUSTRATED plan ("ne plot plan.png"), the owner's explicit pick
+     2026-08-17 late ("not this printed… this one") over the branded DTCP
+     card shipped an hour earlier. The DTCP card renditions stay on disk at
+     /plan/edappadi-sheet-* for a one-line swap back. */
+  "jamin-new-project-jul-2026": { src: "/plan/edappadi-illustrated-1055.webp", width: 1055, height: 1491 },
 };
 
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {

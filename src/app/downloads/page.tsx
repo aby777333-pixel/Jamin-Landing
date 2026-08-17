@@ -42,9 +42,11 @@ export default async function DownloadsPage() {
   return (
     <>
       <PageHero
-        /* hero-68 — JAMIN IMPERIAL ("Imperiel.png", owner-named 2026-08-17),
-           replacing the hero-7 skyline render. */
-        art={68}
+        /* hero-70 — the PARK AT DUSK (the re-supplied "Imperiel.png",
+           2026-08-17 22:15), replacing the Imperial gate of an hour earlier.
+           ⚠️ New id, not an overwrite: hero-68's renditions came from the
+           first file of the same name — the next/image cache rule. */
+        art={70}
         eyebrow="Brochures & plans"
         title="Read the paperwork before you talk to anyone."
         lead="Every brochure, sanctioned layout plan and approval document we publish, in one place. No form to fill in, no sign-in, and no agent's card attached to the file."
