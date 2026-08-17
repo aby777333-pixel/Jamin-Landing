@@ -50,17 +50,34 @@ export function NearbyGroups({ places }: { places: NearbyPlace[] }) {
       <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
         What&rsquo;s nearby
       </h3>
-      <div className="mt-phi3 space-y-phi3">
-        {ordered.map(([label, items]) => (
-          <section key={label}>
-            <div className="flex items-baseline gap-2 border-b border-line pb-1.5">
+      {/* ⚠️ DISCLOSURES, NOT SECTIONS (owner 2026-08-17: "make the what's
+          nearby dropdowns, with heading to be clicked"). Native <details>, so
+          the headings are keyboard-operable and screen-reader-announced with
+          no JavaScript, and a crawler still reads every place name. The
+          LARGEST group opens by default — the strongest fact about the
+          location shows itself; the rest are one click away with their counts
+          doing the advertising. */}
+      <div className="mt-phi3 space-y-phi2">
+        {ordered.map(([label, items], gi) => (
+          <details
+            key={label}
+            open={gi === 0}
+            className="group rounded-card border border-line bg-canvas-alt/60"
+          >
+            <summary className="flex cursor-pointer list-none items-baseline gap-2 px-phi2 py-2.5 [&::-webkit-details-marker]:hidden">
+              <span
+                aria-hidden="true"
+                className="self-center text-tiny text-jamin-red-deep transition-transform duration-300 group-open:rotate-90"
+              >
+                ▸
+              </span>
               <h4 className="ledger-label text-ink-muted">{label}</h4>
               {/* The count is the point of grouping: "School 13" is a fact
                   about the location that the flat list contained and never
                   stated. */}
               <span className="ledger text-micro text-ink-faint">{items.length}</span>
-            </div>
-            <ul className="mt-phi2 grid gap-2 sm:grid-cols-2">
+            </summary>
+            <ul className="grid gap-2 px-phi2 pb-phi2 sm:grid-cols-2">
               {items.map((n, i) => (
                 <li
                   key={`${label}-${i}`}
@@ -78,7 +95,7 @@ export function NearbyGroups({ places }: { places: NearbyPlace[] }) {
                 </li>
               ))}
             </ul>
-          </section>
+          </details>
         ))}
       </div>
     </div>

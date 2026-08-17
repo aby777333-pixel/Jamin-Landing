@@ -745,8 +745,8 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
   )}
 
   {plan.notes?.length ? (
-    <details className="mt-phi3 rounded-card border border-line bg-canvas-alt p-phi3">
-      <summary className="cursor-pointer text-base font-medium text-ink">
+    <details className="mt-phi3 rounded-card border border-jamin-gold bg-jamin-gold-soft/60 p-phi3">
+      <summary className="cursor-pointer text-base font-medium text-ink marker:text-jamin-red-deep">
         Conditions printed on the approved plan
       </summary>
       <ul className="mt-phi2 space-y-2">

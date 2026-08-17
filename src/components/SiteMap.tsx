@@ -155,6 +155,7 @@ export function SiteMap({
         <MapLink
           href={maps}
           label="Open in Maps"
+          stone="var(--color-cta)"
           note="Directions"
           tint="bg-jamin-red-soft text-jamin-red-deep"
           ring="hover:border-jamin-red/40"
@@ -168,6 +169,7 @@ export function SiteMap({
         <MapLink
           href={sat}
           label="Satellite"
+          stone="var(--color-graphite)"
           note="From above"
           tint="bg-canvas-sunken text-graphite"
           ring="hover:border-graphite/40"
@@ -183,6 +185,7 @@ export function SiteMap({
         <MapLink
           href={sv}
           label="Street View"
+          stone="var(--color-emerald)"
           note="Stand there"
           tint="bg-canopy-soft text-canopy"
           ring="hover:border-canopy/40"
@@ -197,6 +200,7 @@ export function SiteMap({
         <MapLink
           href={earth}
           label="Earth"
+          stone="var(--color-jamin-gold)"
           note="In 3D"
           tint="bg-jamin-gold-soft text-jamin-gold-ink"
           ring="hover:border-jamin-gold/60"
@@ -228,6 +232,7 @@ function MapLink({
   icon,
   tint,
   ring,
+  stone,
 }: {
   href: string;
   label: string;
@@ -235,14 +240,21 @@ function MapLink({
   icon: ReactNode;
   tint: string;
   ring: string;
+  /* Colorized rows (owner 2026-08-17): the pill wears a wash of its own
+     stone, mixed with transparent so it reads on any ground. */
+  stone: string;
 }) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex items-center gap-2.5 rounded-card border border-line bg-canvas px-3 py-2.5 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lift ${ring}`}
-      style={{ transitionTimingFunction: "var(--ease-silk)" }}
+      className={`group flex items-center gap-2.5 rounded-card border px-3 py-2.5 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lift ${ring}`}
+      style={{
+        transitionTimingFunction: "var(--ease-silk)",
+        borderColor: `color-mix(in srgb, ${stone} 36%, transparent)`,
+        background: `color-mix(in srgb, ${stone} 8%, transparent)`,
+      }}
     >
       <span
         aria-hidden="true"

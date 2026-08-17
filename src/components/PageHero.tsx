@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -84,6 +84,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   /* hero-65 JAMIN MONARCH · hero-66 the red elephant (/tools). */
   65: 941,
   66: 941,
+  /* hero-68 JAMIN IMPERIAL (/downloads) · hero-69 JAMIN GRAND (/projects). */
+  68: 941,
+  69: 1024,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -278,6 +281,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      its retint. Standing rule on both: alt="", aria-hidden, never a caption. */
   65: 1672,
   66: 1672,
+  /* hero-68 JAMIN IMPERIAL ("Imperiel.png") → /downloads, replacing the
+     hero-7 skyline. hero-69 JAMIN GRAND ("Grand.png", 1.5:1 — the TALLEST
+     cinematic frame in the register) → /projects, replacing the database
+     photograph at the owner's supply; the secondaryImage path stays live in
+     the page for a one-prop restore. Both named communities: the standing
+     rule at full strength. */
+  68: 1672,
+  69: 1536,
 };
 
 function artSrc(n: HeroArt) {

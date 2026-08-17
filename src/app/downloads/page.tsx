@@ -42,7 +42,9 @@ export default async function DownloadsPage() {
   return (
     <>
       <PageHero
-        art={7}
+        /* hero-68 — JAMIN IMPERIAL ("Imperiel.png", owner-named 2026-08-17),
+           replacing the hero-7 skyline render. */
+        art={68}
         eyebrow="Brochures & plans"
         title="Read the paperwork before you talk to anyone."
         lead="Every brochure, sanctioned layout plan and approval document we publish, in one place. No form to fill in, no sign-in, and no agent's card attached to the file."

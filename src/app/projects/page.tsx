@@ -6,6 +6,7 @@ import { Container, EmptyState, ButtonLink } from "@/components/ui";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, secondaryImage } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
+import { STAGE_STONE } from "@/lib/stones";
 
 export const revalidate = 3600;
 
@@ -40,16 +41,23 @@ export default async function ProjectsPage() {
   // project carries it — the second photograph, because the first is the card
   // cover in the grid below.
   const showcase = all.find((p) => secondaryImage(p));
+  // Kept live for the one-prop restore recorded on the PageHero call.
   const photo = showcase
     ? { src: secondaryImage(showcase)!, alt: `${showcase.title}, a Jamin development` }
     : undefined;
 
   return (
     <>
+      {/* ⚠️ hero-69 (JAMIN GRAND, owner-named 2026-08-17) REPLACES THE REAL
+          PHOTOGRAPH this page carried by rule — the owner supplied the frame
+          for this page, the hero-40 precedent standing for the third time. The
+          `photo`/`secondaryImage` path stays live below the fold and in code;
+          restoring it is re-adding one prop. The standing rule binds hard: a
+          named-community render on the projects index is alt="", aria-hidden,
+          never a caption. */}
       <PageHero
-        art={5}
-        photo={photo}
-        tone={photo ? "cinematic" : "paper"}
+        art={69}
+        tone="cinematic"
         /* ⚠️ SHEER, at the owner's request 2026-08-12: "make the bg card see
            through transparent". Two things change and the second one is doing
            most of the work — `gilt` is 0.52 near-black WITH a 14px backdrop
@@ -76,7 +84,10 @@ export default async function ProjectsPage() {
            a backdrop-filter draws a hard frosted edge at the plate boundary,
            which is the artefact that got it removed in the first place. */
         sheer
-        sheerAlpha={0.34}
+        /* 0.58 for hero-69 — the bright Grand render, the same figure every
+           daylight frame in the set now carries; the 0.34 note above described
+           the swapped-out photograph. */
+        sheerAlpha={0.58}
         eyebrow="Plotted developments"
         title="Every Jamin project, by stage"
         lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."
@@ -92,16 +103,35 @@ export default async function ProjectsPage() {
           />
         </div>
       ) : (
-        groups.map((g) => (
+        groups.map((g) => {
+          /* Colorized stage headers (owner 2026-08-17, "all over the projects
+             pages"): each shelf wears its stage's own stone as a left bar, an
+             underline tint and the link's ink - the same key the cards, pills
+             and fore-edge tabs already speak. Stages without a stone (a future
+             taxonomy addition) fall back to the champagne. */
+          const stone = STAGE_STONE[g.phase as keyof typeof STAGE_STONE];
+          return (
           <section key={g.phase} className="mt-phi6 first:mt-phi5">
-            <div className="flex flex-wrap items-end justify-between gap-phi2 border-b border-line pb-phi2">
-              <div className="max-w-xl">
+            <div
+              className="flex flex-wrap items-end justify-between gap-phi2 border-b pb-phi2"
+              style={{
+                borderColor: `color-mix(in srgb, ${stone?.stone ?? "var(--color-champagne-500)"} 40%, var(--color-line))`,
+              }}
+            >
+              <div
+                className="max-w-xl"
+                style={{
+                  borderLeft: `3px solid ${stone?.stone ?? "var(--color-champagne-500)"}`,
+                  paddingLeft: "0.9rem",
+                }}
+              >
                 <h2 className="text-2xl text-ink">{g.meta.label}</h2>
                 <p className="mt-2 text-base leading-relaxed text-ink-muted">{g.meta.blurb}</p>
               </div>
               <Link
                 href={`/projects/${g.phase}`}
-                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
+                className="text-tiny font-semibold uppercase tracking-[0.12em]"
+                style={{ color: stone?.ink ?? "var(--color-jamin-red-deep)" }}
               >
                 View {g.meta.label.toLowerCase()} →
               </Link>
@@ -112,7 +142,8 @@ export default async function ProjectsPage() {
               ))}
             </div>
           </section>
-        ))
+          );
+        })
       )}
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
