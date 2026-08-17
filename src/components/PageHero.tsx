@@ -29,7 +29,8 @@ import { Container } from "./ui";
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
-  | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59;
+  | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
+  | 62 | 63;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -75,6 +76,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   /* hero-55..59 — the FLOWERED GATES set (owner-supplied 2026-08-17 evening,
      files named for their pages). 59 is a NIGHT frame. */
   55: 941, 56: 941, 57: 941, 58: 887, 59: 887,
+  /* hero-62 (Erode) / hero-63 (Coimbatore) — owner-supplied 2026-08-17
+     night, named for their pages. */
+  62: 929, 63: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -245,6 +249,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      frame the district pages have ever carried. Same standing rule as the
      whole register: alt="", aria-hidden, never a caption. */
   55: 1672, 56: 1672, 57: 1672, 58: 1774, 59: 1774,
+  /* hero-62 (Erode: the pergola-top beige arch, lockup CENTRED high) and
+     hero-63 (Coimbatore: the classical stone gate, lockup wall RIGHT) —
+     "Erode hero.png" / "Coibatore hero.png", 2026-08-17 night. Swept
+     comparatively: both read ABOVE the audited hero-38 figure at 0.52
+     (62: p95 5.47, worst 4.10 · 63: p95 5.67) — the first daylight frames
+     in the set to hold the lower alpha. Standing rule as ever: alt="",
+     aria-hidden, never a caption. */
+  62: 1693, 63: 1672,
 };
 
 function artSrc(n: HeroArt) {

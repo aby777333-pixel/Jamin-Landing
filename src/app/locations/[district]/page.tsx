@@ -72,11 +72,14 @@ export const dynamicParams = false;
  * mirrored 44/45 retire to the spare pile with their purpose served: the
  * board-right rule they established is now in the artwork itself.
  */
+/* ⚠️ 2026-08-17 night: Erode and Coimbatore took their own named frames
+   (62, 63) — the last two districts still riding repurposed JAMIN CITY
+   art. Every district now carries a frame the owner named for it. */
 const ART_BY_DISTRICT: Record<string, HeroArt> = {
-  erode: 49,
+  erode: 62,
   salem: 58,
   tiruppur: 59,
-  coimbatore: 48,
+  coimbatore: 63,
 };
 const DEFAULT_ART: HeroArt = 17;
 
@@ -140,13 +143,15 @@ const SHEER_ALPHA = 0.52;
  * entry above).
  */
 const ALPHA_BY_DISTRICT: Record<string, number> = {
+  /* hero-62/63 both read ABOVE the audited figure at 0.52 (see the register)
+     — the softer late light of this pair is kinder than the earlier set. */
   erode: 0.52,
   /* hero-58: bright daylight, reads like 48/50 — 0.58 restores the audited
      figure. hero-59 is the NIGHT gate and reads p95 8-11 at 0.52, the safest
      district frame yet; darkening it further would spend the picture. */
   salem: 0.58,
   tiruppur: 0.52,
-  coimbatore: 0.58,
+  coimbatore: 0.52,
 };
 
 export async function generateStaticParams() {

@@ -269,8 +269,14 @@ export function Hero({
               between the sheer 0.12 and the audited-opaque 0.74, visibly a
               tab, still letting the Trident dusk through. Both vars, as
               before, so it does not snap opaque below 1440. */}
+          {/* ⚠️ max-w-xl AND the type a step down (owner 2026-08-17 night:
+              "the home hero captions and the tab is a little oversized"). The
+              old 42rem-is-not-a-lever note assumed the 4xl headline; at 3xl
+              the copy is shorter at 36rem than the old block was at 42, so
+              the content-sized banner GAINS width from this change rather
+              than losing it. */}
           <div
-            className="gilt-light rj-gilt-light-sheer reveal max-w-2xl rounded-2xl p-phi3 text-center sm:text-left"
+            className="gilt-light rj-gilt-light-sheer reveal max-w-xl rounded-2xl p-phi3 text-center sm:text-left"
             style={
               {
                 "--rj-sheer-alpha": 0.62,
@@ -326,12 +332,12 @@ export function Hero({
                 → teal, exactly as the reference creative colours KNOW THE
                 PROCESS. All three inks are AAA/AA on the plate (bronze-700
                 5.6:1, teal-700 7.8:1 on sand). */}
-            <h1 className="mt-phi3 text-balance text-4xl uppercase text-ink">
+            <h1 className="mt-phi3 text-balance text-3xl uppercase text-ink">
               The address <span className="text-jamin-gold-ink">your family</span>{" "}
               <span className="text-canopy">keeps.</span>
             </h1>
 
-            <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
+            <p className="mt-phi2 text-pretty text-base leading-relaxed text-ink-soft">
               Residential plots in sanctioned layouts across Erode, Salem, Tiruppur and Coimbatore —
               clear and marketable title, roads and water formed to the approved plan, and the plot
               schedule published before you visit.
