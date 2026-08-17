@@ -475,12 +475,32 @@ export default async function HomePage() {
       {/* ---- track record ---- */}
       {completed.length > 0 && (
         <Container className="py-phi6">
-          <SectionLabel>Track record</SectionLabel>
-          <h2 className="mt-phi3 text-3xl text-ink">Delivered and handed over</h2>
-          <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
-            Completed layouts where every plot is now with its owner. Shown in full, because a track
-            record is only worth something if you can inspect it.
-          </p>
+          {/* The MINI HERO (owner 2026-08-17 night: "add a mini hero image
+              here") — the JAMIN CROWN gate fills the half of this opener that
+              was bare sand, beside the heading. Standing rule: it names a
+              community not in the catalogue, so alt="", aria-hidden, and never
+              a caption — decoration beside the track record, not a claim
+              inside it. */}
+          <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_1.1fr]">
+            <div>
+              <SectionLabel>Track record</SectionLabel>
+              <h2 className="mt-phi3 text-3xl text-ink">Delivered and handed over</h2>
+              <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
+                Completed layouts where every plot is now with its owner. Shown in full, because a
+                track record is only worth something if you can inspect it.
+              </p>
+            </div>
+            <div className="relative hidden aspect-[16/8] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+              <Image
+                src="/hero/hero-67-1672.webp"
+                alt=""
+                aria-hidden="true"
+                fill
+                sizes="(max-width: 1280px) 50vw, 640px"
+                className="object-cover object-center"
+              />
+            </div>
+          </div>
           <div className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
             {completed.map((p) => (
               <PropertyCard key={p.id} p={p} />

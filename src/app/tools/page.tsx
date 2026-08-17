@@ -45,7 +45,13 @@ export default function ToolsPage() {
   return (
     <>
       <PageHero
-        art={28}
+        /* hero-66 — the RED elephant ("red elephant.png", owner 2026-08-17):
+           the same weight-of-the-decision concept as hero-28, redrawn in the
+           signal red, subject already on the RIGHT (no mirror needed this
+           time) and the paper tone's multiply blend prints its white ground
+           into the sand (no retint needed either — both of hero-28's
+           mandatory edits are obsolete on this frame). */
+        art={66}
         tone="paper"
         /* ⚠️ 42%, and the number is COMPUTED rather than nudged. The default
            `object-left` crop pinned the woman against the frame's own right

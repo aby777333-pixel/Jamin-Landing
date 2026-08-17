@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64;
+  | 62 | 63 | 64 | 65 | 66;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -81,6 +81,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   62: 929, 63: 941,
   /* hero-64 — JAMIN REGENT ("Regent.png", 2026-08-17 night). */
   64: 941,
+  /* hero-65 JAMIN MONARCH · hero-66 the red elephant (/tools). */
+  65: 941,
+  66: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -267,6 +270,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      Unlike 31/33 its lockup is centred, so paper's right anchor keeps it
      whole without a trim. */
   64: 1672,
+  /* hero-65 — JAMIN MONARCH ("Monarch.png") → /projects/ongoing, replacing
+     the hero-31 photograph at the owner's supply (the hero-40 precedent
+     standing: a render on a real-project page binds the no-caption rule at
+     full strength). hero-66 — the RED elephant → /tools; subject right, so
+     hero-28's mirror is not inherited, and paper's multiply blend replaces
+     its retint. Standing rule on both: alt="", aria-hidden, never a caption. */
+  65: 1672,
+  66: 1672,
 };
 
 function artSrc(n: HeroArt) {

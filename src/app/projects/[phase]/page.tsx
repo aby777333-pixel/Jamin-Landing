@@ -94,7 +94,11 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // page whose subject genuinely IS a Jamin project should carry a real
   // photograph rather than brand imagery of nowhere.
   const ART_BY_PHASE: Record<string, HeroArt> = {
-    ongoing: 31,
+    /* hero-65 (JAMIN MONARCH, owner-named 2026-08-17) replaces hero-31 —
+       the register's real-photo preference on this page is overruled by the
+       owner's own supply, the hero-40 precedent. Lockup centred on the arch,
+       so the right anchor keeps it whole. */
+    ongoing: 65,
     current: 11,
     /* hero-64 (JAMIN REGENT, owner-named 2026-08-17) replaces hero-33 —
        its lockup is CENTRED, so the right anchor keeps it whole untrimmed. */

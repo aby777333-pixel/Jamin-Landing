@@ -401,11 +401,18 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
         <span className="rj-medallion-label" aria-hidden="true">
           {open ? "Close ✦" : "Ask Jamindar ✦"}
         </span>
-        {/* The crest. Not `next/image`: it is a 22px mark on a fixed control
-            that appears on every page, and the optimiser round-trip costs more
-            than the file does. */}
+        {/* JAMINDAR HIMSELF (owner 2026-08-17): the namaste illustration from
+            the app's own asset set replaces the app mark — the assistant has a
+            face now. Cropped square to the turban and set in a circle; still a
+            plain <img> for the same reason the mark was (a fixed control on
+            every page, optimiser round-trip costs more than the file). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo-mark.png" alt="" aria-hidden="true" className="h-[22px] w-[22px] object-contain" />
+        <img
+          src="/jamindar-avatar.webp"
+          alt=""
+          aria-hidden="true"
+          className="h-9 w-9 rounded-full bg-white object-cover"
+        />
       </button>
 
       {/* ---- panel ---- */}
