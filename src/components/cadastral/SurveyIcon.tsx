@@ -52,7 +52,11 @@ export type SurveyIconName =
      rather than a globe. */
   | "grid"
   | "list"
-  | "map";
+  | "map"
+  /* The account statistics (2026-08-17 report) asked for a price-tag mark on
+     "Selling now". Drawn as the label a registry ties to a parcel — a deed
+     tag with its eyelet — not a shopping pictogram. */
+  | "tag";
 
 const STROKE = {
   fill: "none",
@@ -80,6 +84,16 @@ export function SurveyIcon({
 }) {
   return (
     <svg viewBox="0 0 24 24" className={`${size} ${className}`} aria-hidden="true" focusable="false">
+      {name === "tag" && (
+        /* The deed tag: a parcel label with its eyelet, rotated the way one
+           hangs. The rule line stands for the rate written on it. */
+        <g {...STROKE}>
+          <path d="M12.6 3.8h6.6a1 1 0 0 1 1 1v6.6a1 1 0 0 1-.3.7l-9 9a1 1 0 0 1-1.4 0l-6.6-6.6a1 1 0 0 1 0-1.4l9-9a1 1 0 0 1 .7-.3Z" />
+          <circle cx="16.4" cy="7.6" r="1.4" />
+          <path d="M8.4 13.2l3.4 3.4" />
+        </g>
+      )}
+
       {name === "stamp" && (
         /* A rubber approval stamp: double-ruled impression with the arc of text
            reduced to the arc itself, and the handle above it. */

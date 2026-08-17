@@ -211,14 +211,20 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
       {/* ---- facets + view switch ---- */}
       {/* `border-t` only. The bottom rule sat a hair above the first card and
           read as a second divider stacked on the section's own spacing. */}
+      {/* ⚠️ TABULAR ROWS (2026-08-17 report round) — a fixed label track, so
+          DISTRICT's pills and STAGE's pills start on the same column instead
+          of each row's pills beginning wherever its own label ended. The
+          labels are a column now; the rows read as a register. */}
       <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3">
         {districts.length > 1 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2">
+            <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
+            <div className="flex flex-wrap gap-2">
             {districts.map(([d, n]) => {
               const on = f.district === d;
+              const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
               return (
                 <button
                   key={d}
@@ -226,7 +232,23 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   aria-pressed={on}
                   onClick={() => set({ district: on ? null : d })}
                   className={chip(on)}
-                  style={{ "--rj-stone": DISTRICT_STONE[d] ?? STONE_FALLBACK } as React.CSSProperties}
+                  /* Colour-coded beyond the dot now: the resting pill wears a
+                     wash and a border of its own stone, so the row reads as a
+                     colour key even before anything is picked. The stone never
+                     becomes the WORD (two stones are illegible at this size —
+                     lib/stones.ts) and the pressed state stays ink, which is
+                     readable over every stone in the set. */
+                  style={
+                    {
+                      "--rj-stone": stone,
+                      ...(on
+                        ? {}
+                        : {
+                            borderColor: `color-mix(in srgb, ${stone} 38%, var(--color-line))`,
+                            background: `color-mix(in srgb, ${stone} 8%, var(--color-canvas))`,
+                          }),
+                    } as React.CSSProperties
+                  }
                 >
                   <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {d}{" "}
@@ -234,16 +256,19 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 </button>
               );
             })}
+            </div>
           </div>
         )}
 
         {phases.length > 1 && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2">
+            <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>
+            <div className="flex flex-wrap gap-2">
             {phases.map(([k, n]) => {
               const on = f.phase === k;
+              const stone = STAGE_STONE[k as keyof typeof STAGE_STONE]?.stone ?? STONE_FALLBACK;
               return (
                 <button
                   key={k}
@@ -251,7 +276,17 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   aria-pressed={on}
                   onClick={() => set({ phase: on ? null : k })}
                   className={chip(on)}
-                  style={{ "--rj-stone": STAGE_STONE[k as keyof typeof STAGE_STONE]?.stone ?? STONE_FALLBACK } as React.CSSProperties}
+                  style={
+                    {
+                      "--rj-stone": stone,
+                      ...(on
+                        ? {}
+                        : {
+                            borderColor: `color-mix(in srgb, ${stone} 38%, var(--color-line))`,
+                            background: `color-mix(in srgb, ${stone} 8%, var(--color-canvas))`,
+                          }),
+                    } as React.CSSProperties
+                  }
                 >
                   <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {PHASE_META[k].label}{" "}
@@ -259,6 +294,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 </button>
               );
             })}
+            </div>
           </div>
         )}
 

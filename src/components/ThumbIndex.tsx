@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { districtSlug } from "@/lib/site";
+import { DISTRICT_STONE, STONE_FALLBACK } from "@/lib/stones";
 
 /**
  * The thumb index: a ledger's cut tabs down the fore-edge, so a reader can go
@@ -43,6 +44,13 @@ export function ThumbIndex({
     >
       {districts.map((d) => {
         const active = current?.toLowerCase() === d.toLowerCase();
+        /* CARTOUCHE round 2026-08-17 — "color code all the tabs". Each tab
+           carries its DISTRICT STONE, the same colour its filter pill and its
+           card jewellery already wear, so the fore-edge reads as a colour-coded
+           register. The stone is the TINT and the EDGE BAR, never the word —
+           the stones are illegible as 10px labels (see lib/stones.ts); the
+           label stays ink. */
+        const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
         return (
           <Link
             key={d}
@@ -59,11 +67,19 @@ export function ThumbIndex({
                WIDTH needed asserting — `pl-2.5 pr-2` plus the border lands it
                at 44 exactly. */
             className={`rj-deboss flex min-h-[44px] items-center rounded-l-md border border-r-0 border-line py-3 pl-2.5 pr-2 text-micro uppercase tracking-brand transition-colors ${
-              active
-                ? "bg-champagne-500/15 text-champagne-700"
-                : "bg-canvas-alt text-ink-faint hover:text-ink-muted"
+              active ? "text-ink" : "text-ink-faint hover:text-ink-muted"
             }`}
-            style={{ writingMode: "vertical-rl", rotate: "180deg" }}
+            style={{
+              writingMode: "vertical-rl",
+              rotate: "180deg",
+              /* The stone tints the tab and draws a 3px bar on the viewport
+                 edge (visually the right edge; after the 180° rotation that is
+                 this box's left). Active tabs deepen the tint rather than
+                 changing colour — same hue, more of it. */
+              background: `color-mix(in srgb, ${stone} ${active ? 22 : 10}%, var(--color-canvas-alt))`,
+              boxShadow: `inset 3px 0 0 0 ${stone}`,
+              borderColor: `color-mix(in srgb, ${stone} 35%, var(--color-line))`,
+            }}
           >
             {d}
           </Link>

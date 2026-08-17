@@ -248,25 +248,21 @@ export function AccountShell({ title, children }: { title: string; children: Rea
         />
       </div>
 
-      {/* ⚠️ SIGN OUT IS NO LONGER HERE. It used to sit at the top right of this
-          header, which is in the content column and scrolls — so the moment a
-          reader moved down the page, the way out went with it. It now lives at
-          the foot of the sidebar, which stays put. */}
-      <header className="flex flex-wrap items-end justify-between gap-phi3">
-        <div>
-          <SectionLabel>Your account</SectionLabel>
-          <h1 className="mt-phi2 text-3xl text-ink">{title}</h1>
-          <p className="mt-phi2 text-base text-ink-muted">
-            Signed in as {name}
-            {profile?.member_code ? ` · ${profile.member_code}` : ""}
-          </p>
-        </div>
-      </header>
+      {/* 🚨 THE ACCOUNT HEADER LIVES IN THE SIDEBAR NOW (2026-08-17 report).
+          It used to sit here, between the picture and the grid — in the
+          content column, so it SCROLLED, which is the report's exact words
+          ("YOUR ACCOUNT, Overview … is scrolling, that should not scroll"),
+          and it pushed the sidebar's start below the fold ("the left sidebar
+          starts lower on the page"). It now renders inside the sticky column
+          below, so the label, the section title and the signed-in identity
+          stay pinned with the navigation and the whole panel reads as one
+          account context. The h1 keeps its element — every account page still
+          opens with a real heading — it just moved columns. */}
 
       {/* The ref is the scroll target for the effect above — the top of this
           grid is where a section begins, and it is deliberately BELOW the
-          picture band and the account header rather than at the page top. */}
-      <div ref={gridRef} className="mt-phi4 grid gap-phi4 lg:grid-cols-[13rem_1fr]">
+          picture band rather than at the page top. */}
+      <div ref={gridRef} className="mt-phi4 grid gap-phi4 lg:grid-cols-[15rem_1fr]">
         {/* ⚠️ THE STICKY LIVES ON THIS WRAPPER, NOT ON THE <nav>. The nav and
             the sign-out control have to travel together — pinning only the nav
             is what left the button behind in the first place.
@@ -311,6 +307,20 @@ export function AccountShell({ title, children }: { title: string; children: Rea
           className="flex min-w-0 flex-col gap-phi3 lg:sticky lg:z-10 lg:max-h-[calc(100dvh-var(--header-h)-2.5rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
           style={{ top: "calc(var(--header-h) + 1.25rem)" }}
         >
+        {/* The account context card — the report's "move YOUR ACCOUNT,
+            Overview and the signed-in user information into the left-side
+            account panel". Compact on purpose: the whole panel (context +
+            nav + sign out) has to fit one desktop viewport, which the
+            sticky wrapper's max-h already enforces with a scroll as the
+            worst case rather than the design. */}
+        <div className="rounded-card border border-line bg-canvas-alt p-phi3">
+          <SectionLabel>Your account</SectionLabel>
+          <h1 className="mt-phi2 text-xl text-ink">{title}</h1>
+          <p className="mt-1.5 text-tiny leading-snug text-ink-muted">
+            Signed in as {name}
+            {profile?.member_code ? ` · ${profile.member_code}` : ""}
+          </p>
+        </div>
         {/* `overscroll-contain` on the mobile scroller stops a horizontal flick
             from turning into a page scroll.
 
