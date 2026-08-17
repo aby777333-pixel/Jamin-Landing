@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
+import { Sweep } from "@/components/brand/Sweep";
 import { Container } from "@/components/ui";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { VisitBooking } from "@/components/VisitBooking";
@@ -27,9 +28,12 @@ export default async function ContactPage() {
            layout mid-build, with workers, a tractor and a house going up. It is
            a render. The no-caption rule in public/hero/README.md binds here as
            it does on /about: no caption, no location, no project name. */
-        art={21}
+        /* hero-52 — the modern slat gate, JAMIN CITY set 2026-08-17. */
+        art={52}
         sheer
-        sheerAlpha={0.26}
+        /* 0.42 for hero-52 — the audited hero-40 value for a paper-tone plate
+           whose overlap strip is dark; this frame puts greenery there. */
+        sheerAlpha={0.42}
         eyebrow="Talk to Jamin"
         title="Book a site visit"
         lead="Walk the layout, see the approvals and stand on the plot before you decide. Visits are arranged at your convenience and carry no obligation."
@@ -125,6 +129,12 @@ export default async function ContactPage() {
         </aside>
       </div>
       </Container>
+
+      {/* CARTOUCHE §4.2 — the Sweep, surface 2 of exactly 3. On /contact the
+          sweep IS the page's closing statement. */}
+      <div className="mt-phi6">
+        <Sweep lead="The desk, directly" />
+      </div>
     </>
   );
 }

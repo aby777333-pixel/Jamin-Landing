@@ -11,19 +11,31 @@
  * The scales are golden-ratio based (φ = 1.618) rather than arbitrary, so type
  * and rhythm stay proportional at every breakpoint.
  */
+/* ══════════════════════════════════════════════════════════════════════════
+   JAMIN CARTOUCHE (2026-08-17) — the palette is now the GHL campaign grade:
+   signal red #C90202, warm sand paper, bronze structure, teal for the resolved
+   fact, warm ink. ⚠️ THE TOKEN NAMES ARE THE OLD ONES ON PURPOSE. Every
+   Tailwind utility in this codebase compiles to var(--color-…), so re-valuing
+   the tokens regrades all 31 routes in one file with zero component churn —
+   the same mechanism MAHARAJA used for [data-theme]. Renaming would touch a
+   hundred files to produce the identical pixels. Semantic mapping:
+   jamin-red→jp-red-600 · gold family→bronze family · canvas→sand ·
+   canopy/emerald→teal · charcoal/onyx→warm ink. The spec's --jp-* names exist
+   as aliases at the end of this block for new Cartouche components.
+   ══════════════════════════════════════════════════════════════════════════ */
 @theme {
   /* ---- brand ---- */
-  --color-jamin-red: #e11b22;
-  --color-jamin-red-deep: #a81219;
-  --color-jamin-red-soft: #fdecec;
-  --color-jamin-gold: #eaa317;
-  --color-jamin-gold-light: #f5c869;
-  --color-jamin-gold-soft: #fdf5e6;
+  --color-jamin-red: #c90202;
+  --color-jamin-red-deep: #a80303;
+  --color-jamin-red-soft: #fbe8e6;
+  --color-jamin-gold: #b48961;
+  --color-jamin-gold-light: #c9a884;
+  --color-jamin-gold-soft: #e5d2c2;
   /* The logo gold is a FILL colour. As text it measures 2.12:1 on the canvas
      and worse on gold-soft, so every gold word uses this darker cousin
      instead — 5.29:1 on canvas, 4.95:1 on gold-soft. Rules, dots, borders and
      backgrounds keep the bright original. */
-  --color-jamin-gold-ink: #8a6410;
+  --color-jamin-gold-ink: #6c533b;
   /* The mirror of gold-ink, for gold words on the DARK `gilt` plate — where the
      problem inverts and gold-ink would disappear. `gold-light` was tried first
      and is not enough: on the worst frame the site carries (hero-18, whose
@@ -41,7 +53,7 @@
      This is the dark plate's version of the rule written on `gilt-light`:
      move the TEXT, not the plate. There the fix is a darker gold, here it is a
      paler one, and in both cases the plate stays as see-through as it was. */
-  --color-jamin-gold-pale: #fbe6bd;
+  --color-jamin-gold-pale: #ead9be;
   /* Deeper again, for gold words on the LIGHT `gilt-light` plate. This exists
      to buy transparency: the plate's alpha is set by whichever text on it has
      the least contrast, and that was always the gold caption. Swapping
@@ -49,17 +61,17 @@
      plate go from 0.94 to 0.74 while still clearing AA. Still gold on the page
      (13.4:1 on canvas), just enough darker to stop being the binding
      constraint. */
-  --color-jamin-gold-deep: #6b4e0c;
+  --color-jamin-gold-deep: #4e3b28;
 
   /* ---- ink ----
      The ramp was shifted one step darker after an audit: `faint` was #9aa0ab,
      which is 2.59:1 against the canvas and fails WCAG AA on the caption and
      metadata text it is used for. `muted` took its place at the darker end so
      the visible hierarchy survives, and both now pass — 6.46:1 and 4.95:1. */
-  --color-ink: #17181c;
-  --color-ink-soft: #3d4048;
-  --color-ink-muted: #5a5d68;
-  --color-ink-faint: #6b6f7a;
+  --color-ink: #1b1712;
+  --color-ink-soft: #291f15;
+  --color-ink-muted: #5d5548;
+  --color-ink-faint: #6c5f4e;
 
   /* ---- surfaces ----
      Retuned for the 2026 art direction. The supplied photography sits on a
@@ -68,22 +80,22 @@
      images ended in a visible rectangle, on this they dissolve into the page.
      Luminance barely moved (0.984 → 0.988), so every contrast ratio fixed in
      the accessibility pass still holds. */
-  --color-canvas: #fdfcf9;        /* warm white */
-  --color-canvas-alt: #f8f5ef;    /* ivory */
-  --color-canvas-sunken: #efe9de;  /* champagne */
-  --color-line: #e7e0d4;
-  /* Deep, quiet surfaces for the cinematic sections. */
-  --color-charcoal: #1a1a1c;
-  --color-graphite: #34353a;
-  --color-burgundy: #6e1420;
-  --color-terracotta: #b4674f;
+  --color-canvas: #f0e1d6;        /* sand-200 — THE PAGE FIELD */
+  --color-canvas-alt: #f5eae3;    /* sand-100 — warm paper, raised */
+  --color-canvas-sunken: #e5d2c2; /* sand-300 — recessed bands */
+  --color-line: #d8c2ab;          /* sand-400 */
+  /* Deep, quiet surfaces for the cinematic sections — warm ink now. */
+  --color-charcoal: #291f15;
+  --color-graphite: #4a4237;
+  --color-burgundy: #7a0404;
+  --color-terracotta: #9b7656;
   /* Hairline red, the same line-work as the renders. Structure, never text. */
-  --color-line-red: #f6cfd0;
+  --color-line-red: #f0cfc7;
 
-  /* ---- land / trust accents ---- */
-  --color-canopy: #1f5d4c;
-  --color-canopy-soft: #eaf3f0;
-  --color-earth: #8a6a45;
+  /* ---- land / trust accents — teal is the resolved fact ---- */
+  --color-canopy: #2f4749;
+  --color-canopy-soft: #e4eae9;
+  --color-earth: #6c533b;
 
   /* ---- type scale ----
      Still golden-ratio at the small end, but the display sizes are now fluid.
@@ -121,13 +133,14 @@
      backdrop can only move between rgb(228) and rgb(253) whatever the image
      does, which keeps every ratio on the panel knowable. The blur and the
      saturation, not the transparency, are what make it read as glass. */
-  --glass-tint: rgba(253, 252, 249, 0.9);
-  --glass-tint-dark: rgba(26, 26, 28, 0.42);
+  --glass-tint: rgba(245, 234, 227, 0.9);
+  --glass-tint-dark: rgba(27, 23, 18, 0.42);
   --glass-edge: rgba(255, 255, 255, 0.55);
 
-  --shadow-lift: 0 1px 2px rgba(23, 24, 28, 0.04), 0 8px 24px -8px rgba(23, 24, 28, 0.1);
-  --shadow-raise: 0 2px 4px rgba(23, 24, 28, 0.05), 0 20px 48px -16px rgba(23, 24, 28, 0.18);
-  --shadow-hero: 0 40px 120px -40px rgba(23, 24, 28, 0.45);
+  /* Elevation is warm — never neutral grey (Cartouche §3.3). */
+  --shadow-lift: 0 1px 2px rgba(41, 31, 21, 0.05), 0 8px 24px -8px rgba(41, 31, 21, 0.12);
+  --shadow-raise: 0 2px 4px rgba(41, 31, 21, 0.06), 0 20px 48px -16px rgba(41, 31, 21, 0.2);
+  --shadow-hero: 0 40px 120px -40px rgba(41, 31, 21, 0.45);
 
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -155,18 +168,18 @@
      Onyx is warmer and deeper than the existing --color-charcoal (#1a1a1c),
      which stays as it is: it grades the cinematic photo sections and is not
      a page ground. These are page grounds. */
-  --color-onyx-900: #0a0a09;
-  --color-onyx-800: #121110;
-  --color-onyx-700: #1c1a17;
-  --color-onyx-600: #262320;
+  --color-onyx-900: #120e0a;
+  --color-onyx-800: #1b1712;
+  --color-onyx-700: #251e16;
+  --color-onyx-600: #2f261c;
 
-  --color-ivory-50: #fbf8f1;
-  --color-ivory-100: #f4efe3;
-  --color-ivory-200: #ede5d4;
+  --color-ivory-50: #f5f2f1;
+  --color-ivory-100: #f5eae3;
+  --color-ivory-200: #e5d2c2;
 
   /* Text on onyx. */
-  --color-bone: #e8e1d2;
-  --color-bone-soft: #a79e8c;
+  --color-bone: #f0e1d6;
+  --color-bone-soft: #b3a48f;
 
   /* ---- tier 2 · champagne gold ----
      ⚠️ THE IDENTITY GOLD AND THE LOGO GOLD ARE NOT THE SAME COLOUR, and that
@@ -180,12 +193,12 @@
      to write that rule down; globals and cadastral each record their own. */
   /* The seal foil's own light stop, promoted to a token because it is now
      also the only gold that reads on a deliberately see-through plate. */
-  --color-champagne-50: #fdf6e0;
-  --color-champagne-900: #5a4210;
-  --color-champagne-700: #7a5a16;
-  --color-champagne-500: #c9a227;
-  --color-champagne-300: #e3cb74;
-  --color-champagne-100: #f2dfa0;
+  --color-champagne-50: #fdf4e7;
+  --color-champagne-900: #55402a;
+  --color-champagne-700: #6c533b;
+  --color-champagne-500: #b48961;
+  --color-champagne-300: #c9a884;
+  --color-champagne-100: #e8d5b8;
 
   /* ---- tier 3 · platinum ----
      ⚠️ 800 IS NOT IN THE BRIEF. It was added because the brief's ramp has no
@@ -194,31 +207,31 @@
      the line, and the paper grain multiplies over it and spends what is left.
      "Completed" is a real label on a real card, so platinum needed a text
      cousin for the same reason gold has one. 800 measures 6.14:1. */
-  --color-plat-800: #5a6167;
-  --color-plat-700: #6e767d;
-  --color-plat-500: #8e959b;
-  --color-plat-300: #c3c9cd;
-  --color-plat-100: #eff2f3;
+  --color-plat-800: #5d5548;
+  --color-plat-700: #6e6455;
+  --color-plat-500: #8a8073;
+  --color-plat-300: #c6b9a6;
+  --color-plat-100: #efe7dc;
 
   /* ---- tier 4 · gemstones ----
      District identity, stage, and plot state. Every one of these is a FILL or
      a hairline; the text sitting on them is bone or ink, never the stone. */
-  --color-emerald: #0e7a55;
-  --color-emerald-deep: #0b5c41;
-  --color-jade: #3e8e72;
-  --color-ruby: #9b1b30;
-  --color-garnet: #7a1626;
+  --color-emerald: #3d5758;
+  --color-emerald-deep: #2f4749;
+  --color-jade: #587270;
+  --color-ruby: #a80303;
+  --color-garnet: #7a0404;
   --color-sapphire: #1b3e8c;
   --color-amethyst: #6b3fa0;
-  --color-topaz: #b07a18;
+  --color-topaz: #9b7656;
 
   /* ---- the primary action colour ----
      Indirection on purpose. `bg-cta` compiles to `var(--color-cta)`, so
      royal.css can repoint it per palette at runtime without regenerating a
      single utility. Default is the logo red the site already ships.
      White on red measures 4.78:1; white on ruby measures 8.14:1. */
-  --color-cta: #e11b22;
-  --color-cta-deep: #a81219;
+  --color-cta: #c90202;
+  --color-cta-deep: #a80303;
 
   /* ── The lit 3D view (`LayoutVR`) ──────────────────────────────────────────
      🚨 A LANDSCAPE NEEDS ITS OWN COLOURS, NOT THE DOCUMENT'S. The first build
@@ -229,6 +242,28 @@
      a sheet of paper under a lamp and wrong for open ground under the sun.
      They live here, not as hexes in the component, so the scene stays on the
      same footing as every other colour on this site. */
+  /* ---- Cartouche aliases — the spec's own names, for brand components ---- */
+  --color-jp-red-600: #c90202;
+  --color-jp-red-700: #a80303;
+  --color-jp-red-800: #7a0404;
+  --color-jp-red-900: #6e0303;
+  --color-jp-red-100: #fbe8e6;
+  --color-jp-sand-050: #f5f2f1;
+  --color-jp-sand-100: #f5eae3;
+  --color-jp-sand-200: #f0e1d6;
+  --color-jp-sand-300: #e5d2c2;
+  --color-jp-sand-400: #d8c2ab;
+  --color-jp-sand-500: #bca18a;
+  --color-jp-bronze-700: #6c533b;
+  --color-jp-bronze-500: #9b7656;
+  --color-jp-bronze-400: #b48961;
+  --color-jp-bronze-300: #c9a884;
+  --color-jp-teal-700: #2f4749;
+  --color-jp-teal-600: #3d5758;
+  --color-jp-ink-900: #1b1712;
+  --color-jp-ink-800: #291f15;
+  --color-jp-ink-600: #5d5548;
+
   --vr-sky-day: #7fb2e0;
   --vr-sky-dusk: #d98b4e;
   --vr-sky-night: #0d1220;
@@ -262,19 +297,40 @@
      -0.008em while headings were set in Marcellus, because negative tracking
      closes a Roman capital face's counters. If a display serif is ever tried
      again, that value has to move with it. */
+  /* CARTOUCHE type roles (2026-08-17). The display face is a HEAVY grotesk —
+     that is what makes this palette read as this brand and not as a generic
+     warm-minimal template (spec §10). -0.022em replaces Inter's -0.032em;
+     Archivo's counters close sooner. */
   h1,
   h2 {
-    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 300;
-    letter-spacing: -0.032em;
-    line-height: 1.04;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 750;
+    font-variation-settings: "wdth" 106;
+    letter-spacing: -0.022em;
+    line-height: 0.96;
   }
   h3,
   h4 {
-    font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-    font-weight: 500;
-    letter-spacing: -0.014em;
-    line-height: 1.22;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 650;
+    font-variation-settings: "wdth" 102;
+    letter-spacing: -0.012em;
+    line-height: 1.18;
+  }
+  /* Every uppercase label — eyebrows, buttons, chips — sets in the display
+     face; a serif in tracked caps reads as a wine label, not a drawing sheet.
+     Safe as a base rule: no Tailwind utility in this repo sets font-family,
+     so nothing is beaten (the unlayered-CSS trap does not apply inside a
+     layer, and this contests nothing anyway). */
+  .uppercase {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  }
+  /* …except the eyebrow proper (`tracking-brand` is the site-wide eyebrow
+     marker) and every figure of record, which take the MONO — the register of
+     the sanctioned drawing. Declared after .uppercase so it wins the tie. */
+  .tracking-brand,
+  .ledger {
+    font-family: var(--font-mono), ui-monospace, monospace;
   }
   /* Never trap keyboard users just because the design is quiet.
      §6.10 asks the ring to take the active section's stone. It does that by
@@ -378,7 +434,7 @@
      its targets actually need. */
   backdrop-filter: blur(22px) saturate(140%);
   border: 1px solid var(--glass-edge);
-  box-shadow: 0 1px 1px rgba(26, 26, 28, 0.03), 0 18px 50px -24px rgba(26, 26, 28, 0.28);
+  box-shadow: 0 1px 1px rgba(41, 31, 21, 0.03), 0 18px 50px -24px rgba(41, 31, 21, 0.28);
 }
 
 @utility glass-dark {
@@ -442,9 +498,9 @@
      being something you can see the photograph through. */
   background: rgba(16, 14, 12, 0.52);
   backdrop-filter: blur(14px) saturate(120%);
-  border: 1px solid rgba(234, 163, 23, 0.38);
+  border: 1px solid rgba(180, 137, 97, 0.45);
   box-shadow:
-    inset 0 1px 0 rgba(245, 200, 105, 0.18),
+    inset 0 1px 0 rgba(201, 168, 132, 0.2),
     0 24px 70px -34px rgba(0, 0, 0, 0.65);
 }
 
@@ -475,12 +531,12 @@
      through; the text colour is not. And re-sweep on every homepage artwork
      change — hero-16 passed at 0.90 where hero-20 needed 0.94, on the same
      plate with the same copy, purely because the picture behind it changed. */
-  background: rgba(253, 252, 249, 0.74);
+  background: rgba(245, 234, 227, 0.78);
   backdrop-filter: blur(14px) saturate(130%);
-  border: 1px solid rgba(138, 100, 16, 0.26);
+  border: 1px solid rgba(108, 83, 59, 0.3);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 20px 56px -30px rgba(26, 26, 28, 0.26);
+    0 20px 56px -30px rgba(41, 31, 21, 0.26);
 }
 
 @utility reveal {

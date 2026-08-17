@@ -28,7 +28,8 @@ import { Container } from "./ui";
  */
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
-  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45;
+  | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
+  | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -68,6 +69,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   /* hero-44/45 — MIRRORED cuts of 35/39; same dimensions as their sources. */
   44: 887,
   45: 836,
+  /* hero-46..54 — the JAMIN CITY set (owner-supplied 2026-08-17): gated
+     entrances of named Jamin Bazaar communities. No trims. */
+  46: 887, 47: 916, 48: 863, 49: 941, 50: 941, 51: 941, 52: 941, 53: 887, 54: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -214,6 +218,18 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      register entry, never by flipping alone. See public/hero/README.md. */
   44: 1774,
   45: 1881,
+  /* hero-46..54 — the JAMIN CITY set (owner-supplied 2026-08-17, "Jamin city"
+     folder): gated entrances of named communities — Trident, Metropolis, the
+     arc gate, Nexus Residency, City of Dreams, Daydreamer Residency, and
+     three more. ⚠️ Every frame names a community that is NOT in the catalogue,
+     so the standing rule binds at hero-19 strength: `alt=""`, `aria-hidden`,
+     never a caption, never on a property card. 46 carries the homepage
+     (via Hero.tsx's own ART constant, not this register's callers); 53/54 are
+     SPARES — both put the lockup where `paper`'s fade or the copy plate
+     would fight it, the hero-31/33 lesson. Cinematic alphas were swept
+     comparatively against audited hero-38: 49 holds 0.52; 47/48/50/51 need
+     0.58 (see each caller). */
+  46: 1773, 47: 1716, 48: 1823, 49: 1672, 50: 1672, 51: 1672, 52: 1672, 53: 1774, 54: 1672,
 };
 
 function artSrc(n: HeroArt) {
@@ -535,6 +551,14 @@ export function PageHero({
           something a full-width phone band should carry. The extra fetch is
           real and is the price of the two treatments being genuinely
           different pictures of the same file. */}
+      {/* ⚠️ `mix-blend-multiply` on BOTH paper-tone images (CARTOUCHE
+          2026-08-17). The page field is sand now, not near-white, and half the
+          graphic renders sit on their own white ground — unblended they read
+          as white rectangles pasted on the paper. Multiply maps white exactly
+          onto whatever ground is behind it, so a render prints INTO the page
+          — which is the whole drawing-sheet metaphor — and a photograph takes
+          a faint warm cast that reads as the house print grade. Cinematic
+          frames are full-bleed cover and keep their own colour. */}
       <div className="relative aspect-[var(--hero-band)] w-full xl:hidden" style={bandStyle}>
         <Image
           src={src}
@@ -543,7 +567,7 @@ export function PageHero({
           fill
           sizes="100vw"
           priority={priority}
-          className="object-contain object-center"
+          className="object-contain object-center mix-blend-multiply"
         />
       </div>
 
@@ -562,7 +586,7 @@ export function PageHero({
           fetchPriority={priority ? "high" : "auto"}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          className="hero-fade h-full w-full object-cover"
+          className="hero-fade h-full w-full object-cover mix-blend-multiply"
           style={{ objectPosition: artPosition ?? "left" }}
         />
       </div>

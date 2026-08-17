@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/Gallery";
+import { Sweep } from "@/components/brand/Sweep";
 import { PropertyCard } from "@/components/PropertyCard";
 import { LayoutViews } from "@/components/LayoutViews";
 import { SiteMap } from "@/components/SiteMap";
@@ -925,6 +926,12 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           </div>
         </section>
       )}
+      </div>
+
+      {/* CARTOUCHE §4.2 — the Sweep, surface 3 of exactly 3 (home, /contact,
+          and here). The property page ends on the desk. */}
+      <div className="mt-phi6">
+        <Sweep lead={p.title} />
       </div>
     </article>
   );

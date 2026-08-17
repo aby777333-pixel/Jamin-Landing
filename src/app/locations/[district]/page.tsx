@@ -58,10 +58,19 @@ export const dynamicParams = false;
  * could move the board a single pixel. See the register entry in
  * public/hero/README.md; 35 and 39 stay on disk as the un-mirrored sources.
  */
+/**
+ * ⚠️ 2026-08-17 (CARTOUCHE): Erode and Coimbatore took frames from the
+ * owner's JAMIN CITY set — hero-49 (the Nexus arch, whose subject is CENTRED
+ * and so clears the left copy plate) and hero-48 (the arc gate). Coimbatore
+ * therefore stops falling through to hero-17 and DEFAULT_ART becomes a true
+ * fallback for a future fifth district. Salem and Tiruppur KEEP hero-44/45 —
+ * the board-right mirrors the owner's own report asked for this same morning.
+ */
 const ART_BY_DISTRICT: Record<string, HeroArt> = {
-  erode: 38,
+  erode: 49,
   salem: 44,
   tiruppur: 45,
+  coimbatore: 48,
 };
 const DEFAULT_ART: HeroArt = 17;
 
@@ -116,6 +125,20 @@ const DEFAULT_ART: HeroArt = 17;
  * entry already accepts across the set. 0.52 stands.
  */
 const SHEER_ALPHA = 0.52;
+
+/**
+ * ⚠️ Per-district now, because the set is no longer one shoot. Swept
+ * comparatively against audited hero-38 at the same geometry: hero-49 (Erode)
+ * reads at or above the audited figure at 0.52; hero-48 (Coimbatore) reads
+ * p95 4.13/4.19 there and needs 0.58 to restore it. 44/45 hold 0.52 (see the
+ * entry above).
+ */
+const ALPHA_BY_DISTRICT: Record<string, number> = {
+  erode: 0.52,
+  salem: 0.52,
+  tiruppur: 0.52,
+  coimbatore: 0.58,
+};
 
 export async function generateStaticParams() {
   const all = await getProperties();
@@ -184,7 +207,7 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
         tone="cinematic"
         size="tall"
         sheer
-        sheerAlpha={ART_BY_DISTRICT[district] ? SHEER_ALPHA : 0.12}
+        sheerAlpha={ALPHA_BY_DISTRICT[district] ?? (ART_BY_DISTRICT[district] ? SHEER_ALPHA : 0.12)}
         /* 38rem (2026-08-17) — the report asked for a clear gap between the
            copy and the entrance board now on the RIGHT of 44/45. District
            headlines are the shortest on the site, so the narrow cap costs no

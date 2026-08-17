@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
+import { Sweep } from "@/components/brand/Sweep";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
@@ -548,6 +549,14 @@ export default async function HomePage() {
           </div>
         </div>
       </Container>
+
+      {/* CARTOUCHE §4.2 — the Sweep, surface 1 of exactly 3 (here, /contact,
+          and the foot of /property/[slug]). The red quarter-round is the
+          site's contact-and-conversion mark; adding it anywhere else spends
+          the signature. */}
+      <div className="mt-phi6">
+        <Sweep lead="Speak to the desk" />
+      </div>
     </>
   );
 }

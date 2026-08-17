@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Archivo, Newsreader, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 /* After globals: the cadastral layer adds to the foundation, it never
    overrides an audited decision made there. */
@@ -35,9 +35,35 @@ import { SITE_URL } from "@/lib/supabase";
  *  - The material change in this redesign is doing the work regardless. What
  *    reads as expensive is the champagne-against-onyx discipline, the gem
  *    banding and the hairlines — not the face the headline is set in. */
-const body = Inter({
-  subsets: ["latin"],
+/** JAMIN CARTOUCHE (2026-08-17) — three faces, three jobs, replacing the
+ *  one-typeface Inter rule the previous briefs converged on. This brief is a
+ *  different animal: the reference creative's identity IS the heavy grotesk
+ *  headline against a book-serif body, so the contrast between families is the
+ *  brand this time, not a discipline to avoid.
+ *
+ *  - Archivo (display): H1–H3, buttons, uppercase labels — the heavy caps.
+ *  - Newsreader (body): paragraphs, long-form — the printed page.
+ *  - IBM Plex Mono (data): survey numbers, sheet serials, eyebrows — the
+ *    drawing-sheet register. `.ledger` now resolves here too.
+ *
+ *  ⚠️ The CSS variable --font-body deliberately keeps its name (it is
+ *  referenced by globals.css and dozens of components); it simply resolves to
+ *  Newsreader now. --font-display and --font-mono are new. */
+const display = Archivo({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-display",
+  display: "swap",
+  axes: ["wdth"],
+});
+const body = Newsreader({
+  subsets: ["latin", "latin-ext"],
   variable: "--font-body",
+  display: "swap",
+});
+const mono = IBM_Plex_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
   display: "swap",
 });
 
@@ -141,7 +167,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
          primary; every control resolves through --color-cta, so nothing else
          in the tree has to know which one is active. */
       data-palette="heritage"
-      className={`${body.variable} h-full antialiased`}
+      className={`${body.variable} ${display.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         {/* Once for the document. Never per section — see the component. */}

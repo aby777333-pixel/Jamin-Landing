@@ -1017,6 +1017,42 @@ optimised output by source path, so overwriting purpose-1857.webp would let a
 warm build keep serving the old picture from a deploy that looks correct. Same
 trap recorded against hero-27. purpose-1857 is left in place, unused.
 
+## hero-46..54 — the JAMIN CITY set (2026-08-17, CARTOUCHE revamp)
+
+Owner-supplied ("Jamin city" folder in Downloads): nine gated-entrance renders
+of named Jamin Bazaar communities. No trims; q82 WebP at 768/1280/native.
+
+| id | source | native | assigned |
+|---|---|---|---|
+| 46 | trident.png — JAMIN TRIDENT, red trident roofline at dusk | 1773x887 | homepage (Hero.tsx ART) |
+| 47 | metropolis.png — JAMIN METROPOLIS gate | 1716x916 | /properties, a0.58 |
+| 48 | 2.png — the arc gate at sunset | 1823x863 | /locations/coimbatore, a0.58 |
+| 49 | 1.png — JAMIN NEXUS RESIDENCY arch (subject CENTRED) | 1672x941 | /locations/erode, a0.52 |
+| 50 | …01_13_39 — JAMIN CITY OF DREAMS | 1672x941 | /about, a0.58 |
+| 51 | …01_18_11 — JAMIN DAYDREAMER RESIDENCY | 1672x941 | /journal, a0.58 |
+| 52 | …01_24_30 — modern slat gate | 1672x941 | /contact (paper, a0.42) |
+| 53 | …01_27_08 — stone-pillar gate | 1774x887 | **spare** — lockup sits where paper's fade would cut it (the hero-31/33 lesson) |
+| 54 | …01_32_33 — brick-and-white gate | 1672x941 | **spare** — lockup dead centre, fights every copy position |
+
+⚠️ **Every frame names a community that is NOT in the catalogue** (Trident,
+Metropolis, Nexus, City of Dreams, Daydreamer). The standing rule binds at
+hero-19 strength: `alt=""`, `aria-hidden`, never a caption, never a location,
+never on a property card. The owner supplied them for the CARTOUCHE revamp
+with that on the table.
+
+⚠️ **Alphas were swept comparatively, not inherited** (the pair rule):
+against audited hero-38 at the same geometry, hero-49 reads at or above the
+audited figure at 0.52; 47/48/50/51 read p95 4.1–4.6 there and take **0.58**.
+/journal's 0.08 belonged to the BANYAN (hero-43) and would have shipped a
+failure invisibly — the exact trap the hero-27 entry documents. /contact's
+paper plate went 0.26 → 0.42, the audited hero-40 value.
+
+Displaced to the spare pile: 37 (/properties), 19 (/about), 43 (/journal),
+21 (/contact), 20 (homepage banner — its trim notes stay in Hero.tsx), 38
+(Erode), 17 (now a true default for an artless future district). Salem and
+Tiruppur KEEP 44/45 — the board-right mirrors from the owner's own report the
+same morning.
+
 ## hero-44 -> /locations/salem · hero-45 -> /locations/tiruppur (2026-08-17)
 
 MIRRORED cuts of hero-35 and hero-39, made for the owner's report asking for

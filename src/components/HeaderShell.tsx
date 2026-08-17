@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { Cartouche } from "@/components/brand/Cartouche";
 import { usePathname } from "next/navigation";
 import { useQueryString } from "@/lib/url-state";
 import { useEffect, useId, useRef, useState } from "react";
@@ -156,29 +156,21 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             sit under the image rather than beside it, and the column must not
             stretch to the header's height or the rule floats. Purely
             decorative: the link, its target and its label are unchanged. */}
+        {/* CARTOUCHE (2026-08-17) — the red lozenge title block from the
+            reference creative replaces the bare lockup. One per page, header
+            only; it contracts once the reader is into the page, driven by the
+            same `deep` boolean the hairline already uses. The link, target and
+            aria-label are unchanged — only the chrome moved. It hangs 24px
+            below the bar at rest (`-mb-6`) so it reads as APPLIED to the page;
+            the margin goes with the compact state so the scrolled bar stays
+            tight. */}
         <Link
           href="/"
-          className="rj-lockup flex flex-col items-start justify-center"
+          className={`flex flex-col items-start justify-center ${deep ? "" : "-mb-6"}`}
           aria-label="Jamin Bazaar — home"
+          style={{ transition: "margin 220ms var(--ease-silk)" }}
         >
-          {/* The full lockup — mark, wordmark and the "signature for Fortune"
-              rule. logo.png is the square app mark on its own and belongs on an
-              icon, not in a header, where it reads as a favicon that wandered
-              onto the page. */}
-          <Image
-            src="/logo-full.png"
-            alt="Jamin Bazaar"
-            width={793}
-            height={312}
-            priority
-            /* Without `sizes` Next falls back to 1x/2x density candidates off
-               the `width` prop and fetched a 1920px rendition for a 122px box. */
-            sizes="(max-width: 1024px) 108px, 130px"
-            className="h-10 w-auto lg:h-12"
-          />
-          {/* The logo already carries a gold rule under BAZAAR; this draws one,
-              from the left, on hover. `aria-hidden` — it says nothing. */}
-          <span className="rj-lockup-rule mt-0.5" aria-hidden="true" />
+          <Cartouche compact={deep} />
         </Link>
 
         <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">

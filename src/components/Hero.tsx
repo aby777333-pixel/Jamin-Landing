@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HeroConsole } from "./HeroConsole";
+import { Docket } from "@/components/ui/Docket";
 
 /**
  * The homepage hero — one frame, no carousel.
@@ -57,7 +58,14 @@ export type Slide = {
  * Brand imagery, not a photograph of a Jamin project — it carries no caption and
  * must never be given one. See public/hero/README.md.
  */
-const ART = { id: "20", w: 1983 };
+/* ⚠️ CARTOUCHE 2026-08-17: hero-46 — JAMIN TRIDENT from the owner's JAMIN
+   CITY set — replaces hero-20. It is 2:1, not 3.3:1, and it is a lit dusk
+   frame rather than a light banner, which moves two numbers with it (the pair
+   rule): the copy plate's sheer alpha rises 0.24 → 0.85 (ink type cannot sit
+   on a quarter-strength plate over a dark red roofline), and the crop steers
+   centre rather than 35% (the trident and its name are the centre of the
+   frame). The hero-20 notes below are kept for the day the banner returns. */
+const ART = { id: "46", w: 1773 };
 
 export function Hero({
   slides,
@@ -122,7 +130,7 @@ export function Hero({
           fill
           sizes="100vw"
           priority
-          className="object-cover object-[62%_38%]"
+          className="object-cover object-center"
         />
       </div>
 
@@ -171,7 +179,7 @@ export function Hero({
                height comes off the banner's SIDES. 36rem measured a 675px block
                and cropped the banner to 56%. Steering the picture is free;
                narrowing the card is not. */
-            style={{ objectPosition: "35% top" }}
+            style={{ objectPosition: "50% 35%" }}
           />
           {/* The mirror of `hero-fade`: instead of a dark scrim the page
               dissolves the image into its own canvas from the left. Over the
@@ -253,7 +261,7 @@ export function Hero({
             /* The banner is light everywhere the copy sits, so the plate can go
                a long way down before the ink is in trouble — and the white halo
                is what carries it the rest of the way. */
-            style={{ "--rj-sheer-alpha": 0.24 } as React.CSSProperties}
+            style={{ "--rj-sheer-alpha": 0.85 } as React.CSSProperties}
           >
             {/* ⚠️ CENTRED ON A PHONE ONLY — `sm:` puts everything back. The
                 report (2026-08-14) is a screenshot of a 285px card, and at that
@@ -295,8 +303,15 @@ export function Hero({
                    That section is the page's designated warm passage. Having
                    two is not fatal, but if one of them is ever rewritten they
                    should be pulled apart rather than closer. */}
-            <h1 className="mt-phi3 text-balance text-4xl text-ink">
-              The address your family keeps.
+            {/* CARTOUCHE §3.2 — the two-colour headline rule, applied here and
+                on at most two other headings site-wide. The sentence splits at
+                its semantic hinge and ends on the fact, in teal: ink → bronze
+                → teal, exactly as the reference creative colours KNOW THE
+                PROCESS. All three inks are AAA/AA on the plate (bronze-700
+                5.6:1, teal-700 7.8:1 on sand). */}
+            <h1 className="mt-phi3 text-balance text-4xl uppercase text-ink">
+              The address <span className="text-jamin-gold-ink">your family</span>{" "}
+              <span className="text-canopy">keeps.</span>
             </h1>
 
             <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
@@ -335,6 +350,19 @@ export function Hero({
               >
                 Book a site visit
               </Link>
+            </div>
+
+            {/* CARTOUCHE §4.3 — the index sheet's own docket. Site-wide facts
+                only: this hero fronts the whole register, so it carries the
+                index serial rather than any one project's. */}
+            <div className="mt-phi3 hidden sm:block">
+              <Docket
+                lines={[
+                  "Jamin Properties",
+                  "Tamil Nadu · DTCP-approved layouts",
+                  "SHEET JG-TN-000 · INDEX",
+                ]}
+              />
             </div>
           </div>
         </div>

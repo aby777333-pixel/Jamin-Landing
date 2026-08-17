@@ -47,9 +47,9 @@
   --dur-slow: 1400ms;
 
   /* Rules, in the ink the audit approved. */
-  --rule-hair: rgba(23, 24, 28, 0.1);
-  --rule-strong: rgba(23, 24, 28, 0.18);
-  --rule-gold: rgba(234, 163, 23, 0.38);
+  --rule-hair: rgba(41, 31, 21, 0.12);
+  --rule-strong: rgba(41, 31, 21, 0.2);
+  --rule-gold: rgba(180, 137, 97, 0.45);
 }
 
 /**
@@ -149,7 +149,7 @@ body > footer {
   right: 0;
   width: var(--fold-size);
   height: var(--fold-size);
-  background: linear-gradient(225deg, rgba(23, 24, 28, 0.16) 0%, transparent 55%);
+  background: linear-gradient(225deg, rgba(41, 31, 21, 0.16) 0%, transparent 55%);
   opacity: 0;
   transition: opacity var(--dur-base) var(--ease-press);
   pointer-events: none;

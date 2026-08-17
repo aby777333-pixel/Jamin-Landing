@@ -43,12 +43,12 @@
    */
   --foil-gold: linear-gradient(
     115deg,
-    #7a5a16 0%,
-    #c9a227 22%,
-    #f6ebbf 42%,
-    #c9a227 58%,
-    #8a6a1c 78%,
-    #e3cb74 100%
+    #6c533b 0%,
+    #b48961 22%,
+    #ecd9c2 42%,
+    #b48961 58%,
+    #6c533b 78%,
+    #c9a884 100%
   );
   /**
    * ⚠️ THE FOIL THAT CARRIES WORDS IS NOT THE FOIL THAT CARRIES NONE.
@@ -71,30 +71,30 @@
    */
   --foil-gold-seal: linear-gradient(
     115deg,
-    #e3cb74 0%,
-    #f2dfa0 24%,
-    #fdf6e0 46%,
-    #f2dfa0 68%,
-    #e3cb74 100%
+    #c9a884 0%,
+    #e8d5b8 24%,
+    #f5ead9 46%,
+    #e8d5b8 68%,
+    #c9a884 100%
   );
 
   --foil-plat: linear-gradient(
     115deg,
-    #82898f 0%,
-    #c3c9cd 26%,
-    #fafbfb 46%,
-    #cfd5d8 64%,
-    #8e959b 84%,
-    #e6eaec 100%
+    #847b6d 0%,
+    #c6b9a6 26%,
+    #faf6ef 46%,
+    #cfc3b0 64%,
+    #8a8073 84%,
+    #e9e0d2 100%
   );
   --foil-silver: linear-gradient(
     115deg,
-    #6e767d 0%,
-    #aab2b8 24%,
-    #f2f5f7 44%,
-    #b7bfc5 62%,
-    #7c848b 82%,
-    #d4dade 100%
+    #6e6455 0%,
+    #ada091 24%,
+    #f4ede2 44%,
+    #b9ac9a 62%,
+    #7d7263 82%,
+    #d6cab7 100%
   );
 
   /* Glass. The tint values are deliberately heavier than the brief's .62/.58 —
@@ -108,16 +108,16 @@
   /* The gradient border painted onto glass panels. */
   --glass-rim: linear-gradient(
     135deg,
-    rgba(201, 162, 39, 0.55),
-    rgba(201, 162, 39, 0.06) 40%,
+    rgba(180, 137, 97, 0.6),
+    rgba(180, 137, 97, 0.07) 40%,
     rgba(195, 201, 205, 0.35) 70%,
-    rgba(201, 162, 39, 0.42)
+    rgba(180, 137, 97, 0.48)
   );
 
   /* Hairlines. Engraving, not borders. */
   --line-ivory: rgba(23, 20, 15, 0.12);
   --line-onyx: rgba(232, 225, 210, 0.13);
-  --line-champagne: rgba(201, 162, 39, 0.42);
+  --line-champagne: rgba(180, 137, 97, 0.48);
 
   /* Motion. Silk settles; rise is the chisel cut. */
   --ease-rise: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -196,8 +196,8 @@
 .rj-fret {
   height: 8px;
   background-image:
-    linear-gradient(45deg, transparent 46%, rgba(201, 162, 39, 0.3) 46% 54%, transparent 54%),
-    linear-gradient(-45deg, transparent 46%, rgba(201, 162, 39, 0.3) 46% 54%, transparent 54%);
+    linear-gradient(45deg, transparent 46%, rgba(180, 137, 97, 0.34) 46% 54%, transparent 54%),
+    linear-gradient(-45deg, transparent 46%, rgba(180, 137, 97, 0.34) 46% 54%, transparent 54%);
   background-size: 16px 16px;
 }
 
@@ -668,7 +668,7 @@
  * a shadow there would be pure decoration.
  */
 .rj-hairline {
-  box-shadow: 0 1px 0 rgba(23, 24, 28, 0.04), 0 10px 28px -18px rgba(23, 24, 28, 0.35);
+  box-shadow: 0 1px 0 rgba(41, 31, 21, 0.04), 0 10px 28px -18px rgba(41, 31, 21, 0.35);
 }
 [data-theme="vault"] .rj-hairline {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 12px 30px -18px rgba(0, 0, 0, 0.75);
@@ -755,7 +755,7 @@
      two read as a hierarchy rather than as two unrelated colours. */
   --plan-road-wide: #e8e0d2;
   --plan-road-wide-line: #c4b9a6;
-  --plan-tick: #9aa0ab;
+  --plan-tick: #8a8073;
 }
 
 /**
@@ -1053,10 +1053,10 @@
   border-radius: inherit;
   background: linear-gradient(
     var(--rj-rim-angle),
-    rgba(201, 162, 39, 0.55),
-    rgba(201, 162, 39, 0.06) 40%,
+    rgba(180, 137, 97, 0.6),
+    rgba(180, 137, 97, 0.07) 40%,
     rgba(195, 201, 205, 0.35) 70%,
-    rgba(201, 162, 39, 0.42)
+    rgba(180, 137, 97, 0.48)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -1824,7 +1824,7 @@
  * translucent. Caught by the sweep, not by eye.
  */
 .glass-dark {
-  background: rgba(26, 26, 28, 0.72);
+  background: rgba(27, 23, 18, 0.72);
 }
 #jamindar-panel.glass-dark,
 .rj-console.glass-dark {
@@ -1884,7 +1884,7 @@ header .glass,
     --color-canvas-alt: #fff;
     --color-canvas-sunken: #fff;
     --color-ink: #000;
-    --color-ink-soft: #1a1a1a;
+    --color-ink-soft: #291f15;
     --color-ink-muted: #333;
     --color-ink-faint: #444;
     --color-line: #999;

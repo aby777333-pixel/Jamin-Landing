@@ -81,7 +81,8 @@ export default async function JournalPage() {
           hero-43 is a photograph with real tonal range, which is the case
           `veil` and the `gilt` plate exist for. */}
       <PageHero
-        art={43}
+        /* hero-51 — Jamin Daydreamer Residency, JAMIN CITY set 2026-08-17. */
+        art={51}
         tone="cinematic"
         /* Taller, at the owner's request (2026-08-15): `clamp(26rem,64vh,38rem)`
            against the standard `clamp(20rem,48vh,30rem)`.
@@ -142,7 +143,7 @@ export default async function JournalPage() {
            5.5x lighter, and it is below the utility’s own 0.14 default.
            The eyebrow binds, as on every cinematic hero — `champagne-50`, not
            the white h1. Anyone lightening this has to change the ink first. */
-        sheerAlpha={0.08}
+        sheerAlpha={0.58}  /* re-swept for hero-51: 0.08 was the BANYAN frame; this is bright daylight. */
         /* ⚠️ 42rem, NOT the 38rem /properties uses — the cliff is set by the
            headline and this one is longer. Measured at 1440: "Land, and the
            things worth knowing before you decide." holds three lines at 42rem

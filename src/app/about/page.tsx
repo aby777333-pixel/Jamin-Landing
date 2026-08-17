@@ -62,12 +62,16 @@ export default async function AboutPage() {
           uncaptioned and out of the accessibility tree — the no-caption rule in
           public/hero/README.md binds harder here than anywhere else. */}
       <PageHero
-        art={19}
+        /* hero-50 — Jamin City of Dreams, JAMIN CITY set 2026-08-17. */
+        art={50}
         tone="cinematic"
         size="tall"
         sheer
         /* Swept on this frame, not copied. The brightest frame the site carries: white 4.96, gold 4.59 at blur 16. */
-        sheerAlpha={0.14}
+        /* 0.58 for hero-50 — re-swept, not carried (the pair rule). At the
+           old 0.14 this bright daylight frame fails outright; 0.58 matches the
+           audited hero-38 figure at the same geometry. */
+        sheerAlpha={0.58}
         eyebrow="Who we are"
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."

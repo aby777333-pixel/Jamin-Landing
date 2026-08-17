@@ -25,7 +25,9 @@ export default async function PropertiesPage() {
         /* hero-37 — the aerial gate, owner-supplied 2026-08-12, replacing
            hero-17. hero-17 is not retired: it is still the fallback for a
            district page without art of its own, which today means Coimbatore. */
-        art={37}
+        /* hero-47 — Jamin Metropolis, from the owner's 2026-08-17 JAMIN CITY
+           set, replacing the aerial hero-37. */
+        art={47}
         tone="cinematic"
         /* `full`, up from `tall` (2026-08-17) — the owner's report: "hero does
            not fill the expected viewport height / large white space below".
@@ -73,7 +75,11 @@ export default async function PropertiesPage() {
            sweep that models a full-bleed phone crop overstates the constraint.
            The tightest real case is the narrowest width that still composites
            copy over photograph, which is 1024. */
-        sheerAlpha={0.52}
+        /* 0.58 for hero-47, up from hero-37's 0.52 — the pair rule. Swept
+           comparatively against audited hero-38: at 0.52 this frame reads p95
+           4.46/4.57 where the audited figure is ~5.0; 0.58 restores it
+           (5.40/5.52). */
+        sheerAlpha={0.58}
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
         lead={

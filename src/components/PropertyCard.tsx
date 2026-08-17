@@ -3,8 +3,10 @@ import Link from "next/link";
 import { AvailabilityChip } from "@/components/cadastral/AvailabilityChip";
 import { DimensionOverlay } from "@/components/cadastral/DimensionOverlay";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+import { Docket } from "@/components/ui/Docket";
 import { districtName, districtStone, stageStone } from "@/lib/stones";
 import { getTier } from "@/lib/tiers";
+import { sheetNumber } from "@/lib/sheet-number";
 import {
   approvalBadges,
   areaParts,
@@ -158,6 +160,29 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
               {p.status === "sold" ? "Sold Out" : p.status}
             </span>
           )}
+        </div>
+
+        {/* CARTOUCHE §4.3 — the Docket, bottom-left of every card image, on a
+            warm scrim. District, the real approval number when the record has
+            one, and the deterministic sheet serial — the drawing-sheet
+            metaphor made literal. The title itself stays in the card body
+            below; repeating it here would say it twice three inches apart. */}
+        <div
+          className="absolute inset-x-0 bottom-0 p-4"
+          style={{ background: "linear-gradient(to top, rgba(18, 14, 10, 0.66), transparent)" }}
+        >
+          {/* ⚠️ No DTCP number here — the card's `Property` shape deliberately
+              does not carry `legal` (the allowlist in lib/properties), and the
+              approval chip above already says what is verifiable. District and
+              serial only. */}
+          <Docket
+            onDark
+            rule="red"
+            lines={[
+              district ?? phaseLabel(p),
+              `SHEET ${sheetNumber(district, p.slug ?? p.id, p.plots_total)}`,
+            ]}
+          />
         </div>
       </div>
 
