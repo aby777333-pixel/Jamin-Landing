@@ -1008,31 +1008,33 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
      It is also BRIGHTER than the frame it replaces, which reverses the concern
      recorded on -2: the copy is clear of the picture at 1440 either way, and a
      bright frame only helps the dark ink beside it. */
+  /* ═══ 2026-08-17: ALL FOUR HEADERS TOOK NEW OWNER ARTWORK — the gated-
+     entrance set from `Downloads\Jamin city`, files named for their projects
+     by the owner ("names written to the images"). Every frame is 1672x941
+     (1.777), which retires the per-frame ratio table above: the four now crop
+     identically, and the box's worst case (2.594 at a 2000-wide window) keeps
+     68.5% of each frame's height. New filenames, never overwrites —
+     `next/image` keys optimised output by source path (the standing trap).
+     The countryside frames stay in the folder, unused.
+
+     ⚠️ `focus` re-decided per frame, not carried: the old values belonged to
+     the old subjects (edappadi-3's banyan children, udumalaipet-2's arrow).
+     Two of the new gates mount the JAMIN BAZAAR board top-centre, where a
+     centred crop's 15.7% top cut clips it — those two get `50% 35%`, which
+     keeps the board with headroom and spends sky's worth of road instead.
+     The other two carry the lockup at mid-height and centre is right. */
   "jamin-new-project-jul-2026": {
-    file: "edappadi-3",
+    /* The bougainvillea arch — board TOP-CENTRE. */
+    file: "edappadi-hero",
     widths: [960, 1440, 1672],
-    /* 🚨 88%, BECAUSE THIS FRAME PUTS ITS SUBJECT ON THE FLOOR. Reported
-       2026-08-14: "can't see the bottom of the image" — the children under the
-       banyan were cut to their heads.
-
-       The box is much wider than the picture, so `cover` spends HEIGHT, and at
-       a 2000-wide window it spends a lot: measured 1026x396 = 2.594 against a
-       1.777 source, so only 68.5% of the height survives and a centred crop
-       takes 15.7% off the top AND 15.7% off the bottom. The children sit in the
-       last quarter of the frame, so the bottom cut is the one that hurts.
-
-       ⚠️ NOT `100%`, and the sign is why. Rendered centre / 75 / 88 / bottom at
-       the 2.594 worst case: at 100% the whole group is in shot but the JAMIN
-       BAZAAR board is jammed against the top edge with its hanging chains cut.
-       88% keeps the children AND leaves headroom above the board. The same
-       trade as every other frame in this file — subject versus lockup — just
-       decided on the vertical axis for once. */
-    focus: "50% 88%",
+    focus: "50% 35%",
   },
-  "jamin-garden-varapatty": { file: "jamin-garden-varapatty", widths: [960, 1440, 1774] },
+  /* The sunset stone gate with the waterfall wall — lockup right, mid-height. */
+  "jamin-garden-varapatty": { file: "varapatty-2", widths: [960, 1440, 1672] },
+  /* The modern slat gate with the fountain — lockup right, mid-height. */
   "jamin-garden-shastri-nagar-erode": {
-    file: "jamin-garden-shastri-nagar-erode",
-    widths: [960, 1440, 1799],
+    file: "shastri-nagar-2",
+    widths: [960, 1440, 1672],
   },
   /* No slug in the database — this is the id the URL actually uses.
      ⚠️ `udumalaipet-2`, owner-supplied 2026-08-14, replacing `udumalaipet`.
@@ -1051,8 +1053,10 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
      both still read. Centre is the default, so the override is gone rather than
      set to 50%. */
   "c0e9c29e-8865-45ba-b852-1ab993fb1664": {
-    file: "udumalaipet-2",
+    /* The cottage-street gate — board TOP-CENTRE, same crop call as Edappadi. */
+    file: "udumalaipet-3",
     widths: [960, 1440, 1672],
+    focus: "50% 35%",
   },
 };
 
