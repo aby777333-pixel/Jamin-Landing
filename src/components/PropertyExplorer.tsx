@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
 import { SurveyIcon } from "./cadastral/SurveyIcon";
@@ -148,7 +149,20 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      not yet in the comparison; one tap adds it. Closes on pick, on re-tap,
      and on any press outside it. */
   const [pickOpen, setPickOpen] = useState(false);
+  /* The comparison POPUP (owner 2026-08-17: "should give a pop up
+     comparison... a beautiful pop up with all details") — Compare opens a
+     portalled dialog right here instead of navigating away; /compare stays
+     alive inside it as the shareable full-page link. */
+  const [compareOpen, setCompareOpen] = useState(false);
   const pickRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!compareOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setCompareOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [compareOpen]);
   useEffect(() => {
     if (!pickOpen) return;
     const close = (e: PointerEvent) => {
@@ -575,12 +589,13 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
               Clear
             </button>
             {compared.length >= 2 ? (
-              <Link
-                href={`/compare?ids=${compared.join(",")}`}
+              <button
+                type="button"
+                onClick={() => setCompareOpen(true)}
                 className="rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-jamin-red-deep"
               >
                 Compare {compared.length}
-              </Link>
+              </button>
             ) : (
               /* A real button in gold guidance dress, not a dead link — the
                  gold says "next step", the red above says "go". */
@@ -640,6 +655,153 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         </div>
       )}
 
+      {/* ---- the comparison popup ---- */}
+      {/* Portalled to <body> — body>main is a stacking context, the plot-sheet
+          lesson. Click-outside and Escape both close; the × is the same red
+          control the sheet lightbox taught. */}
+      {compareOpen &&
+        compared.length >= 2 &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Compare developments side by side"
+            className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/85 sm:items-center sm:p-6"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setCompareOpen(false);
+            }}
+          >
+            <div className="relative max-h-[92dvh] w-full max-w-4xl overflow-y-auto overscroll-contain rounded-t-card border border-line bg-canvas shadow-raise sm:rounded-card">
+              <span className="rj-royal-rule block" aria-hidden="true" />
+              <button
+                type="button"
+                onClick={() => setCompareOpen(false)}
+                aria-label="Close the comparison"
+                className="absolute right-4 top-5 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-jamin-red text-lg text-white shadow-lift transition-all hover:bg-jamin-red-deep"
+              >
+                ×
+              </button>
+              <div className="px-phi3 pb-phi4 pt-phi3 sm:px-phi4">
+                <p className="rj-eyebrow text-jamin-gold-ink">Side by side</p>
+                <h2 className="mt-1 text-2xl text-ink">
+                  Comparing {compared.length} developments
+                </h2>
+
+                {/* The register scrolls INSIDE its own box on a phone — the
+                    page must never scroll sideways. */}
+                <div className="mt-phi3 overflow-x-auto">
+                  <div
+                    className="grid min-w-[34rem] gap-x-3"
+                    style={{
+                      gridTemplateColumns: `6.5rem repeat(${compared.length}, minmax(0, 1fr))`,
+                    }}
+                  >
+                    {/* Column heads: each development under its district stone. */}
+                    <span aria-hidden="true" />
+                    {compared.map((id) => {
+                      const p = all.find((x) => x.id === id)!;
+                      const stone = DISTRICT_STONE[p.district ?? ""] ?? STONE_FALLBACK;
+                      return (
+                        <div
+                          key={id}
+                          className="rounded-t-lg border-b-0 px-3 pb-2.5 pt-3"
+                          style={{
+                            background: `color-mix(in srgb, ${stone} 12%, transparent)`,
+                            boxShadow: `inset 0 3px 0 0 ${stone}`,
+                          }}
+                        >
+                          <p className="text-base font-semibold leading-snug text-ink">{p.title}</p>
+                          <p className="mt-0.5 text-micro uppercase tracking-[0.1em] text-ink-faint">
+                            {locationLine(p)}
+                          </p>
+                        </div>
+                      );
+                    })}
+
+                    {(
+                      [
+                        ["Stage", (p: Property) => phaseLabel(p) ?? "—", false],
+                        ["Price", (p: Property) => formatPrice(p), true],
+                        ["Extent", (p: Property) => formatArea(p) ?? "—", true],
+                        [
+                          "Plots",
+                          (p: Property) =>
+                            p.plots_available != null && p.plots_total != null
+                              ? `${p.plots_available} of ${p.plots_total} available`
+                              : p.plots_available != null
+                                ? `${p.plots_available} available`
+                                : "—",
+                          true,
+                        ],
+                        [
+                          "Approvals",
+                          (p: Property) => approvalBadges(p).join(" · ") || "—",
+                          false,
+                        ],
+                        ["Survey no.", (p: Property) => p.survey_number ?? "—", true],
+                      ] as const
+                    ).map(([label, value, ledger]) => (
+                      <div key={label} className="contents">
+                        <span className="border-t border-line py-2.5 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+                          {label}
+                        </span>
+                        {compared.map((id) => {
+                          const p = all.find((x) => x.id === id)!;
+                          return (
+                            <span
+                              key={id}
+                              className={`border-t border-line px-3 py-2.5 text-tiny text-ink ${
+                                ledger ? "ledger" : ""
+                              }`}
+                            >
+                              {value(p)}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ))}
+
+                    {/* The action row: straight into either project. */}
+                    <span aria-hidden="true" className="border-t border-line" />
+                    {compared.map((id) => {
+                      const p = all.find((x) => x.id === id)!;
+                      return (
+                        <span key={id} className="border-t border-line px-3 py-3">
+                          <Link
+                            href={propertyHref(p)}
+                            className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-opacity hover:opacity-70"
+                          >
+                            Open the project →
+                          </Link>
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="mt-phi3 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-phi2">
+                  <Link
+                    href={`/compare?ids=${compared.join(",")}`}
+                    className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-opacity hover:opacity-70"
+                  >
+                    Open the full comparison page →
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCompareOpen(false);
+                      set({ compare: [] });
+                    }}
+                    className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep hover:text-jamin-red"
+                  >
+                    Clear the comparison
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   );
 }
