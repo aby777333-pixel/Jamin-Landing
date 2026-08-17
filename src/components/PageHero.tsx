@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -88,9 +88,10 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   68: 941,
   69: 1024,
   /* hero-70 — the park at dusk (spare) · hero-71 — the golden gate walk
-     (/downloads). */
+     (spare) · hero-72 — the gate at golden hour (/downloads). */
   70: 941,
   71: 1024,
+  72: 1024,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -298,6 +299,10 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      the lockup) took /downloads. Standing rule on both. */
   70: 1672,
   71: 1536,
+  /* hero-72 — the gate at golden hour (22:54): the wall lockup left, the
+     arch lockup overhead, the family walking in. Took /downloads within
+     the hour (71 → spare). Standing rule applies. */
+  72: 1536,
 };
 
 function artSrc(n: HeroArt) {

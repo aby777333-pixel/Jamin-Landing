@@ -42,9 +42,10 @@ export default async function DownloadsPage() {
   return (
     <>
       <PageHero
-        /* hero-71 — the GOLDEN GATE WALK (22:37), the family entering under
-           the lockup at golden hour, replacing the park (70 → spare). */
-        art={71}
+        /* hero-72 — the GATE AT GOLDEN HOUR (22:54): the big wall lockup left,
+           the arch lockup above, the family walking in. Replaces 71 within
+           the hour (71 → spare). */
+        art={72}
         eyebrow="Brochures & plans"
         title="Read the paperwork before you talk to anyone."
         lead="Every brochure, sanctioned layout plan and approval document we publish, in one place. No form to fill in, no sign-in, and no agent's card attached to the file."
