@@ -140,6 +140,24 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     set({ compare: next });
   }
 
+  /* "Pick one more" DOES something now (owner 2026-08-17: "pick another one
+     is not working") — with one property in the tray it used to be a
+     pointer-events-none link styled like a CTA, a button that ate the click.
+     It now returns the visitor to the top of the listings to pick the second
+     property. Offset by `--header-h`, read not hard-coded, the same pattern
+     VisitBooking uses; smooth unless the visitor prefers reduced motion. */
+  function pickAnother() {
+    const el = boxRef.current;
+    if (!el) return;
+    const headerH =
+      parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+      ) || 72;
+    const top = el.getBoundingClientRect().top + window.scrollY - headerH - 16;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+  }
+
   /* ⚠️ `inline-flex`, so each chip can carry the same 6px gem the nav tabs do.
      The filters ARE tabs — they select a district or a stage, which is exactly
      what the Locations and Projects menus select — so they get the same
@@ -349,7 +367,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             )}
           </div>
 
-          <div className="flex items-center self-start rounded-full border border-line bg-canvas p-1 sm:self-auto">
+          <div className="flex items-center gap-1 self-start rounded-full border border-line bg-canvas p-1 sm:self-auto">
             {/* ⚠️ The icon is DECORATION beside a label that stays — reported
                 2026-08-14 as the three controls being "less recognizable at a
                 glance", which is an argument for adding a mark, not for
@@ -357,13 +375,16 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 switcher gets right: `capitalize` on a plain word needs no
                 tooltip and no guess. The mark is `aria-hidden`; the button's
                 accessible name is still its text. */}
+            {/* Colorized (owner 2026-08-17): each resting segment wears its
+                own stone wash — the Downloads trio, red/teal/gold — while the
+                pressed segment stays the ink pill, readable over any of them. */}
             {(
               [
-                { v: "grid", icon: "grid" },
-                { v: "list", icon: "list" },
-                { v: "map", icon: "map" },
+                { v: "grid", icon: "grid", stone: "var(--color-cta)" },
+                { v: "list", icon: "list", stone: "var(--color-emerald-deep)" },
+                { v: "map", icon: "map", stone: "var(--color-jamin-gold)" },
               ] as const
-            ).map(({ v, icon }) => (
+            ).map(({ v, icon, stone }) => (
               <button
                 key={v}
                 type="button"
@@ -372,6 +393,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-tiny font-medium capitalize transition-colors ${
                   f.view === v ? "bg-ink text-canvas" : "text-ink-soft hover:text-ink"
                 }`}
+                style={
+                  f.view === v
+                    ? undefined
+                    : { background: `color-mix(in srgb, ${stone} 9%, transparent)` }
+                }
               >
                 <SurveyIcon name={icon} size="h-3.5 w-3.5" className="shrink-0" />
                 {v}
@@ -514,13 +540,25 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             </span>
             {compared.map((id) => {
               const p = all.find((x) => x.id === id)!;
+              /* Colour-coded like the filter pills above: each chip wears the
+                 stone of its property's district, dot included, so the tray
+                 speaks the same colour key as the rest of the page. */
+              const stone = DISTRICT_STONE[p.district ?? ""] ?? STONE_FALLBACK;
               return (
                 <button
                   key={id}
                   type="button"
                   onClick={() => toggleCompare(id)}
-                  className="inline-flex items-center gap-2 rounded-full border border-line bg-canvas-alt px-3 py-1.5 text-tiny text-ink-soft hover:border-ink-faint"
+                  className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-tiny text-ink-soft transition-colors hover:border-jamin-red-deep hover:text-jamin-red-deep"
+                  style={
+                    {
+                      "--rj-stone": stone,
+                      borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
+                      background: `color-mix(in srgb, ${stone} 10%, transparent)`,
+                    } as React.CSSProperties
+                  }
                 >
+                  <span className="rj-dot is-on" aria-hidden="true" />
                   {p.title}
                   <span aria-hidden="true">×</span>
                   <span className="sr-only">Remove from comparison</span>
@@ -532,21 +570,28 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <button
               type="button"
               onClick={() => set({ compare: [] })}
-              className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep"
+              className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep hover:text-jamin-red"
             >
               Clear
             </button>
-            <Link
-              href={`/compare?ids=${compared.join(",")}`}
-              className={`rounded-full px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] transition-all ${
-                compared.length >= 2
-                  ? "bg-jamin-red text-white hover:bg-jamin-red-deep"
-                  : "pointer-events-none bg-canvas-sunken text-ink-faint"
-              }`}
-              aria-disabled={compared.length < 2}
-            >
-              {compared.length < 2 ? "Pick one more" : `Compare ${compared.length}`}
-            </Link>
+            {compared.length >= 2 ? (
+              <Link
+                href={`/compare?ids=${compared.join(",")}`}
+                className="rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-jamin-red-deep"
+              >
+                Compare {compared.length}
+              </Link>
+            ) : (
+              /* A real button in gold guidance dress, not a dead link — the
+                 gold says "next step", the red above says "go". */
+              <button
+                type="button"
+                onClick={pickAnother}
+                className="rounded-full border border-jamin-gold bg-jamin-gold-soft/70 px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-all hover:bg-jamin-gold/25"
+              >
+                Pick one more
+              </button>
+            )}
           </div>
         </div>
       )}

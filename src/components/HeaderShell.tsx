@@ -161,13 +161,21 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
             reference creative replaces the bare lockup. One per page, header
             only; it contracts once the reader is into the page, driven by the
             same `deep` boolean the hairline already uses. The link, target and
-            aria-label are unchanged — only the chrome moved. It hangs 24px
-            below the bar at rest (`-mb-6`) so it reads as APPLIED to the page;
-            the margin goes with the compact state so the scrolled bar stays
-            tight. */}
+            aria-label are unchanged — only the chrome moved.
+
+            ⚠️ `-my-3`, SYMMETRIC, not the old bottom-only `-mb-6` (owner
+            2026-08-17: "alignment problem"). The bottom-only margin let the
+            flex row centre the nav against a box whose visual centre was 12px
+            lower, so HOME rode high on the lozenge and the lozenge burst out
+            of the band. Taking 12px off BOTH ends keeps the layout box at
+            48px — the band holds its measured 80px (`--header-h` at lg, the
+            token every sticky offset composes with) — while the 72px lozenge
+            overhangs 12px each way and its midline lands exactly on the
+            nav's. The margin still goes with the compact state so the
+            scrolled bar stays tight. */}
         <Link
           href="/"
-          className={`flex flex-col items-start justify-center ${deep ? "" : "-mb-6"}`}
+          className={`flex flex-col items-start justify-center ${deep ? "" : "-my-3"}`}
           aria-label="Jamin Bazaar — home"
           style={{ transition: "margin 220ms var(--ease-silk)" }}
         >

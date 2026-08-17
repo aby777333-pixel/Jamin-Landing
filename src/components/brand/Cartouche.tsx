@@ -65,12 +65,20 @@ export function Cartouche({ compact = false }: { compact?: boolean }) {
         </span>
       </span>
       {/* The paper shoulder beneath the squared corner — the detail that makes
-          the lozenge read as APPLIED to the page rather than laid out on it. */}
+          the lozenge read as APPLIED to the page rather than laid out on it.
+          ⚠️ ABSOLUTE, pinned to the lozenge's bottom-right (owner 2026-08-17:
+          "alignment problem") — as a flow sibling it added its height to the
+          Cartouche's layout box, so the header centred the nav against
+          lozenge-plus-shoulder and the chip could drift from the corner it
+          belongs to. Pinned, it contributes nothing to layout and cannot
+          detach. */}
       <span
         aria-hidden="true"
         style={{
+          position: "absolute",
+          top: "100%",
+          right: 0,
           background: "var(--color-jp-sand-050)",
-          alignSelf: "flex-end",
           width: "42%",
           height: compact ? 4 : 6,
           borderRadius: "0 0 8px 8px",
