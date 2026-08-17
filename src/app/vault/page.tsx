@@ -405,7 +405,7 @@ export default async function VaultPage() {
             <div className="mt-phi4 grid gap-3 sm:grid-cols-2">
               <Link
                 href="/vault/request?intent=buy"
-                className="rounded-full bg-jamin-red px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+                className="rj-velvet rounded-full px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
               >
                 I want to buy
               </Link>

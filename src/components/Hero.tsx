@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroConsole } from "./HeroConsole";
 import { Docket } from "@/components/ui/Docket";
+import { GoldDust } from "@/components/GoldDust";
 
 /**
  * The homepage hero — one frame, no carousel.
@@ -141,6 +142,9 @@ export function Hero({
       {/* The banner and the words it was drawn around. The rail is deliberately
           NOT in here — see the note on ART above. */}
       <div className="relative">
+        {/* Gilded Register §7: the Vault's drifting gold dust over the Trident
+            dusk — the site's best light effect finally on its first screen. */}
+        <GoldDust />
         {/* From `xl` (1280px) up the banner is full-bleed behind the copy. */}
         <div
           className="pointer-events-none absolute inset-0 hidden xl:block"

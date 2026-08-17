@@ -127,6 +127,10 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           picture: the box is already `relative overflow-hidden`, which is
           exactly what the class asks of its host. */}
       <div className="rj-sheen relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
+        {/* Certificate corners (Gilded Register §5): four gold brackets draw
+            in when the card is touched. On the PICTURE box — the card root's
+            pseudo-elements belong to cd-fold. */}
+        <span className="rj-corners" aria-hidden="true" />
         <DimensionOverlay
           top={area}
           left={p.plots_total ? `${p.plots_total} plot${p.plots_total === 1 ? "" : "s"}` : null}

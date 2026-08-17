@@ -29,9 +29,11 @@ export async function Sweep({
 
   return (
     <section aria-label="Contact the desk" className="relative overflow-hidden">
-      {/* The sweep itself: bleeds off the right and bottom edges. */}
+      {/* The sweep itself: bleeds off the right and bottom edges.
+          `rj-velvet` (Gilded Register §1): the flat signal red becomes the
+          oxblood sweep, with the certificate rule riding its top edge. */}
       <div
-        className="relative ml-auto flex flex-col items-start justify-end bg-cta text-white"
+        className="rj-velvet relative ml-auto flex flex-col items-start justify-end text-white"
         style={{
           borderRadius: "60% 0 0 0 / 100% 0 0 0",
           minHeight: "34vh",
@@ -72,7 +74,7 @@ export async function Sweep({
           <div
             aria-hidden="true"
             className="ml-auto mt-phi3 h-px w-full max-w-sm"
-            style={{ background: "rgba(255,255,255,0.35)" }}
+            style={{ background: "var(--color-jamin-gold-light)", opacity: 0.65 }}
           />
           <a
             href={`mailto:${email}`}

@@ -400,10 +400,12 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
+  /* Champagne, not white (Gilded Register §8): the travelling band reads as
+     gilt light rather than glare. */
   background: linear-gradient(
     100deg,
     transparent 34%,
-    rgba(255, 255, 255, 0.22) 50%,
+    rgba(236, 217, 194, 0.3) 50%,
     transparent 66%
   );
   transform: translateX(-100%);
@@ -2282,4 +2284,103 @@ header .glass,
   fill: var(--plan-road-wide);
   stroke: var(--plan-road-wide-line);
   stroke-width: 0.9;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE GILDED REGISTER (2026-08-17 night, owner: "make it ultra premium
+   royal… free hand"). Six devices, every gold a FILL or a RULE, never a
+   word — the discipline the whole metal system already keeps. Nothing here
+   declares `position` except on its own new classes, and no property a
+   Tailwind utility needs to win is contested (the unlayered-CSS trap).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The certificate rule: a thick-thin pair of gold lines, the frame move on a
+   share certificate. Crowns the footer, the velvet bands, the Sweep and the
+   property page's vault band — one device, everywhere, so it reads as the
+   site's signature strip. */
+.rj-royal-rule {
+  height: 7px;
+  background:
+    linear-gradient(var(--color-jamin-gold), var(--color-jamin-gold)) left top / 100% 3px no-repeat,
+    linear-gradient(var(--color-jamin-gold), var(--color-jamin-gold)) left bottom / 100% 1px no-repeat;
+}
+
+/* The velvet: the two deep reds the palette carried unused become a slow
+   oxblood sweep. White holds 10:1+ on the darkest stop; gold-light 8:1. */
+.rj-velvet {
+  background: linear-gradient(115deg, #6e0303 0%, #7a0404 55%, #a80303 120%);
+}
+
+/* Folio numerals: the section indices of a bound document, stamped in the
+   bronze foil ramp. Decoration — always aria-hidden, never a heading. */
+.rj-folio {
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(105deg, #6c533b 0%, #b48961 30%, #ecd9c2 50%, #b48961 70%, #6c533b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Certificate corners: four gold brackets that draw in when a card is
+   touched. One element, eight background strokes; sits INSIDE the card's
+   picture box (the card root's pseudo-elements belong to cd-fold). */
+.rj-corners {
+  position: absolute;
+  inset: 10px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 220ms var(--ease-silk);
+  --ck: var(--color-jamin-gold-light);
+  background:
+    linear-gradient(var(--ck), var(--ck)) left 0 top 0 / 18px 1.5px,
+    linear-gradient(var(--ck), var(--ck)) left 0 top 0 / 1.5px 18px,
+    linear-gradient(var(--ck), var(--ck)) right 0 top 0 / 18px 1.5px,
+    linear-gradient(var(--ck), var(--ck)) right 0 top 0 / 1.5px 18px,
+    linear-gradient(var(--ck), var(--ck)) left 0 bottom 0 / 18px 1.5px,
+    linear-gradient(var(--ck), var(--ck)) left 0 bottom 0 / 1.5px 18px,
+    linear-gradient(var(--ck), var(--ck)) right 0 bottom 0 / 18px 1.5px,
+    linear-gradient(var(--ck), var(--ck)) right 0 bottom 0 / 1.5px 18px;
+  background-repeat: no-repeat;
+}
+.group:hover .rj-corners,
+.group:focus-within .rj-corners {
+  opacity: 1;
+}
+
+/* The bound edge: a 3px gilded spine down the viewport's left on desktop —
+   the book's edge, constant on every page. Fixed on its OWN class, so it
+   contests nothing. Hidden where a phone's edge swipe lives. */
+.rj-spine {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  z-index: 50;
+  pointer-events: none;
+  background: linear-gradient(180deg, #6c533b 0%, #ecd9c2 28%, #b48961 50%, #ecd9c2 72%, #6c533b 100%);
+}
+@media (max-width: 1023px) {
+  .rj-spine {
+    display: none;
+  }
+}
+
+/* The wax seal: the registrar's press, once per property page, over the
+   corner of the dark approvals band. The one place the two metals meet. */
+.rj-wax {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  rotate: -8deg;
+  background: radial-gradient(circle at 35% 30%, #c90202, #6e0303 78%);
+  border: 2px solid var(--color-jamin-gold-light);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: var(--color-champagne-50);
 }

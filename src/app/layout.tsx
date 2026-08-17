@@ -167,6 +167,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         {/* Once for the document. Never per section — see the component. */}
         <PaperGrain />
+        {/* The bound edge (Gilded Register §9): the book's gilded spine down
+            the viewport's left, constant on every page. Desktop only. */}
+        <div className="rj-spine" aria-hidden="true" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}

@@ -37,6 +37,8 @@ export async function SiteFooter() {
        gap to announce itself — it changes ground colour to onyx, which is a
        harder edge than any amount of margin. */
     <footer className="rj-footer mt-phi5 lg:mt-phi7">
+      {/* The certificate rule crowns the onyx (Gilded Register §2). */}
+      <div className="rj-royal-rule" aria-hidden="true" />
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>

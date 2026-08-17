@@ -119,6 +119,13 @@ export default async function HomePage() {
 
       {/* ---- what we are, in plain search terms ---- */}
       <Container className="py-phi6">
+          {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the
+              section indices of a bound document, the ornament running
+              between its chapters. Decoration only. */}
+          <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+            <div className="rj-fret w-40 opacity-60" />
+            <span className="rj-folio text-3xl">01</span>
+          </div>
         <div className="grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
           {/* On the page's own canvas this block was a slab of text with nothing
               holding it. The card is ivory on warm white — a step of luminance,
@@ -234,9 +241,14 @@ export default async function HomePage() {
           field between the hero and the Sweep, carrying only figures the
           catalogue itself asserts (the same numbers the footer trio and the
           sign-in card read). White on #C90202 is the audited 6.01 AA pair. */}
+      {/* Gilded Register §1: the stat band is the ROYAL VELVET now — the
+          oxblood sweep the palette carried unused, framed by the certificate
+          rule, with the figures in gold (gold-light measures ~8:1 on the
+          darkest stop; the labels stay white). */}
       {live.length > 0 && (
-        <section className="bg-cta py-phi5 text-white">
-          <Container>
+        <section className="rj-velvet text-white">
+          <div className="rj-royal-rule" aria-hidden="true" />
+          <Container className="py-phi5">
             <dl className="grid grid-cols-3 gap-phi3 text-center">
               {[
                 [live.length, `Development${live.length === 1 ? "" : "s"} selling`],
@@ -246,7 +258,7 @@ export default async function HomePage() {
                 .filter(([v]) => Number(v) > 0)
                 .map(([v, label]) => (
                   <div key={String(label)} className="min-w-0">
-                    <dd className="ledger text-4xl font-extrabold text-white">{v}</dd>
+                    <dd className="ledger text-4xl font-extrabold text-jamin-gold-light">{v}</dd>
                     <dt className="mt-1 text-micro font-semibold uppercase tracking-brand text-white/80">
                       {label}
                     </dt>
@@ -254,6 +266,7 @@ export default async function HomePage() {
                 ))}
             </dl>
           </Container>
+          <div className="rj-royal-rule" aria-hidden="true" />
         </section>
       )}
 
@@ -388,6 +401,10 @@ export default async function HomePage() {
           <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
+<div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+                <div className="rj-fret w-40 opacity-60" />
+                <span className="rj-folio text-3xl">02</span>
+              </div>
               <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
                 Pick a district to see every Jamin development in it on the map, then open a project
@@ -425,6 +442,10 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-xl">
               <SectionLabel>Before you commit</SectionLabel>
+<div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+                <div className="rj-fret w-40 opacity-60" />
+                <span className="rj-folio text-3xl">03</span>
+              </div>
               <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
                 Four calculators, using your figures rather than ours. Jamin publishes no rate, so
