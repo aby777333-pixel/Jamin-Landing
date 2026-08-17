@@ -728,15 +728,19 @@
   --plot-reserved-line: var(--color-champagne-700);
   --plot-reserved-ink: var(--color-champagne-900);
 
-  --plot-booked-fill: color-mix(in srgb, var(--color-ruby) 18%, white);
-  --plot-booked-line: var(--color-ruby);
-  --plot-booked-ink: var(--color-ruby);
+  /* ⚠️ BOOKED AND SOLD ARE THE RED SEAL NOW (owner 2026-08-17: "the booked
+     block gets sealed with red, with a lock") — both wear the signal red as
+     fill-wash and line, sold a step deeper into the oxblood, and MasterPlan
+     stamps the padlock badge on their number circles. The old "sold is
+     desaturated" argument is overruled by the clearer one: a red-sealed,
+     locked parcel is the strongest "gone" a drawing can say. */
+  --plot-booked-fill: color-mix(in srgb, var(--color-cta) 20%, white);
+  --plot-booked-line: var(--color-cta);
+  --plot-booked-ink: var(--color-jamin-red-deep);
 
-  /* Sold is the one state that is deliberately desaturated — the drawing
-     should read "gone" without the eye being drawn to it. */
-  --plot-sold-fill: color-mix(in srgb, var(--color-plat-300) 55%, white);
-  --plot-sold-line: var(--color-plat-500);
-  --plot-sold-ink: var(--color-plat-800);
+  --plot-sold-fill: color-mix(in srgb, #6e0303 26%, white);
+  --plot-sold-line: #6e0303;
+  --plot-sold-ink: #6e0303;
 
   --plot-blocked-fill: color-mix(in srgb, var(--color-plat-300) 32%, white);
   --plot-blocked-line: var(--color-plat-500);
@@ -756,13 +760,20 @@
      plot states, but they were the other half of MasterPlan's hardcoded
      colours. Three of the old values were already exact matches for existing
      tokens (ink-faint, canopy, canopy-soft) and now say so. */
-  --plan-road-fill: #f2ede4;
-  --plan-road-line: #d8d0c2;
-  --plan-road-existing: #ede6da;
+  /* ⚠️ RETUNED TO THE SANCTIONED DRAWING'S OWN KEY (owner 2026-08-17, "true
+     to the original"): the DTCP sheet paints its internal roads SALMON, the
+     existing municipal road YELLOW and the OSR GREEN — the traced plan now
+     speaks the same colour language as the drawing it was traced from, so a
+     buyer holding the original can read our plan without a legend lesson. */
+  --plan-road-fill: #eec3ab;
+  --plan-road-line: #d69c7d;
+  --plan-road-existing: #f2e5ac;
   /* The wider internal road: a half-step deeper than the standard band, so the
      two read as a hierarchy rather than as two unrelated colours. */
-  --plan-road-wide: #e8e0d2;
-  --plan-road-wide-line: #c4b9a6;
+  --plan-road-wide: #e8b294;
+  --plan-road-wide-line: #cd8a66;
+  --plan-osr-fill: #b3d69a;
+  --plan-osr-line: #5f9c46;
   --plan-tick: #8a8073;
 }
 
@@ -786,8 +797,10 @@
   stroke: var(--plan-road-line);
 }
 .rj-plan-osr {
-  fill: var(--color-canopy-soft);
-  stroke: var(--color-canopy);
+  /* The original paints the reservation a true garden green; canopy-soft had
+     regraded to a pale teal wash and stopped reading as parkland. */
+  fill: var(--plan-osr-fill);
+  stroke: var(--plan-osr-line);
 }
 .rj-plan-note {
   fill: var(--color-ink-faint);

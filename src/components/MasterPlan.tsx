@@ -184,6 +184,39 @@ export function MasterPlan({
               </span>
             );
           })}
+          {/* The drawing's ZONES join the key (owner 2026-08-17, "true to the
+              original") — the sanctioned sheet's own colour language, said in
+              words beside the states so neither band needs guessing. */}
+          <span
+            className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-tiny font-medium"
+            style={{
+              background: "color-mix(in srgb, var(--plan-road-fill) 55%, white)",
+              borderColor: "var(--plan-road-line)",
+              color: "var(--color-ink-soft)",
+            }}
+          >
+            <span
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 rounded-[3px] border"
+              style={{ background: "var(--plan-road-fill)", borderColor: "var(--plan-road-line)" }}
+            />
+            Roads
+          </span>
+          <span
+            className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-tiny font-medium"
+            style={{
+              background: "color-mix(in srgb, var(--plan-osr-fill) 45%, white)",
+              borderColor: "var(--plan-osr-line)",
+              color: "var(--color-ink-soft)",
+            }}
+          >
+            <span
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 rounded-[3px] border"
+              style={{ background: "var(--plan-osr-fill)", borderColor: "var(--plan-osr-line)" }}
+            />
+            Open space
+          </span>
         </div>
 
         <div className="flex items-center gap-2">
@@ -485,19 +518,53 @@ export function MasterPlan({
                       style={{ fill: `url(#rj-hatch-${s.hatch})`, color: s.stroke, opacity: 0.5 }}
                     />
                   )}
+                  {/* ⚠️ CIRCLED NUMBERS (owner 2026-08-17, "true to the
+                      original") — the DTCP sheet sets every plot number in a
+                      ring, and the traced plan now does the same: a paper
+                      disc under the figure, rimmed in the state's own line
+                      colour, so the numbers read as the drawing's rather than
+                      as labels laid over it. */}
                   {p.at && (
-                    <text
-                      x={p.at[0]}
-                      y={p.at[1]}
-                      textAnchor="middle"
-                      fontSize={8}
-                      fontWeight={700}
-                      style={{ fill: active ? "var(--plot-selected-ink)" : s.text }}
-                      pointerEvents="none"
-                      className="cd-plan__num"
-                    >
-                      {p.plot}
-                    </text>
+                    <g pointerEvents="none">
+                      <circle
+                        cx={p.at[0]}
+                        cy={p.at[1] - 2.8}
+                        r={5.4}
+                        style={{
+                          fill: "rgba(255,255,255,0.92)",
+                          stroke: active ? "var(--plot-selected-line)" : s.stroke,
+                        }}
+                        strokeWidth={0.6}
+                      />
+                      <text
+                        x={p.at[0]}
+                        y={p.at[1]}
+                        textAnchor="middle"
+                        fontSize={7}
+                        fontWeight={700}
+                        style={{ fill: active ? "var(--plot-selected-ink)" : s.text }}
+                        className="cd-plan__num"
+                      >
+                        {p.plot}
+                      </text>
+                      {/* THE SEAL'S PADLOCK — a booked or sold parcel wears a
+                          red wax dot with a drawn lock on its ring's shoulder.
+                          Geometry, not colour alone, so the state survives
+                          forced-colors and colour-blindness the same way the
+                          hatches do. */}
+                      {(st === "booked" || st === "sold") && (
+                        <g transform={`translate(${p.at[0] + 4.6}, ${p.at[1] - 7.2})`}>
+                          <circle r={3.4} style={{ fill: s.stroke }} />
+                          <rect x={-1.7} y={-0.6} width={3.4} height={2.6} rx={0.5} fill="#fff" />
+                          <path
+                            d="M -1.05 -0.6 v -0.55 a 1.05 1.05 0 0 1 2.1 0 v 0.55"
+                            fill="none"
+                            stroke="#fff"
+                            strokeWidth={0.65}
+                          />
+                        </g>
+                      )}
+                    </g>
                   )}
                 </g>
               );
