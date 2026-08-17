@@ -75,10 +75,15 @@ export function ThumbIndex({
               /* The stone tints the tab and draws a 3px bar on the viewport
                  edge (visually the right edge; after the 180° rotation that is
                  this box's left). Active tabs deepen the tint rather than
-                 changing colour — same hue, more of it. */
-              background: `color-mix(in srgb, ${stone} ${active ? 22 : 10}%, var(--color-canvas-alt))`,
+                 changing colour — same hue, more of it.
+                 ⚠️ SEE-THROUGH (owner 2026-08-17): the mix is with TRANSPARENT
+                 now, not with the canvas, and a light blur frosts whatever the
+                 tab hangs over — hero photograph included — so the page reads
+                 through the tab the way it does through the copy plates. */
+              background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, transparent)`,
+              backdropFilter: "blur(8px)",
               boxShadow: `inset 3px 0 0 0 ${stone}`,
-              borderColor: `color-mix(in srgb, ${stone} 35%, var(--color-line))`,
+              borderColor: `color-mix(in srgb, ${stone} 40%, transparent)`,
             }}
           >
             {d}

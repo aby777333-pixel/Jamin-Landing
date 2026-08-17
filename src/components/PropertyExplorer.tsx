@@ -144,11 +144,15 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      The filters ARE tabs — they select a district or a stage, which is exactly
      what the Locations and Projects menus select — so they get the same
      jewellery rather than a second visual language for the same job. */
+  /* ⚠️ SEE-THROUGH TABS (owner 2026-08-17): the pressed pill is ink at 85%
+     over a blur rather than solid — white copy still reads 10:1+ over any
+     ground the sand system produces — and the resting pill's stone wash mixes
+     with TRANSPARENT (set inline below), so the page shows through both. */
   const chip = (on: boolean) =>
-    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium transition-colors ${
+    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium backdrop-blur-sm transition-colors ${
       on
-        ? "border-ink bg-ink text-canvas"
-        : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
+        ? "border-ink bg-ink/85 text-canvas"
+        : "border-line bg-canvas/40 text-ink-soft hover:border-ink-faint hover:text-ink"
     }`;
 
   return (
@@ -244,8 +248,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                       ...(on
                         ? {}
                         : {
-                            borderColor: `color-mix(in srgb, ${stone} 38%, var(--color-line))`,
-                            background: `color-mix(in srgb, ${stone} 8%, var(--color-canvas))`,
+                            borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
+                            background: `color-mix(in srgb, ${stone} 10%, transparent)`,
                           }),
                     } as React.CSSProperties
                   }
@@ -282,8 +286,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                       ...(on
                         ? {}
                         : {
-                            borderColor: `color-mix(in srgb, ${stone} 38%, var(--color-line))`,
-                            background: `color-mix(in srgb, ${stone} 8%, var(--color-canvas))`,
+                            borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
+                            background: `color-mix(in srgb, ${stone} 10%, transparent)`,
                           }),
                     } as React.CSSProperties
                   }

@@ -373,8 +373,12 @@ export function AccountShell({ title, children }: { title: string; children: Rea
                   const strip = e.currentTarget.parentElement;
                   if (strip) navState.stripLeft = strip.scrollLeft;
                 }}
+                /* See-through tabs (owner 2026-08-17): the active tab is ink
+                   at 85% over a light blur rather than a solid block. */
                 className={`shrink-0 rounded-card px-phi3 py-2.5 text-base transition-colors ${
-                  on ? "bg-ink text-canvas" : "text-ink-soft hover:bg-canvas-alt hover:text-ink"
+                  on
+                    ? "bg-ink/85 text-canvas backdrop-blur-sm"
+                    : "text-ink-soft hover:bg-canvas-alt/60 hover:text-ink"
                 }`}
               >
                 {n.label}
