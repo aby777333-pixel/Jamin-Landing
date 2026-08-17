@@ -81,8 +81,8 @@ export default async function JournalPage() {
           hero-43 is a photograph with real tonal range, which is the case
           `veil` and the `gilt` plate exist for. */}
       <PageHero
-        /* hero-51 — Jamin Daydreamer Residency, JAMIN CITY set 2026-08-17. */
-        art={51}
+        /* hero-55 — the bougainvillea pergola, FLOWERED GATES set 2026-08-17. */
+        art={55}
         tone="cinematic"
         /* Taller, at the owner's request (2026-08-15): `clamp(26rem,64vh,38rem)`
            against the standard `clamp(20rem,48vh,30rem)`.

@@ -25,9 +25,9 @@ export default async function PropertiesPage() {
         /* hero-37 — the aerial gate, owner-supplied 2026-08-12, replacing
            hero-17. hero-17 is not retired: it is still the fallback for a
            district page without art of its own, which today means Coimbatore. */
-        /* hero-47 — Jamin Metropolis, from the owner's 2026-08-17 JAMIN CITY
-           set, replacing the aerial hero-37. */
-        art={47}
+        /* hero-57 — the villa street at golden hour, FLOWERED GATES set
+           2026-08-17 evening, replacing Metropolis the same day. */
+        art={57}
         tone="cinematic"
         /* `full`, up from `tall` (2026-08-17) — the owner's report: "hero does
            not fill the expected viewport height / large white space below".

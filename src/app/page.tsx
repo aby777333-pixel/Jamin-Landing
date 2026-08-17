@@ -265,25 +265,21 @@ export default async function HomePage() {
                 nowhere. It carries no caption and must never be given one. */}
             <div className="relative aspect-[16/10] overflow-hidden rounded-xl">
               <Image
-                /* ⚠️ hero-42, 2026-08-14, replacing hero-22. It is the one frame
-                   on this page that BAKES ITS OWN HEADLINE into the artwork —
-                   "Move better, but keep the same happiness." — which sits a
-                   few centimetres from this section's own h2. Two headlines,
-                   two different sentences. Flagged to the owner rather than
-                   silently cropped; if it should go, the frame gets trimmed at
-                   source the way hero-31, 33 and 34 were.
-
-                   ⚠️ `object-right` because of that text. The box is 16/10 and
-                   the frame is 1.777, so `cover` spends 10% of the width; a
-                   centred crop takes 5% off each side and clips the last
-                   letters of "happiness." Anchoring right keeps the line whole
-                   and spends the kitchen's left edge instead. */
-                src="/hero/hero-42-1672.webp"
+                /* ⚠️ `family-keeps`, owner-supplied 2026-08-17 as "move better
+                   image.png", replacing hero-42 — same subject (the family
+                   room, the rain outside, the wall lockup) redrawn WITHOUT the
+                   baked competing headline hero-42 carried, which closes the
+                   two-headlines flag recorded here. 1536x1024 (1.5:1), so the
+                   16/10 box crops ~6% of the HEIGHT now instead of width, and
+                   centre keeps everything: object-right retired with the text
+                   it existed to protect. New filename per the next/image
+                   cache rule. */
+                src="/section/family-keeps-1536.webp"
                 alt=""
                 aria-hidden="true"
                 fill
                 sizes="(max-width: 1024px) 100vw, 55vw"
-                className="object-cover object-right"
+                className="object-cover object-center"
               />
             </div>
           </div>

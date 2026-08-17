@@ -62,8 +62,9 @@ export default async function AboutPage() {
           uncaptioned and out of the accessibility tree — the no-caption rule in
           public/hero/README.md binds harder here than anywhere else. */}
       <PageHero
-        /* hero-50 — Jamin City of Dreams, JAMIN CITY set 2026-08-17. */
-        art={50}
+        /* hero-56 — the curving avenue and lockup wall, FLOWERED GATES set
+           2026-08-17 evening, replacing City of Dreams the same day. */
+        art={56}
         tone="cinematic"
         size="tall"
         sheer

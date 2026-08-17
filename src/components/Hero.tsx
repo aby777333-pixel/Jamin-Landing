@@ -258,10 +258,23 @@ export function Hero({
               copy TALLER, which is the expensive direction. */}
           <div
             className="gilt-light rj-gilt-light-sheer rj-sheer-copy-ink reveal max-w-2xl rounded-2xl p-phi3 text-center sm:text-left"
-            /* The banner is light everywhere the copy sits, so the plate can go
-               a long way down before the ink is in trouble — and the white halo
-               is what carries it the rest of the way. */
-            style={{ "--rj-sheer-alpha": 0.85 } as React.CSSProperties}
+            /* ⚠️ 0.12 AT EVERY WIDTH, DOWN FROM 0.85 — owner 2026-08-17: "make
+               it see through to the max, add shadow to the text". BOTH sheer
+               vars are set because `rj-gilt-light-sheer` switches to
+               `--rj-sheer-alpha-narrow` below 1440, and a see-through plate
+               that snaps opaque on a laptop is not what was asked. Safe on
+               THIS hero specifically: below `xl` the banner is a band above
+               the copy, so the near-invisible plate sits on the page's own
+               canvas. What carries the ink now is `rj-sheer-copy-ink`'s
+               four-layer warm halo — the text shadow the owner asked for,
+               already swept for exactly this job. Remove the halo and the ink
+               is bare on the photograph. */
+            style={
+              {
+                "--rj-sheer-alpha": 0.12,
+                "--rj-sheer-alpha-narrow": 0.12,
+              } as React.CSSProperties
+            }
           >
             {/* ⚠️ CENTRED ON A PHONE ONLY — `sm:` puts everything back. The
                 report (2026-08-14) is a screenshot of a 285px card, and at that

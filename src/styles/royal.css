@@ -1611,7 +1611,7 @@
  */
 .rj-gilt-light-sheer {
   /* Below the threshold: `gilt-light`'s audited 0.74, i.e. unchanged. */
-  background: rgba(253, 252, 249, var(--rj-sheer-alpha-narrow, 0.74));
+  background: rgba(245, 234, 227, var(--rj-sheer-alpha-narrow, 0.74));
   /* Same reasoning as the dark plate: no filter, no pooled corner shadow. */
   backdrop-filter: none;
   box-shadow: none;
@@ -1619,7 +1619,7 @@
 
 @media (min-width: 1440px) {
   .rj-gilt-light-sheer {
-    background: rgba(253, 252, 249, var(--rj-sheer-alpha, 0.26));
+    background: rgba(245, 234, 227, var(--rj-sheer-alpha, 0.26));
   }
 }
 

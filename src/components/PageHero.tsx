@@ -29,7 +29,7 @@ import { Container } from "./ui";
 export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
-  | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54;
+  | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -72,6 +72,9 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   /* hero-46..54 — the JAMIN CITY set (owner-supplied 2026-08-17): gated
      entrances of named Jamin Bazaar communities. No trims. */
   46: 887, 47: 916, 48: 863, 49: 941, 50: 941, 51: 941, 52: 941, 53: 887, 54: 941,
+  /* hero-55..59 — the FLOWERED GATES set (owner-supplied 2026-08-17 evening,
+     files named for their pages). 59 is a NIGHT frame. */
+  55: 941, 56: 941, 57: 941, 58: 887, 59: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -230,6 +233,18 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      comparatively against audited hero-38: 49 holds 0.52; 47/48/50/51 need
      0.58 (see each caller). */
   46: 1773, 47: 1716, 48: 1823, 49: 1672, 50: 1672, 51: 1672, 52: 1672, 53: 1774, 54: 1672,
+  /* hero-55..59 — the FLOWERED GATES set (2026-08-17 evening, "Jamin city"
+     folder, files named for their pages): 55 /journal (bougainvillea pergola),
+     56 /about (curving avenue, lockup wall), 57 /properties (villa street at
+     golden hour), 58 /locations/salem (pergola with guard booth), 59
+     /locations/tiruppur (the NIGHT gate — lit wall, blue dusk). All lockups
+     sit RIGHT of frame, which is what lets the left copy plate breathe — the
+     board-right rule the mirrored 44/45 round established, now drawn in
+     rather than flipped in. Alphas swept comparatively vs audited hero-38:
+     55-58 take 0.58; 59 is night and reads p95 8-11 at 0.52 — the safest
+     frame the district pages have ever carried. Same standing rule as the
+     whole register: alt="", aria-hidden, never a caption. */
+  55: 1672, 56: 1672, 57: 1672, 58: 1774, 59: 1774,
 };
 
 function artSrc(n: HeroArt) {

@@ -236,15 +236,21 @@ export function AccountShell({ title, children }: { title: string; children: Rea
           ⚠️ Brand imagery under the standing rule: `alt=""`, `aria-hidden`, and
           never a caption of ours — the picture already carries its own. It is a
           render of nowhere, not a Jamin site. */}
-      <div className="relative mb-phi4 aspect-[3/2] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken lg:aspect-[2/1]">
+      {/* ⚠️ `account-home-2`, owner-supplied 2026-08-17 ("accounts page.png"):
+          the trident-roof apartment gate. Native 2:1, so the band takes 2/1 at
+          EVERY width now (the 3/2 phone box belonged to the 3:2 village frame)
+          and `object-bottom` retires with the baked caption it protected —
+          this frame's lockup is mid-right and centre keeps it. New filename
+          per the next/image cache rule; the village frame stays on disk. */}
+      <div className="relative mb-phi4 aspect-[2/1] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken">
         <Image
-          src="/section/account-home-1536.webp"
+          src="/section/account-home-2-1773.webp"
           alt=""
           aria-hidden="true"
           fill
           priority
           sizes="(max-width: 1280px) 100vw, 1200px"
-          className="object-cover object-bottom"
+          className="object-cover object-center"
         />
       </div>
 

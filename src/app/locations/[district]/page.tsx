@@ -66,10 +66,16 @@ export const dynamicParams = false;
  * fallback for a future fifth district. Salem and Tiruppur KEEP hero-44/45 —
  * the board-right mirrors the owner's own report asked for this same morning.
  */
+/**
+ * ⚠️ 2026-08-17 evening: Salem and Tiruppur took FLOWERED GATES frames
+ * (58, 59-night) — both draw the lockup on the RIGHT natively, so the
+ * mirrored 44/45 retire to the spare pile with their purpose served: the
+ * board-right rule they established is now in the artwork itself.
+ */
 const ART_BY_DISTRICT: Record<string, HeroArt> = {
   erode: 49,
-  salem: 44,
-  tiruppur: 45,
+  salem: 58,
+  tiruppur: 59,
   coimbatore: 48,
 };
 const DEFAULT_ART: HeroArt = 17;
@@ -135,7 +141,10 @@ const SHEER_ALPHA = 0.52;
  */
 const ALPHA_BY_DISTRICT: Record<string, number> = {
   erode: 0.52,
-  salem: 0.52,
+  /* hero-58: bright daylight, reads like 48/50 — 0.58 restores the audited
+     figure. hero-59 is the NIGHT gate and reads p95 8-11 at 0.52, the safest
+     district frame yet; darkening it further would spend the picture. */
+  salem: 0.58,
   tiruppur: 0.52,
   coimbatore: 0.58,
 };
