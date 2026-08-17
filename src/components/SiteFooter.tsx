@@ -238,32 +238,15 @@ export async function SiteFooter() {
           </p>
         </div>
 
-        {/* ⚠️ THE BUILD CREDIT, and the link is an ASSUMPTION worth reading.
-            Owner's instruction 2026-08-13, verbatim: "in the footer write site
-            powered by 777 Raptor …give a link and keep the whatzap number
-            7012608089". 777 Raptor has no website recorded anywhere in this
-            project, and the number arrived in the same breath as the request for
-            a link, so the link is a WhatsApp deep link to that number. If there
-            is a real site, this is a one-line change.
-
-            ⚠️ The number is HARD-CODED here, unlike every other contact on this
-            page. That is deliberate and it is the exception that proves the
-            rule: the desk's phone, WhatsApp and email above are read from
-            `platform_contacts.jamin_desk` so the app and the site can never
-            disagree about how to reach JAMIN. This is not Jamin's number — it is
-            the builder's — and putting it in the desk record would make it
-            answer sales calls. */}
+        {/* ⚠️ THE BUILD CREDIT — owner's instruction 2026-08-17: "Change this
+            to Website powered by GHL India Ventures", replacing the 777 Raptor
+            credit and its WhatsApp deep link (owner's own 2026-08-13 request).
+            No URL was given, so the credit is plain text rather than an
+            invented link; if GHL's site should be linked, that is a one-line
+            change here. */}
         <p className="mt-phi3 text-center text-tiny text-ink-faint">
-          Site powered by{" "}
-          <a
-            href="https://wa.me/917012608089"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rj-underline font-medium text-champagne-300 transition-colors hover:text-champagne-100"
-          >
-            777 Raptor
-          </a>{" "}
-          · WhatsApp 70126 08089
+          Website powered by{" "}
+          <span className="font-medium text-champagne-300">GHL India Ventures</span>
         </p>
 
         {/* §6.9's closing line.
