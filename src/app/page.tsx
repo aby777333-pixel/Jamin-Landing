@@ -284,20 +284,34 @@ export default async function HomePage() {
             </div>
           </div>
 
+          {/* ⚠️ SOLID STAGE COLOUR (owner 2026-08-17: "the beige are too much
+              everywhere") — the 10px accent stub grew into a full-width 6px
+              bar, the index takes the stage's own ink, and each card face
+              carries a whisper of its stage colour so the four read as four
+              STEPS in four materials rather than four beige boxes. Stage 04
+              stays the signal red — the resolved fact ends the sequence, the
+              same move the reference creative makes. Text colours are the
+              audited ink cousins, never the fills (the fill/word rule). */}
           <ol className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              ["Land and title", "We buy only where the chain of title is continuous and the encumbrance is clean.", "bg-canopy"],
-              ["Sanctioned layout", "The plan goes to the planning authority. Plot boundaries, road widths and open space are fixed by that approval.", "bg-jamin-gold"],
-              ["Formed on the ground", "Roads laid to the sanctioned width, water and drains run, open space handed to the local body.", "bg-terracotta"],
-              ["Registered to you", "You see the plot, the plan and the documents, then the sale is registered in your name.", "bg-jamin-red"],
-            ].map(([t, d, bar], n) => (
-              <li key={t} className="rounded-card bg-canvas/70 p-phi3 backdrop-blur-sm">
-                <span className={`block h-1 w-10 rounded-full ${bar}`} aria-hidden="true" />
-                <span className="mt-phi2 block text-tiny font-semibold tabular-nums text-ink-faint">
-                  {String(n + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-1 text-lg text-ink">{t}</h3>
-                <p className="mt-1.5 text-base leading-relaxed text-ink-muted">{d}</p>
+              ["Land and title", "We buy only where the chain of title is continuous and the encumbrance is clean.", "bg-canopy", "text-canopy", "var(--color-canopy)"],
+              ["Sanctioned layout", "The plan goes to the planning authority. Plot boundaries, road widths and open space are fixed by that approval.", "bg-jamin-gold", "text-jamin-gold-ink", "var(--color-jamin-gold)"],
+              ["Formed on the ground", "Roads laid to the sanctioned width, water and drains run, open space handed to the local body.", "bg-terracotta", "text-jamin-gold-ink", "var(--color-terracotta)"],
+              ["Registered to you", "You see the plot, the plan and the documents, then the sale is registered in your name.", "bg-jamin-red", "text-jamin-red-deep", "var(--color-jamin-red)"],
+            ].map(([t, d, bar, ink, stone], n) => (
+              <li
+                key={t}
+                className="overflow-hidden rounded-card bg-canvas/70 backdrop-blur-sm"
+                style={{ background: `color-mix(in srgb, ${stone} 7%, var(--color-canvas))` }}
+              >
+                <span className={`block h-1.5 w-full ${bar}`} aria-hidden="true" />
+                <div className="p-phi3">
+                  <span className={`block text-tiny font-semibold tabular-nums ${ink}`}>
+                    {String(n + 1).padStart(2, "0")}
+                  </span>
+                  <h3 className="mt-1 text-lg text-ink">{t}</h3>
+                  <p className="mt-1.5 text-base leading-relaxed text-ink-muted">{d}</p>
+                </div>
               </li>
             ))}
           </ol>

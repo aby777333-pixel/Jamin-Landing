@@ -8,6 +8,9 @@ import {
   isSellable,
   locationLine,
   phaseLabel,
+} from "@/lib/properties";
+import { stageStone } from "@/lib/stones";
+import {
   propertyHref,
   type Property,
 } from "@/lib/properties";
@@ -503,8 +506,20 @@ export function PropertiesMap({
                     ? "border-ink bg-canvas"
                     : `border-line bg-canvas-alt hover:border-ink-faint ${phaseHover(p)}`
                 }`}
+                /* SOLID STAGE COLOUR (owner 2026-08-17, the beige round): a 3px
+                   stage bar on the row's left edge and the stage word in its
+                   own ink, so the list reads as a colour-keyed register — the
+                   same key the filter pills and the fore-edge tabs wear.
+                   Selection stays the ink border: stage and selection are two
+                   facts on two channels. */
+                style={{
+                  boxShadow: `inset 3px 0 0 0 ${stageStone(p)?.stone ?? "var(--color-jamin-gold)"}`,
+                }}
               >
-                <div className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
+                <div
+                  className="text-micro font-semibold uppercase tracking-[0.14em]"
+                  style={{ color: stageStone(p)?.ink ?? "var(--color-jamin-gold-ink)" }}
+                >
                   {phaseLabel(p)}
                 </div>
                 <div className="mt-1 text-base text-ink">{p.title}</div>

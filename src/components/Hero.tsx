@@ -360,7 +360,7 @@ export function Hero({
               </Link>
               <Link
                 href="/contact"
-                className="rounded-full border border-ink/20 bg-canvas/70 px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-ink/35 hover:bg-canvas"
+                className="rounded-full border border-jamin-gold bg-canvas/70 px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all duration-500 hover:-translate-y-0.5 hover:border-jamin-gold-ink hover:bg-canvas"
                 style={{ transitionTimingFunction: "var(--ease-silk)" }}
               >
                 Book a site visit

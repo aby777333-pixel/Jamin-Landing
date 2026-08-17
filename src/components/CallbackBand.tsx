@@ -32,7 +32,14 @@ export async function CallbackBand({
   const desk = await getDeskContact();
 
   return (
-    <section className="rj-deboss mt-phi6 border-y border-line bg-canvas-alt py-phi5" id="desk">
+    /* The 3px signal-red crown (owner 2026-08-17): the desk is the one band
+       on a listing page where something can be DONE, and it now announces
+       itself in the action colour instead of dissolving into the sand. */
+    <section
+      className="rj-deboss mt-phi6 border-b border-line bg-canvas-alt py-phi5"
+      style={{ borderTop: "3px solid var(--color-cta)" }}
+      id="desk"
+    >
       <Container>
         <div className="grid gap-phi4 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-phi5">
           <div>

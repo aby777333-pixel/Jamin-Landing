@@ -31,9 +31,13 @@ export function SectionLabel({ children }: { children: ReactNode }) {
           same lozenge the prose bullets use, so a section opening and a list
           item are visibly the same hand. Decoration: `aria-hidden`, and the
           label itself is unchanged. */}
+      {/* The station mark takes the SIGNAL RED (owner 2026-08-17, the "too
+          much beige" round): one solid drop of the brand in every section
+          opening, against the bronze rule it terminates. Small on purpose —
+          a dot of signal, not a red bar. */}
       <span className="flex items-center gap-1.5" aria-hidden="true">
         <span className="h-px w-10 bg-jamin-gold" />
-        <span className="h-1 w-1 rotate-45 rounded-[1px] bg-jamin-gold" />
+        <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-cta" />
       </span>
       <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
         {children}
