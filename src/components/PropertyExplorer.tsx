@@ -141,6 +141,20 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     set({ compare: next });
   }
 
+  /* MOBILE FILTERS FOLD BEHIND ONE BUTTON (owner report 2026-08-18: the
+     chip rows "look crowded on mobile… replace with a single Filters
+     button", Grid/List/Map staying visible). Phone-only — from `sm` the
+     rows show as always, and the xl rail is untouched. Opens automatically
+     when a filter is already active from the URL, so a shared filtered link
+     never hides the chips that explain the short list. */
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const activeFilterCount = (f.district ? 1 : 0) + (f.phase ? 1 : 0) + (f.purpose ? 1 : 0);
+  /* DERIVED, not an effect (the repo's eslint bans setState in an effect
+     body): with a filter active the rows stay shown, so a shared filtered
+     URL always explains its own short list. */
+  const filtersShown = mobileFiltersOpen || activeFilterCount > 0;
+  const filterRowCls = filtersShown ? "grid" : "hidden sm:grid";
+
   /* "Pick one more" OFFERS THE OTHER PROJECTS (owner 2026-08-17, second
      report: "it should give other projects to pick") — the first fix scrolled
      back to the listings, which still made the visitor do the finding. The
@@ -251,8 +265,27 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           rail the tracks stack (`xl:grid-cols-1`) — a 5.5rem label column
           inside a 17rem rail would leave the pills 10rem. */}
       <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:mt-phi4 xl:gap-phi3 xl:rounded-card xl:border xl:border-line xl:bg-canvas-alt/60 xl:p-phi3">
+        {(districts.length > 1 || phases.length > 1) && (
+          <button
+            type="button"
+            aria-expanded={filtersShown}
+            onClick={() => setMobileFiltersOpen((v) => !v)}
+            className="inline-flex items-center gap-2 self-start rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft sm:hidden"
+          >
+            <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+              <path d="M2 4h12M4.5 8h7M7 12h2" />
+            </svg>
+            Filters
+            {activeFilterCount > 0 && (
+              <span className="ledger rounded-full bg-jamin-red px-1.5 text-micro text-white">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+        )}
+
         {districts.length > 1 && (
-          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5">
+          <div className={`${filterRowCls} grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5`}>
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
@@ -296,7 +329,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
 
         {phases.length > 1 && (
-          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5">
+          <div className={`${filterRowCls} grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5`}>
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>

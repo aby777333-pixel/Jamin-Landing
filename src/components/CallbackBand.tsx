@@ -36,7 +36,15 @@ export async function CallbackBand({
        on a listing page where something can be DONE, and it now announces
        itself in the action colour instead of dissolving into the sand. */
     <section
-      className="rj-deboss mt-phi6 border-b border-line bg-canvas-alt py-phi5"
+      /* ⚠️ NEGATIVE BOTTOM MARGIN, matched to SiteFooter's top margin (owner
+         report 2026-08-18: "excessive empty space above footer" after
+         CALL/WHATSAPP and ASK FOR A CALL — i.e. after THIS band). The footer's
+         mt-phi5/lg:mt-phi7 assumes the page ends on open canvas; this band is
+         a full-width ground with its own border, so the margin stacked on it
+         reads as a hole. -phi4/-phi6 leaves ~19px / ~55px of breath. Only
+         pages ending on the band are affected — everywhere else the footer
+         margin still does its job. */
+      className="rj-deboss -mb-phi4 mt-phi6 border-b border-line bg-canvas-alt py-phi5 lg:-mb-phi6"
       style={{ borderTop: "3px solid var(--color-cta)" }}
       id="desk"
     >

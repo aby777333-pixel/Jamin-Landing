@@ -127,15 +127,26 @@ export function Hero({
           after the copy and the whole first screen is type on ivory. Cropped to
           the arch and the road — centring it would show the empty paper panel
           and lose the only thing in the frame worth seeing at this size. */}
+      {/* ⚠️ THE PHONE BAND CARRIES A DIFFERENT FRAME NOW (owner report
+          2026-08-18: the board on hero-61 sits RIGHT and "appears cramped
+          and less visible" in the band's crop — "replace the previous hero
+          image where the branding title is in the left side for the mobile
+          view only"). hero-72 is the register's one left-lockup frame: the
+          wall lockup at far LEFT with the family walking in, so `left
+          center` puts the brand exactly where the report wants it. Desktop
+          keeps hero-61 untouched. Cross-surface reuse (72 also carries
+          /downloads) under the where-we-build/hero-39 precedent — a phone
+          band and a desktop hero are never on screen together. */}
       <div className="relative h-44 w-full sm:h-56 xl:hidden">
         <Image
-          src={`/hero/hero-${ART.id}-${ART.w}.webp`}
+          src="/hero/hero-72-1536.webp"
           alt=""
           aria-hidden="true"
           fill
           sizes="100vw"
           priority
-          className="object-cover object-center"
+          className="object-cover"
+          style={{ objectPosition: "left center" }}
         />
       </div>
 

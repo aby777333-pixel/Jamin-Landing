@@ -180,56 +180,38 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      {/* ⚠️ Same tone and size for every stage. Giving `completed` a photograph
-          once flipped it to `cinematic`, which moved its heading ON TO the image
-          while Ongoing and Future kept theirs above it — three sibling pages
-          with three different content structures. `paper` keeps the hierarchy
-          identical across the section, and it stays that way now that the
-          photograph has been replaced by hero-40. */}
+      {/* 🚨 `cinematic` FOR ALL THREE BUILT STAGES (owner report 2026-08-18:
+          "use the complete image across the entire hero… remove the large
+          white/grid background effect… only a subtle transparent overlay
+          behind the text"). This retires the paper split — and with it the
+          whole trim/anchor apparatus above, which existed to keep boards
+          clear of `hero-fade`; full-bleed cover has no fade. The sibling
+          consistency note that once kept these `paper` now argues the same
+          way for `cinematic`: all three stages flip together.
+
+          ⚠️ The sheer plate (0.52/0.58, swept comparatively vs audited
+          hero-38 at this geometry: 65 p95 0.489 → 0.52 · 64 p95 0.631 →
+          0.58 · 40 p95 0.863 → 0.58) IS the report's "subtle transparent
+          overlay", and `sheerEdge` + the 38rem cap fade its right edge where
+          the arch lockups (top-centre on 64/65) pass behind it — the sign
+          reads THROUGH the dissolving plate instead of dying under an
+          opaque one. `50% 30%` keeps the arch band in shot on 64/65 (their
+          lockups sit high; a centre crop clips 64's). hero-40's wall is far
+          right and never meets the plate.
+
+          `current` (hero-11, a white-ground render) stays `paper` — the
+          report names only these three, and a near-white frame full-bleed
+          would need the heavy scrim the paper tone exists to avoid. */}
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
-        artPosition={ART_POSITION_BY_PHASE[phase] ?? "left"}
-        /* See-through copy plate, at the owner's request 2026-08-12. `gilt-light`
-           is 0.74 with a 14px backdrop blur; `rj-gilt-light-sheer` drops the blur
-           and takes the tint to 0.26, so the blueprint grid and the picture's
-           faded edge read straight through and only the gold hairline holds the
-           shape.
-
-           ⚠️ It is transparent only from 1440px up, and that is enforced in
-           royal.css rather than here. Below it the plate genuinely sits over the
-           photograph — at 1024 the gold eyebrow measures 1.11 at this alpha
-           against 4.07 at the opaque one — so the narrow widths keep 0.74. Read
-           the sweep on `.rj-gilt-light-sheer` before touching either number. */
+        tone={phase === "current" ? "paper" : "cinematic"}
+        artPosition={
+          phase === "current" ? (ART_POSITION_BY_PHASE[phase] ?? "left") : phase === "completed" ? "50% 50%" : "50% 30%"
+        }
         sheer
-        /* 🚨 PER PHASE NOW, AND hero-40 IS WHY — the pair rule again: a plate's
-           contrast belongs to the plate AND the picture, never to the plate
-           alone. 0.26 was swept against hero-31 and hero-33, whose overlap strip
-           at 1440 is a pale, faded edge. hero-40 is dusk: the same strip is dark
-           tarmac and shadowed kerb, and the lead paragraph (20.35px regular, so
-           AA is 4.5 and not the 3.0 large-text allowance) measured **4.02 at the
-           darkest pixel** carried over unchanged. It would have shipped
-           invisibly, because swapping the art looks like a one-line change.
-
-           Swept on the built page at 1440 — the width where this plate goes
-           sheer — compositing the served rendition through `hero-fade`'s mask
-           and then the tint, worst pixel inside each text box:
-
-               0.26 → lead 4.02 · h1 7.09   ← hero-31/33's value, fails here
-               0.34 → lead 4.56 · h1 7.96   ← the floor, and only by 0.06
-               0.42 → lead 5.06 · h1 8.88   ← ships
-               0.50 → lead 5.65 · h1 9.82
-               0.74 → lead 7.64 · h1 13.11  ← the opaque plate
-
-           0.42 rather than the 0.34 floor because a 0.06 margin is not a margin
-           in a model that is a comparison rather than an audit. The eyebrow is
-           7.52 at every step: it sits left of the band at every width and never
-           touches the picture, which is why the LEAD binds on this tone where
-           the eyebrow binds on the cinematic one.
-
-           ⚠️ Applying the mask is not optional in this measurement. Without it
-           the same lead reads 1.01 — `hero-fade` makes the leftmost 22% of the
-           image box transparent, and the whole overlap sits inside that. */
-        sheerAlpha={phase === "completed" ? 0.42 : 0.26}
+        sheerAlpha={phase === "current" ? 0.26 : phase === "ongoing" ? 0.52 : 0.58}
+        sheerEdge={phase !== "current"}
+        plateXl="38rem"
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}

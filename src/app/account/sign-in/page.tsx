@@ -95,13 +95,16 @@ export default async function SignInPage() {
               <SignInForm next="/account" />
             </Suspense>
 
-            {/* hero-12. The report called this page empty, and a render here
-                fills it with something on-brand rather than with padding. */}
+            {/* hero-76 — the Premium Villas Chennai gate, owner-supplied
+                2026-08-18 (12:58, "swap image with the attached"), replacing
+                hero-12's pin-in-plot render. ⚠️ It names a city with no
+                catalogue project, so the standing rule binds at full
+                strength: alt="", aria-hidden, never a caption. */}
             <div className="overflow-hidden rounded-card border border-line bg-canvas-alt">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/hero/hero-12-1280.webp"
-                srcSet="/hero/hero-12-768.webp 768w, /hero/hero-12-1280.webp 1280w"
+                src="/hero/hero-76-1280.webp"
+                srcSet="/hero/hero-76-768.webp 768w, /hero/hero-76-1280.webp 1280w, /hero/hero-76-1672.webp 1672w"
                 /* ⚠️ Re-stated with the move. It used to sit in the 0.85fr
                    column and now sits in the 1fr one, so the old `34vw` would
                    have had the browser pick a rendition about a third too small
@@ -152,24 +155,35 @@ export default async function SignInPage() {
             {stats.length > 0 && (
               <div className="cd-plate flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
                 <div className="ledger-label">On the books today</div>
-                <dl className="mt-phi3 grid grid-cols-2 gap-phi3 sm:grid-cols-4 lg:grid-cols-2">
+                {/* ⚠️ VERTICAL REGISTER ROWS with FIXED COLUMNS (owner report
+                    2026-08-18, two items): the 2/4-column grid compressed the
+                    stats into a dashboard strip, and the label's start
+                    position drifted with the number's width — "the 138 row
+                    especially". One row per statistic now, ruled like every
+                    register on this site, with a fixed icon track, a fixed
+                    number track in tabular figures, and every label starting
+                    on the same x. A plain list, not a <dl> — the number-first
+                    reading order would force dd before dt, which is invalid
+                    in a description list. */}
+                <ul className="mt-phi2 divide-y divide-line">
                   {stats.map((s) => (
-                    <div key={s.label} className="flex min-w-0 items-start gap-2">
+                    <li
+                      key={s.label}
+                      className="grid grid-cols-[2.5rem_4.5rem_minmax(0,1fr)] items-center gap-3 py-phi2"
+                    >
                       <span
                         aria-hidden="true"
-                        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] bg-canvas-sunken text-jamin-gold-ink"
+                        className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-canvas-sunken text-jamin-gold-ink"
                       >
-                        <SurveyIcon name={s.icon} className="h-[18px] w-[18px]" />
+                        <SurveyIcon name={s.icon} className="h-[19px] w-[19px]" />
                       </span>
-                      <span className="min-w-0">
-                        <dt className="text-tiny text-ink-faint">{s.label}</dt>
-                        <dd className="mt-0.5 text-2xl text-ink">
-                          <LedgerCount value={s.value} />
-                        </dd>
+                      <span className="ledger text-2xl leading-none text-ink">
+                        <LedgerCount value={s.value} />
                       </span>
-                    </div>
+                      <span className="text-base text-ink-muted">{s.label}</span>
+                    </li>
                   ))}
-                </dl>
+                </ul>
                 <p className="mt-phi3 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint">
                   No password is ever set or stored. Signing in mints a one-time credential that is
                   exchanged for a session immediately and never shown again.

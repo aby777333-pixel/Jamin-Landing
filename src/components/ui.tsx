@@ -21,12 +21,15 @@ export function Container({
 /** The small gold-ruled eyebrow that opens every section. */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
-    /* ⚠️ RIGHT-ALIGNED (owner, 2026-08-17): "all the tabs and captions
-       everywhere: move to the right." `justify-end` walks the caption to its
-       container's right edge on every section that uses it; the rule still
-       leads INTO the label reading left-to-right, so the mark keeps its
-       direction while the pair changes side. */
-    <div className="flex items-center justify-end gap-3">
+    /* ⚠️ LEFT-ALIGNED AGAIN (owner report 2026-08-18: "NOW SELLING" and
+       "START HERE" both flagged as "disconnected from the section heading",
+       with the same correction asked for "all similar section labels").
+       This REVERSES the 2026-08-17 "captions to the right" sweep for
+       SECTION labels only — a label above a left heading belongs on the
+       heading's own edge. PageHero's hero eyebrows and `.rj-eyebrow` card
+       captions keep the right-hand rule; they sit on plates, not above
+       headings, and the report does not name them. */
+    <div className="flex items-center gap-3">
       {/* The rule now ends in a station mark rather than simply stopping — the
           same lozenge the prose bullets use, so a section opening and a list
           item are visibly the same hand. Decoration: `aria-hidden`, and the
