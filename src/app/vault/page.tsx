@@ -980,13 +980,15 @@ export default async function VaultPage() {
           cost clarity, and the verification paragraph in particular is the one
           that stops a premium presentation from implying a legal opinion
           nobody has given. */}
-      {/* ⚠️ `pb-phi5 lg:pb-phi7` below. This was `pb-phi7` at every width, and
-          stacked on the footer's own 9rem top margin it left 288px of empty
-          canvas under the closing line on a phone — half of the "excessive
-          empty space before the footer" report. The other half was the footer's
-          own margin, fixed in SiteFooter. */}
+      {/* ⚠️ `pb-phi5` at EVERY width now (owner report 2026-08-18: "excessive
+          padding bottom in the Vault section" under the closing line). The
+          2026-08-15 round cut the phone to phi5 and left `lg:pb-phi7` — but
+          the desktop stacks the same way: phi7 here plus the footer's 9rem
+          top margin was ~290px of dark canvas under fifteen words. The
+          footer's own margin IS the separation; this container adds only a
+          breath. */}
       {settings.legal ? (
-        <Container className="pb-phi5 lg:pb-phi7">
+        <Container className="pb-phi5">
           <div className="rounded-xl border border-line p-phi4">
             <p className="rj-eyebrow text-ink-faint">Please note</p>
             <div className="mt-phi3 space-y-phi3 text-tiny leading-relaxed text-ink-muted">

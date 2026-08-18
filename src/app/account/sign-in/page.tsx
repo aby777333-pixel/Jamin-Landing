@@ -117,46 +117,42 @@ export default async function SignInPage() {
             </div>
           </div>
 
-          {/* ── THE RIGHT COLUMN IS A CARD NOW (2026-08-17 account report) ────
-              It was bare copy on the blueprint beside a plated form, and the
-              two never ended on the same line. Same plate chrome as the
-              sign-in card (`cd-plate` + `shadow-lift`), `h-full flex flex-col`
-              so the pair stretch as one row, and `mt-auto` walks the
-              statistics and the security note to the card's foot — which is
-              what makes both cards END together whatever the copy does. The
-              dividers and padding now mirror the form's own rhythm. */}
-          <aside className="cd-plate flex h-full flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
-            <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
-            <h2 className="text-2xl text-ink">What an account is for</h2>
+          {/* ── TWO INDIVIDUAL CARDS (owner report 2026-08-18), where the
+              2026-08-17 round made one. Top card: "What an account is for"
+              with the three features. Bottom card: "On the books today" with
+              the statistics and the security note at its foot. The column is
+              still `h-full` with the features card taking `flex-1`, so the
+              pair of columns keep ending flush — the property the previous
+              round existed to win stays won, just across two plates. */}
+          <aside className="flex h-full flex-col gap-phi4">
+            <div className="cd-plate flex flex-1 flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+              <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
+              <h2 className="text-2xl text-ink">What an account is for</h2>
 
-            <dl className="mt-phi3">
-              {REASONS.map((r) => (
-                <div key={r.title} className="flex gap-phi2 border-t border-line py-phi3">
-                  {/* Drawn survey marks, one register for all three — the
-                      report's "simple, consistent icons". */}
-                  <span
-                    aria-hidden="true"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
-                  >
-                    <SurveyIcon name={r.icon} className="h-[22px] w-[22px]" />
-                  </span>
-                  <div>
-                    <dt className="text-lg text-ink">{r.title}</dt>
-                    <dd className="mt-1 text-base leading-relaxed text-ink-muted">{r.body}</dd>
+              <dl className="mt-phi3">
+                {REASONS.map((r) => (
+                  <div key={r.title} className="flex gap-phi2 border-t border-line py-phi3">
+                    {/* Drawn survey marks, one register for all three — the
+                        report's "simple, consistent icons". */}
+                    <span
+                      aria-hidden="true"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
+                    >
+                      <SurveyIcon name={r.icon} className="h-[22px] w-[22px]" />
+                    </span>
+                    <div>
+                      <dt className="text-lg text-ink">{r.title}</dt>
+                      <dd className="mt-1 text-base leading-relaxed text-ink-muted">{r.body}</dd>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </dl>
+                ))}
+              </dl>
+            </div>
 
-            {/* `mt-auto` — the statistics anchor the card's FOOT, level with
-                the picture at the foot of the form column. The report's
-                "remove unnecessary empty space" is this line: the slack now
-                lives between the features and the figures, where a register
-                breathes, instead of trailing below the last line. */}
             {stats.length > 0 && (
-              <div className="mt-auto rounded-card border border-line bg-canvas p-phi3">
+              <div className="cd-plate flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
                 <div className="ledger-label">On the books today</div>
-                <dl className="mt-phi2 grid grid-cols-2 gap-phi3 sm:grid-cols-4 lg:grid-cols-2">
+                <dl className="mt-phi3 grid grid-cols-2 gap-phi3 sm:grid-cols-4 lg:grid-cols-2">
                   {stats.map((s) => (
                     <div key={s.label} className="flex min-w-0 items-start gap-2">
                       <span
@@ -174,13 +170,12 @@ export default async function SignInPage() {
                     </div>
                   ))}
                 </dl>
+                <p className="mt-phi3 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint">
+                  No password is ever set or stored. Signing in mints a one-time credential that is
+                  exchanged for a session immediately and never shown again.
+                </p>
               </div>
             )}
-
-            <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
-              No password is ever set or stored. Signing in mints a one-time credential that is
-              exchanged for a session immediately and never shown again.
-            </p>
           </aside>
         </div>
       </Container>

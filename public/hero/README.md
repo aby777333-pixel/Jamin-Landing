@@ -1143,3 +1143,23 @@ it takes 0.58 (the bright-daylight figure), not 0.52.
 ⚠️ It carries the brand lockup on the arch, so the standing rule binds at
 hero-19 strength: `alt=""`, `aria-hidden`, never a caption, never on a property
 card. hero-6 stays on disk and in the register.
+
+## hero-74 — the survey-desk flat-lay (/journal, 2026-08-18)
+
+COMPOSED IN-REPO, not owner-supplied (image generation was unavailable and the
+report wanted "property documents, land/site plans, maps, survey details"):
+the two REAL Edappadi sheets the site already publishes — `public/plan/
+edappadi-sheet-1260.webp` (the DTCP record card) behind at +4.5°, `public/plan/
+edappadi-illustrated-2-1055.webp` (the 61-unit illustrated plan) in front at
+−3.5° — on near-white warm paper (250,246,240) with a faint 76px setting-out
+grid, soft gaussian shadows (blur 18, offset +14/+20), each sheet wearing a
+10px paper margin and a 2px stone hairline. 1672x941, renditions 768/1280/1672
+at WebP q82. Subject occupies the right two-thirds; the left third is calm
+ground for `paper`'s copy plate. Rebuild by re-running the PIL script from the
+2026-08-18 session (place() with those exact params) — regenerating the sheets
+regenerates the hero.
+
+PAPER family (near-white ground → multiply prints it into the sand page), so
+no alpha sweep. These are documents of a CATALOGUE project already published
+on its own property page — decoration here, `alt=""`, `aria-hidden`, no
+caption. hero-55 (bougainvillea pergola) returns to the SPARE pile.

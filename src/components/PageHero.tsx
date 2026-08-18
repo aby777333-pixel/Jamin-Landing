@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73 | 74;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -94,6 +94,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   72: 1024,
   /* hero-73 — the JAMIN BAZAAR avenue gate at sunset (/compare). */
   73: 941,
+  /* hero-74 — the survey-desk flat-lay (/journal), COMPOSED not supplied. */
+  74: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -313,6 +315,18 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      the /compare standard-height geometry: p95 lum 0.783 against 38's 0.604
      — brighter, so it takes 0.58 like the other bright daylight frames. */
   73: 1672,
+  /* hero-74 — the survey-desk flat-lay → /journal (owner report 2026-08-18:
+     the Journal hero must read as research/documents, not a project gate).
+     ⚠️ COMPOSED IN-REPO, not owner-supplied: the two REAL Edappadi sheets
+     the site already publishes (public/plan/edappadi-sheet + the illustrated
+     plan) laid at opposing tilts on near-white paper with a faint
+     setting-out grid — regenerate with the PIL script in the register entry
+     in public/hero/README.md. Near-white ground = the PAPER family, so it
+     ships with `multiply` and needs no alpha sweep. Subject sits RIGHT;
+     artPosition="right" on the caller. These are documents of a CATALOGUE
+     project already published on its own property page, so the no-caption
+     rule is the ordinary one: alt="", aria-hidden, decoration only. */
+  74: 1672,
 };
 
 function artSrc(n: HeroArt) {

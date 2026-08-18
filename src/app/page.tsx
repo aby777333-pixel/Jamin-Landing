@@ -17,7 +17,8 @@ import {
   propertyHref,
   type Property,
 } from "@/lib/properties";
-import { getNavFacets } from "@/lib/site";
+import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
+import { STAGE_STONE } from "@/lib/stones";
 
 /** Revalidate hourly so admin edits reach the website without a redeploy,
  *  while every visitor still gets a cached, server-rendered page. */
@@ -229,11 +230,54 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <div className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-          {live.map((p, i) => (
-            <PropertyCard key={p.id} p={p} priority={i === 0} />
-          ))}
-        </div>
+        {/* ⚠️ GROUPED BY STAGE, NOT ONE GRID (owner report 2026-08-18):
+            "Ongoing and Upcoming projects appear together in the same grid…
+            do not mix." Each selling stage gets its own shelf with the same
+            stage-stone header /projects uses — one visual language for the
+            same job. `completed` is excluded here because the track-record
+            band below already gives it the structured treatment the report
+            points at. */}
+        {PHASE_ORDER.filter((ph) => ph !== "completed")
+          .map((ph) => ({ ph, items: live.filter((p) => p.project_phase === ph) }))
+          .filter((g) => g.items.length > 0)
+          .map((g, gi) => {
+            const stone = STAGE_STONE[g.ph as keyof typeof STAGE_STONE];
+            return (
+              <section key={g.ph} className={gi === 0 ? "mt-phi5" : "mt-phi6"}>
+                <div
+                  className="flex flex-wrap items-end justify-between gap-phi2 border-b pb-phi2"
+                  style={{
+                    borderColor: `color-mix(in srgb, ${stone?.stone ?? "var(--color-champagne-500)"} 40%, var(--color-line))`,
+                  }}
+                >
+                  <div
+                    className="max-w-xl"
+                    style={{
+                      borderLeft: `3px solid ${stone?.stone ?? "var(--color-champagne-500)"}`,
+                      paddingLeft: "0.9rem",
+                    }}
+                  >
+                    <h3 className="text-2xl text-ink">{PHASE_META[g.ph].label}</h3>
+                    <p className="mt-2 text-base leading-relaxed text-ink-muted">
+                      {PHASE_META[g.ph].blurb}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/projects/${g.ph}`}
+                    className="text-tiny font-semibold uppercase tracking-[0.12em]"
+                    style={{ color: stone?.ink ?? "var(--color-jamin-red-deep)" }}
+                  >
+                    View {PHASE_META[g.ph].label.toLowerCase()} →
+                  </Link>
+                </div>
+                <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+                  {g.items.map((p, i) => (
+                    <PropertyCard key={p.id} p={p} priority={gi === 0 && i === 0} />
+                  ))}
+                </div>
+              </section>
+            );
+          })}
       </Container>
 
       {/* ---- from plan to plot: the motif, made literal ---- */}

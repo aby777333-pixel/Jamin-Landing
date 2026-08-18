@@ -156,7 +156,7 @@ export function Hero({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-top"
+            className="object-cover"
             /* 🚨 35%, NOT THE 50% `object-top` IMPLIES — and the card width is
                deliberately NOT what moved. Reported 2026-08-14: the copy card
                and the gateway's left pillar compete, the pillar sitting behind
@@ -187,7 +187,14 @@ export function Hero({
                height comes off the banner's SIDES. 36rem measured a 675px block
                and cropped the banner to 56%. Steering the picture is free;
                narrowing the card is not. */
-            style={{ objectPosition: "50% 35%" }}
+            /* ⚠️ Y = 0% ON hero-61, NOT the 35% the hero-20 sweep above chose
+               (owner report 2026-08-18: "hero image is cropped slightly at the
+               top"). The trident's APEX touches the frame's own top edge, so
+               any positive Y clips it; the ~20% a viewport box crops off this
+               1.59:1 frame is all foreground tarmac at the BOTTOM, which is
+               the expendable end. The 35% figure belonged to the 3.3:1 banner
+               and travels back with it if hero-20 ever returns. */
+            style={{ objectPosition: "50% 0%" }}
           />
           {/* The mirror of `hero-fade`: instead of a dark scrim the page
               dissolves the image into its own canvas from the left. Over the
@@ -237,13 +244,15 @@ export function Hero({
             49px low (109 above, 60 below). Reversing it puts the extra room
             BELOW, which lands the card a touch above the geometric centre —
             where the optical centre of a block of type actually is. */}
-        {/* ⚠️ The `xl` bottom padding is the console's landing room, not a
-            spacing preference — see "THE CONSOLE'S STRADDLE" in royal.css.
-            Below that width the console does not overlap, so the padding stays
-            at phi5. The three `xl` rules in this component and the console's
-            `xl` lift below are ONE breakpoint in four places: the banner must
-            be full-bleed, tall, and cleared at exactly the widths where the
-            console straddles it. */}
+        {/* ⚠️ THE STRADDLE IS OFF (owner report 2026-08-18): "Where would you
+            like to own?" was riding half-over the banner's foot and so sat
+            inside the first screen. The console now sits wholly BELOW the
+            100svh hero — off the first screen — and the banner's xl padding
+            went symmetric (`xl:py-phi5`, replacing the console-clear bottom
+            pad), which is also what actually centres the copy card: with
+            `justify-center`, the old outsized bottom padding pushed the card
+            high ("currently it is upside", same report). The straddle math
+            stays in royal.css for the day it returns. */}
         {/* ⚠️ FULL VIEWPORT HEIGHT (owner 2026-08-17 night): the hero fills the
             first screen less the sticky header — `svh` so a phone's collapsing
             URL bar cannot make it overflow. The height-costs-width arithmetic
@@ -251,7 +260,7 @@ export function Hero({
             hero-61 is 1.59:1, so a viewport box is WIDTH-bound on any desktop
             and the full frame width stays in shot regardless. The console
             still straddles the foot via the same pb var. */}
-        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi3 lg:px-10 xl:min-h-[calc(100svh-var(--header-h))] xl:pb-[var(--rj-console-clear)]">
+        <div className="relative mx-auto flex max-w-[1280px] flex-col justify-center px-5 pb-phi5 pt-phi3 lg:px-10 xl:min-h-[calc(100svh-var(--header-h))] xl:py-phi5">
           {/* ⚠️ `max-w-2xl`, WIDER than the 36rem this carried before the plate,
               and that is not a taste change — it is the height budget.
 
@@ -408,12 +417,13 @@ export function Hero({
           page's own canvas). Like the rail it sits OUTSIDE the banner block, so
           its height is not taken off the sides of a 3.3:1 frame. */}
       <div className="relative mx-auto max-w-[1280px] px-5 lg:px-10">
-        {/* Exactly half over the banner from `xl` up — the lift is half the
-            console's own height, and the banner's bottom padding is derived
-            from the same number so the copy plate is never covered. Both live
-            in royal.css under "THE CONSOLE'S STRADDLE"; changing one here
-            without the other is the bug that block exists to prevent. */}
-        <div className="mt-phi3 xl:mt-[var(--rj-console-lift)]">
+        {/* ⚠️ NO LIFT — the straddle came off 2026-08-18 (owner report: this
+            section must not appear inside the first screen). The console sits
+            in flow below the 100svh banner now; if the straddle ever returns,
+            `xl:mt-[var(--rj-console-lift)]` here and the banner's
+            `xl:pb-[var(--rj-console-clear)]` must come back TOGETHER — see
+            "THE CONSOLE'S STRADDLE" in royal.css. */}
+        <div className="mt-phi3">
           <HeroConsole districts={districts} />
         </div>
       </div>

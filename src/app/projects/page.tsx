@@ -58,37 +58,24 @@ export default async function ProjectsPage() {
           never a caption. */}
       <PageHero
         art={69}
-        tone="cinematic"
-        /* ⚠️ SHEER, at the owner's request 2026-08-12: "make the bg card see
-           through transparent". Two things change and the second one is doing
-           most of the work — `gilt` is 0.52 near-black WITH a 14px backdrop
-           blur, so the picture behind the copy was both darkened and frosted.
-           `rj-gilt-sheer` drops the blur entirely, so the photograph now runs
-           through the plate sharp, and takes the tint to 0.34. Measured under
-           the plate on the frame this page actually carries, mean luminance
-           goes 0.033 → 0.060 — about twice the light, before counting the
-           frost coming off.
-
-           ⚠️ 0.34 rather than lower, and this hero is the reason the number is
-           not free to keep falling: its backdrop is a PHOTOGRAPH FROM THE
-           DATABASE (`secondaryImage` of the first project with one), so an
-           administrator can replace it tomorrow and no sweep here can bind the
-           frame. 0.34 is the alpha /journal already ships over a photograph,
-           and it is the top of the range this treatment uses. Swept at 1280
-           against all three candidate photos in `property-media` today, plate
-           region, gold eyebrow at p95: Erode 5.79 · Varapatty 5.90 · New
-           project 8.95. The worst single pixel runs 2.79–4.04 and is covered by
-           `.rj-sheer-copy`'s four-layer halo, which is precisely the thing that
-           replaced the blur — see the note on that class.
-
-           If a future photo looks washed here, RAISE THIS, do not re-add blur:
-           a backdrop-filter draws a hard frosted edge at the plate boundary,
-           which is the artefact that got it removed in the first place. */
-        sheer
-        /* 0.58 for hero-69 — the bright Grand render, the same figure every
-           daylight frame in the set now carries; the 0.34 note above described
-           the swapped-out photograph. */
-        sheerAlpha={0.58}
+        /* 🚨 `paper`, NOT `cinematic` (owner report 2026-08-18): the dark copy
+           plate was covering the JAMIN BAZAAR lockup baked into the LEFT of
+           hero-69's arch, and on desktop the geometry has NO fix — measured
+           at 1440x800: the gap between the hero's top edge and the plate's
+           top is 73px, the lockup is 84px tall at the width-bound scale, and
+           the frame is width-bound so horizontal steering has zero travel.
+           Vertical steering, taller boxes and source trims were all computed
+           and each fails at some viewport height. `paper` dissolves the
+           problem by construction: the copy sits on the page's own sand and
+           NOTHING overlays the render. The lockup lands at 23–38% of the art
+           box — past `hero-fade`'s 22% knee, fully solid. This is the
+           hero-64 precedent from /projects/future (paper keeps a lockup whole
+           without a trim). Below `xl` the band-then-copy structure is
+           unchanged, which is the mobile composition the report says to keep.
+           The cinematic sweep notes that lived here (0.34 photograph history,
+           0.58 for the Grand render) travel back with `tone="cinematic"` —
+           recover them from git if a photograph returns via `photo`. */
+        tone="paper"
         eyebrow="Plotted developments"
         title="Every Jamin project, by stage"
         lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."

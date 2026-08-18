@@ -195,12 +195,20 @@ export default async function AboutPage() {
         </Link>
       </section>
       </Container>
-      {/* Anti-beige item 6: a thin full-bleed strip of the spare stone-pillar
-          gate (hero-53) breaks the long sand read before the desk — imagery
-          is the site's strongest non-beige asset and it only lived in heroes.
-          Brand imagery under the standing rule: alt="", aria-hidden, never a
-          caption. */}
-      <div className="relative h-72 w-full overflow-hidden border-y border-line lg:h-[34rem]" aria-hidden="true">
+      {/* Anti-beige item 6: the spare stone-pillar gate (hero-53) breaks the
+          long sand read before the desk — imagery is the site's strongest
+          non-beige asset and it only lived in heroes. Brand imagery under the
+          standing rule: alt="", aria-hidden, never a caption.
+          ⚠️ THE BAND IS THE ARTWORK'S OWN RATIO, NOT A FIXED HEIGHT (owner
+          2026-08-18: "make the images fully visible") — the h-72/34rem crop
+          bands were losing the arch and the lockup; a box cut to the frame's
+          1774/887 shows the whole picture at every width, the same rule the
+          hero mobile band settled. */}
+      <div
+        className="relative w-full overflow-hidden border-y border-line"
+        style={{ aspectRatio: "1774 / 887" }}
+        aria-hidden="true"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/hero/hero-53-1774.webp"
@@ -210,7 +218,6 @@ export default async function AboutPage() {
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover"
-          style={{ objectPosition: "50% 32%" }}
         />
       </div>
 

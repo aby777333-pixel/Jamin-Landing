@@ -110,7 +110,10 @@ function Num({
 function Result({ rows, note }: { rows: [string, string, string?][]; note?: string }) {
   return (
     <div
-      className="mt-phi4 rounded-xl border bg-canvas-alt p-phi3"
+      /* ⚠️ `lg:mt-0` (owner report 2026-08-18): inside the two-column grid the
+         top margin pushed the card below the form's first field — the margin
+         is the phone-stack spacing and only belongs there. */
+      className="mt-phi4 rounded-xl border bg-canvas-alt p-phi3 lg:mt-0"
       style={{ borderColor: "var(--color-canopy)" }}
     >
       <dl>
@@ -240,13 +243,39 @@ export function PlanningTools() {
           <Num id="t-erate" label="Interest rate" value={eRate} onChange={setERate} step={0.05} suffix="% p.a." />
           <Num id="t-eyears" label="Tenure" value={eYears} onChange={setEYears} suffix="years" />
         </div>
-        <Result
-          rows={[
-            ["Indicative loan amount", inr(eligible), words(eligible)],
-            ["Instalment it assumes", inr(maxEmi)],
-          ]}
-          note="Indicative only, and not an offer of finance. A lender decides on your credit record, employment, the property's own papers and its own policy — Jamin Bazaar does not lend and does not arrange loans."
-        />
+        {/* ⚠️ BESPOKE, NOT <Result> (owner report 2026-08-18, two items): the
+            grid STRETCHES this cell to its five-field form's height, so the
+            generic two-row card left a slab of empty border under the note.
+            This one is a flex column that spends the height: the loan amount
+            as the headline fact, the instalment on its own rule, and the
+            disclaimer anchored to the card's foot with `mt-auto` so the
+            bottom region is the disclaimer's breathing room rather than a
+            gap. Same teal border — a calculator's answer is a resolved
+            fact. */}
+        <div
+          className="mt-phi4 flex flex-col rounded-xl border bg-canvas-alt p-phi3 lg:mt-0"
+          style={{ borderColor: "var(--color-canopy)" }}
+        >
+          <p className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint">
+            Indicative loan amount
+          </p>
+          <p className="ledger mt-2 text-3xl font-semibold text-canopy">{inr(eligible)}</p>
+          {words(eligible) ? (
+            <p className="mt-1 text-tiny text-ink-faint">≈ {words(eligible)}</p>
+          ) : null}
+          <div className="mt-phi3 flex items-baseline justify-between gap-4 border-t border-line pt-phi3">
+            <span className="text-base text-ink-muted">Instalment it assumes</span>
+            <span className="ledger text-xl text-ink">{inr(maxEmi)}</span>
+          </div>
+          {/* `mt-phi3` is the phone gap, where the column is content-sized and
+              `auto` would collapse to zero; from `lg` the stretch is real and
+              `mt-auto` is what anchors the foot. */}
+          <p className="mt-phi3 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint lg:mt-auto">
+            Indicative only, and not an offer of finance. A lender decides on your credit record,
+            employment, the property&rsquo;s own papers and its own policy — Jamin Bazaar does not
+            lend and does not arrange loans.
+          </p>
+        </div>
       </Tool>
 
       <Tool

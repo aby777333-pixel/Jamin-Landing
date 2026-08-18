@@ -77,80 +77,31 @@ export default async function JournalPage() {
 
   return (
     <>
-      {/* `cinematic` — the tone is a property of the artwork, not of the page.
-          hero-43 is a photograph with real tonal range, which is the case
-          `veil` and the `gilt` plate exist for. */}
+      {/* `paper` — the tone is a property of the artwork, not of the page,
+          and hero-74 is a document flat-lay on near-white ground, which is
+          exactly the paper family. (The long cinematic sweep notes below
+          belonged to hero-43/51/55 and travel back with a photographic frame;
+          kept nowhere because the paper plate's contrast is fixed and
+          knowable — nothing sits behind the copy.) */}
       <PageHero
-        /* hero-55 — the bougainvillea pergola, FLOWERED GATES set 2026-08-17. */
-        art={55}
-        tone="cinematic"
-        /* Taller, at the owner's request (2026-08-15): `clamp(26rem,64vh,38rem)`
-           against the standard `clamp(20rem,48vh,30rem)`.
-
-           🚨 HEIGHT CHANGES THE CROP, SO THE PLATE HAD TO BE RE-SWEPT — the
-           same rule as swapping the artwork. A taller box takes LESS off the
-           top and bottom (131px of slack here against 275px), so more of the
-           frame's bright mist bank arrives under the copy. Carried over
-           unchanged, 0.08 fell from a worst-case p99 of 4.77 to **4.54** — still
-           passing, but on a margin of 0.04 rather than 0.27, which is not a
-           margin at all.
-
-           ⚠️ THE FIX IS THE CROP, NOT THE TINT. Steering the frame up trades
-           the wet foreground for banyan canopy, which is the dark half of the
-           picture. Swept at 1440x576, 1440x608, 1280, 1920x1080 and 1680:
-
-               object-position   worst p99 @ 0.08
-               top   (0%)             5.07
-               25%                    5.00   ← ships
-               center                 4.54   (the naive carry-over)
-               75%                    3.96   FAILS
-               bottom                 3.45   FAILS
-
-           So the hero gets taller AND keeps the lightest plate on the site,
-           with a 0.50 margin — nearly double what it ran at before. Verified
-           the JAMIN BAZAAR signboard (source y 275–479 of 879) sits fully
-           inside the 25% crop at every one of those widths. */
+        /* hero-74 — the survey-desk flat-lay (owner report 2026-08-18: the
+           Journal hero must say research/documents, not project showcase).
+           The two REAL Edappadi sheets at opposing tilts — see the register
+           entry in PageHero.tsx and the rebuild script in
+           public/hero/README.md. hero-55 returns to the spare pile. */
+        art={74}
+        tone="paper"
+        /* `tall` kept from the cinematic era — the Journal opens on its hero
+           and the extra height is presence, not a sweep concern any more:
+           the paper plate sits on the page's own ivory, so the elaborate
+           per-frame alpha history that used to live here (hero-43's p99
+           tables, hero-51's re-sweep) went with the photographic frames it
+           measured. Recover it from git if a photograph ever returns. */
         size="tall"
-        artPosition="center 25%"
-        sheer
-        /* 🚨 RE-SWEPT FOR hero-43 (2026-08-15). The owner asked for the plate
-           “see-through to the max”, and on THIS frame that is a real option
-           rather than a wish: hero-41 was a sunlit meadow whose footprint
-           measured a p95 of rgb(221,188,155), where hero-43 is a wet forest
-           platform in deep shade measuring rgb(20,47,30). Same request on the
-           old frame would have been refused.
-
-           Swept the way this page always is — photograph, then `veil`’s two
-           gradients, then the plate — over the plate’s footprint only:
-
-               0.00 → 7.83 at p95   the tint removed entirely
-               0.08 → 8.47 at p95   ships
-               0.44 → 12.00 at p95  hero-41’s value
-
-           ⚠️ AND p95 IS THE WRONG STATISTIC ON THIS FRAME, WHICH IS THE WHOLE
-           REASON THIS IS NOT 0. The mist at the track’s vanishing point is a
-           genuinely bright BANK, not the stray specular hits p95 exists to
-           discount, and it lands under the plate’s inner edge. Measured at p99
-           across 1440x900, 1440x1080, 1280, 1920x1080 and 1680:
-
-               0.00 → 4.23 worst   FAILS
-               0.04 → 4.49 worst   fails by 0.01
-               0.08 → 4.77 worst   ships, 0.27 of margin
-
-           1.38% of the footprint sits above the 4.5 limit at alpha 0 — an area,
-           so a reader would meet it. 0.08 keeps the same order of margin this
-           page has always run at (0.44 kept 0.26 on the meadow) while being
-           5.5x lighter, and it is below the utility’s own 0.14 default.
-           The eyebrow binds, as on every cinematic hero — `champagne-50`, not
-           the white h1. Anyone lightening this has to change the ink first. */
-        sheerAlpha={0.58}  /* re-swept for hero-51: 0.08 was the BANYAN frame; this is bright daylight. */
-        /* ⚠️ 42rem, NOT the 38rem /properties uses — the cliff is set by the
-           headline and this one is longer. Measured at 1440: "Land, and the
-           things worth knowing before you decide." holds three lines at 42rem
-           and breaks to four at 40. So this card gives back 64px of picture
-           where /properties gave back 128. Re-measure before changing it. */
-        sheerEdge
-        plateXl="42rem"
+        /* Subject sits RIGHT in the composed flat-lay; `right` anchors the
+           sheets against the bleed edge and gives `hero-fade` the calm paper
+           at the composition's left to dissolve. */
+        artPosition="right"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         /* ONE LINE now, where this was three paragraphs (owner, 2026-08-15).
@@ -207,10 +158,17 @@ export default async function JournalPage() {
         )}
       </Container>
 
-      {/* Anti-beige item 6: the spare brick-and-white gate (hero-54) as a thin
-          full-bleed strip before the desk — same treatment as /about's, same
-          standing rule: alt="", aria-hidden, never a caption. */}
-      <div className="relative h-72 w-full overflow-hidden border-y border-line lg:h-[34rem]" aria-hidden="true">
+      {/* Anti-beige item 6: the spare brick-and-white gate (hero-54) before
+          the desk — same treatment as /about's, same standing rule: alt="",
+          aria-hidden, never a caption.
+          ⚠️ FULL FRAME, NOT A CROP BAND (owner 2026-08-18: "make the images
+          fully visible") — the box takes the artwork's own 1672/941 ratio so
+          the whole gate and lockup are on screen at every width. */}
+      <div
+        className="relative w-full overflow-hidden border-y border-line"
+        style={{ aspectRatio: "1672 / 941" }}
+        aria-hidden="true"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/hero/hero-54-1672.webp"
@@ -220,7 +178,6 @@ export default async function JournalPage() {
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover"
-          style={{ objectPosition: "50% 28%" }}
         />
       </div>
 
