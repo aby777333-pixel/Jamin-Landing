@@ -98,6 +98,9 @@ export default async function TamilPage() {
         /* Swept on this frame: p95 0.864 vs audited hero-38's 0.604 — the
            bright-daylight 0.58, see the register. */
         sheerAlpha={0.58}
+        /* 52rem (owner: "widen the tab") — Tamil sets wide, and the wider
+           measure drops the headline to two lines. */
+        plateXl="52rem"
         eyebrow="தமிழில்"
         title={
           <span className="text-3xl">நிலம் வாங்குவதில், பேச்சை விட ஆவணமே முக்கியம்.</span>

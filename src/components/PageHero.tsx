@@ -465,7 +465,7 @@ export function PageHero({
    *  So this is a union of literal strings rather than a number: Tailwind scans
    *  source text, and a class it never sees written out is a class it never
    *  generates. Re-measure before adding a value. */
-  plateXl?: "38rem" | "42rem" | "46rem";
+  plateXl?: "38rem" | "42rem" | "46rem" | "52rem";
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -613,12 +613,21 @@ export function PageHero({
                ⚠️ Scoped to `sheerEdge` rather than applied to every cinematic
                hero — the 46rem cap was set for a different headline on a
                different page and those pages were not what was reported. */
+            /* ⚠️ The BASE width lives in the map now, not as a standalone
+               utility before it — two same-layer max-w classes in one string
+               are resolved by stylesheet order, not string order (the
+               SurveyIcon size lesson). "52rem" (owner 2026-08-18, /ta:
+               "widen the tab") widens BOTH tiers; the other three keep the
+               42rem base they always had. */
             className={`gilt ${
               sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""
-            } rise max-w-[42rem] rounded-2xl p-phi3 sm:p-phi4 ${
-              { "38rem": "xl:max-w-[38rem]", "42rem": "xl:max-w-[42rem]", "46rem": "xl:max-w-[46rem]" }[
-                plateXl
-              ]
+            } rise rounded-2xl p-phi3 sm:p-phi4 ${
+              {
+                "38rem": "max-w-[42rem] xl:max-w-[38rem]",
+                "42rem": "max-w-[42rem] xl:max-w-[42rem]",
+                "46rem": "max-w-[42rem] xl:max-w-[46rem]",
+                "52rem": "max-w-[46rem] xl:max-w-[52rem]",
+              }[plateXl]
             }`}
             style={
               sheer
