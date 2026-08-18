@@ -2561,3 +2561,208 @@ header .glass,
     animation-delay: 0ms;
   }
 }
+
+/* ═══ THE AESTHETICS ROUND (2026-08-18, owner: "do all") ═════════════════
+   Twenty-two purely visual devices. Every colour is a token, every glow is
+   a gradient or shadow (never a backdrop-filter — §9 budget), and every
+   animation collapses under reduced motion at the block's end. */
+
+/* ── 2 · WHISPER GRAIN — paper you can almost feel ───────────────────────
+   Inline SVG turbulence, one request-free data URI, at whisper opacity.
+   A PSEUDO overlay so it never tints the panel's own children stacking:
+   the host must carry `relative` (Tailwind), never position from here. */
+.rj-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+}
+[data-mode="dark"] .rj-grain::before {
+  opacity: 0.09;
+  mix-blend-mode: screen;
+}
+
+/* ── 3 · THE DECKLED EDGE — a torn-paper divider ─────────────────────────
+   A thin strip whose bottom edge is irregular. Colour comes from the
+   ELEMENT's own background utility (the sheet it belongs to), the clip
+   comes from here. Sparingly: two or three per page. */
+.rj-deckle {
+  height: 12px;
+  clip-path: polygon(
+    0 0, 100% 0, 100% 55%, 97% 78%, 93% 52%, 89% 84%, 84% 60%, 79% 92%,
+    74% 55%, 68% 80%, 62% 48%, 56% 88%, 50% 62%, 44% 90%, 38% 55%, 32% 82%,
+    26% 50%, 20% 86%, 14% 58%, 9% 90%, 4% 60%, 0 78%
+  );
+}
+
+/* ── 4 · THE AGED-RECORD VIGNETTE ────────────────────────────────────────
+   The faintest corner-darkening of a filed document. Two radial washes,
+   ink-toned so both modes derive their own cast from the token. */
+.rj-vignette {
+  background-image:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--color-ink) 6%, transparent), transparent 42%),
+    radial-gradient(120% 90% at 100% 100%, color-mix(in srgb, var(--color-ink) 7%, transparent), transparent 45%);
+}
+
+/* ── 6 · THE SINDOOR THREAD ──────────────────────────────────────────────
+   A 2px vermilion mark above a heading — cultural, geometric, never a
+   word's colour. Applied per-heading; the width is the thread's, not the
+   heading's. */
+.rj-sindoor::before {
+  content: "";
+  display: block;
+  width: 2.75rem;
+  height: 2px;
+  margin-bottom: 0.65rem;
+  background: var(--color-vermilion);
+  border-radius: 999px;
+}
+.rj-sindoor.text-center::before,
+.text-center .rj-sindoor::before {
+  margin-inline: auto;
+}
+
+/* ── 7 · THE RED FOIL FOLIO — chapter numerals struck in red ─────────────
+   The bronze `rj-folio` re-valued through vermilion → garnet. Same
+   letterform, richer metal. background-clip only in its standard form —
+   Lightning CSS supplies the prefix (never hand-write -webkit- here). */
+.rj-folio-red {
+  background: linear-gradient(160deg, #e86a44 0%, var(--color-vermilion) 38%, var(--color-garnet) 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── 8 · THE LOZENGE HALO — the lit sign at dusk ─────────────────────────
+   Carbon mode only: the header ground is always dark there, so the red
+   bloom always has night air to glow into. */
+.rj-cartouche-glow {
+  /* the light-mode shadow that used to live inline on the component */
+  box-shadow: 0 10px 26px -14px rgba(201, 2, 2, 0.42);
+}
+[data-mode="dark"] .rj-cartouche-glow {
+  box-shadow:
+    0 0 30px rgba(226, 60, 40, 0.32),
+    0 0 70px rgba(201, 2, 2, 0.18),
+    0 10px 26px -14px rgba(201, 2, 2, 0.42);
+}
+
+/* ── 9 · LAMPLIGHT — hovers lit like the night renders ───────────────────
+   A warm pool under the lifted card instead of a grey smudge. Additive on
+   hover only, so resting cards keep their audited shadows. Carbon inverts
+   the temperature: windows lit from within. */
+.rj-lamplight {
+  transition: box-shadow 500ms var(--ease-silk);
+}
+.rj-lamplight:hover {
+  box-shadow:
+    0 22px 44px -20px rgba(171, 108, 34, 0.4),
+    0 6px 18px -6px rgba(80, 52, 20, 0.16);
+}
+[data-mode="dark"] .rj-lamplight:hover {
+  box-shadow:
+    0 22px 44px -18px rgba(255, 170, 80, 0.17),
+    0 0 0 1px rgba(255, 190, 120, 0.1);
+}
+
+/* ── 10 · NIGHT SIGNAGE — the footer wordmark as a lit board ─────────────
+   Dark mode only, and a text-shadow, not a filter. */
+[data-mode="dark"] .rj-signage {
+  text-shadow:
+    0 0 4px rgba(255, 200, 160, 0.5),
+    0 0 22px rgba(255, 130, 90, 0.35);
+}
+
+/* ── 11 · BRASS RIM-LIGHT — figures that catch a top light ───────────────
+   Gradient-clipped type for the velvet band's gold numerals only; the
+   stops bracket gold-light so the darkest pixel still clears the oxblood
+   ground the band was audited on. */
+.rj-brass {
+  background: linear-gradient(180deg, #ffe9b8 0%, var(--color-jamin-gold-light, #e8c887) 52%, #c9a35c 100%);
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── 15 · THE SETTLING NEEDLE — the compass finds north ──────────────────
+   Runs only once its Reveal wrapper lands `rj-arrive`; without JS the
+   needle is simply at rest, pointing north — the no-JS guarantee again. */
+@keyframes rj-needle-settle {
+  0% { transform: rotate(52deg); }
+  55% { transform: rotate(-10deg); }
+  80% { transform: rotate(4deg); }
+  100% { transform: rotate(0deg); }
+}
+.rj-arrive .rj-needle {
+  transform-origin: 50% 50%;
+  animation: rj-needle-settle 1600ms var(--ease-silk) 200ms both;
+}
+
+/* ── 21 · THE PAGE-TURN — a cover lifts its corner ───────────────────────
+   The dog-ear made literal on Journal covers: a folded corner grows from
+   the bottom-right on hover. Lives on the IMAGE BOX (cd-fold owns the card
+   root's pseudos — the PropertyCard lesson). Host carries `relative`. */
+.rj-pageturn::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  background: linear-gradient(315deg, transparent 49%, var(--color-canvas-alt) 50%, var(--color-canvas) 100%);
+  box-shadow: -3px -3px 8px rgba(40, 25, 10, 0.18);
+  transition: width 420ms var(--ease-silk), height 420ms var(--ease-silk);
+  border-top-left-radius: 6px;
+}
+.rj-pageturn:hover::after,
+.group:hover .rj-pageturn::after {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+/* ── 22 · INK-SETTLE — the homepage headline dries onto the paper ────────
+   One place only, by rule. `both` fill; collapsed below with the rest. */
+@keyframes rj-ink-settle {
+  from {
+    opacity: 0;
+    filter: blur(3.5px);
+    letter-spacing: 0.02em;
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    letter-spacing: 0;
+  }
+}
+.rj-ink-settle {
+  animation: rj-ink-settle 850ms var(--ease-silk) 120ms both;
+}
+
+/* ── THE PAPER STACK'S CARBON TWINS (item 1) ─────────────────────────────
+   Every new light ground inverts the day it ships — the standing carbon
+   rule. Steps keep their ORDER (parchment lightest → kraft deepest becomes
+   parchment least-raised → kraft most-recessed). */
+[data-mode="dark"] {
+  --color-parchment: #262019;
+  --color-bone-paper: #211c15;
+  --color-kraft: #191512;
+}
+
+/* ── REDUCED MOTION — the whole round collapses ──────────────────────────*/
+@media (prefers-reduced-motion: reduce) {
+  .rj-arrive .rj-needle {
+    animation: none;
+  }
+  .rj-ink-settle {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms;
+  }
+  .rj-pageturn::after {
+    transition: none;
+  }
+  .rj-lamplight {
+    transition: none;
+  }
+}

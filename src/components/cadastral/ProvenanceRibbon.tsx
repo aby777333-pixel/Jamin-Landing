@@ -1,4 +1,5 @@
 import { approvalBadges, type PropertyDetail } from "@/lib/properties";
+import { PlanEmboss } from "@/components/cadastral/PlanEmboss";
 import { Reveal } from "@/components/Reveal";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 
@@ -79,7 +80,17 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
   if (links.length < 2) return null;
 
   return (
-    <section aria-labelledby="provenance-heading" className="mt-phi5">
+    /* Aesthetics item 13: the traced plan pressed into the paper behind
+       the chain — a blind stamp drawn from the REAL geometry. `isolate` +
+       `-z-10` per the homepage-stamp rule. Renders nothing when the
+       project carries no traced boundary. */
+    <section aria-labelledby="provenance-heading" className="relative isolate mt-phi5 overflow-hidden">
+      {p.plot_plan && (
+        <PlanEmboss
+          plan={p.plot_plan}
+          className="pointer-events-none absolute -right-8 -top-4 -z-10 h-[130%] w-2/5 opacity-70"
+        />
+      )}
       <h2 id="provenance-heading" className="ledger-label text-ink-muted">
         Chain of record
       </h2>

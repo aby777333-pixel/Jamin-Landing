@@ -94,7 +94,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
          colour tokens to onyx, and every child follows, including the two
          cadastral components this file does not own. See royal.css. */
       data-tier={tier.key}
-      className="cd-card cd-fold cd-photo rj-lift group flex h-full w-full flex-col rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500 hover:shadow-raise"
+      className="cd-card cd-fold cd-photo rj-lift rj-lamplight group flex h-full w-full flex-col rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500"
       /* The lift is `.rj-lift` (transform only). The shadow tint is the card's
          own stone at very low alpha, so a row lifts in slightly different
          light — set here rather than in CSS because it is per-district data. */

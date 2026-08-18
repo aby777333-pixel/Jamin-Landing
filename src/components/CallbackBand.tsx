@@ -44,7 +44,9 @@ export async function CallbackBand({
          reads as a hole. -phi4/-phi6 leaves ~19px / ~55px of breath. Only
          pages ending on the band are affected — everywhere else the footer
          margin still does its job. */
-      className="rj-deboss -mb-phi4 mt-phi6 border-b border-line bg-canvas-alt py-phi5 lg:-mb-phi6"
+      /* Aesthetics item 1: `bg-bone-paper` — the desk sits one paper rung
+         below the panels, so the band reads as its own sheet. */
+      className="rj-deboss -mb-phi4 mt-phi6 border-b border-line bg-bone-paper py-phi5 lg:-mb-phi6"
       style={{ borderTop: "3px solid var(--color-cta)" }}
       id="desk"
     >
@@ -55,7 +57,8 @@ export async function CallbackBand({
                 end serifs, which is the mark this site uses when something is
                 being stated rather than sold. */}
             <span className="block h-px w-24 rule-measure" aria-hidden="true" />
-            <h2 className="mt-phi3 text-2xl text-ink">Talk to an executive</h2>
+            {/* Item 6: the sindoor thread above the desk's own heading. */}
+            <h2 className="rj-sindoor mt-phi3 text-2xl text-ink">Talk to an executive</h2>
             <p className="mt-phi2 max-w-md text-base leading-relaxed text-ink-muted">
               Not a call centre. One person who knows the layouts, the paperwork and what is
               actually available this week — reachable directly, or by asking for a call at a

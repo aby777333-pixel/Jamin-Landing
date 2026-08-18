@@ -128,7 +128,9 @@ export default async function SignInPage() {
               pair of columns keep ending flush — the property the previous
               round existed to win stays won, just across two plates. */}
           <aside className="flex h-full flex-col gap-phi4">
-            <div className="cd-plate flex flex-1 flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+            {/* Aesthetics item 2: whisper grain — the account plate reads as
+                paper. `relative` is the grain's host duty. */}
+            <div className="cd-plate rj-grain relative flex flex-1 flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
               <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
               <h2 className="text-2xl text-ink">What an account is for</h2>
 

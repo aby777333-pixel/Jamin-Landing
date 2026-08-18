@@ -34,16 +34,20 @@ export function Cartouche({ compact = false }: { compact?: boolean }) {
           round restored — that round's complaint was the lockup being
           SQUEEZED by flex, which shrink-0 still prevents; this one is about
           its set size on a phone. */}
+      {/* Aesthetics item 8: `rj-cartouche-glow` — in carbon mode the lozenge
+          blooms like a lit sign at dusk (royal.css; light mode unchanged). */}
       <span
-        className={`inline-flex shrink-0 items-center bg-cta ${
+        className={`rj-cartouche-glow inline-flex shrink-0 items-center bg-cta ${
           compact ? "h-11 lg:h-12" : "h-14 lg:h-[72px]"
         }`}
         style={{
           borderRadius: "999px 999px 8px 999px",
           /* Right pad trimmed 20→14 (owner 2026-08-17: crowding HOME) — the
              width gives, the presence stays. */
+          /* ⚠️ The box-shadow moved to CSS (`.rj-cartouche-glow` in
+             royal.css) — an inline shadow can never lose to the carbon
+             bloom rule, which is exactly what it was silently doing. */
           padding: compact ? "5px 14px 5px 8px" : "8px 14px 8px 10px",
-          boxShadow: "0 10px 26px -14px rgba(201, 2, 2, 0.42)",
           transition: "all 220ms var(--ease-silk)",
         }}
       >

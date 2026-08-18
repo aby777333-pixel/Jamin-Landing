@@ -8,6 +8,7 @@ import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 import { districtFromSlug, districtNames, districtSlug } from "@/lib/site";
 import { ThumbIndex } from "@/components/ThumbIndex";
+import { MonogramSeal } from "@/components/cadastral/Engravings";
 import { SITE_URL } from "@/lib/supabase";
 import { seoTitle } from "@/lib/seo";
 
@@ -245,13 +246,22 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
       <ThumbIndex districts={districtNames(await getProperties())} current={name} />
 
       <Container className="py-phi5">
-        <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
-          <Link href="/properties" className="hover:text-ink">
-            Properties
-          </Link>
-          <span className="px-2">/</span>
-          <span className="text-ink">{name}</span>
-        </nav>
+        <div className="flex items-start justify-between gap-4">
+          <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
+            <Link href="/properties" className="hover:text-ink">
+              Properties
+            </Link>
+            <span className="px-2">/</span>
+            <span className="text-ink">{name}</span>
+          </nav>
+          {/* Aesthetics item 17: the district's engraved monogram seal, in
+              its own stone. A monogram, deliberately NOT a map silhouette —
+              a hand-drawn boundary would be invented geography. */}
+          <MonogramSeal
+            letter={name.charAt(0)}
+            className="hidden h-16 w-16 shrink-0 text-jamin-gold-ink/50 sm:block"
+          />
+        </div>
 
         {/* ⚠️ The SAME explorer the catalogue uses, handed only this district's
             records. Its own district chips render only when there is more than

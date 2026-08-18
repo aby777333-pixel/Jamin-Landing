@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { PageHero } from "@/components/PageHero";
+import { KolamCorner } from "@/components/cadastral/Engravings";
 import { getDeskContact, telHref, waHref } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -145,7 +146,9 @@ export default async function TamilPage() {
       />
 
       <Container className="py-phi5">
-        <h2 className="text-3xl text-ink">வாங்கும் முறை — நான்கு படிகள்</h2>
+        {/* Aesthetics item 6: the sindoor thread — most at home on the
+            Tamil page's own headings. */}
+        <h2 className="rj-sindoor text-3xl text-ink">வாங்கும் முறை — நான்கு படிகள்</h2>
         <ol className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
           {STAGES.map((s, i) => (
             <li key={s.title} className="rounded-card border border-line bg-canvas-alt p-phi3">
@@ -158,7 +161,7 @@ export default async function TamilPage() {
           ))}
         </ol>
 
-        <h2 className="mt-phi6 text-3xl text-ink">அடிக்கடி கேட்கப்படும் கேள்விகள்</h2>
+        <h2 className="rj-sindoor mt-phi6 text-3xl text-ink">அடிக்கடி கேட்கப்படும் கேள்விகள்</h2>
         <dl className="mt-phi3 max-w-3xl">
           {FAQS.map((f) => (
             <div key={f.q} className="border-t border-line py-phi3 first:border-t-0">
@@ -168,8 +171,11 @@ export default async function TamilPage() {
           ))}
         </dl>
 
-        <div className="mt-phi6 rounded-card border border-line bg-canvas-alt p-phi4">
-          <h2 className="text-2xl text-ink">எங்களுடன் பேசுங்கள்</h2>
+        {/* Item 18: kolam corners on the contact card — geometric, Tamil. */}
+        <div className="relative mt-phi6 rounded-card border border-line bg-canvas-alt p-phi4">
+          <KolamCorner className="pointer-events-none absolute left-2 top-2 h-8 w-8 text-jamin-gold-ink/40" />
+          <KolamCorner className="pointer-events-none absolute bottom-2 right-2 h-8 w-8 rotate-180 text-jamin-gold-ink/40" />
+          <h2 className="rj-sindoor text-2xl text-ink">எங்களுடன் பேசுங்கள்</h2>
           <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
             அழையுங்கள் அல்லது வாட்ஸ்அப்பில் எழுதுங்கள் — வேலை நேரத்தில் பதில் தருகிறோம்.
           </p>

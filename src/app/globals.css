@@ -89,6 +89,16 @@
   --color-graphite: #4a4237;
   --color-burgundy: #7a0404;
   --color-terracotta: #9b7656;
+  /* ---- THE PAPER STACK (aesthetics round 2026-08-18) — three more rungs
+     of sand so a long page reads as stacked sheets. Grounds only, never
+     inks; each gets a carbon twin at the END of royal.css. */
+  --color-parchment: #f6ebdd;   /* a half-step above canvas-alt */
+  --color-bone-paper: #efe3d2;  /* between alt and sunken */
+  --color-kraft: #ddc7ae;       /* a shade under sunken — the deep sheet */
+  /* ---- THE RED REGISTER (same round) — materials, never words. Vermilion
+     is the sindoor thread; garnet is the red foil's deep stop. */
+  --color-vermilion: #d3401f;
+  --color-garnet: #8e1c22;
   /* Hairline red, the same line-work as the renders. Structure, never text. */
   --color-line-red: #f0cfc7;
 

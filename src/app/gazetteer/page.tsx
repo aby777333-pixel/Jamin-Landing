@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
+import { CompassRose } from "@/components/cadastral/Engravings";
+import { Reveal } from "@/components/Reveal";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, locationLine, propertyHref, type Property } from "@/lib/properties";
 import { districtSlug } from "@/lib/site";
@@ -102,6 +104,12 @@ export default async function GazetteerPage() {
       />
 
       <Container className="py-phi5">
+        {/* Aesthetics item 15: the compass rose settles north as it arrives
+            — the index of places opens with the instrument that orders
+            them. Decoration; static without JS. */}
+        <Reveal className="pointer-events-none float-right -mt-2 ml-phi3 hidden sm:block">
+          <CompassRose className="h-24 w-24 text-jamin-gold-ink/50" />
+        </Reveal>
         {/* The letter rail. Anchors only — no JS, and it degrades to a plain
             list of links if the smooth-scroll never runs. */}
         {letters.length > 1 && (

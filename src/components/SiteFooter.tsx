@@ -4,6 +4,7 @@ import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
 import { TitleBlock } from "@/components/cadastral/TitleBlock";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
+import { FooterFrieze } from "@/components/cadastral/Engravings";
 
 /**
  * §59 — the footer is a discovery layer, and §75 — its contact details must be
@@ -39,6 +40,11 @@ export async function SiteFooter() {
     <footer className="rj-footer mt-phi5 lg:mt-phi7">
       {/* The certificate rule crowns the onyx (Gilded Register §2). */}
       <div className="rj-royal-rule" aria-hidden="true" />
+      {/* Aesthetics item 19: the engraved frieze — banyan and paddy in
+          hairline champagne, the land drawn once before the register. */}
+      <div aria-hidden="true" className="overflow-hidden">
+        <FooterFrieze className="h-7 w-full text-champagne-500/40" />
+      </div>
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>
@@ -59,7 +65,9 @@ export async function SiteFooter() {
                 sizes="44px"
                 className="h-11 w-11 object-contain"
               />
-              <span className="text-lg font-medium uppercase tracking-brand text-ink">
+              {/* Item 10: `rj-signage` — in carbon mode the wordmark glows
+                  like the gate boards in the night renders. */}
+              <span className="rj-signage text-lg font-medium uppercase tracking-brand text-ink">
                 Jamin Bazaar
               </span>
             </div>

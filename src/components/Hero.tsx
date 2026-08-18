@@ -334,7 +334,8 @@ export function Hero({
                 → teal, exactly as the reference creative colours KNOW THE
                 PROCESS. All three inks are AAA/AA on the plate (bronze-700
                 5.6:1, teal-700 7.8:1 on sand). */}
-            <h1 className="mt-phi3 text-balance text-3xl uppercase text-ink">
+            {/* Aesthetics item 22: ink-settle — this H1 only, by rule. */}
+            <h1 className="rj-ink-settle mt-phi3 text-balance text-3xl uppercase text-ink">
               The address <span className="text-jamin-gold-ink">your family</span>{" "}
               <span className="text-canopy">keeps.</span>
             </h1>

@@ -5,6 +5,8 @@ import { Hero, type Slide } from "@/components/Hero";
 import { Sweep } from "@/components/brand/Sweep";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { Reveal } from "@/components/Reveal";
+import { Tilt } from "@/components/Tilt";
+import { IsoMark } from "@/components/cadastral/Engravings";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
@@ -125,8 +127,11 @@ export default async function HomePage() {
               section indices of a bound document, the ornament running
               between its chapters. Decoration only. */}
           <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+            {/* Aesthetics round: the survey-stone diorama (item 14) joins the
+                ornament row; the folio is struck in red foil (item 7). */}
+            <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
             <div className="rj-fret w-40 opacity-60" />
-            <span className="rj-folio text-3xl">01</span>
+            <span className="rj-folio rj-folio-red text-3xl">01</span>
           </div>
         <div className="grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
           {/* On the page's own canvas this block was a slab of text with nothing
@@ -155,7 +160,9 @@ export default async function HomePage() {
               stacking context on this panel so a negative z-index drops the
               stamp behind the text without escaping to sit behind the panel's
               own background. */}
-          <div className="relative isolate flex h-full flex-col overflow-hidden rounded-xl border border-line bg-canvas-alt p-phi4">
+          {/* Aesthetics round: `bg-parchment` (the paper stack's top rung,
+              item 1) + `rj-grain` (item 2) — the panel becomes a sheet. */}
+          <div className="rj-grain relative isolate flex h-full flex-col overflow-hidden rounded-xl border border-line bg-parchment p-phi4">
             <SurveyIcon
               name="stamp"
               size="h-64 w-64"
@@ -303,7 +310,9 @@ export default async function HomePage() {
                 .filter(([v]) => Number(v) > 0)
                 .map(([v, label]) => (
                   <div key={String(label)} className="min-w-0">
-                    <dd className="ledger text-4xl font-extrabold text-jamin-gold-light">{v}</dd>
+                    {/* Item 11: brass rim-light — the numerals catch a top
+                        light; gradient stops bracket the audited gold. */}
+                    <dd className="ledger rj-brass text-4xl font-extrabold">{v}</dd>
                     <dt className="mt-1 text-micro font-semibold uppercase tracking-brand text-white/80">
                       {label}
                     </dt>
@@ -449,8 +458,9 @@ export default async function HomePage() {
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+                <IsoMark name="road" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio text-3xl">02</span>
+                <span className="rj-folio rj-folio-red text-3xl">02</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -491,14 +501,18 @@ export default async function HomePage() {
           "coming soon". The app links on this site are withdrawn until the
           Play Store listing exists, so borrowing the app's tools was not an
           option — they are rebuilt for the web. */}
-      <section className="border-y border-line bg-canvas-sunken py-phi6">
+      {/* The deckled edge (item 3): the sunken band tears out of the page
+          above it rather than starting on a ruled line. */}
+      <div className="rj-deckle bg-canvas-sunken" aria-hidden="true" />
+      <section className="border-b border-line bg-canvas-sunken py-phi6">
         <Container>
           <div className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-xl">
               <SectionLabel>Before you commit</SectionLabel>
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+                <IsoMark name="gate" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio text-3xl">03</span>
+                <span className="rj-folio rj-folio-red text-3xl">03</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -523,9 +537,13 @@ export default async function HomePage() {
               ["yield", "Rental yield", "Estimate potential rental returns.", "growth", "bg-canvas-sunken/80"],
             ].map(([anchor, title, note, icon, ground]) => (
               <li key={anchor} className="flex">
+                {/* Items 9 + 12: the card lifts into lamplight and tilts a
+                    few degrees under a mouse (touch and reduced motion are
+                    exempt inside Tilt). */}
+                <Tilt className="flex w-full">
                 <Link
                   href={`/tools#${anchor}`}
-                  className={`group flex w-full flex-col rounded-xl border border-line ${ground} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint hover:shadow-lift`}
+                  className={`rj-lamplight group flex w-full flex-col rounded-xl border border-line ${ground} p-phi3 transition-all duration-500 hover:-translate-y-1 hover:border-ink-faint`}
                   style={{ transitionTimingFunction: "var(--ease-silk)" }}
                 >
                   <span
@@ -542,6 +560,7 @@ export default async function HomePage() {
                     Open →
                   </span>
                 </Link>
+                </Tilt>
               </li>
             ))}
           </ul>

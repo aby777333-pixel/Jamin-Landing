@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { InstrumentPlate } from "@/components/cadastral/Engravings";
 
 /**
  * FEATURE 3 — PLAN YOUR PROPERTY INVESTMENT.
@@ -143,6 +144,17 @@ function Result({ rows, note }: { rows: [string, string, string?][]; note?: stri
   );
 }
 
+/* Aesthetics item 16: each calculator gets its own survey instrument as a
+   watermark — theodolite, chain, rod, compass — oversized, faint,
+   bottom-right, exactly the homepage stamp's recipe (`isolate` + `-z-10`,
+   or even 5% ink would tint the copy). */
+const TOOL_INSTRUMENT: Record<string, "theodolite" | "chain" | "rod" | "compass"> = {
+  emi: "chain",
+  eligibility: "theodolite",
+  cost: "rod",
+  yield: "compass",
+};
+
 function Tool({
   id,
   title,
@@ -154,8 +166,15 @@ function Tool({
   lead: string;
   children: React.ReactNode;
 }) {
+  const instrument = TOOL_INSTRUMENT[id];
   return (
-    <section id={id} className="scroll-mt-28 border-t border-line pt-phi5">
+    <section id={id} className="relative isolate scroll-mt-28 overflow-hidden border-t border-line pt-phi5">
+      {instrument && (
+        <InstrumentPlate
+          name={instrument}
+          className="pointer-events-none absolute -bottom-6 -right-4 -z-10 h-48 w-48 text-ink/[0.05]"
+        />
+      )}
       <h2 className="text-2xl text-ink">{title}</h2>
       <p className="mt-phi2 max-w-2xl text-lg leading-relaxed text-ink-muted">{lead}</p>
       <div className="mt-phi4 grid gap-phi4 lg:grid-cols-2">{children}</div>

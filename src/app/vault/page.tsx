@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui";
 import { GoldDust } from "@/components/GoldDust";
+import { KolamCorner } from "@/components/cadastral/Engravings";
 import { VaultCarousel } from "@/components/vault/VaultCarousel";
 import { VaultPlate } from "@/components/vault/VaultPlate";
 import {
@@ -403,15 +404,19 @@ export default async function VaultPage() {
                 half-width tap targets at 375px would be under the 44px
                 minimum this site keeps to. */}
             <div className="mt-phi4 grid gap-3 sm:grid-cols-2">
+              {/* Aesthetics item 20: `rj-rim` finally earns its keep — the
+                  gradient glass ring on the two primaries (authored in the
+                  Maharaja round, unused since). `relative` is the host's
+                  duty; the class never declares position. */}
               <Link
                 href="/vault/request?intent=buy"
-                className="rj-velvet rounded-full px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
+                className="rj-velvet rj-rim relative rounded-full px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
               >
                 I want to buy
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="rounded-full border border-champagne-300 px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="rj-rim relative rounded-full border border-champagne-300 px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
               >
                 I want to rent
               </Link>
@@ -989,7 +994,11 @@ export default async function VaultPage() {
           breath. */}
       {settings.legal ? (
         <Container className="pb-phi5">
-          <div className="rounded-xl border border-line p-phi4">
+          {/* Aesthetics items 2 + 4 + 18: the legal panel becomes a FILED
+              sheet — whisper grain, aged-corner vignette, kolam corners. */}
+          <div className="rj-grain rj-vignette relative rounded-xl border border-line p-phi4">
+            <KolamCorner className="pointer-events-none absolute left-2 top-2 h-8 w-8 text-champagne-500/45" />
+            <KolamCorner className="pointer-events-none absolute bottom-2 right-2 h-8 w-8 rotate-180 text-champagne-500/45" />
             <p className="rj-eyebrow text-ink-faint">Please note</p>
             <div className="mt-phi3 space-y-phi3 text-tiny leading-relaxed text-ink-muted">
               {settings.legal.intro ? <p>{settings.legal.intro}</p> : null}

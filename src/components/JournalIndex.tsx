@@ -368,7 +368,10 @@ function ArticleCard({ post }: { post: JournalCard }) {
           right only. If a cover ever arrives with its subject at the bottom,
           this is the line to re-check, and re-render the comparison rather than
           reasoning about it. */}
-      <div className="rj-sheen relative aspect-[2/1] overflow-hidden">
+      {/* Aesthetics item 21: `rj-pageturn` — the cover lifts a corner on
+          hover, the dog-ear made literal. Rides the IMAGE BOX (the card
+          root's pseudos belong to its own chrome). */}
+      <div className="rj-sheen rj-pageturn relative aspect-[2/1] overflow-hidden">
         {post.coverUrl ? (
           <Image
             src={post.coverUrl}
