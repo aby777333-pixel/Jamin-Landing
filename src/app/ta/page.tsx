@@ -94,18 +94,33 @@ export default async function TamilPage() {
       <PageHero
         art={77}
         tone="cinematic"
+        /* `full` — at 85vh the frame is nearly uncropped, which is what
+           gives the TRICHY TULIP lettering room to sit ABOVE the card
+           (measured: lettering bottom 251 vs card top 276 at 1440x800). */
+        size="full"
         sheer
         /* Swept on this frame: p95 0.864 vs audited hero-38's 0.604 — the
            bright-daylight 0.58, see the register. */
         sheerAlpha={0.58}
-        /* 52rem (owner: "widen the tab") — Tamil sets wide, and the wider
-           measure drops the headline to two lines. */
+        /* 52rem (owner: "widen the tab", then "widen the text and decrease
+           the height") — on this rung the lead runs the plate's full
+           measure, which is what actually shortens the card. */
         plateXl="52rem"
+        /* The card sits LOW and the crop holds the arch HIGH ("I want to
+           see the brand on the gate") — the /faq recipe: the TRICHY TULIP
+           lettering rides the top of the frame, clear of the card. */
+        copyAlign="end"
+        artPosition="50% 100%"
         eyebrow="தமிழில்"
         title={
           <span className="text-3xl">நிலம் வாங்குவதில், பேச்சை விட ஆவணமே முக்கியம்.</span>
         }
-        lead="ஜமீன் ப்ராப்பர்ட்டீஸ் — தமிழ்நாட்டில் DTCP அங்கீகாரம் பெற்ற மனைப்பிரிவுகளில் வீட்டுமனைகள். அனுமதி எண், சர்வே எண்கள், மனை அட்டவணை — எல்லாம் இணையதளத்திலேயே. நீங்கள் வருவதற்கு முன்பே சரிபார்க்கலாம்."
+        /* ⚠️ TWO LINES at the wide measure, and the length is structural —
+           the four-line lead made the card taller than the space under the
+           gate's lettering. What was cut ("நீங்கள் வருவதற்கு முன்பே
+           சரிபார்க்கலாம்") survives in the metadata description and the
+           sections below. */
+        lead="DTCP அங்கீகாரம் பெற்ற மனைப்பிரிவுகள் — அனுமதி எண், சர்வே எண்கள், மனை அட்டவணை எல்லாம் இணையதளத்திலேயே வெளியிடப்படுகின்றன."
         actions={
           <>
             <Link

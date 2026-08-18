@@ -568,15 +568,21 @@ export function PageHero({
             reported 2026-08-17 as "large white space appears below the hero".
             Below `xl` the vertical rhythm is now the same `py-phi5` every
             other section opens with, exactly as it already was below `lg`. */}
+        {/* ⚠️ END-ANCHORED COPY TAKES THE SLIM BOTTOM PAD (phi4). The phi7/
+            phi6 pads below are breathing room for CENTRED copy; on an
+            end-anchored page they just hold the card 90px off the floor —
+            which on /ta was exactly the 90px the TRICHY TULIP lettering
+            needed (Tamil glyphs set tall; the card could not shrink
+            further). Measured before/after at 1440x800. */}
         <Container
           className={`relative flex flex-col py-phi5 ${
             copyAlign === "end" ? "justify-end" : "justify-center"
           } ${
             size === "full"
-              ? "xl:min-h-[clamp(30rem,85vh,52rem)] xl:pb-phi7 xl:pt-phi6"
+              ? `xl:min-h-[clamp(30rem,85vh,52rem)] xl:pt-phi6 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi7"}`
               : size === "tall"
-                ? "xl:min-h-[clamp(26rem,64vh,38rem)] xl:pb-phi7 xl:pt-phi6"
-                : "xl:min-h-[clamp(20rem,48vh,30rem)] xl:pb-phi6 xl:pt-phi5"
+                ? `xl:min-h-[clamp(26rem,64vh,38rem)] xl:pt-phi6 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi7"}`
+                : `xl:min-h-[clamp(20rem,48vh,30rem)] xl:pt-phi5 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi6"}`
           }`}
         >
           {/* The measure opens up on a wide screen. At 42rem a headline like
@@ -655,8 +661,19 @@ export function PageHero({
             {/* `text-balance` evens the line lengths instead of filling each one
                 to the measure and orphaning whatever is left over. */}
             <h1 className="mt-phi3 text-balance text-4xl text-white">{title}</h1>
+            {/* ⚠️ ON THE 52rem RUNG THE LEAD RUNS THE PLATE'S FULL MEASURE
+                (owner 2026-08-18, /ta: "widen the text and decrease the
+                height of the tab") — the max-w-xl cap inside a wide plate
+                was why widening the card never shortened the copy: the text
+                wrapped at 36rem regardless. Fewer lines IS the height
+                decrease. The three narrower rungs keep the reading-measure
+                cap they were tuned with. */}
             {lead && (
-              <div className={`mt-phi3 max-w-xl text-pretty text-lg leading-relaxed ${sheer ? "text-white" : "text-white/80"}`}>
+              <div
+                className={`mt-phi3 text-pretty text-lg leading-relaxed ${
+                  plateXl === "52rem" ? "" : "max-w-xl"
+                } ${sheer ? "text-white" : "text-white/80"}`}
+              >
                 {lead}
               </div>
             )}
