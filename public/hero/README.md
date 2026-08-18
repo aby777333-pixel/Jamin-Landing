@@ -1180,3 +1180,10 @@ SIGN-IN page's content-card art — registered as renditions only, no PageHero
 id. hero-77 ("Tulip 1.png", 14:00 supply, 1774x887) → /ta's cinematic hero;
 swept p95 0.864 vs hero-38's 0.604 → 0.58. Both name places/communities not
 in the catalogue: standing rule at full strength.
+
+## hero-67 → /faq (2026-08-18, owner's swap)
+
+The JAMIN CROWN gate joins the PageHero register (it had only been the home
+track-record mini hero's direct image). Now ALSO /faq's cinematic hero at
+0.52 (swept: p95 0.563 vs hero-38's 0.604 — darker). Deliberate two-surface
+reuse under the hero-39/72 precedent. hero-73 (sunset gate) → SPARES.

@@ -95,13 +95,13 @@ export default function FaqPage() {
   return (
     <>
       <PageHero
-        /* hero-73 — the sunset avenue gate, freed from /compare the same day
-           and already swept at THIS standard geometry (p95 0.783 vs hero-38's
-           0.604 → 0.58, the bright-daylight figure; see the register). */
-        art={73}
+        /* hero-67 — JAMIN CROWN (owner's swap 2026-08-18, replacing the
+           hero-73 sunset gate; 73 → spares). Swept on this frame at this
+           geometry: p95 0.563 vs hero-38's 0.604 — darker, holds 0.52. */
+        art={67}
         tone="cinematic"
         sheer
-        sheerAlpha={0.58}
+        sheerAlpha={0.52}
         eyebrow="Questions, answered"
         title="How buying a plot actually works"
         lead="The questions every buyer asks, answered the way the paperwork answers them — plainly, and with the record to check."
