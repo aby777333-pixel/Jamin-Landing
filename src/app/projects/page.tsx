@@ -42,6 +42,7 @@ export default async function ProjectsPage() {
   // cover in the grid below.
   const showcase = all.find((p) => secondaryImage(p));
   // Kept live for the one-prop restore recorded on the PageHero call.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unused BY DESIGN while hero-69 carries the page
   const photo = showcase
     ? { src: secondaryImage(showcase)!, alt: `${showcase.title}, a Jamin development` }
     : undefined;

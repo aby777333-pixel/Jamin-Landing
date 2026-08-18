@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 /**
  * CARBON — the dark-mode toggle (owner 2026-08-17). One boolean on <html>
@@ -11,17 +11,26 @@ import { useEffect, useState } from "react";
  * ⚠️ The glyphs are DRAWN, per the SurveyIcon rule — a lamp for light and a
  * crescent for carbon, both stroke-only so they take the current ink.
  * ⚠️ Light stays the default. Dark is an offer, not an opinion.
+ *
+ * ⚠️ `useSyncExternalStore`, not useState+useEffect — the DOM attribute IS
+ * the store (the boot script writes it before hydration), and the repo's
+ * eslint bans setState in an effect body. Server snapshot is `false`, the
+ * light default; after hydration React re-reads the real attribute. Same
+ * pattern as JamindarDock's SpeechRecognition detection.
  */
-export function ModeToggle() {
-  const [dark, setDark] = useState(false);
+const listeners = new Set<() => void>();
+function subscribe(cb: () => void) {
+  listeners.add(cb);
+  return () => listeners.delete(cb);
+}
+const getSnapshot = () => document.documentElement.dataset.mode === "dark";
+const getServerSnapshot = () => false;
 
-  useEffect(() => {
-    setDark(document.documentElement.dataset.mode === "dark");
-  }, []);
+export function ModeToggle() {
+  const dark = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   const toggle = () => {
     const next = !dark;
-    setDark(next);
     if (next) document.documentElement.dataset.mode = "dark";
     else delete document.documentElement.dataset.mode;
     try {
@@ -29,6 +38,7 @@ export function ModeToggle() {
     } catch {
       /* private mode — the toggle still works for the session */
     }
+    listeners.forEach((l) => l());
   };
 
   return (

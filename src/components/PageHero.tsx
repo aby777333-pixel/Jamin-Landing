@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -92,6 +92,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   70: 941,
   71: 1024,
   72: 1024,
+  /* hero-73 — the JAMIN BAZAAR avenue gate at sunset (/compare). */
+  73: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -303,6 +305,14 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      arch lockup overhead, the family walking in. Took /downloads within
      the hour (71 → spare). Standing rule applies. */
   72: 1536,
+  /* hero-73 — the JAMIN BAZAAR avenue gate at sunset, wet road, guard at
+     the left pillar (owner-supplied 2026-08-18) → /compare, replacing the
+     hero-6 dart-board render. Lockup on the arch TOP-CENTRE, sun at right.
+     ⚠️ Carries the brand lockup, so the standing rule binds: alt="",
+     aria-hidden, never a caption. Swept comparatively vs audited hero-38 at
+     the /compare standard-height geometry: p95 lum 0.783 against 38's 0.604
+     — brighter, so it takes 0.58 like the other bright daylight frames. */
+  73: 1672,
 };
 
 function artSrc(n: HeroArt) {

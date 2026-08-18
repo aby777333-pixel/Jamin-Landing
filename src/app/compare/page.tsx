@@ -28,7 +28,15 @@ export default async function ComparePage() {
   return (
     <>
       <PageHero
-        art={6}
+        /* hero-73 — the avenue gate at sunset (owner-supplied 2026-08-18),
+           replacing the hero-6 dart-board render. A photographic-range frame,
+           so it moves to `cinematic`; alpha swept on this frame, not copied —
+           brighter than audited hero-38 under the plate, so 0.58 (the bright
+           daylight figure), see the register entry in PageHero. */
+        art={73}
+        tone="cinematic"
+        sheer
+        sheerAlpha={0.58}
         eyebrow="Side by side"
         title="Compare Jamin developments"
         lead="Two or three at a time. Rows where the projects agree are hidden, so what is left on the page is what actually separates them."

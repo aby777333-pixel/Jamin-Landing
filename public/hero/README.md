@@ -1126,3 +1126,20 @@ WARNING: the /journal lead dropped from three paragraphs to one line in the same
 change, which makes the PLATE about 140px shorter and therefore moves it up over
 different pixels. The sweep above is measured on the SHORT plate. Growing that
 copy back is a re-sweep, not a copy edit.
+
+## hero-73 — the avenue gate at sunset (/compare, 2026-08-18)
+
+Owner-supplied ("Jamin city" folder, ChatGPT Image Aug 18 12:38). The JAMIN
+BAZAAR avenue gate after rain at sunset: lockup on the arch top-centre, a guard
+at the left pillar, wet road reflecting the golden sky, sun low at right.
+1672x941, renditions 768/1280/1672 at WebP q80, no trim.
+
+Replaces hero-6 (the dart-board graphic render) on /compare, and the page moves
+`paper` → `cinematic` with it — this is a photographic-range frame, not a
+white-ground render. Alpha swept comparatively against audited hero-38 at the
+/compare standard-height plate geometry: p95 luminance 0.783 vs 38's 0.604, so
+it takes 0.58 (the bright-daylight figure), not 0.52.
+
+⚠️ It carries the brand lockup on the arch, so the standing rule binds at
+hero-19 strength: `alt=""`, `aria-hidden`, never a caption, never on a property
+card. hero-6 stays on disk and in the register.
