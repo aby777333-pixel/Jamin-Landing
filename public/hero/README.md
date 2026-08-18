@@ -1144,25 +1144,42 @@ it takes 0.58 (the bright-daylight figure), not 0.52.
 hero-19 strength: `alt=""`, `aria-hidden`, never a caption, never on a property
 card. hero-6 stays on disk and in the register.
 
-## hero-74 — the survey-desk flat-lay (/journal, 2026-08-18)
+## hero-74 — the survey-desk flat-lay v1 (/journal, 2026-08-18) — WITHDRAWN
 
-COMPOSED IN-REPO, not owner-supplied (image generation was unavailable and the
-report wanted "property documents, land/site plans, maps, survey details"):
-the two REAL Edappadi sheets the site already publishes — `public/plan/
-edappadi-sheet-1260.webp` (the DTCP record card) behind at +4.5°, `public/plan/
-edappadi-illustrated-2-1055.webp` (the 61-unit illustrated plan) in front at
-−3.5° — on near-white warm paper (250,246,240) with a faint 76px setting-out
-grid, soft gaussian shadows (blur 18, offset +14/+20), each sheet wearing a
-10px paper margin and a 2px stone hairline. 1672x941, renditions 768/1280/1672
-at WebP q82. Subject occupies the right two-thirds; the left third is calm
-ground for `paper`'s copy plate. Rebuild by re-running the PIL script from the
-2026-08-18 session (place() with those exact params) — regenerating the sheets
-regenerates the hero.
+The first flat-lay laid the two REAL Edappadi sheets (`edappadi-sheet-1260` at
++4.5° behind, `edappadi-illustrated-2-1055` at −3.5° in front) on the same
+ground the recipe below describes. Owner replaced both sheets the same evening
+("Replace those two layouts with the attached"), so the renditions are DELETED
+and the id is retired — see hero-80. The id moved rather than the file being
+regenerated in place because `next/image` and the CDN both key on the path,
+and a same-name swap serves the old picture to anyone who has it cached.
+
+## hero-80 — the survey-desk flat-lay v2 (/journal, 2026-08-18 16:05)
+
+COMPOSED IN-REPO from two OWNER-ATTACHED sheets, replacing hero-74:
+
+- BEHIND, +4.5°, height 800px, centred at (1010, 465): the **JAMIN GARDEN —
+  Premium Plotted Development** masterplan poster (Studio Village / Workshops
+  & Fab Labs / Creative Academy). ⚠️ A CONCEPT sheet, not a record of a
+  catalogue project.
+- IN FRONT, −3.5°, height 830px, centred at (1330, 485): the **61-unit
+  illustrated JAMIN GARDEN plan** (Perungulam, 2.31 acres).
+
+Ground and finish are unchanged from v1: near-white warm paper (250,246,240),
+a faint 76px setting-out grid in (238,233,225), each sheet wearing a 10px
+paper margin then a 2px stone (168,160,148) hairline, and a gaussian shadow
+(blur 18, offset +14/+20, alpha 60) cast from the rotated silhouette. Canvas
+1672×941; renditions 768/1280/1672 at WebP q82. Subject occupies the right
+two-thirds; the left third stays calm ground for `paper`'s copy plate.
+
+Rebuild: PIL, `sheet()` → resize to target height, `ImageOps.expand` twice for
+the margin and hairline; `place()` → rotate expand-true, paste blurred
+silhouette shadow, paste sheet. Same script as v1 with the two inputs swapped.
 
 PAPER family (near-white ground → multiply prints it into the sand page), so
-no alpha sweep. These are documents of a CATALOGUE project already published
-on its own property page — decoration here, `alt=""`, `aria-hidden`, no
-caption. hero-55 (bougainvillea pergola) returns to the SPARE pile.
+no alpha sweep. Decoration only: `alt=""`, `aria-hidden`, no caption — and the
+concept masterplan is covered by the site-wide "creative representation only"
+line the footer now carries. hero-55 (bougainvillea pergola) stays SPARE.
 
 ## hero-75 — JAMIN SOULFUL in daylight (/compare, 2026-08-18 13:00)
 

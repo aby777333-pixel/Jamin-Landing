@@ -78,18 +78,18 @@ export default async function JournalPage() {
   return (
     <>
       {/* `paper` — the tone is a property of the artwork, not of the page,
-          and hero-74 is a document flat-lay on near-white ground, which is
+          and hero-80 is a document flat-lay on near-white ground, which is
           exactly the paper family. (The long cinematic sweep notes below
           belonged to hero-43/51/55 and travel back with a photographic frame;
           kept nowhere because the paper plate's contrast is fixed and
           knowable — nothing sits behind the copy.) */}
       <PageHero
-        /* hero-74 — the survey-desk flat-lay (owner report 2026-08-18: the
-           Journal hero must say research/documents, not project showcase).
-           The two REAL Edappadi sheets at opposing tilts — see the register
-           entry in PageHero.tsx and the rebuild script in
-           public/hero/README.md. hero-55 returns to the spare pile. */
-        art={74}
+        /* hero-80 — the survey-desk flat-lay v2 (owner 2026-08-18 16:05:
+           "Replace those two layouts with the attached"). The two attached
+           JAMIN GARDEN sheets at opposing tilts — see the register entry in
+           PageHero.tsx and the rebuild script in public/hero/README.md.
+           Supersedes hero-74 (deleted). */
+        art={80}
         tone="paper"
         /* `tall` kept from the cinematic era — the Journal opens on its hero
            and the extra height is presence, not a sweep concern any more:

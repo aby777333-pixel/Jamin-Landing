@@ -4,7 +4,6 @@ import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
 import { TitleBlock } from "@/components/cadastral/TitleBlock";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
-import { FooterFrieze } from "@/components/cadastral/Engravings";
 
 /**
  * §59 — the footer is a discovery layer, and §75 — its contact details must be
@@ -38,13 +37,11 @@ export async function SiteFooter() {
        gap to announce itself — it changes ground colour to onyx, which is a
        harder edge than any amount of margin. */
     <footer className="rj-footer mt-phi5 lg:mt-phi7">
-      {/* The certificate rule crowns the onyx (Gilded Register §2). */}
+      {/* The certificate rule crowns the onyx (Gilded Register §2).
+          ⚠️ The engraved FooterFrieze that used to sit under it was withdrawn
+          at the owner's ask (2026-08-18 16:05, "no need of this design") —
+          the component stays in cadastral/Engravings for any future use. */}
       <div className="rj-royal-rule" aria-hidden="true" />
-      {/* Aesthetics item 19: the engraved frieze — banyan and paddy in
-          hairline champagne, the land drawn once before the register. */}
-      <div aria-hidden="true" className="overflow-hidden">
-        <FooterFrieze className="h-7 w-full text-champagne-500/40" />
-      </div>
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
           <div>
@@ -253,6 +250,17 @@ export async function SiteFooter() {
             Plot availability and pricing are confirmed by our sales desk at the time of booking.
           </p>
         </div>
+
+        {/* Owner's ask (2026-08-18 16:05): "add a disclaimer somewhere that
+            the images are for creative representation only." The footer is on
+            every page, so one line here covers every render and composed
+            sheet on the site — including the /journal flat-lay's concept
+            masterplan and the gate renders naming places outside the
+            catalogue. Plans of record stay checkable on their own pages. */}
+        <p className="mt-3 text-tiny text-ink-faint">
+          Artistic renders and illustrative site plans shown on this website are for creative
+          representation only.
+        </p>
 
         {/* ⚠️ THE BUILD CREDIT — owner's instruction 2026-08-17: "Change this
             to Website powered by GHL India Ventures", replacing the 777 Raptor
