@@ -392,6 +392,7 @@ export function PageHero({
   artPosition,
   sheerEdge = false,
   plateXl = "46rem",
+  copyAlign = "center",
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -443,6 +444,14 @@ export function PageHero({
    *  behind it reads. Only for heroes whose copy is left-aligned and whose
    *  subject sits right — see the note on `.rj-gilt-sheer-edge`. */
   sheerEdge?: boolean;
+  /** ⚠️ Where the plate sits VERTICALLY, cinematic only. `end` drops it to
+   *  the hero's foot — the lever for frames whose baked signage rides the
+   *  TOP of the arch (owner 2026-08-18, /faq: "this blocks the brand logo
+   *  on the gate"). Centre steering could not clear hero-67's board at
+   *  every viewport height; anchoring the copy LOW clears the top band at
+   *  all of them. Pair it with an artPosition that keeps the board in the
+   *  visible crop's upper third. */
+  copyAlign?: "center" | "end";
   /** 🚨 THE PLATE'S CAP FROM `xl`, AND IT IS PER-PAGE BECAUSE THE CLIFF IS.
    *  Narrowing the card is what actually gives the photograph back, but how far
    *  it can go is set by the HEADLINE, and every page has a different one.
@@ -560,7 +569,9 @@ export function PageHero({
             Below `xl` the vertical rhythm is now the same `py-phi5` every
             other section opens with, exactly as it already was below `lg`. */}
         <Container
-          className={`relative flex flex-col justify-center py-phi5 ${
+          className={`relative flex flex-col py-phi5 ${
+            copyAlign === "end" ? "justify-end" : "justify-center"
+          } ${
             size === "full"
               ? "xl:min-h-[clamp(30rem,85vh,52rem)] xl:pb-phi7 xl:pt-phi6"
               : size === "tall"

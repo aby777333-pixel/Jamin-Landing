@@ -97,14 +97,33 @@ export default function FaqPage() {
       <PageHero
         /* hero-67 — JAMIN CROWN (owner's swap 2026-08-18, replacing the
            hero-73 sunset gate; 73 → spares). Swept on this frame at this
-           geometry: p95 0.563 vs hero-38's 0.604 — darker, holds 0.52. */
+           geometry: p95 0.563 vs hero-38's 0.604 — darker, holds 0.52.
+           ⚠️ THE PLATE SITS AT THE FOOT (`copyAlign="end"`, same day: "this
+           blocks the brand logo on the gate") — the lockups ride the TOP of
+           the arch, so the copy anchors low and the crop steers the board
+           into the upper third (measured at 1440 and 1280 in the preview).
+           sheerEdge + 38rem shrink what the plate can ever touch. */
         art={67}
         tone="cinematic"
         sheer
         sheerAlpha={0.52}
+        sheerEdge
+        plateXl="38rem"
+        copyAlign="end"
+        /* 88%, measured at BOTH 1440x800 and 1280x664: 82% left the board's
+           bottom trim grazing the plate top by 14px at 1280. At 88% the
+           board clears the plate at both, at the price of its top edge
+           sitting under the TRANSPARENT header at 1440 load — which reads
+           through. */
+        artPosition="50% 88%"
         eyebrow="Questions, answered"
         title="How buying a plot actually works"
-        lead="The questions every buyer asks, answered the way the paperwork answers them — plainly, and with the record to check."
+        /* ⚠️ ONE LINE, and the length is structural: the three-line lead made
+           the plate 451px tall — taller than the hero's free space — so no
+           anchor could pull it off the arch. Shortening the copy IS the
+           board fix (the same shortening-moves-the-plate rule the /journal
+           hero-43 round recorded). */
+        lead="Plain answers, with the record to check."
       />
       <script
         type="application/ld+json"
