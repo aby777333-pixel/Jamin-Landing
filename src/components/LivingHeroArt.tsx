@@ -28,14 +28,29 @@ import { useSyncExternalStore } from "react";
  * The phone band is NOT cycled: it carries hero-72 for the left-lockup
  * report fix and stays stable.
  */
+/* FIVE bands now (owner 2026-08-18 evening: "add early morning and midnight
+   too, and adjust the time. Do not change the other images"): DEWDROPS at
+   dawn (hero-78, mist and joggers) and DREAMERS at midnight (hero-79, moon
+   over the lit layout) join the original three, which are untouched.
+   ⚠️ evening.png arrived in the same batch and is deliberately NOT wired —
+   the instruction keeps hero-61 as the dusk identity; the file waits in
+   Downloads as a spare. */
 const FRAMES = {
+  dawn: { id: "78", w: 1774, pos: "50% 30%" },
   day: { id: "75", w: 1774, pos: "50% 30%" },
   dusk: { id: "61", w: 1581, pos: "50% 0%" },
   night: { id: "59", w: 1774, pos: "50% 30%" },
+  midnight: { id: "79", w: 1840, pos: "50% 40%" },
 } as const;
 
 type FrameKey = keyof typeof FRAMES;
 
+/* The adjusted clock, IST:
+     05–08  dawn      — the Dewdrops mist
+     08–17  day       — the Soulful daylight gate
+     17–20  dusk      — the Trident dusk (unchanged)
+     20–23  night     — the lit night gate (unchanged)
+     23–05  midnight  — the Dreamers moon */
 function frameForNow(): FrameKey {
   const hour = Number(
     new Intl.DateTimeFormat("en-GB", {
@@ -44,9 +59,11 @@ function frameForNow(): FrameKey {
       timeZone: "Asia/Kolkata",
     }).format(new Date()),
   );
-  if (hour >= 6 && hour < 17) return "day";
+  if (hour >= 5 && hour < 8) return "dawn";
+  if (hour >= 8 && hour < 17) return "day";
   if (hour >= 17 && hour < 20) return "dusk";
-  return "night";
+  if (hour >= 20 && hour < 23) return "night";
+  return "midnight";
 }
 
 const listeners = new Set<() => void>();

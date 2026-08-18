@@ -1187,3 +1187,15 @@ The JAMIN CROWN gate joins the PageHero register (it had only been the home
 track-record mini hero's direct image). Now ALSO /faq's cinematic hero at
 0.52 (swept: p95 0.563 vs hero-38's 0.604 — darker). Deliberate two-surface
 reuse under the hero-39/72 precedent. hero-73 (sunset gate) → SPARES.
+
+## hero-78 / hero-79 — the living day grows to five bands (2026-08-18 evening)
+
+hero-78 = JAMIN DEWDROPS ("Morning.png", 1774x887): sunrise mist, joggers,
+butterflies — the DAWN band (05–08 IST). hero-79 = JAMIN DREAMERS
+("midnight.png", 1840x854): full moon over the lit plotted layout — the
+MIDNIGHT band (23–05 IST). Both live ONLY in LivingHeroArt's register (like
+hero-61, no PageHero id). No alpha sweep needed — the home plate is the sand
+0.62 card, safe over any frame (worked in LivingHeroArt's header).
+⚠️ "evening.png" from the same batch is deliberately UNUSED — the owner kept
+hero-61 as dusk; it waits in Downloads as a spare. Standing rule on both:
+named communities, alt="", aria-hidden, never a caption.
