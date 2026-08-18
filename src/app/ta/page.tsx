@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container, SectionLabel } from "@/components/ui";
+import { Container } from "@/components/ui";
+import { PageHero } from "@/components/PageHero";
 import { getDeskContact, telHref, waHref } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -83,37 +84,42 @@ export default async function TamilPage() {
 
   return (
     <article lang="ta">
-      <section className="relative overflow-hidden border-b border-line bg-canvas-alt">
-        <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
-        <Container className="relative py-phi6">
-          <div className="max-w-2xl">
-            <SectionLabel>தமிழில்</SectionLabel>
-            <h1 className="mt-phi3 text-balance text-4xl text-ink">
-              நிலம் வாங்குவதில், பேச்சை விட ஆவணமே முக்கியம்.
-            </h1>
-            <p className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">
-              ஜமீன் ப்ராப்பர்ட்டீஸ் — தமிழ்நாட்டில் DTCP அங்கீகாரம் பெற்ற மனைப்பிரிவுகளில்
-              வீட்டுமனைகள். ஒவ்வொரு திட்டத்திலும் அனுமதி எண், சர்வே எண்கள், பரப்பு விவரம்,
-              மனை-வாரி அட்டவணை — எல்லாம் இணையதளத்திலேயே வெளியிடப்படுகின்றன. நீங்கள் வருவதற்கு
-              முன்பே சரிபார்க்கலாம்.
-            </p>
-            <div className="mt-phi4 flex flex-wrap gap-3">
-              <Link
-                href="/properties"
-                className="rounded-full bg-jamin-red px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all hover:bg-jamin-red-deep"
-              >
-                மனைகளைப் பார்க்க
-              </Link>
-              <Link
-                href="/contact"
-                className="rounded-full border border-jamin-gold bg-canvas/70 px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-ink transition-all hover:border-jamin-gold-ink"
-              >
-                தள பார்வை பதிவு
-              </Link>
-            </div>
-          </div>
-        </Container>
-      </section>
+      {/* THE TULIP GATE HERO (owner 2026-08-18: "add hero image… make the
+          hero caption little smaller on a see through card") — hero-77
+          cinematic with the sheer plate, which IS the see-through card.
+          The headline steps DOWN one rung via the inner span: PageHero's h1
+          stays text-4xl for every other page, and the span's own class wins
+          on the inner element — a Tamil headline sets wider than its English
+          cousins, so the smaller size is also what keeps it to three lines. */}
+      <PageHero
+        art={77}
+        tone="cinematic"
+        sheer
+        /* Swept on this frame: p95 0.864 vs audited hero-38's 0.604 — the
+           bright-daylight 0.58, see the register. */
+        sheerAlpha={0.58}
+        eyebrow="தமிழில்"
+        title={
+          <span className="text-3xl">நிலம் வாங்குவதில், பேச்சை விட ஆவணமே முக்கியம்.</span>
+        }
+        lead="ஜமீன் ப்ராப்பர்ட்டீஸ் — தமிழ்நாட்டில் DTCP அங்கீகாரம் பெற்ற மனைப்பிரிவுகளில் வீட்டுமனைகள். அனுமதி எண், சர்வே எண்கள், மனை அட்டவணை — எல்லாம் இணையதளத்திலேயே. நீங்கள் வருவதற்கு முன்பே சரிபார்க்கலாம்."
+        actions={
+          <>
+            <Link
+              href="/properties"
+              className="rounded-full bg-jamin-red px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all hover:bg-jamin-red-deep"
+            >
+              மனைகளைப் பார்க்க
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-full border border-jamin-gold bg-canvas/20 px-7 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all hover:bg-canvas/40"
+            >
+              தள பார்வை பதிவு
+            </Link>
+          </>
+        }
+      />
 
       <Container className="py-phi5">
         <h2 className="text-3xl text-ink">வாங்கும் முறை — நான்கு படிகள்</h2>

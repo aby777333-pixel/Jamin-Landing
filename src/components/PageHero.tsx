@@ -31,7 +31,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75 | 77;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -99,6 +99,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   74: 941,
   /* hero-75 — JAMIN SOULFUL daylight gate (/compare). */
   75: 887,
+  /* hero-77 — JAMIN TRICHY TULIP daylight gate (/ta). */
+  77: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -339,6 +341,15 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      0.604 — brighter → 0.58, the bright-daylight figure. hero-73 (the sunset
      gate) moves to the SPARE pile. */
   75: 1774,
+  /* hero-77 — the JAMIN TRICHY TULIP gate ("Tulip 1.png", owner-supplied
+     2026-08-18 14:00) → /ta. Modern villas behind a tulip-carved wall,
+     lockup TOP-CENTRE. Names a community not in the catalogue → standing
+     rule at full strength: alt="", aria-hidden, never a caption. Swept vs
+     audited hero-38 at the standard geometry: p95 0.864 vs 0.604 — a very
+     bright frame, takes 0.58 with the halo carrying the worst pixels like
+     the rest of the daylight set. (76 is the sign-in gate, a page art with
+     no PageHero id — the number is skipped here, not missing.) */
+  77: 1774,
 };
 
 function artSrc(n: HeroArt) {

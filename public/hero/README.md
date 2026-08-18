@@ -1172,3 +1172,11 @@ Planned" plinth right. 1774x887, renditions 768/1280/1774 q80. Replaces
 hero-73 on /compare the same day it shipped (owner's ask); 73 → SPARES.
 Named community not in the catalogue → standing rule at full strength.
 Swept vs hero-38 at /compare standard geometry: p95 0.711 vs 0.604 → 0.58.
+
+## hero-76 / hero-77 — the sign-in gate and the Trichy Tulip gate (2026-08-18)
+
+hero-76 ("Premium Villas, Chennai" gate, 12:58 supply, 1672x940) is the
+SIGN-IN page's content-card art — registered as renditions only, no PageHero
+id. hero-77 ("Tulip 1.png", 14:00 supply, 1774x887) → /ta's cinematic hero;
+swept p95 0.864 vs hero-38's 0.604 → 0.58. Both name places/communities not
+in the catalogue: standing rule at full strength.
