@@ -17,6 +17,7 @@ import {
   typeLabel,
   type Property,
 } from "@/lib/properties";
+import { DISTRICT_STONE, STONE_FALLBACK } from "@/lib/stones";
 
 const MAX = 3;
 
@@ -120,8 +121,19 @@ export function CompareTable({ all }: { all: Property[] }) {
         <div />
         {chosen.map((p) => {
           const cover = coverImage(p);
+          /* District-stone column heads (do-all round 2026-08-18) — the same
+             colour key the tray chips, filter pills and fore-edge tabs speak.
+             The stone is a top bar and a wash, never the word. */
+          const stone = DISTRICT_STONE[p.district ?? ""] ?? STONE_FALLBACK;
           return (
-            <div key={p.id}>
+            <div
+              key={p.id}
+              className="rounded-card p-2"
+              style={{
+                background: `color-mix(in srgb, ${stone} 9%, transparent)`,
+                boxShadow: `inset 0 3px 0 0 ${stone}`,
+              }}
+            >
               <div className="relative aspect-[1.618/1] overflow-hidden rounded-card border border-line bg-canvas-sunken">
                 {cover ? (
                   <Image
@@ -217,6 +229,8 @@ function Picker({
         {all.map((p) => {
           const on = chosenIds.includes(p.id);
           const full = chosenIds.length >= MAX && !on;
+          /* Same stone key as the column heads and the tray chips. */
+          const stone = DISTRICT_STONE[p.district ?? ""] ?? STONE_FALLBACK;
           return (
             <button
               key={p.id}
@@ -227,12 +241,22 @@ function Picker({
                 onChange(on ? chosenIds.filter((x) => x !== p.id) : [...chosenIds, p.id].slice(0, MAX))
               }
               title={full ? `Compare up to ${MAX} at once` : undefined}
-              className={`rounded-full border px-4 py-2 text-tiny font-medium transition-colors disabled:opacity-40 ${
-                on
-                  ? "border-ink bg-ink text-canvas"
-                  : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
+              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium transition-colors disabled:opacity-40 ${
+                on ? "border-ink bg-ink text-canvas" : "text-ink-soft hover:text-ink"
               }`}
+              style={
+                {
+                  "--rj-stone": stone,
+                  ...(on
+                    ? {}
+                    : {
+                        borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
+                        background: `color-mix(in srgb, ${stone} 10%, transparent)`,
+                      }),
+                } as React.CSSProperties
+              }
             >
+              <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
               {p.title}
             </button>
           );

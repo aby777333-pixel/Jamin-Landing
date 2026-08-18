@@ -168,6 +168,7 @@ export async function SiteFooter() {
             <ul className="mt-phi2 space-y-3">
               <FooterLink href="/properties">All properties</FooterLink>
               <FooterLink href="/projects">Projects by stage</FooterLink>
+              <FooterLink href="/compare">Compare developments</FooterLink>
               <FooterLink href="/downloads">Brochures &amp; plans</FooterLink>
               {facets.phases.map((f) => (
                 <FooterLink key={f.key} href={f.href}>
@@ -221,6 +222,8 @@ export async function SiteFooter() {
                 </li>
               )}
               {facets.hasJournal && <FooterLink href="/journal">Jamin Journal</FooterLink>}
+              <FooterLink href="/tools">Tools &amp; calculators</FooterLink>
+              <FooterLink href="/faq">Questions, answered</FooterLink>
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/vault">The Vault</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>

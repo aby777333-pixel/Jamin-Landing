@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
 import { Sweep } from "@/components/brand/Sweep";
 import { LocationExplorer } from "@/components/LocationExplorer";
+import { Reveal } from "@/components/Reveal";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
 import { Container, SectionLabel, ButtonLink } from "@/components/ui";
@@ -380,6 +381,7 @@ export default async function HomePage() {
               stays the signal red — the resolved fact ends the sequence, the
               same move the reference creative makes. Text colours are the
               audited ink cousins, never the fills (the fill/word rule). */}
+          <Reveal>
           <ol className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["Land and title", "We buy only where the chain of title is continuous and the encumbrance is clean.", "bg-canopy", "text-canopy", "var(--color-canopy)"],
@@ -403,6 +405,7 @@ export default async function HomePage() {
               </li>
             ))}
           </ol>
+          </Reveal>
         </Container>
       </section>
 
@@ -471,6 +474,13 @@ export default async function HomePage() {
         </Container>
       )}
 
+      {/* ⚠️ NO "How buying works" rail here — one was BUILT in the do-all
+          round and REMOVED the same hour: the four-stage <ol> below ("Land
+          and title → Registered to you", 2026-08-17, four materials) already
+          IS this page's process section, and two four-step sequences a
+          screen apart read as a mistake. The §5 rail item is satisfied by
+          the existing sequence; it now carries the scroll reveal instead. */}
+
       {/* ---- FEATURE 3: plan your property investment ----
           Four tools, four cards, one destination. They sit AFTER the inventory
           and the map because the sum only becomes interesting once somebody has
@@ -504,6 +514,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
+          <Reveal>
           <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["emi", "EMI calculator", "Estimate your monthly EMI.", "ledger", "bg-jamin-gold-soft/50"],
@@ -534,6 +545,7 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
+          </Reveal>
         </Container>
       </section>
 

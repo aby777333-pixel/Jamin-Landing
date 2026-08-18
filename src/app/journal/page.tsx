@@ -158,28 +158,10 @@ export default async function JournalPage() {
         )}
       </Container>
 
-      {/* Anti-beige item 6: the spare brick-and-white gate (hero-54) before
-          the desk — same treatment as /about's, same standing rule: alt="",
-          aria-hidden, never a caption.
-          ⚠️ FULL FRAME, NOT A CROP BAND (owner 2026-08-18: "make the images
-          fully visible") — the box takes the artwork's own 1672/941 ratio so
-          the whole gate and lockup are on screen at every width. */}
-      <div
-        className="relative w-full overflow-hidden border-y border-line"
-        style={{ aspectRatio: "1672 / 941" }}
-        aria-hidden="true"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/hero/hero-54-1672.webp"
-          srcSet="/hero/hero-54-768.webp 768w, /hero/hero-54-1280.webp 1280w, /hero/hero-54-1672.webp 1672w"
-          sizes="100vw"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="h-full w-full object-cover"
-        />
-      </div>
+      {/* ⚠️ THE hero-54 DIVIDER IS GONE (owner 2026-08-18 second report:
+          "hide the image") — same decision as /about's hero-53 band: at the
+          artwork's own ratio it read as a second hero mid-page, and the owner
+          chose removal. Do not reintroduce a photo strip here. */}
 
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

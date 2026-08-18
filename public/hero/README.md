@@ -1163,3 +1163,12 @@ PAPER family (near-white ground → multiply prints it into the sand page), so
 no alpha sweep. These are documents of a CATALOGUE project already published
 on its own property page — decoration here, `alt=""`, `aria-hidden`, no
 caption. hero-55 (bougainvillea pergola) returns to the SPARE pile.
+
+## hero-75 — JAMIN SOULFUL in daylight (/compare, 2026-08-18 13:00)
+
+Owner-supplied ("Jamin city", ChatGPT Image Aug 18 01:00 PM). The SOULFUL
+gate at midday: lockup top-centre, guard booth left, "Welcome to a Life Well
+Planned" plinth right. 1774x887, renditions 768/1280/1774 q80. Replaces
+hero-73 on /compare the same day it shipped (owner's ask); 73 → SPARES.
+Named community not in the catalogue → standing rule at full strength.
+Swept vs hero-38 at /compare standard geometry: p95 0.711 vs 0.604 → 0.58.

@@ -113,8 +113,14 @@ function Result({ rows, note }: { rows: [string, string, string?][]; note?: stri
       /* ⚠️ `lg:mt-0` (owner report 2026-08-18): inside the two-column grid the
          top margin pushed the card below the form's first field — the margin
          is the phone-stack spacing and only belongs there. */
-      className="mt-phi4 rounded-xl border bg-canvas-alt p-phi3 lg:mt-0"
-      style={{ borderColor: "var(--color-canopy)" }}
+      /* CARTOUCHE §5's calculator TEAL PANELS (do-all round): the answer
+         surface takes a canopy wash, not just a canopy border — mixed over
+         the token so carbon mode derives its own dark teal for free. */
+      className="mt-phi4 rounded-xl border p-phi3 lg:mt-0"
+      style={{
+        borderColor: "var(--color-canopy)",
+        background: "color-mix(in srgb, var(--color-canopy) 7%, var(--color-canvas-alt))",
+      }}
     >
       <dl>
         {rows.map(([k, v, sub], i) => (
@@ -253,8 +259,11 @@ export function PlanningTools() {
             gap. Same teal border — a calculator's answer is a resolved
             fact. */}
         <div
-          className="mt-phi4 flex flex-col rounded-xl border bg-canvas-alt p-phi3 lg:mt-0"
-          style={{ borderColor: "var(--color-canopy)" }}
+          className="mt-phi4 flex flex-col rounded-xl border p-phi3 lg:mt-0"
+          style={{
+            borderColor: "var(--color-canopy)",
+            background: "color-mix(in srgb, var(--color-canopy) 7%, var(--color-canvas-alt))",
+          }}
         >
           <p className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint">
             Indicative loan amount

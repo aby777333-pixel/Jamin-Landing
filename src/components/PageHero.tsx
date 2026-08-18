@@ -30,7 +30,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73 | 74;
+  | 62 | 63 | 64 | 65 | 66 | 68 | 69 | 70 | 71 | 72 | 73 | 74 | 75;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -96,6 +96,8 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   73: 941,
   /* hero-74 — the survey-desk flat-lay (/journal), COMPOSED not supplied. */
   74: 941,
+  /* hero-75 — JAMIN SOULFUL daylight gate (/compare). */
+  75: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -327,6 +329,15 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      project already published on its own property page, so the no-caption
      rule is the ordinary one: alt="", aria-hidden, decoration only. */
   74: 1672,
+  /* hero-75 — the JAMIN SOULFUL gate in daylight (owner-supplied 2026-08-18
+     13:00) → /compare, replacing hero-73 the same day at the owner's ask.
+     Lockup TOP-CENTRE on the arch, "Welcome to a Life Well Planned" plinth
+     right. Named community not in the catalogue → the standing rule at full
+     strength: alt="", aria-hidden, never a caption. Swept comparatively vs
+     audited hero-38 at the /compare standard geometry: p95 lum 0.711 vs
+     0.604 — brighter → 0.58, the bright-daylight figure. hero-73 (the sunset
+     gate) moves to the SPARE pile. */
+  75: 1774,
 };
 
 function artSrc(n: HeroArt) {

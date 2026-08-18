@@ -234,16 +234,25 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
       </div>
 
+      {/* CARTOUCHE §5's /properties LEFT FILTER RAIL (do-all round,
+          2026-08-18): from `xl` the facets become a sticky rail beside the
+          results instead of a band above them. ONE DOM, two layouts — below
+          `xl` nothing changes, so the phone keeps the band the reports
+          already tuned. `min-w-0` on the results column or a wide map/table
+          would stretch the track. */}
+      <div className="xl:grid xl:grid-cols-[17rem_minmax(0,1fr)] xl:items-start xl:gap-phi4">
       {/* ---- facets + view switch ---- */}
       {/* `border-t` only. The bottom rule sat a hair above the first card and
           read as a second divider stacked on the section's own spacing. */}
       {/* ⚠️ TABULAR ROWS (2026-08-17 report round) — a fixed label track, so
           DISTRICT's pills and STAGE's pills start on the same column instead
           of each row's pills beginning wherever its own label ended. The
-          labels are a column now; the rows read as a register. */}
-      <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3">
+          labels are a column now; the rows read as a register. In the `xl`
+          rail the tracks stack (`xl:grid-cols-1`) — a 5.5rem label column
+          inside a 17rem rail would leave the pills 10rem. */}
+      <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:mt-phi4 xl:gap-phi3 xl:rounded-card xl:border xl:border-line xl:bg-canvas-alt/60 xl:p-phi3">
         {districts.length > 1 && (
-          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2">
+          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
@@ -287,7 +296,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
 
         {phases.length > 1 && (
-          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2">
+          <div className="grid grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>
@@ -352,7 +361,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           </div>
         )}
 
-        <div className="flex flex-col gap-phi2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-phi2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between xl:flex-col xl:items-start">
           <div className="flex items-center gap-3">
             {active && (
               <>
@@ -411,7 +420,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         </div>
       </div>
 
-      {/* ---- results ---- */}
+      {/* ---- results (the rail's right column from `xl`) ---- */}
+      <div className="min-w-0">
       {results.length === 0 ? (
         <div className="mt-phi5">
           <EmptyState
@@ -657,6 +667,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           </div>
         </div>
       )}
+      </div>
+      </div>
 
     </>
   );

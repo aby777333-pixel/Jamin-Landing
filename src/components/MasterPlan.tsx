@@ -899,14 +899,37 @@ function PlotSheet({
         {/* A plot that is not available gets no booking button. There is
             nothing to book and the answer would only be "that one is gone". */}
         {available ? (
-          <a
-            href="#visit"
-            onClick={onClose}
-            className="mt-phi3 flex justify-center rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
-            style={{ transitionTimingFunction: "var(--ease-silk)" }}
-          >
-            Book a visit for plot {plot.plot}
-          </a>
+          <>
+            <a
+              href="#visit"
+              onClick={onClose}
+              className="mt-phi3 flex justify-center rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
+              style={{ transitionTimingFunction: "var(--ease-silk)" }}
+            >
+              Book a visit for plot {plot.plot}
+            </a>
+            {/* Tap-a-plot enquiry (do-all round 2026-08-18): the sheet is
+                where a buyer decides they want THIS plot, so the enquiry
+                leaves from here carrying the plot number. The prefill rides a
+                CustomEvent because the form is a separate client island —
+                EnquiryForm listens for it; if this plan ever renders on a
+                page with no #enquire anchor the link is simply inert. Gold
+                guidance dress: the red above is "go", this is "next step". */}
+            <a
+              href="#enquire"
+              onClick={() => {
+                window.dispatchEvent(
+                  new CustomEvent("jamin:enquiry-prefill", {
+                    detail: `I'm interested in plot ${plot.plot} at ${title}. Please share the current rate and availability.`,
+                  }),
+                );
+                onClose();
+              }}
+              className="mt-2 flex justify-center rounded-full border border-jamin-gold bg-jamin-gold-soft/60 px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-all hover:bg-jamin-gold/25"
+            >
+              Ask about plot {plot.plot}
+            </a>
+          </>
         ) : (
           <p className="mt-phi3 rounded-card bg-canvas-sunken px-phi3 py-2.5 text-base text-ink-soft">
             This plot is {s.label.toLowerCase()}. Ask the desk what else is open in {title}.

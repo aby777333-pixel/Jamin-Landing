@@ -59,6 +59,22 @@ export default async function DownloadsPage() {
       />
 
       <Container className="py-phi5">
+        {/* The printable visit checklist (do-all round 2026-08-18) — offered
+            where a buyer is already collecting papers for a visit. */}
+        <Link
+          href="/visit-checklist"
+          className="group mb-phi5 flex flex-wrap items-center justify-between gap-3 rounded-card border border-jamin-gold/55 bg-jamin-gold-soft/40 p-phi3 transition-all hover:border-jamin-gold hover:bg-jamin-gold-soft/60"
+        >
+          <span>
+            <span className="block text-xl text-ink">Site-visit checklist</span>
+            <span className="mt-1 block text-base text-ink-muted">
+              What to verify at the gate, on the plot and in the paperwork — printable, one sheet.
+            </span>
+          </span>
+          <span className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-transform group-hover:translate-x-1">
+            Open the checklist →
+          </span>
+        </Link>
         {groups.length === 0 ? (
           <EmptyState
             title="Nothing published yet"

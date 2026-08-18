@@ -42,6 +42,19 @@ export function EnquiryForm({
     captureAttribution();
   }, []);
 
+  /* Tap-a-plot prefill (2026-08-18): MasterPlan's sheet dispatches this when
+     the buyer asks about a specific plot — the two are separate client
+     islands, so the message rides an event rather than a prop. Overwriting
+     `message` is correct here: the dispatch IS the visitor's latest intent. */
+  useEffect(() => {
+    const on = (e: Event) => {
+      const detail = (e as CustomEvent<unknown>).detail;
+      if (typeof detail === "string") setMessage(detail);
+    };
+    window.addEventListener("jamin:enquiry-prefill", on);
+    return () => window.removeEventListener("jamin:enquiry-prefill", on);
+  }, []);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;

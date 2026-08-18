@@ -28,12 +28,11 @@ export default async function ComparePage() {
   return (
     <>
       <PageHero
-        /* hero-73 — the avenue gate at sunset (owner-supplied 2026-08-18),
-           replacing the hero-6 dart-board render. A photographic-range frame,
-           so it moves to `cinematic`; alpha swept on this frame, not copied —
-           brighter than audited hero-38 under the plate, so 0.58 (the bright
-           daylight figure), see the register entry in PageHero. */
-        art={73}
+        /* hero-75 — JAMIN SOULFUL in daylight (owner-supplied 2026-08-18
+           13:00, replacing the same morning's hero-73 sunset gate at the
+           owner's ask). Swept on this frame: brighter than audited hero-38
+           under the plate (p95 0.711 vs 0.604) → 0.58, see the register. */
+        art={75}
         tone="cinematic"
         sheer
         sheerAlpha={0.58}

@@ -2485,3 +2485,27 @@ header .glass,
 [data-mode="dark"] .bg-ink {
   color: var(--color-onyx-800);
 }
+
+/* ── THE ACTIVE TAB'S INK, RE-SCOPED FOR CARBON (2026-08-18) ──────────────
+   NAV_STONE's inks are audited against the SAND header (sapphire 9.68:1 on
+   sand is ~1.6:1 on carbon — the owner's "menu text dims and is not
+   readable"). The label carries the per-tab ink through a var so this scope
+   can override it; champagne-300 is the ink the Vault tab already ships on
+   onyx (12.3:1), so every active label in the dark takes the same value.
+   The dot and inlay keep the tab's own stone — identity stays in the
+   jewellery, legibility in the ink. */
+.rj-tab-on {
+  color: var(--rj-tab-ink, var(--color-champagne-700));
+}
+[data-mode="dark"] .rj-tab-on {
+  color: var(--color-champagne-300);
+}
+
+/* ── THE REVEAL'S WAITING STATE (2026-08-18) ──────────────────────────────
+   Applied ONLY by Reveal.tsx's effect, never in server markup — see the
+   component for why that ordering is the whole safety argument. Matches
+   rj-arrive's own from-frame so the handoff is seamless. */
+.rj-reveal-pre {
+  opacity: 0;
+  transform: translateY(12px);
+}

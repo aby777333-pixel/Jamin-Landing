@@ -27,6 +27,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
        the primary nav but absent here is discoverable only by crawl, which is
        exactly the gap nobody notices until the page has been live for months. */
     { url: `${SITE_URL}/vault`, changeFrequency: "monthly", priority: 0.6 },
+    /* The do-all round (2026-08-18), added with their routes. */
+    { url: `${SITE_URL}/faq`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE_URL}/visit-checklist`, changeFrequency: "monthly", priority: 0.5 },
   ];
 
   try {

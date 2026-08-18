@@ -522,7 +522,19 @@ function Jewels({
   return (
     <>
       <span className={`rj-dot ${active ? "is-on" : ""}`} aria-hidden="true" />
-      <span style={active ? { color: ink } : undefined}>{label}</span>
+      {/* ⚠️ A CLASS + VAR, NOT `color: ink` INLINE (owner 2026-08-18: "when
+          clicked the menu text dims, and is not readable" — in carbon). The
+          NAV_STONE inks are audited for the SAND header; an inline style
+          cannot be re-scoped, so dark mode was stuck with sapphire-on-carbon
+          at ~1.6:1. The class lets royal.css's carbon scope override every
+          active label to champagne-300 — the same ink the Vault tab already
+          uses on onyx, 12.3:1. */}
+      <span
+        className={active ? "rj-tab-on" : undefined}
+        style={active ? ({ "--rj-tab-ink": ink } as React.CSSProperties) : undefined}
+      >
+        {label}
+      </span>
       {children}
       <span className={`rj-inlay ${active ? "is-on rj-sweep" : ""}`} aria-hidden="true" />
     </>

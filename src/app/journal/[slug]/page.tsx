@@ -129,6 +129,14 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
     .filter((x) => !post.blog_categories || x.blog_categories?.slug === post.blog_categories.slug)
     .slice(0, 3);
 
+  /* Prev/next (do-all round 2026-08-18) — sequential navigation through the
+     WHOLE journal in publication order, complementing "More like this" (which
+     is same-category). getJournalPosts returns newest-first, so the previous
+     piece is the one published after this, and the next the one before. */
+  const idx = allPosts.findIndex((x) => x.id === post.id);
+  const newer = idx > 0 ? allPosts[idx - 1] : null;
+  const older = idx >= 0 && idx < allPosts.length - 1 ? allPosts[idx + 1] : null;
+
   return (
     <Container className="py-phi5">
       <script
@@ -330,6 +338,45 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
 
         {/* The publishing record, at the foot where a colophon belongs. */}
         <Colophon post={post} />
+
+        {/* Sequential navigation — the reader who finished wants the next
+            piece, not the index. Chronological across the whole journal;
+            same-category discovery is "More like this" below. */}
+        {(newer || older) && (
+          <nav
+            aria-label="More from the Journal"
+            className="mt-phi5 grid gap-phi3 border-t border-line pt-phi4 sm:grid-cols-2"
+          >
+            {newer ? (
+              <Link
+                href={journalHref(newer)}
+                className="group rounded-card border border-line p-phi3 transition-colors hover:border-ink-faint"
+              >
+                <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+                  ← Newer
+                </span>
+                <span className="mt-1 block text-lg text-ink group-hover:text-jamin-red-deep">
+                  {newer.title}
+                </span>
+              </Link>
+            ) : (
+              <span aria-hidden="true" />
+            )}
+            {older && (
+              <Link
+                href={journalHref(older)}
+                className="group rounded-card border border-line p-phi3 text-right transition-colors hover:border-ink-faint"
+              >
+                <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
+                  Older →
+                </span>
+                <span className="mt-1 block text-lg text-ink group-hover:text-jamin-red-deep">
+                  {older.title}
+                </span>
+              </Link>
+            )}
+          </nav>
+        )}
       </article>
 
       {more.length > 0 && (

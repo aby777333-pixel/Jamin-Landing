@@ -195,31 +195,11 @@ export default async function AboutPage() {
         </Link>
       </section>
       </Container>
-      {/* Anti-beige item 6: the spare stone-pillar gate (hero-53) breaks the
-          long sand read before the desk — imagery is the site's strongest
-          non-beige asset and it only lived in heroes. Brand imagery under the
-          standing rule: alt="", aria-hidden, never a caption.
-          ⚠️ THE BAND IS THE ARTWORK'S OWN RATIO, NOT A FIXED HEIGHT (owner
-          2026-08-18: "make the images fully visible") — the h-72/34rem crop
-          bands were losing the arch and the lockup; a box cut to the frame's
-          1774/887 shows the whole picture at every width, the same rule the
-          hero mobile band settled. */}
-      <div
-        className="relative w-full overflow-hidden border-y border-line"
-        style={{ aspectRatio: "1774 / 887" }}
-        aria-hidden="true"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/hero/hero-53-1774.webp"
-          srcSet="/hero/hero-53-768.webp 768w, /hero/hero-53-1280.webp 1280w, /hero/hero-53-1774.webp 1774w"
-          sizes="100vw"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          className="h-full w-full object-cover"
-        />
-      </div>
+      {/* ⚠️ THE hero-53 DIVIDER IS GONE (owner 2026-08-18 second report:
+          "hide the image"). It began as a crop band, became a full-frame band
+          the same morning, and at the artwork's own ratio it read as a second
+          hero mid-page — the owner chose removal over either. Anti-beige
+          item 6 is closed; do not reintroduce a photo strip here. */}
 
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

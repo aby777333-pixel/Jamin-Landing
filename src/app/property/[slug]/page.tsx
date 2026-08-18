@@ -10,6 +10,7 @@ import { SaveProperty } from "@/components/SaveProperty";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
+import { MobileDeskDock } from "@/components/MobileDeskDock";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
 import { ProvenanceRibbon } from "@/components/cadastral/ProvenanceRibbon";
@@ -963,6 +964,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       <div className="mt-phi6">
         <Sweep lead={p.title} />
       </div>
+
+      {/* The phone dock (do-all round 2026-08-18) — Call/WhatsApp/visit
+          pinned to the foot on small screens only. */}
+      <MobileDeskDock context={p.title} />
     </article>
   );
 }
