@@ -98,10 +98,14 @@ export default async function TamilPage() {
            gives the TRICHY TULIP lettering room to sit ABOVE the card
            (measured: lettering bottom 251 vs card top 276 at 1440x800). */
         size="full"
-        sheer
-        /* Swept on this frame: p95 0.864 vs audited hero-38's 0.604 — the
-           bright-daylight 0.58, see the register. */
-        sheerAlpha={0.58}
+        /* ⚠️ NO CARD (owner: "remove the bg card") — the copy rides the
+           photograph on the halo alone. The legibility argument this prop
+           makes the caller own: at `50% 100%` the visible band is the
+           frame's LOWER half (road, shaded buildings, greenery), not the
+           bright sky the 0.58 sweep guarded against, and the four-layer
+           halo carries the worst pixels. If the crop ever moves back up
+           toward the sky, the plate comes back with it. */
+        plateBare
         /* "full" + centred copy (owner's final form for this hero: "make it
            center, and make the text and tab ultra wide… all the way from
            left to right") — the card spans the container, everything on the

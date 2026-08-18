@@ -394,6 +394,7 @@ export function PageHero({
   plateXl = "46rem",
   copyAlign = "center",
   copyCenter = false,
+  plateBare = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -458,6 +459,13 @@ export function PageHero({
    *  `plateXl="full"`, where a left rag on a container-wide card reads as
    *  a mistake. Cinematic only. */
   copyCenter?: boolean;
+  /** ⚠️ NO CARD AT ALL (owner 2026-08-18, /ta: "remove the bg card") — the
+   *  copy sits straight on the photograph, carried by `rj-sheer-copy`'s
+   *  four-layer halo and the veil alone. This is the treatment the plate
+   *  exists to avoid, so it is opt-in per page and the CALLER owns the
+   *  legibility argument: only use it where the crop puts the copy over
+   *  the frame's darker ground. Overrides `sheer`. Cinematic only. */
+  plateBare?: boolean;
   /** 🚨 THE PLATE'S CAP FROM `xl`, AND IT IS PER-PAGE BECAUSE THE CLIFF IS.
    *  Narrowing the card is what actually gives the photograph back, but how far
    *  it can go is set by the HEADLINE, and every page has a different one.
@@ -631,8 +639,10 @@ export function PageHero({
                SurveyIcon size lesson). "52rem" (owner 2026-08-18, /ta:
                "widen the tab") widens BOTH tiers; the other three keep the
                42rem base they always had. */
-            className={`gilt ${
-              sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""
+            className={`${
+              plateBare
+                ? "rj-sheer-copy"
+                : `gilt ${sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""}`
             } rise rounded-2xl p-phi3 sm:p-phi4 ${copyCenter ? "text-center" : ""} ${
               {
                 "38rem": "max-w-[42rem] xl:max-w-[38rem]",
@@ -662,8 +672,8 @@ export function PageHero({
                     fill gold; gold as a WORD may not, so the label takes
                     `jamin-gold-light`, which holds on the plate. */}
                 <span className="h-px w-12 rule-gold" />
-                <span className={`text-micro font-medium uppercase tracking-brand ${sheer ? "" : "text-jamin-gold-pale"}`}
-                  style={sheer ? { color: "var(--color-champagne-50)" } : undefined}>
+                <span className={`text-micro font-medium uppercase tracking-brand ${sheer || plateBare ? "" : "text-jamin-gold-pale"}`}
+                  style={sheer || plateBare ? { color: "var(--color-champagne-50)" } : undefined}>
                   {eyebrow}
                 </span>
               </div>
@@ -682,7 +692,7 @@ export function PageHero({
               <div
                 className={`mt-phi3 text-pretty text-lg leading-relaxed ${
                   plateXl === "52rem" || plateXl === "full" ? "" : "max-w-xl"
-                } ${copyCenter ? "mx-auto max-w-4xl" : ""} ${sheer ? "text-white" : "text-white/80"}`}
+                } ${copyCenter ? "mx-auto max-w-4xl" : ""} ${sheer || plateBare ? "text-white" : "text-white/80"}`}
               >
                 {lead}
               </div>
