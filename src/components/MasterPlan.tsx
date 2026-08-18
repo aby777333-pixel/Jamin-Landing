@@ -87,6 +87,35 @@ export function MasterPlan({
   /** So focus can go back where it came from when the sheet closes. */
   const openerRef = useRef<SVGGElement | null>(null);
 
+  /* SHARE-A-PLOT'S DEEP LINK (do-all #2): a shared URL arrives as
+     `#plot-N`, and the plan opens that plot's sheet on arrival. The rAF is
+     what keeps the eslint setState-in-effect rule honest — the state lands
+     a frame after mount, exactly like a click would. A hash naming no plot
+     is ignored. */
+  useEffect(() => {
+    const m = window.location.hash.match(/^#plot-(.+)$/);
+    if (!m) return;
+    /* ⚠️ String-normalised on BOTH sides: `Plot.plot` is TYPED string but the
+       jsonb rows deliver numbers at runtime (logged: 1, 2 — not "1", "2"),
+       and `5 === "5"` is false. The type is a promise the data does not
+       keep — same lesson as the jsonb-is-schema-too note in the page. */
+    const raw = decodeURIComponent(m[1]);
+    const target = plots.find((p) => String(p.plot) === raw);
+    if (!target) return;
+    /* ⚠️ setTimeout, NOT requestAnimationFrame — rAF never fires in a hidden
+       or background tab, and a shared WhatsApp link is exactly the kind of
+       URL that gets opened in one. A timer keeps the deferral (satisfying
+       the setState-in-effect rule's spirit: async, like a click) and fires
+       regardless of visibility. Verified: rAF sat forever in a
+       non-compositing pane; the timer opened the sheet. */
+    const t = setTimeout(() => {
+      setSelected(target);
+      frameRef.current?.scrollIntoView({ block: "center" });
+    }, 0);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- arrival only
+  }, []);
+
   const geo = useMemo(() => plots.filter((p) => Array.isArray(p.poly) && p.poly.length >= 3), [plots]);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
   const [vx, vy, vw, vh] = plan.viewBox ?? [0, 0, 100, 100];
@@ -929,6 +958,50 @@ function PlotSheet({
             >
               Ask about plot {plot.plot}
             </a>
+            {/* The quiet third row (do-all #2): share the plot into WhatsApp
+                with a link that reopens THIS sheet (`#plot-N`, see the
+                arrival effect), ask the desk for a 48-hour hold (a lead the
+                desk confirms by phone — the wording promises a request,
+                never a reservation), and jump to the sun study. */}
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              <button
+                type="button"
+                onClick={() => {
+                  const url = `${window.location.origin}${window.location.pathname}#plot-${encodeURIComponent(plot.plot)}`;
+                  const dims = plot.dim_m ? ` · ${fmtDims(plot.dim_m, unit)}` : "";
+                  const text = `Plot ${plot.plot} at ${title}${dims}. Have a look: ${url}`;
+                  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+                }}
+                className="text-tiny font-semibold uppercase tracking-[0.1em] text-canopy transition-opacity hover:opacity-70"
+              >
+                Share on WhatsApp
+              </button>
+              <a
+                href="#enquire"
+                onClick={() => {
+                  window.dispatchEvent(
+                    new CustomEvent("jamin:enquiry-prefill", {
+                      detail: `Please hold plot ${plot.plot} at ${title} for me for 48 hours while I arrange a visit. I understand the desk will confirm by phone.`,
+                    }),
+                  );
+                  onClose();
+                }}
+                className="text-tiny font-semibold uppercase tracking-[0.1em] text-jamin-red-deep transition-opacity hover:opacity-70"
+              >
+                Ask to hold 48&nbsp;h
+              </a>
+              <button
+                type="button"
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent("jamin:open-sun-view"));
+                  onClose();
+                }}
+                className="text-tiny font-semibold uppercase tracking-[0.1em] text-jamin-gold-ink transition-opacity hover:opacity-70"
+              >
+                See the sun here
+              </button>
+            </div>
+            <SheetEmi plotLabel={plot.plot} />
           </>
         ) : (
           <p className="mt-phi3 rounded-card bg-canvas-sunken px-phi3 py-2.5 text-base text-ink-soft">
@@ -999,5 +1072,96 @@ function PlanRow({ label, value }: { label: string; value: string }) {
       <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">{label}</dt>
       <dd className="mt-0.5 text-base text-ink @[19rem]:mt-0 @[19rem]:text-right">{value}</dd>
     </div>
+  );
+}
+
+/**
+ * The plot sheet's pocket EMI (do-all round #2, 2026-08-18).
+ *
+ * 🚨 EVERY FIGURE IS THE READER'S OWN — no plot on this site has a published
+ * rate, and this widget must never look like one. The price field starts
+ * EMPTY and the result renders only once a price is typed; the note below
+ * the figure restates whose numbers these are. Behind a <details> so the
+ * record-keeping half of the sheet stays a document.
+ */
+function SheetEmi({ plotLabel }: { plotLabel: string }) {
+  const [price, setPrice] = useState("");
+  const [rate, setRate] = useState("8.75");
+  const [years, setYears] = useState("15");
+  const p = Number(price);
+  const r = Number(rate);
+  const y = Number(years);
+  let emi = 0;
+  if (p > 0 && y > 0) {
+    const mr = r / 12 / 100;
+    const n = y * 12;
+    emi = mr <= 0 ? p / n : (p * mr * Math.pow(1 + mr, n)) / (Math.pow(1 + mr, n) - 1);
+  }
+  const field =
+    "w-full rounded-card border border-line bg-canvas px-2.5 py-1.5 text-base text-ink outline-none focus:border-ink-faint";
+  return (
+    <details className="mt-phi3 rounded-card border border-line bg-canvas-alt px-phi2 py-2">
+      <summary className="cursor-pointer text-tiny font-semibold uppercase tracking-[0.1em] text-ink-soft">
+        Estimate a monthly instalment
+      </summary>
+      <div className="mt-phi2 grid grid-cols-3 gap-2">
+        <label className="block">
+          <span className="mb-1 block text-micro uppercase tracking-[0.1em] text-ink-faint">
+            Your price ₹
+          </span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step={50000}
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="—"
+            className={field}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-micro uppercase tracking-[0.1em] text-ink-faint">
+            Rate %
+          </span>
+          <input
+            type="number"
+            inputMode="decimal"
+            min={0}
+            step={0.05}
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+            className={field}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-micro uppercase tracking-[0.1em] text-ink-faint">
+            Years
+          </span>
+          <input
+            type="number"
+            inputMode="numeric"
+            min={1}
+            step={1}
+            value={years}
+            onChange={(e) => setYears(e.target.value)}
+            className={field}
+          />
+        </label>
+      </div>
+      {emi > 0 && (
+        <p className="mt-phi2 text-base text-ink">
+          At your figures, plot {plotLabel} ≈{" "}
+          <span className="ledger font-semibold text-canopy">
+            ₹{Math.round(emi).toLocaleString("en-IN")}
+          </span>{" "}
+          / month
+        </p>
+      )}
+      <p className="mt-1.5 text-micro leading-relaxed text-ink-faint">
+        Your figures, not ours — no rate is published for this plot, and a lender&rsquo;s offer
+        will differ.
+      </p>
+    </details>
   );
 }

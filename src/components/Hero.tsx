@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { HeroConsole } from "./HeroConsole";
+import { LivingHeroArt } from "./LivingHeroArt";
 import { Docket } from "@/components/ui/Docket";
 import { GoldDust } from "@/components/GoldDust";
 
@@ -70,6 +71,11 @@ export type Slide = {
    TRIDENT letters and fountain centre-frame, the lockup wall right —
    replacing hero-46 the same day. 1581x995 (1.59:1), noticeably TALLER than
    46's 2:1, so the banner crop spends less height. */
+/* ⚠️ Kept as the register's record of the DUSK identity frame even though the
+   backdrop now cycles (LivingHeroArt) and the phone band carries hero-72 —
+   the notes throughout this file cite it. eslint-disable, not deletion: the
+   constant is this file's documentation anchor. */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ART = { id: "61", w: 1581 };
 
 export function Hero({
@@ -161,52 +167,17 @@ export function Hero({
           className="pointer-events-none absolute inset-0 hidden xl:block"
           aria-hidden="true"
         >
-          <Image
-            src={`/hero/hero-${ART.id}-${ART.w}.webp`}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-            /* 🚨 35%, NOT THE 50% `object-top` IMPLIES — and the card width is
-               deliberately NOT what moved. Reported 2026-08-14: the copy card
-               and the gateway's left pillar compete, the pillar sitting behind
-               the card.
-
-               hero-20 is 3.302:1 inside a 1.943 box, so `cover` throws away
-               **41.2% of its width** and object-position has real travel here —
-               unlike the /properties hero, whose frame leaves only 10.6% and
-               cannot be steered out of trouble at all. Lowering X shows more of
-               the picture's LEFT, which walks the gate to the RIGHT. Measured
-               against the card's right edge (55% of the banner at 1440, 61% at
-               1280, because the card is a fixed 42rem and the banner is the
-               viewport):
-
-                 50% (was)  pillar at ~42% — the card covers a third of the gate
-                 35%        pillar at ~52%, JAMIN BAZAAR whole at both widths
-                 22%        pillar clear, but the lockup clips off the right
-
-               35% is the balance: the card sits over open sky and fields at
-               1440, the pillar reaches its edge at 1280, and the brand mark
-               survives at both. Anything lower buys separation with the lockup,
-               which is the trade the Journal covers already taught us not to
-               make.
-
-               ⚠️ THE CARD'S 42rem IS NOT AVAILABLE AS A LEVER. The note on it
-               below records that a narrower measure makes taller copy, and this
-               section is content-sized on a 3.3:1 banner — every pixel of copy
-               height comes off the banner's SIDES. 36rem measured a 675px block
-               and cropped the banner to 56%. Steering the picture is free;
-               narrowing the card is not. */
-            /* ⚠️ Y = 0% ON hero-61, NOT the 35% the hero-20 sweep above chose
-               (owner report 2026-08-18: "hero image is cropped slightly at the
-               top"). The trident's APEX touches the frame's own top edge, so
-               any positive Y clips it; the ~20% a viewport box crops off this
-               1.59:1 frame is all foreground tarmac at the BOTTOM, which is
-               the expendable end. The 35% figure belonged to the 3.3:1 banner
-               and travels back with it if hero-20 ever returns. */
-            style={{ objectPosition: "50% 0%" }}
-          />
+          {/* THE LIVING DAY (do-all #2): the backdrop follows IST — daylight
+              gate by day, this trident at dusk, the night gate after dark.
+              See LivingHeroArt for the frame register, the per-frame crops
+              and why the 0.62 sand plate needs no re-sweep. The hero-61
+              notes below still govern its own frame. */}
+          {/* ⚠️ The hero-20/hero-61 crop sweeps that governed the single
+              <Image> this replaced (35% for the 3.3:1 banner; 50% 0% for the
+              trident's apex, owner report 2026-08-18) now live per-frame in
+              LivingHeroArt's register — a hero and its crop are ONE change,
+              so the crop travels with the frame. */}
+          <LivingHeroArt />
           {/* The mirror of `hero-fade`: instead of a dark scrim the page
               dissolves the image into its own canvas from the left. Over the
               artwork's own white panel this is very nearly invisible — it only

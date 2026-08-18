@@ -18,6 +18,7 @@ import {
   type Property,
 } from "@/lib/properties";
 import { DISTRICT_STONE, STONE_FALLBACK } from "@/lib/stones";
+import { PassportButton } from "@/components/PassportButton";
 
 const MAX = 3;
 
@@ -115,6 +116,26 @@ export function CompareTable({ all }: { all: Property[] }) {
 
   return (
     <div className="mt-phi5">
+      {/* THE COMPARISON PRINTS AS A FILED SHEET (do-all #2): the deed-sheet
+          print system already suppresses the chrome; this masthead is the
+          document's own head — what it is and what it is not. No date on
+          purpose: the table is client-rendered from the URL and a stamped
+          "taken" time would claim a freshness this sheet cannot warrant. */}
+      <div className="rj-print-only mb-6 border-b-2 border-black pb-3">
+        <div className="flex items-baseline justify-between gap-6">
+          <div>
+            <div className="text-[10pt] uppercase tracking-[0.18em]">Jamin Properties</div>
+            <div className="text-[16pt] font-medium leading-tight">
+              Comparison — {chosen.map((p) => p.title).join(" · ")}
+            </div>
+          </div>
+          <div className="text-right text-[8pt] leading-snug">
+            Record of published listings.
+            <br />
+            Not a title document.
+          </div>
+        </div>
+      </div>
       <div className="-mx-5 overflow-x-auto px-5 lg:mx-0 lg:px-0">
       {/* headers */}
       <div className="grid gap-phi3" style={{ gridTemplateColumns: template }}>
@@ -183,20 +204,25 @@ export function CompareTable({ all }: { all: Property[] }) {
       </dl>
       </div>
 
-      <div className="mt-phi3 flex flex-wrap items-center justify-between gap-3">
+      <div className="mt-phi3 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <p className="text-tiny text-ink-muted">
           {differing.length} row{differing.length === 1 ? "" : "s"} differ
           {matching.length ? ` · ${matching.length} identical row${matching.length === 1 ? "" : "s"} hidden` : ""}
         </p>
-        {matching.length > 0 && (
-          <button
-            type="button"
-            onClick={() => setShowSame((v) => !v)}
-            className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
-          >
-            {showSame ? "Hide identical rows" : "Show identical rows"}
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          {matching.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowSame((v) => !v)}
+              className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
+            >
+              {showSame ? "Hide identical rows" : "Show identical rows"}
+            </button>
+          )}
+          {/* The browser's own dialogue — paper or PDF, the reader's choice,
+              exactly as the property sheet and the checklist already do. */}
+          <PassportButton />
+        </div>
       </div>
 
       <p className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
@@ -204,7 +230,7 @@ export function CompareTable({ all }: { all: Property[] }) {
         specific plot. Nothing on this page is an estimate.
       </p>
 
-      <div className="mt-phi4 border-t border-line pt-phi3">
+      <div className="mt-phi4 border-t border-line pt-phi3 print:hidden">
         <Picker all={all} chosenIds={ids} onChange={write} />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { Container } from "./ui";
+import { ParallaxLayer } from "./ParallaxLayer";
 
 /**
  * The hero every page opens with.
@@ -493,21 +494,26 @@ export function PageHero({
           style={bandStyle}
         >
           {/* A render is decoration and stays out of the accessibility tree; a
-              photograph of a real project is content and gets a real alt. */}
-          <Image
-            src={src}
-            alt={photo?.alt ?? ""}
-            aria-hidden={photo ? undefined : "true"}
-            fill
-            priority={priority}
-            sizes="100vw"
-            className="object-contain object-center xl:object-cover"
-            /* ⚠️ Only bites from `xl`, where the picture is `cover` and there
-               is a crop to steer. Below that it is `contain` in a box cut to the
-               artwork’s own ratio, so the whole frame is on screen and an
-               object-position has nothing to choose between. */
-            style={artPosition ? { objectPosition: artPosition } : undefined}
-          />
+              photograph of a real project is content and gets a real alt.
+              ⚠️ Wrapped in ParallaxLayer (do-all #2): the photograph drifts
+              14% slower than the page from `xl`; the veil stays OUTSIDE the
+              wrapper so the legibility gradient never swims. */}
+          <ParallaxLayer>
+            <Image
+              src={src}
+              alt={photo?.alt ?? ""}
+              aria-hidden={photo ? undefined : "true"}
+              fill
+              priority={priority}
+              sizes="100vw"
+              className="object-contain object-center xl:object-cover"
+              /* ⚠️ Only bites from `xl`, where the picture is `cover` and there
+                 is a crop to steer. Below that it is `contain` in a box cut to the
+                 artwork’s own ratio, so the whole frame is on screen and an
+                 object-position has nothing to choose between. */
+              style={artPosition ? { objectPosition: artPosition } : undefined}
+            />
+          </ParallaxLayer>
           {/* The veil is a legibility device for type sitting ON the picture.
               Below `lg` nothing sits on it, so darkening it there would spend
               the photograph for nothing. */}

@@ -1,4 +1,5 @@
 import { approvalBadges, type PropertyDetail } from "@/lib/properties";
+import { Reveal } from "@/components/Reveal";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 
 /**
@@ -85,6 +86,11 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
       {/* ⚠️ `items-start`, not `items-center`: the values are different lengths
           and centring them would make the connecting rule step up and down
           between seals, which is exactly the thing a chain must not do. */}
+      {/* THE CHAIN DRAWS ITSELF (do-all #2): Reveal + rj-stagger assemble
+          the links in order on scroll — form saying what the component says.
+          No-JS and reduced-motion readers get the finished chain, per
+          Reveal's own guarantee. */}
+      <Reveal className="rj-stagger">
       <ol className="mt-phi3 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-5 lg:items-start">
         {links.map((l, i) => (
           <li key={l.term} className="relative flex gap-3 lg:flex-col lg:gap-2">
@@ -125,6 +131,7 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
           </li>
         ))}
       </ol>
+      </Reveal>
     </section>
   );
 }

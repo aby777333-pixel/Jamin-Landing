@@ -17,8 +17,8 @@ const PUBLIC_PAGES = [
      clean audit run meant "the pages I remembered are fine", not "the site is
      fine". Add a route here the day it ships. */
   "/tools", "/downloads", "/vault", "/gazetteer",
-  /* Added with their routes (2026-08-18, the do-all round). */
-  "/faq", "/visit-checklist",
+  /* Added with their routes (2026-08-18, the do-all rounds). */
+  "/faq", "/visit-checklist", "/ta",
   "/locations/erode", "/locations/salem", "/locations/tiruppur", "/locations/coimbatore",
   /* A sample of Journal articles. The whole set is 39 and grows weekly, so the
      audit takes a representative few rather than crawling the lot — the

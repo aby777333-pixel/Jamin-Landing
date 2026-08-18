@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ShortlistHeart } from "./ShortlistHeart";
 import { AvailabilityChip } from "@/components/cadastral/AvailabilityChip";
 import { DimensionOverlay } from "@/components/cadastral/DimensionOverlay";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
@@ -165,11 +166,16 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
               </span>
             ))}
           </div>
-          {!sellable && (
-            <span className="rounded-full bg-ink/85 px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] text-white backdrop-blur">
-              {p.status === "sold" ? "Sold Out" : p.status}
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            {!sellable && (
+              <span className="rounded-full bg-ink/85 px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] text-white backdrop-blur">
+                {p.status === "sold" ? "Sold Out" : p.status}
+              </span>
+            )}
+            {/* The browser shortlist's heart (do-all #2) — a client island;
+                it stops propagation so the card's own link never fires. */}
+            <ShortlistHeart propertyId={p.id} title={p.title} />
+          </div>
         </div>
 
         {/* CARTOUCHE §4.3 — the Docket, bottom-left of every card image, on a

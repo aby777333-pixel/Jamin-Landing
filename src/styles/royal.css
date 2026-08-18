@@ -2509,3 +2509,55 @@ header .glass,
   opacity: 0;
   transform: translateY(12px);
 }
+
+/* ── THE CHAIN DRAWS ITSELF (do-all round #2, 2026-08-18) ─────────────────
+   When Reveal lands `rj-arrive` on a wrapper that also carries
+   `rj-stagger`, the links inside arrive one after another — the chain of
+   record assembling in order, which is the argument the component makes in
+   form. Without JS the wrapper never gets `rj-arrive` and the chain is
+   simply present, complete — the no-JS guarantee Reveal already documents. */
+.rj-arrive.rj-stagger li {
+  animation: rj-arrive 560ms var(--ease-rise) both;
+}
+.rj-arrive.rj-stagger li:nth-child(1) { animation-delay: 80ms; }
+.rj-arrive.rj-stagger li:nth-child(2) { animation-delay: 200ms; }
+.rj-arrive.rj-stagger li:nth-child(3) { animation-delay: 320ms; }
+.rj-arrive.rj-stagger li:nth-child(4) { animation-delay: 440ms; }
+.rj-arrive.rj-stagger li:nth-child(5) { animation-delay: 560ms; }
+.rj-arrive.rj-stagger li:nth-child(n + 6) { animation-delay: 680ms; }
+
+/* ── THE WAX SEAL PRESSES (same round) ────────────────────────────────────
+   A scroll-driven animation, pure CSS: the seal descends onto the paper as
+   the approvals band enters the viewport. `@supports` gates it to browsers
+   with view timelines — everywhere else the seal is simply there, already
+   pressed. Reduced motion collapses it below. */
+@keyframes rj-wax-press {
+  from {
+    transform: scale(1.7) rotate(-10deg);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(0.94) rotate(1deg);
+    opacity: 1;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@supports (animation-timeline: view()) {
+  .rj-wax {
+    animation: rj-wax-press 1 both;
+    animation-timeline: view();
+    animation-range: entry 30% entry 95%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rj-wax {
+    animation: none;
+  }
+  .rj-arrive.rj-stagger li {
+    animation-duration: 0.01ms;
+    animation-delay: 0ms;
+  }
+}

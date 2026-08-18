@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LayoutRelief } from "@/components/LayoutRelief";
 import { MasterPlan, PlanParticulars } from "@/components/MasterPlan";
@@ -88,6 +88,22 @@ export function LayoutViews({
   /** The printed sheet's lightbox (owner 2026-08-17: "add a click to pop
    *  up, and close button"). */
   const [sheetOpen, setSheetOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  /* THE SUN STUDY, SURFACED (do-all round #2, 2026-08-18): the plot sheet's
+     "See the sun here" dispatches this. setState inside a subscription
+     callback is the pattern the effect rule allows. The 2026-08-17 "hide the
+     3D and sun and shadow for later use" is cashed in by the same round —
+     the Sun & shadow OPTION returns below; "3D view" stays hidden. */
+  useEffect(() => {
+    if (!hasPlan) return;
+    const on = () => {
+      setView("sun");
+      rootRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
+    };
+    window.addEventListener("jamin:open-sun-view", on);
+    return () => window.removeEventListener("jamin:open-sun-view", on);
+  }, [hasPlan]);
 
   /** Only worth offering where a stored metre figure actually appears. */
   const hasMetricFigures =
@@ -101,7 +117,7 @@ export function LayoutViews({
     );
 
   return (
-    <div>
+    <div ref={rootRef}>
       {(hasPlan || hasMetricFigures) && (
         <div className="mb-phi3 flex flex-wrap items-center justify-between gap-phi2">
           {hasPlan ? (
@@ -137,7 +153,11 @@ export function LayoutViews({
               options={[
                 { value: "plan", label: "Approved plan" },
                 // { value: "relief", label: "3D view" },
-                // { value: "sun", label: "Sun & shadow" },
+                /* Sun & shadow RESTORED (do-all #2) — the "later use" the
+                   2026-08-17 hide reserved it for. The plot sheet deep-links
+                   here, so the option must exist or a reader landed in the
+                   sun view has no lit tab and no way back. */
+                { value: "sun", label: "Sun & shadow" },
                 ...(sheet ? [{ value: "sheet", label: "Printed sheet" }] : []),
                 { value: "blocks", label: "Plot list" },
               ]}

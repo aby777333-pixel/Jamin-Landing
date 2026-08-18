@@ -222,6 +222,9 @@ export async function SiteFooter() {
                 </li>
               )}
               {facets.hasJournal && <FooterLink href="/journal">Jamin Journal</FooterLink>}
+              {/* The Tamil doorway — the label IS Tamil, because the reader
+                  it serves scans for their own script, not for "Tamil". */}
+              <FooterLink href="/ta">தமிழில்</FooterLink>
               <FooterLink href="/tools">Tools &amp; calculators</FooterLink>
               <FooterLink href="/faq">Questions, answered</FooterLink>
               <FooterLink href="/about">About Jamin</FooterLink>

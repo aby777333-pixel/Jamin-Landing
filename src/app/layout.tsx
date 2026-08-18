@@ -14,6 +14,8 @@ import { ScrollNav } from "@/components/ScrollNav";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Jamindar } from "@/components/Jamindar";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
+import { ShortlistTray } from "@/components/ShortlistTray";
 import { PaperGrain } from "@/components/cadastral/PaperGrain";
 import { SITE_URL } from "@/lib/supabase";
 
@@ -197,6 +199,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Public since 2026-08-08 — safe only because the anonymous rate
             limiter is live and verified. See components/JamindarDock.tsx. */}
         <Jamindar />
+        {/* The browser shortlist's tray — bottom-left (Jamindar owns
+            bottom-right), renders nothing until something is kept. */}
+        <ShortlistTray />
+        {/* The installable site's worker — production only, network-first,
+            see public/sw.js for the whole safety argument. */}
+        <ServiceWorkerRegistration />
         {/* Stacks ABOVE the concierge medallion in the same corner — see the
             component for why they share a column rather than sit side by side. */}
         <ScrollNav />

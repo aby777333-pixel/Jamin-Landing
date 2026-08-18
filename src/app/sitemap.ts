@@ -30,6 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     /* The do-all round (2026-08-18), added with their routes. */
     { url: `${SITE_URL}/faq`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/visit-checklist`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE_URL}/ta`, changeFrequency: "monthly", priority: 0.6 },
   ];
 
   try {
