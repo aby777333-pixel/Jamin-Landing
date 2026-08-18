@@ -105,10 +105,21 @@ export default function FaqPage() {
            sheerEdge + 38rem shrink what the plate can ever touch. */
         art={67}
         tone="cinematic"
+        /* `full` (owner 2026-08-18 night: "make it full height") — and the
+           headline steps down to 3xl with it (the /ta span treatment):
+           at 85vh the box crops far less of the frame, so the board rides
+           lower and the only way the end-anchored plate stays off it is a
+           shorter plate. Measured at 1440x800 and 1280x664 after the
+           change. */
+        size="full"
         sheer
         sheerAlpha={0.52}
         sheerEdge
-        plateXl="38rem"
+        /* 46rem (owner, same night: "widen the tab") — at the 3xl headline
+           the wide measure sets two lines, so the WIDER plate is also the
+           SHORTER one, which is what keeps it off the board at full
+           height. */
+        plateXl="46rem"
         copyAlign="end"
         /* 88%, measured at BOTH 1440x800 and 1280x664: 82% left the board's
            bottom trim grazing the plate top by 14px at 1280. At 88% the
@@ -117,7 +128,7 @@ export default function FaqPage() {
            through. */
         artPosition="50% 88%"
         eyebrow="Questions, answered"
-        title="How buying a plot actually works"
+        title={<span className="text-3xl">How buying a plot actually works</span>}
         /* ⚠️ ONE LINE, and the length is structural: the three-line lead made
            the plate 451px tall — taller than the hero's free space — so no
            anchor could pull it off the arch. Shortening the copy IS the
