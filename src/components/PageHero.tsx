@@ -393,6 +393,7 @@ export function PageHero({
   sheerEdge = false,
   plateXl = "46rem",
   copyAlign = "center",
+  copyCenter = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -452,6 +453,11 @@ export function PageHero({
    *  all of them. Pair it with an artPosition that keeps the board in the
    *  visible crop's upper third. */
   copyAlign?: "center" | "end";
+  /** Centre the copy INSIDE the plate (owner 2026-08-18, /ta: "align
+   *  center… all the way from left to right") — pairs with
+   *  `plateXl="full"`, where a left rag on a container-wide card reads as
+   *  a mistake. Cinematic only. */
+  copyCenter?: boolean;
   /** 🚨 THE PLATE'S CAP FROM `xl`, AND IT IS PER-PAGE BECAUSE THE CLIFF IS.
    *  Narrowing the card is what actually gives the photograph back, but how far
    *  it can go is set by the HEADLINE, and every page has a different one.
@@ -465,7 +471,7 @@ export function PageHero({
    *  So this is a union of literal strings rather than a number: Tailwind scans
    *  source text, and a class it never sees written out is a class it never
    *  generates. Re-measure before adding a value. */
-  plateXl?: "38rem" | "42rem" | "46rem" | "52rem";
+  plateXl?: "38rem" | "42rem" | "46rem" | "52rem" | "full";
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -627,12 +633,14 @@ export function PageHero({
                42rem base they always had. */
             className={`gilt ${
               sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""
-            } rise rounded-2xl p-phi3 sm:p-phi4 ${
+            } rise rounded-2xl p-phi3 sm:p-phi4 ${copyCenter ? "text-center" : ""} ${
               {
                 "38rem": "max-w-[42rem] xl:max-w-[38rem]",
                 "42rem": "max-w-[42rem] xl:max-w-[42rem]",
                 "46rem": "max-w-[42rem] xl:max-w-[46rem]",
                 "52rem": "max-w-[46rem] xl:max-w-[52rem]",
+                /* container-wide — the ultra-wide banner card. */
+                full: "max-w-none",
               }[plateXl]
             }`}
             style={
@@ -645,8 +653,10 @@ export function PageHero({
             }
           >
             {eyebrow && (
-              /* Right-aligned (owner 2026-08-17): tabs and captions sit right. */
-              <div className="flex items-center justify-end gap-3">
+              /* Right-aligned (owner 2026-08-17): tabs and captions sit
+                 right — except on a centred plate, where the caption joins
+                 the centre line. */
+              <div className={`flex items-center gap-3 ${copyCenter ? "justify-center" : "justify-end"}`}>
                 {/* Gilt, where this was a plain white hairline — the same rule
                     that sits under BAZAAR in the logo. Gold as a RULE may be the
                     fill gold; gold as a WORD may not, so the label takes
@@ -671,8 +681,8 @@ export function PageHero({
             {lead && (
               <div
                 className={`mt-phi3 text-pretty text-lg leading-relaxed ${
-                  plateXl === "52rem" ? "" : "max-w-xl"
-                } ${sheer ? "text-white" : "text-white/80"}`}
+                  plateXl === "52rem" || plateXl === "full" ? "" : "max-w-xl"
+                } ${copyCenter ? "mx-auto max-w-4xl" : ""} ${sheer ? "text-white" : "text-white/80"}`}
               >
                 {lead}
               </div>
@@ -682,7 +692,11 @@ export function PageHero({
                 {meta}
               </div>
             )}
-            {actions && <div className="mt-phi4 flex flex-wrap gap-3">{actions}</div>}
+            {actions && (
+              <div className={`mt-phi4 flex flex-wrap gap-3 ${copyCenter ? "justify-center" : ""}`}>
+                {actions}
+              </div>
+            )}
           </div>
         </Container>
       </section>

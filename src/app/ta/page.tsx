@@ -102,13 +102,14 @@ export default async function TamilPage() {
         /* Swept on this frame: p95 0.864 vs audited hero-38's 0.604 — the
            bright-daylight 0.58, see the register. */
         sheerAlpha={0.58}
-        /* 52rem (owner: "widen the tab", then "widen the text and decrease
-           the height") — on this rung the lead runs the plate's full
-           measure, which is what actually shortens the card. */
-        plateXl="52rem"
-        /* The card sits LOW and the crop holds the arch HIGH ("I want to
-           see the brand on the gate") — the /faq recipe: the TRICHY TULIP
-           lettering rides the top of the frame, clear of the card. */
+        /* "full" + centred copy (owner's final form for this hero: "make it
+           center, and make the text and tab ultra wide… all the way from
+           left to right") — the card spans the container, everything on the
+           centre line. The wide measure sets the copy in its fewest lines,
+           which with the low anchor is what keeps the TRICHY TULIP
+           lettering clear above. */
+        plateXl="full"
+        copyCenter
         copyAlign="end"
         artPosition="50% 100%"
         eyebrow="தமிழில்"
