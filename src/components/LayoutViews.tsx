@@ -153,11 +153,14 @@ export function LayoutViews({
               options={[
                 { value: "plan", label: "Approved plan" },
                 // { value: "relief", label: "3D view" },
-                /* Sun & shadow RESTORED (do-all #2) — the "later use" the
-                   2026-08-17 hide reserved it for. The plot sheet deep-links
-                   here, so the option must exist or a reader landed in the
-                   sun view has no lit tab and no way back. */
-                { value: "sun", label: "Sun & shadow" },
+                /* ⚠️ Sun & shadow HIDDEN AGAIN (owner 2026-08-18 night:
+                   "hide the sun and shadow"), reversing the same day's
+                   restore. The plot sheet's "See the sun here" button is
+                   hidden WITH it (MasterPlan) — the pair must move together
+                   or the button lands a reader in a view with no lit tab.
+                   The view value, LayoutVR and the event listener all stay
+                   live; restoring is uncommenting two lines. */
+                // { value: "sun", label: "Sun & shadow" },
                 ...(sheet ? [{ value: "sheet", label: "Printed sheet" }] : []),
                 { value: "blocks", label: "Plot list" },
               ]}

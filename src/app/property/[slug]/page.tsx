@@ -1029,13 +1029,17 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  *  drawing as issued, per project, for LayoutViews' "Printed sheet" view.
  *  Only Edappadi has one today; a missing entry hides the view. */
 const PRINTED_SHEET: Record<string, { src: string; width: number; height: number }> = {
-  /* ⚠️ The ILLUSTRATED plan ("ne plot plan.png"), the owner's explicit pick
-     2026-08-17 late ("not this printed… this one") over the branded DTCP
-     card shipped an hour earlier. The DTCP card renditions stay on disk at
-     /plan/edappadi-sheet-* for a one-line swap back. */
-  /* v2 (22:28): the corrected 61-unit sheet — plots and totals now agree
-     with the record. New filename per the next/image cache rule. */
-  "jamin-new-project-jul-2026": { src: "/plan/edappadi-illustrated-2-1055.webp", width: 1055, height: 1491 },
+  /* ⚠️ THE OFFICIAL SANCTIONED SHEET ("edpdy.png", owner-supplied
+     2026-08-18 night: "replace the printed sheet with the attached") — the
+     Tamil DTCP drawing with approval SWPD/TCPSALEM/LAYOUT NO: 161/2026,
+     replacing the illustrated plan the owner picked on 08-17 (which stays
+     on disk at /plan/edappadi-illustrated-2-* alongside the older DTCP
+     card at /plan/edappadi-sheet-*; either is a one-line swap back). New
+     filename per the cache rule. ⚠️ This sheet records 60 plots where the
+     traced plan and the catalogue record 61 — the sheet is shown AS
+     ISSUED, never edited; the discrepancy is the owner's record to
+     reconcile, not this page's to hide. */
+  "jamin-new-project-jul-2026": { src: "/plan/edappadi-official-2026-1055.webp", width: 1055, height: 1491 },
 };
 
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {

@@ -311,7 +311,16 @@ export function MasterPlan({
           overlays this wrapper rather than the scroller, so it stays put while
           the plan pans underneath. */}
       <div ref={frameRef} className={`cd-plan mt-phi3 ${armed && !drawDone ? "is-armed" : ""} ${drawn && !drawDone ? "is-on" : ""}`}>
-      <div className="overflow-auto rounded-xl border border-line bg-canvas-alt shadow-lift">
+      {/* ⚠️ HEIGHT-CAPPED (owner 2026-08-18: the approved plan "scrolls too
+          much") — the same `min(78vh, 900px)` window the Printed sheet view
+          already uses, so a tall portrait drawing pans INSIDE its own box
+          instead of stretching the page. Nothing else moves: zoom, taps,
+          measure and the draw-in all operate in SVG coordinates and are
+          size-agnostic; the scroller was already `overflow-auto` for zoom. */}
+      <div
+        className="overflow-auto rounded-xl border border-line bg-canvas-alt shadow-lift"
+        style={{ maxHeight: "min(78vh, 900px)" }}
+      >
         <div ref={drawRef} className="relative" style={{ width: `${zoom * 100}%` }}>
           <svg
             viewBox={`${vx} ${vy} ${vw} ${vh}`}
@@ -990,16 +999,22 @@ function PlotSheet({
               >
                 Ask to hold 48&nbsp;h
               </a>
-              <button
-                type="button"
-                onClick={() => {
-                  window.dispatchEvent(new CustomEvent("jamin:open-sun-view"));
-                  onClose();
-                }}
-                className="text-tiny font-semibold uppercase tracking-[0.1em] text-jamin-gold-ink transition-opacity hover:opacity-70"
-              >
-                See the sun here
-              </button>
+              {/* ⚠️ "See the sun here" HIDDEN WITH the Sun & shadow tab
+                  (owner 2026-08-18 night) — the two are a pair; see the note
+                  on the hidden option in LayoutViews. The event plumbing
+                  stays; restoring is uncommenting both. */}
+              {false && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent("jamin:open-sun-view"));
+                    onClose();
+                  }}
+                  className="text-tiny font-semibold uppercase tracking-[0.1em] text-jamin-gold-ink transition-opacity hover:opacity-70"
+                >
+                  See the sun here
+                </button>
+              )}
             </div>
             <SheetEmi plotLabel={plot.plot} />
           </>
