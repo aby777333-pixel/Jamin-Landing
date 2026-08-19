@@ -100,7 +100,11 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
        owner's own supply, the hero-40 precedent. Lockup centred on the arch,
        so the right anchor keeps it whole. */
     ongoing: 65,
-    current: 11,
+    /* ⚠️ WAS hero-11 (owner, 2026-08-19 night: "swap the hero image of the
+       upcoming project"). hero-82 is the Trichy's Tulip entrance arch —
+       the one development actually in this phase — so the page now opens
+       on the thing it is about rather than on a stock sand render. */
+    current: 82,
     /* hero-64 (JAMIN REGENT, owner-named 2026-08-17) replaces hero-33 —
        its lockup is CENTRED, so the right anchor keeps it whole untrimmed. */
     future: 64,
@@ -201,6 +205,17 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    */
   const ART_VERTICAL_BY_PHASE: Record<string, string> = {
     ongoing: "50% 14%",
+    /* ⚠️ `current` IS EXPLICIT, not left to the `50% 30%` fallback, because
+       the warning above applies to it exactly: hero-82 is a gate photographed
+       head-on with its beam near the top, the same shape that made 30%
+       dangerous on hero-65. It is a 2:1 frame though, WIDER than the band at
+       most sizes, so the usual failure is a horizontal crop and the full
+       height survives. Measured on the built page: the beam carrying
+       TRICHY'S TULIP sits at 22-37% of the frame and the JAMIN BAZAAR board
+       at 40-56%, and both stay inside the visible window at every size this
+       hero renders at. 30% is right here for the same reason 14% was right
+       there — it was measured, not inherited. */
+    current: "50% 30%",
     future: "50% 30%",
     completed: "50% 50%",
   };
@@ -235,7 +250,14 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           would need the heavy scrim the paper tone exists to avoid. */}
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
-        tone={phase === "current" ? "paper" : "cinematic"}
+        /* ⚠️ `current` USED TO BE THE ONE `paper` HERO ON THIS ROUTE, and
+           that exception belonged to hero-11, not to the phase. hero-11 was
+           a pale sand render that a cinematic scrim turned to mud; hero-82
+           is a lit gate render like Ongoing's, so it takes Ongoing's
+           treatment. The condition goes with the picture it was written
+           for — leaving it would wash the new frame out, which is exactly
+           what the Upcoming page looked like before the swap. */
+        tone="cinematic"
         /* 🚨 FULL HEIGHT (owner, 2026-08-19 evening: "increase the height of the
            hero image to full"). `PageHero` already carries the three sizes;
            `full` is `xl:min-h-[clamp(30rem,85vh,52rem)]` against the default's
@@ -252,15 +274,26 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
            `50% 14%` was measured to hold the arch at box heights from 500px
            up; a TALLER box discards less of the frame, not more, so the arch
            only becomes safer. */
-        size={phase === "current" ? "standard" : "full"}
-        artPosition={
-          phase === "current"
-            ? (ART_POSITION_BY_PHASE[phase] ?? "left")
-            : (ART_VERTICAL_BY_PHASE[phase] ?? "50% 30%")
-        }
+        /* Full, like every other phase now. The `standard` exception was the
+           other half of the hero-11 accommodation retired above. */
+        size="full"
+        /* ⚠️ THE LAST THREE PIECES OF THE hero-11 ACCOMMODATION, retired with
+           the other two. A pale sand render needed a left anchor, a 0.26 scrim
+           and no edge or it turned to mud; hero-82 is a lit gate frame like
+           Ongoing's hero-65, so Upcoming now reads exactly like Ongoing —
+           `50% 30%` holds the arch lettering and the JAMIN BAZAAR board, both
+           of which sit above the midline.
+           ⚠️ `ART_POSITION_BY_PHASE` is now UNREFERENCED. It was already
+           unreachable for three of its four keys — only `current` ever read
+           it, and `current` had no entry, so it was resolving to the `left`
+           default. Left in place with its hero-31/33/40 reasoning intact,
+           because that reasoning is the record of why a horizontal anchor
+           was ever needed; delete it the day a hero wants one again and the
+           argument can be re-read. */
+        artPosition={ART_VERTICAL_BY_PHASE[phase] ?? "50% 30%"}
         sheer
-        sheerAlpha={phase === "current" ? 0.26 : phase === "ongoing" ? 0.52 : 0.58}
-        sheerEdge={phase !== "current"}
+        sheerAlpha={phase === "ongoing" || phase === "current" ? 0.52 : 0.58}
+        sheerEdge
         plateXl="38rem"
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}

@@ -31,7 +31,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81;
+  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81 | 82;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -109,6 +109,10 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
      replacing hero-69 on /projects. 1672x941, the register's common
      geometry, so the rendition ladder is the existing one. */
   81: 941,
+  /* 82 — the Trichy's Tulip gate, 1774x887. A 2:1 frame, which is WIDER
+     than every other hero here (they are 16:9 or taller), so it is the
+     one to watch if a hero surface is ever given a tall band. */
+  82: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -373,6 +377,7 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      Standing rule at full strength: names a community not in the
      catalogue, so alt="", aria-hidden, never a caption. */
   81: 1672,
+  82: 1774,
   /* hero-75 — the JAMIN SOULFUL gate in daylight (owner-supplied 2026-08-18
      13:00) → /compare, replacing hero-73 the same day at the owner's ask.
      Lockup TOP-CENTRE on the arch, "Welcome to a Life Well Planned" plinth
