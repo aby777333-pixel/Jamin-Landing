@@ -86,6 +86,14 @@ export type Property = {
   lng: number | null;
   gmaps_url: string | null;
   images: string[] | null;
+  /**
+   * ⚠️ NOT A DATABASE COLUMN — it is not in `PUBLIC_COLUMNS` and never will be.
+   * `withLocalArt` fills it with whatever `images` held BEFORE a local gallery
+   * replaced them, so the frames the admin console uploaded are moved aside
+   * rather than lost. Undefined for every property that has no local gallery,
+   * which is all but three.
+   */
+  archiveImages?: string[] | null;
   videos: string[] | null;
   drone_videos: string[] | null;
   amenities: string[] | null;
@@ -192,8 +200,83 @@ const LOCAL_COVER: Record<string, string> = {
   "jamin-garden-varapatty": "/property/jamin-garden-varapatty-cover.webp",
 };
 
-function withLocalArt<T extends { slug?: string | null; images?: string[] | null }>(row: T): T {
-  const local = row.slug ? LOCAL_COVER[row.slug] : undefined;
+/**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * WHOLE GALLERIES, NOT JUST COVERS (owner, 2026-08-19: "swap all images
+ * according to the page names in the respective pages. The existing pictures,
+ * move to a tab next to the videos or brochures").
+ *
+ * `LOCAL_COVER` above replaces one frame. These replace the SET: the owner
+ * supplied finished renders for the three live developments — gates, avenues,
+ * interiors, amenities — and the galleries until now held phone photographs of
+ * earthworks. A buyer arriving at a plotted development should see what it is
+ * being built into, with the site record one section further down.
+ *
+ * ⚠️ THE OLD FRAMES ARE MOVED, NOT DELETED. `withLocalArt` puts them on
+ * `archiveImages`, which the property page renders under "Site photographs".
+ * Nothing is lost and nothing is edited in the database — this file is still
+ * read-only against Supabase, which is the promise the whole lib makes.
+ *
+ * ⚠️ THE FIRST ENTRY IS THE COVER. `coverImage()` reads `images[0]`, so it is
+ * also the card face, the detail hero and the Compare thumbnail. Each set leads
+ * with its establishing shot.
+ *
+ * ⚠️ SAME EXIT AS `LOCAL_COVER`: delete a slug's entry the day the same set is
+ * uploaded through admin.html, or the site and the app will show two different
+ * projects under one name. That drift is what this map exists to make visible.
+ *
+ * ⚠️ These are RENDERS. The footer's site-wide "creative representation only"
+ * line is what covers them; do not caption an individual frame as a photograph.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+const LOCAL_GALLERY: Record<string, string[]> = {
+  "jamin-garden-shastri-nagar-erode": [
+    "/property/gallery/jamin-garden-shastri-nagar-erode/01.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/02.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/03.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/04.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/05.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/06.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/07.webp",
+    "/property/gallery/jamin-garden-shastri-nagar-erode/08.webp",
+  ],
+  "jamin-new-project-jul-2026": [
+    "/property/gallery/jamin-new-project-jul-2026/01.webp",
+    "/property/gallery/jamin-new-project-jul-2026/02.webp",
+    "/property/gallery/jamin-new-project-jul-2026/03.webp",
+    "/property/gallery/jamin-new-project-jul-2026/04.webp",
+    "/property/gallery/jamin-new-project-jul-2026/05.webp",
+    "/property/gallery/jamin-new-project-jul-2026/06.webp",
+    "/property/gallery/jamin-new-project-jul-2026/07.webp",
+  ],
+  "jamin-garden-varapatty": [
+    "/property/gallery/jamin-garden-varapatty/01.webp",
+    "/property/gallery/jamin-garden-varapatty/02.webp",
+    "/property/gallery/jamin-garden-varapatty/03.webp",
+    "/property/gallery/jamin-garden-varapatty/04.webp",
+  ],
+};
+
+function withLocalArt<
+  T extends { slug?: string | null; images?: string[] | null; archiveImages?: string[] | null },
+>(row: T): T {
+  const slug = row.slug ?? undefined;
+
+  /* ⚠️ A GALLERY WINS OVER A COVER, and the two are checked in that order on
+     purpose. Varapatty carries an entry in BOTH maps — its 2026-08-10 cover fix
+     and now a full set — and running the cover branch afterwards would put the
+     retired poster back at `images[0]`, undoing the newer instruction with the
+     older one. The cover entry is left in place rather than deleted so the
+     reason it exists stays on the record; it simply no longer applies while a
+     gallery is present. */
+  const gallery = slug ? LOCAL_GALLERY[slug] : undefined;
+  if (gallery) {
+    /* The cast is the price of a generic that has to stay usable for both
+       `Property` and `PropertyDetail`. Both carry `archiveImages`. */
+    return { ...row, images: gallery, archiveImages: row.images ?? [] } as T;
+  }
+
+  const local = slug ? LOCAL_COVER[slug] : undefined;
   if (!local) return row;
   /* Replace the first frame rather than prepending: prepending would keep the
      old cover one slot behind, so the gallery would open on the poster the

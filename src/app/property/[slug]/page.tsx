@@ -202,6 +202,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   if (!p) notFound();
 
   const images = p.images ?? [];
+  /* The frames the admin console uploaded, set aside by `withLocalArt` when a
+     local gallery replaced them. Empty for every property that has no local
+     gallery, so the block below simply does not render. */
+  const archive = p.archiveImages ?? [];
   const videos = [...(p.videos ?? []), ...(p.drone_videos ?? [])];
   const approvals = approvalBadges(p);
   const area = formatArea(p);
@@ -905,6 +909,36 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   />
                 ))}
               </div>
+            </Block>
+          )}
+
+          {/* 🚨 THE SITE RECORD, MOVED HERE FROM THE MAIN GALLERY (owner,
+              2026-08-19: "swap all images according to the page names in the
+              respective pages. The existing pictures, move to a tab next to the
+              videos or brochures of the respective pages").
+
+              The owner supplied finished renders for the three live
+              developments, and those now lead the page. The photographs that
+              used to open it — earthworks, a JCB, a formed road — are not
+              discarded: they are the evidence that the work is real, which is
+              the one thing a render cannot be. They sit beside the walkthrough,
+              which is the other moving record of the same ground.
+
+              ⚠️ IT IS THE SAME `Gallery` COMPONENT, deliberately. A second
+              picture grid with its own lightbox would be a second thing to
+              maintain and a second thing to get wrong; this reuses the
+              behaviour the page already has, including the keyboard handling.
+
+              ⚠️ RENDERED ONLY WHEN `archiveImages` IS NON-EMPTY, which is only
+              true for a slug carrying a local gallery. Every other property is
+              untouched by this block — it does not exist on their pages. */}
+          {archive.length > 0 && (
+            <Block
+              id="site-photographs"
+              title="Site photographs"
+              lead="Taken on the ground as the development was formed. The images above this section are architectural representations; these are the site itself."
+            >
+              <Gallery images={archive} title={`${p.title} — site photographs`} />
             </Block>
           )}
         </div>
