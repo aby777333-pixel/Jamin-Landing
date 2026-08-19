@@ -269,8 +269,14 @@ const LOCAL_GALLERY: Record<string, string[]> = {
      ⚠️ These are RENDERS of an upcoming layout, not photographs of a built
      place, and nothing on the page may caption them as the site as it
      stands today. */
+  /* ⚠️ 01 IS `01-2.webp`, NOT `01.webp` (owner, 2026-08-19 night: "swap
+     with the attached"). A new filename rather than an overwrite, because
+     `next/image` keys its optimised output by source path — reusing 01.webp
+     would leave the CDN free to keep serving the retired gate from a deploy
+     that looks correct. The old frame stays on disk, unused, exactly as the
+     header folder does for every superseded render. */
   "trichys-tulip": [
-    "/property/gallery/trichys-tulip/01.webp",
+    "/property/gallery/trichys-tulip/01-2.webp",
     "/property/gallery/trichys-tulip/02.webp",
     "/property/gallery/trichys-tulip/03.webp",
     "/property/gallery/trichys-tulip/04.webp",

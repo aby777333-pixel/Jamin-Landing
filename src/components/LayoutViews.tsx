@@ -86,9 +86,28 @@ export function LayoutViews({
    */
   const [unit, setUnit] = useState<Unit>("ft");
   /** The printed sheet's lightbox (owner 2026-08-17: "add a click to pop
-   *  up, and close button"). */
+   *  up, and close button"; 2026-08-19: "let printed sheet have a zoom in
+   *  out, close"). */
   const [sheetOpen, setSheetOpen] = useState(false);
+  /** Lightbox magnification. 1 = fit, which is the sheet drawn at the
+   *  widest it can be without overflowing the viewport. Steps are
+   *  multiplicative so each press feels the same at any level. */
+  const [sheetZoom, setSheetZoom] = useState(1);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  /* Escape closes the drawing, and every open resets the magnification —
+     re-opening a sheet still at 4x would look broken rather than zoomed. */
+  useEffect(() => {
+    if (!sheetOpen) return;
+    setSheetZoom(1);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSheetOpen(false);
+      if (e.key === "+" || e.key === "=") setSheetZoom((z) => Math.min(6, z * 1.4));
+      if (e.key === "-") setSheetZoom((z) => Math.max(1, z / 1.4));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sheetOpen]);
 
   /* THE SUN STUDY, SURFACED (do-all round #2, 2026-08-18): the plot sheet's
      "See the sun here" dispatches this. setState inside a subscription
@@ -222,26 +241,82 @@ export function LayoutViews({
                 role="dialog"
                 aria-modal="true"
                 aria-label={`${title} — layout drawing`}
-                className="fixed inset-0 z-[60] flex items-start justify-center overflow-auto bg-ink/85 p-4 backdrop-blur-sm"
+                className="fixed inset-0 z-[60] overflow-auto bg-ink/85 p-4 backdrop-blur-sm"
                 onClick={() => setSheetOpen(false)}
               >
-                <button
-                  type="button"
-                  onClick={() => setSheetOpen(false)}
-                  aria-label="Close the drawing"
-                  className="fixed right-4 top-4 z-[61] flex h-11 w-11 items-center justify-center rounded-full bg-cta text-xl text-white shadow-raise transition-transform hover:scale-105"
+                {/* ⚠️ THE CONTROLS STOP THE CLICK. The backdrop closes on click, so
+                    a toolbar sitting on top of it would dismiss the drawing on the
+                    way to zooming in. Each button calls stopPropagation, and so
+                    does the image — clicking the sheet magnifies it instead of
+                    closing, which is what a reader who has just zoomed expects. */}
+                <div
+                  className="fixed right-4 top-4 z-[61] flex items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  ×
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setSheetZoom((z) => Math.max(1, z / 1.4))}
+                    disabled={sheetZoom <= 1}
+                    aria-label="Zoom out"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas text-2xl leading-none text-ink shadow-raise transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
+                  >
+                    −
+                  </button>
+                  <span
+                    className="ledger min-w-[4.5rem] rounded-full bg-canvas px-3 py-2 text-center text-tiny text-ink-soft shadow-raise"
+                    aria-live="polite"
+                  >
+                    {Math.round(sheetZoom * 100)}%
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSheetZoom((z) => Math.min(6, z * 1.4))}
+                    disabled={sheetZoom >= 6}
+                    aria-label="Zoom in"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-canvas text-2xl leading-none text-ink shadow-raise transition-transform hover:scale-105 disabled:opacity-40 disabled:hover:scale-100"
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSheetOpen(false)}
+                    aria-label="Close the drawing"
+                    className="flex h-11 w-11 items-center justify-center rounded-full bg-cta text-xl text-white shadow-raise transition-transform hover:scale-105"
+                  >
+                    ×
+                  </button>
+                </div>
+                {/* ⚠️ `w-max min-w-full` IS LOAD-BEARING, TWICE OVER.
+                    `min-w-full` keeps the track at least the viewport wide so a
+                    small drawing still centres; `w-max` lets it grow to the
+                    zoomed image so the centring happens inside the SCROLLABLE
+                    width. Centring on the scroller itself pushes the overflow
+                    half off the left edge, where no scrollbar can reach it. */}
+                <div className="flex w-max min-w-full items-start justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sheet.src}
                   width={sheet.width}
                   height={sheet.height}
                   alt=""
-                  className="my-auto h-auto w-auto max-w-none cursor-zoom-out rounded-lg"
-                  style={{ maxHeight: "none", width: "min(96vw, 1055px)" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSheetZoom((z) => (z >= 6 ? 1 : Math.min(6, z * 1.4)));
+                  }}
+                  className={`h-auto max-w-none shrink-0 rounded-lg ${
+                    sheetZoom >= 6 ? "cursor-zoom-out" : "cursor-zoom-in"
+                  }`}
+                  /* ⚠️ `sheet.width`, NOT A LITERAL. This was `min(96vw, 1055px)`,
+                     and 1055 is EDAPPADI'S sheet width baked into a shared
+                     component — every other drawing was being capped at the size
+                     of the first one that happened to use it. Trichy's sheet is
+                     1500 wide and was rendering at 70% of itself. */
+                  style={{
+                    maxHeight: "none",
+                    width: `min(${96 * sheetZoom}vw, ${sheet.width * sheetZoom}px)`,
+                  }}
                 />
+                </div>
               </div>,
               document.body,
             )}

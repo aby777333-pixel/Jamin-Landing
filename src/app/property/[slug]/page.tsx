@@ -1312,15 +1312,28 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
     focus: "50% 35%",
   },
   "trichys-tulip": {
-    /* The entrance arch, owner-supplied 2026-08-19 as the hero. Native
-       1672x941 — the same 1.777 as Edappadi's and Udumalaipet's gates — so
-       the renditions are cuts of the original and nothing is upscaled.
-       NO `focus`: at 1.777 the box keeps ~85% of the height at 1440, and
-       the two things that must survive — the TRICHY'S TULIP lettering on
-       the beam and the JAMIN BAZAAR board on the left pier — both sit above
-       the midline, so centre holds them with room to spare. */
-    file: "trichys-tulip",
-    widths: [960, 1440, 1672],
+    /* The entrance arch — REPLACED 2026-08-19 night ("swap with the
+       attached"). New filename, not an overwrite: see the note in
+       LOCAL_GALLERY. The first render stays at trichys-tulip-{960,1440,1672}.
+
+       ⚠️ THE ASPECT CHANGED, 1672x941 (1.777) -> 1774x887 (2.000), and
+       that is the thing to watch. A 2:1 frame in this box is cropped on the
+       SIDES, not top and bottom, so the risk moved from the lettering to the
+       JAMIN BAZAAR board on the left pier.
+
+       MEASURED, not assumed. The box is
+       `calc(100% + 5rem + 2.5rem + (100vw - min(100vw,1280px))/2)` wide by a
+       fixed height, so it only gets WIDER above 1280 and the art is hidden
+       below lg — which makes 1280 the worst case at a box ratio of 1.708.
+       There, 85.4% of the source shows and 7.3% is cut from each side. The
+       board's left edge sits at 11.7% of the source, so it clears the cut by
+       4.4% of the width. Simulated the crop at 1.55 and 1.30 as well: it
+       still clears at 1.55, and at 1.30 the "J" would go — that ratio is not
+       reachable by this layout, but it is the number to check first if the
+       header box is ever made taller. No `focus` override: centre is doing
+       the right thing on its own. */
+    file: "trichys-tulip-2",
+    widths: [960, 1440, 1774],
   },
 };
 
