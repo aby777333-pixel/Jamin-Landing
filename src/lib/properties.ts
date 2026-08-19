@@ -212,10 +212,12 @@ const LOCAL_COVER: Record<string, string> = {
  * earthworks. A buyer arriving at a plotted development should see what it is
  * being built into, with the site record one section further down.
  *
- * ⚠️ THE OLD FRAMES ARE MOVED, NOT DELETED. `withLocalArt` puts them on
- * `archiveImages`, which the property page renders under "Site photographs".
- * Nothing is lost and nothing is edited in the database — this file is still
- * read-only against Supabase, which is the promise the whole lib makes.
+ * ⚠️ THE OLD FRAMES ARE MOVED, NOT DELETED — but as of 2026-08-19 evening they
+ * are also NOT SHOWN ("hide the original pics from all three projects").
+ * `withLocalArt` still puts them on `archiveImages`, so nothing is lost and the
+ * database is still never written to; the property page simply no longer
+ * renders a section for them. Re-surfacing them is one block, and the field is
+ * kept populated precisely so that stays true.
  *
  * ⚠️ THE FIRST ENTRY IS THE COVER. `coverImage()` reads `images[0]`, so it is
  * also the card face, the detail hero and the Compare thumbnail. Each set leads
@@ -249,11 +251,16 @@ const LOCAL_GALLERY: Record<string, string[]> = {
     "/property/gallery/jamin-new-project-jul-2026/06.webp",
     "/property/gallery/jamin-new-project-jul-2026/07.webp",
   ],
+  /* 01 is the JAMIN VARAPATTY VELVET gate (owner, 2026-08-19 evening: "add
+     this as the varapatty first image"). The four frames that were 01–04 are
+     now 02–05; the files were renamed from the END so the shuffle could not
+     overwrite itself mid-way. */
   "jamin-garden-varapatty": [
     "/property/gallery/jamin-garden-varapatty/01.webp",
     "/property/gallery/jamin-garden-varapatty/02.webp",
     "/property/gallery/jamin-garden-varapatty/03.webp",
     "/property/gallery/jamin-garden-varapatty/04.webp",
+    "/property/gallery/jamin-garden-varapatty/05.webp",
   ],
 };
 

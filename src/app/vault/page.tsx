@@ -514,8 +514,22 @@ export default async function VaultPage() {
               You do not have to find it. You have to describe it.
             </h2>
             <div className="rj-fret mt-phi3 max-w-[10rem]" aria-hidden="true" />
+            {/* The owner's picture, 2026-08-19 evening — the column carried
+                `VaultPlate`'s DRAWN fallback until now, which is what the
+                report-6 note said it would do until a frame arrived. It has
+                arrived, so the plate takes its `src` branch and the drawing
+                stands down.
+
+                ⚠️ The supplied file had a dark frame baked into it and was
+                cropped to the photograph before saving; the border below is
+                the page's, and two of them read as a mount. If this frame is
+                ever replaced, crop the new one the same way. */}
             <div className="relative mt-phi4 hidden aspect-[4/5] overflow-hidden rounded-xl border border-champagne-500/35 lg:block">
-              <VaultPlate seed="the-idea" sizes="(min-width: 1024px) 32vw, 100vw" />
+              <VaultPlate
+                src="/vault/the-idea.webp"
+                seed="the-idea"
+                sizes="(min-width: 1024px) 32vw, 100vw"
+              />
             </div>
           </div>
           <div>

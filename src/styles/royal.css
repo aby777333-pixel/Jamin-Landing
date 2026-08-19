@@ -3322,15 +3322,37 @@ header .glass,
      `background-image` and the shorthand would reset it to `none`. Same trap
      the hail card hit. */
   background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 40%, var(--color-canvas));
-  /* The glass: light along the top edge, gone by 70%. This is what stops a 40%
-     tint reading as flat gouache. */
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.5),
-    rgba(255, 255, 255, 0.06) 38%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  border: 1px solid color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 55%, var(--color-line));
+  /* 🚨 A GLOSSY GRADIENT, NOT A SINGLE TOP FADE (owner, 2026-08-19 evening:
+     "the hues should have a glossy gradient glass finish as bg").
+
+     It was one vertical wash from the top edge, which reads as a lit sheet.
+     Two layers make it read as GLASS: a diagonal specular running off the
+     top-left corner — the highlight a curved pane actually throws — over a
+     broad soft bloom hung above the top edge. The diagonal is what stops the
+     surface looking flat; the bloom is what stops the diagonal looking like a
+     stripe.
+
+     ⚠️ IT ONLY EVER LIGHTENS. Every stop is white at some alpha, so the
+     ground can only move toward the canvas, never away from it — which is why
+     the contrast ledger for the 40% tint still holds without re-measuring.
+     Do not add a dark stop here. */
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.16) 24%,
+      rgba(255, 255, 255, 0.02) 48%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    radial-gradient(125% 85% at 50% -12%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 62%);
+
+  /* 🚨 A THIN GOLD BORDER, ALL FOUR SIDES (same instruction: "make it a thin
+     gold border all around"). It used to be the pane's own hue mixed into the
+     line colour, so every block was outlined in a different colour and the
+     edge carried the same information the ground already did. One gold hairline
+     on every pane is the house metal doing what a hairline is for — describing
+     the EDGE — and it lets the hue be the only thing the colour says. */
+  border: 1px solid color-mix(in srgb, var(--color-jamin-gold) 62%, transparent);
   backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
   box-shadow: var(--shadow-lift);
 
@@ -3385,22 +3407,17 @@ header .glass,
   }
 }
 
-/**
- * THE CAP — the hue at full strength, where no text can sit on it.
- *
- * Same argument as the stage bands: the tint is capped by the ink, the bar is
- * not capped by anything, so the bar is where the hue arrives undiluted.
- * Decoration only — every pane states its own subject in a heading beneath it.
- */
-.rj-pane::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto 0;
-  height: 5px;
-  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  background: var(--rj-hue, var(--color-champagne-500));
-  pointer-events: none;
-}
+/* ── THE CAP, REMOVED 2026-08-19 evening ─────────────────────────────────
+   `.rj-pane::before` painted 5px of the hue at full strength across the top of
+   every block. It existed because the 40% ground could not show a stone
+   undiluted and the bar could — but the owner's read is that it is a line
+   across the top of every section ("take off those top lines from all the
+   hues"), and with a gold hairline now running all four sides the edge is
+   already described. The hue lives in the ground alone.
+
+   ⚠️ `.rj-pane .rj-pane::before { display: none }` went with it — there is no
+   longer a cap for a nested pane to suppress. If a cap ever returns, that
+   nested rule has to return WITH it. */
 
 /* A pane nested in a pane would double the tint and halve the contrast twice
    over. It happens by accident when a page wraps a section that already wrapped
@@ -3411,9 +3428,6 @@ header .glass,
   border: 0;
   box-shadow: none;
   backdrop-filter: none;
-}
-.rj-pane .rj-pane::before {
-  display: none;
 }
 
 /* ── CARBON ──────────────────────────────────────────────────────────────
@@ -3460,13 +3474,21 @@ header .glass,
 
 [data-mode="dark"] .rj-pane {
   background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 26%, var(--color-canvas));
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.11),
-    rgba(255, 255, 255, 0.02) 38%,
-    rgba(255, 255, 255, 0) 70%
-  );
-  border-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 50%, var(--color-line));
+  /* The same two layers at carbon strength — a bright specular on a dark
+     ground reads as a smear, so both alphas come right down while the SHAPE
+     stays identical. */
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.13) 0%,
+      rgba(255, 255, 255, 0.045) 24%,
+      rgba(255, 255, 255, 0.01) 48%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    radial-gradient(125% 85% at 50% -12%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 62%);
+  /* Gold holds its own on carbon and needs no remap — it is the one colour on
+     this site that was chosen to sit on both grounds. */
+  border-color: color-mix(in srgb, var(--color-jamin-gold) 58%, transparent);
 }
 
 /* ── REDUCED TRANSPARENCY / PRINT ───────────────────────────────────────── */
@@ -3476,9 +3498,6 @@ header .glass,
     background-image: none;
     border-color: var(--color-line);
     box-shadow: none;
-  }
-  .rj-pane::before {
-    display: none;
   }
 }
 

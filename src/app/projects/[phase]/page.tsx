@@ -236,6 +236,23 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
       <PageHero
         art={ART_BY_PHASE[phase] ?? 5}
         tone={phase === "current" ? "paper" : "cinematic"}
+        /* 🚨 FULL HEIGHT (owner, 2026-08-19 evening: "increase the height of the
+           hero image to full"). `PageHero` already carries the three sizes;
+           `full` is `xl:min-h-[clamp(30rem,85vh,52rem)]` against the default's
+           `clamp(20rem,48vh,30rem)`, so the gate gets most of the first screen
+           instead of a third of it.
+
+           ⚠️ `current` KEEPS `standard`. That phase is the one `paper` hero on
+           this route — its art sits on the page's own ground rather than
+           behind the copy — and 85vh of a paper band is a screen of empty sand
+           with a picture at the bottom. The instruction was about the
+           cinematic gate.
+
+           ⚠️ This does NOT re-open the crop this file solved earlier today.
+           `50% 14%` was measured to hold the arch at box heights from 500px
+           up; a TALLER box discards less of the frame, not more, so the arch
+           only becomes safer. */
+        size={phase === "current" ? "standard" : "full"}
         artPosition={
           phase === "current"
             ? (ART_POSITION_BY_PHASE[phase] ?? "left")
