@@ -581,7 +581,10 @@ export function PageHero({
               fill
               priority={priority}
               sizes="100vw"
-              className="object-contain object-center xl:object-cover"
+              /* `rj-print-drop` — hero art is decoration and does not print. On
+                 the Image rather than on ParallaxLayer, which hard-codes its
+                 own className. See the print block in royal.css. */
+              className="rj-print-drop object-contain object-center xl:object-cover"
               /* ⚠️ Only bites from `xl`, where the picture is `cover` and there
                  is a crop to steer. Below that it is `contain` in a box cut to the
                  artwork’s own ratio, so the whole frame is on screen and an
@@ -794,7 +797,10 @@ export function PageHero({
           — which is the whole drawing-sheet metaphor — and a photograph takes
           a faint warm cast that reads as the house print grade. Cinematic
           frames are full-bleed cover and keep their own colour. */}
-      <div className="relative aspect-[var(--hero-band)] w-full xl:hidden" style={bandStyle}>
+      <div
+        className="rj-print-drop relative aspect-[var(--hero-band)] w-full xl:hidden"
+        style={bandStyle}
+      >
         <Image
           src={src}
           alt=""
@@ -808,7 +814,7 @@ export function PageHero({
 
       {/* the render, bleeding off the right edge and dissolving into the page */}
       <div
-        className="pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] xl:block"
+        className="rj-print-drop pointer-events-none absolute inset-y-0 right-0 hidden w-[58%] xl:block"
         aria-hidden={photo ? undefined : "true"}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
 import { SurveyIcon } from "./cadastral/SurveyIcon";
@@ -21,6 +21,12 @@ import { matchReason, matches, suggestions, summaryLine } from "@/lib/search";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
 import { purposeByKey, type PurposeKey } from "@/lib/purpose";
 import { setQuery, useQueryString } from "@/lib/url-state";
+
+/** `useLayoutEffect` on the client, `useEffect` on the server render of this
+ *  client component — React warns about the former during SSR and the warning
+ *  is the only difference. See the view-anchor note below for why the scroll
+ *  correction cannot wait until after paint. */
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /**
  * Discovery: search, facets, three views and comparison (§11, §12, §18, §76).
@@ -102,6 +108,76 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
   const [suggestOpen, setSuggestOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
+  /**
+   * ═══════════════════════════════════════════════════════════════════════
+   * THE VIEW SWITCH HOLDS THE READER'S PLACE (report 6, 2026-08-19: "Scroll
+   * position is not maintained when switching from Grid View to List View").
+   *
+   * Grid and list are wildly different heights for the same result set — three
+   * columns of tall cards against one column of short rows — so the document
+   * shrinks by thousands of pixels on the switch. The browser keeps `scrollY`
+   * and simply clamps it to the new maximum, which lands the reader somewhere
+   * unrelated. Nothing was "scrolling"; the page moved underneath them.
+   *
+   * ⚠️ THE ANCHOR IS A CARD, NOT AN OFFSET — AND NOT THE RESULTS CONTAINER
+   * EITHER. Both of those were tried and both are no-ops exactly where the bug
+   * lives. Measured on /properties at 1440x820: the document is 4959px in grid
+   * and 3309px in list, so the maximum scroll drops from 4139 to 2489. A reader
+   * at y=4000 is CLAMPED to 2489 by the browser, and any fix that computes "put
+   * me back at y=4000" is asking for a position the shorter document does not
+   * have — it clamps straight back and nothing moves.
+   *
+   * What survives the switch is the CONTENT. So the topmost card still on
+   * screen is remembered by id, and after the switch that same card is put back
+   * at the same height in the viewport. It exists in both views, so the sum is
+   * always satisfiable; if the reader was near the end and the target now sits
+   * past the new maximum, the browser clamps to the bottom, which is the
+   * closest place that exists.
+   *
+   * ⚠️ A LAYOUT EFFECT, and it has to be. `useEffect` runs after paint, so the
+   * reader sees the jump and then sees it corrected — a flicker is worse than
+   * the bug. The isomorphic alias below keeps React from warning about
+   * `useLayoutEffect` during the server render of this client component.
+   *
+   * ⚠️ The anchor is CLEARED on read, so an unrelated re-render (a filter, a
+   * compare tick) can never trigger a stray scroll.
+   * ═══════════════════════════════════════════════════════════════════════
+   */
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const viewAnchor = useRef<{ id: string; top: number } | null>(null);
+
+  function setView(view: View) {
+    const root = resultsRef.current;
+    if (root) {
+      /* The topmost card still on screen — `bottom > 0` rather than `top >= 0`
+         so a card the reader is halfway through still counts as the one they
+         are looking at. Reading from a live NodeList in document order means
+         the first match is the topmost. */
+      const cards = Array.from(root.querySelectorAll<HTMLElement>("[data-pid]"));
+      const first = cards.find((el) => el.getBoundingClientRect().bottom > 0);
+      viewAnchor.current =
+        first && first.dataset.pid
+          ? { id: first.dataset.pid, top: first.getBoundingClientRect().top }
+          : null;
+    }
+    set({ view });
+  }
+
+  useIsoLayoutEffect(() => {
+    const a = viewAnchor.current;
+    viewAnchor.current = null;
+    if (!a) return;
+    /* Absent in map view, and absent if the card fell out of the filtered set
+       between renders — either way there is nothing to line up against. */
+    const el = resultsRef.current?.querySelector<HTMLElement>(
+      `[data-pid="${CSS.escape(a.id)}"]`,
+    );
+    if (!el) return;
+    const delta = el.getBoundingClientRect().top - a.top;
+    // Sub-pixel differences are layout noise, not a jump.
+    if (Math.abs(delta) > 1) window.scrollBy(0, delta);
+  }, [f.view]);
+
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (boxRef.current && !boxRef.current.contains(e.target as Node)) setSuggestOpen(false);
@@ -147,8 +223,58 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     [all, f.q, suggestOpen],
   );
 
-  const live = results.filter(isSellable);
-  const completed = results.filter((p) => !isSellable(p));
+  /**
+   * ═══════════════════════════════════════════════════════════════════════
+   * THE GRID IS GROUPED BY PHASE (report 6, 2026-08-19: "Future and Ongoing
+   * projects are displayed under the same section").
+   *
+   * It used to be a two-way split on `isSellable`, which answers a DIFFERENT
+   * question — "can you buy it" — and Ongoing, Upcoming and Future are all
+   * yes. So three stages that mean three very different things to a buyer
+   * (being handed over / about to open / land secured) arrived as one
+   * undifferentiated wall of cards.
+   *
+   * ⚠️ `completed` STILL CATCHES SOLD-OUT, and that is why this is not simply
+   * a group-by. A development can be sold out while its phase still says
+   * `ongoing`; the report asks for "Completed/Sold Out projects only" in one
+   * section, so anything not sellable joins the completed group whatever its
+   * phase says. The filter below therefore takes sellable items for every
+   * stage EXCEPT completed, and completed takes everything else — which is
+   * what keeps the two rules from double-counting a row.
+   *
+   * ⚠️ `unphased` EXISTS BECAUSE `project_phase` IS NULLABLE. A row with no
+   * phase, or one naming a stage this build does not know, would silently
+   * vanish from a pure group-by — a property that is on sale and appears
+   * nowhere is the worst failure this page has. They get their own section.
+   * ═══════════════════════════════════════════════════════════════════════
+   */
+  const groups = useMemo(() => {
+    const sellable = results.filter(isSellable);
+    const known = PHASE_ORDER.map((key) => ({
+      key,
+      meta: PHASE_META[key],
+      selling: key !== "completed",
+      items:
+        key === "completed"
+          ? results.filter((p) => p.project_phase === "completed" || !isSellable(p))
+          : sellable.filter((p) => p.project_phase === key),
+    }));
+    const unphased = sellable.filter(
+      (p) => !PHASE_ORDER.includes((p.project_phase ?? "") as Phase),
+    );
+    if (unphased.length) {
+      known.splice(known.length - 1, 0, {
+        key: "unphased" as Phase,
+        meta: {
+          label: "Also selling",
+          blurb: "Developments open to buy that are not yet assigned a stage.",
+        },
+        selling: true,
+        items: unphased,
+      });
+    }
+    return known.filter((g) => g.items.length > 0);
+  }, [results]);
   const active = !!(f.q.trim() || f.district || f.phase || f.purpose);
   const compared = f.compare.filter((id) => all.some((p) => p.id === id));
 
@@ -478,7 +604,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 key={v}
                 type="button"
                 aria-pressed={f.view === v}
-                onClick={() => set({ view: v })}
+                /* ⚠️ `setView`, not `set({ view })` — it captures the scroll
+                   anchor first. Calling `set` directly here is the bug coming
+                   back. */
+                onClick={() => setView(v)}
                 className="rj-segment-btn capitalize"
                 /* ⚠️ THE STONE WASH STAYS ON THE RESTING SEGMENTS ONLY, exactly
                    as before. The pressed seat must be transparent or it would
@@ -499,7 +628,9 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
       </div>
 
       {/* ---- results (the rail's right column from `xl`) ---- */}
-      <div className="min-w-0">
+      {/* `resultsRef` is what the view switch pins in place; see the note on
+          `viewAnchor` above. */}
+      <div ref={resultsRef} className="min-w-0">
       {results.length === 0 ? (
         <div className="mt-phi5">
           <EmptyState
@@ -538,6 +669,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                aligned depending on how long its title happened to be. */
             <li
               key={p.id}
+              /* The view switch lines this row up with its grid card of the same
+                 id — see `viewAnchor`. Both views must carry it or the anchor
+                 has nothing to find. */
+              data-pid={p.id}
               className="flex flex-col gap-phi2 py-phi3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-phi3"
             >
               <div className="min-w-0 flex-1">
@@ -589,43 +724,65 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         </>
       ) : (
         <>
-          {live.length > 0 && (
-            <section className="mt-phi5">
-              <h2 className="sr-only">Developments currently selling</h2>
-              <div key={swapKey} className="rj-swap grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-                {live.map((p, i) => (
-                  /* `flex` so the card inside stretches to the row height the
-                     grid gives this wrapper — without it the compare button's
-                     positioning context is full height but the card is not. */
-                  <div key={p.id} className="relative flex">
-                    <PropertyCard p={p} priority={i < 3} />
-                    <div className="absolute right-3 top-3 z-10">
-                      <CompareToggle
-                        on={compared.includes(p.id)}
-                        disabled={compared.length >= MAX_COMPARE && !compared.includes(p.id)}
-                        onClick={() => toggleCompare(p.id)}
-                        floating
-                      />
-                    </div>
+          {groups.map((g, gi) => {
+            /* The stage's own stone, the same key the cards, the chips and
+               /projects' bands already speak. `unphased` has none — it is not a
+               stage — so it falls back to the identity metal. */
+            const stone = STAGE_STONE[g.key as keyof typeof STAGE_STONE];
+            const accent = stone?.stone ?? "var(--color-champagne-500)";
+            return (
+              <section key={g.key} className={gi === 0 ? "mt-phi5" : "mt-phi6"}>
+                <div
+                  className="border-b pb-phi2"
+                  style={{
+                    borderColor: `color-mix(in srgb, ${accent} 40%, var(--color-line))`,
+                  }}
+                >
+                  <div style={{ borderLeft: `3px solid ${accent}`, paddingLeft: "0.9rem" }}>
+                    <h2 className="text-2xl text-ink">{g.meta.label} projects</h2>
+                    <p className="mt-phi2 max-w-xl text-base leading-relaxed text-ink-muted">
+                      {g.meta.blurb}
+                    </p>
                   </div>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {completed.length > 0 && (
-            <section className={live.length > 0 ? "mt-phi6 border-t border-line pt-phi5" : "mt-phi5"}>
-              <h2 className="text-2xl text-ink">Completed projects</h2>
-              <p className="mt-phi2 max-w-xl text-base leading-relaxed text-ink-muted">
-                Fully delivered developments, listed for reference. These are not available to buy.
-              </p>
-              <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
-                {completed.map((p) => (
-                  <PropertyCard key={p.id} p={p} />
-                ))}
-              </div>
-            </section>
-          )}
+                </div>
+                {/* ⚠️ The swap key carries the GROUP as well as the filters, or
+                    all three grids would share one animation identity and only
+                    the first would replay. */}
+                <div
+                  key={`${swapKey}|${g.key}`}
+                  className="rj-swap mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {g.items.map((p, i) =>
+                    g.selling ? (
+                      /* `flex` so the card inside stretches to the row height the
+                         grid gives this wrapper — without it the compare button's
+                         positioning context is full height but the card is not. */
+                      <div key={p.id} data-pid={p.id} className="relative flex">
+                        {/* `priority` only in the first group: it is the LCP
+                            candidate and marking every grid's first three would
+                            spend the preload budget on images below the fold. */}
+                        <PropertyCard p={p} priority={gi === 0 && i < 3} />
+                        <div className="absolute right-3 top-3 z-10">
+                          <CompareToggle
+                            on={compared.includes(p.id)}
+                            disabled={compared.length >= MAX_COMPARE && !compared.includes(p.id)}
+                            onClick={() => toggleCompare(p.id)}
+                            floating
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      /* Completed and sold-out carry no compare control — there
+                         is nothing to weigh up against anything. */
+                      <div key={p.id} data-pid={p.id} className="flex">
+                        <PropertyCard p={p} />
+                      </div>
+                    ),
+                  )}
+                </div>
+              </section>
+            );
+          })}
         </>
       )}
 

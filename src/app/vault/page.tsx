@@ -369,14 +369,30 @@ export default async function VaultPage() {
               and it is a flat tint with no backdrop-filter, so the painting
               runs through it unaltered rather than being frosted. */}
           <div
-            className="gilt rj-gilt-sheer rj-sheer-copy max-w-2xl rounded-2xl p-phi3 sm:p-phi4"
+            /* ⚠️ `max-w-xl`, down from `max-w-2xl` (report 6, 2026-08-19:
+               "reduce the left content panel slightly so more of the hero image
+               is visible"). 42rem → 36rem gives the painting back ~96px of
+               frame at every width above `xl`. Deliberately one step, not two:
+               the plate still has to hold a 5xl heading and a 2×3 CTA grid, and
+               `max-w-lg` starts wrapping the longer button labels onto three
+               lines. */
+            className="gilt rj-gilt-sheer rj-sheer-copy max-w-xl rounded-2xl p-phi3 sm:p-phi4"
             style={{ "--rj-sheer-alpha": 0.46 } as React.CSSProperties}
           >
-            {/* text-right (owner 2026-08-17): captions sit right. */}
-            <p className="rj-eyebrow text-right" style={{ color: "var(--color-champagne-300)" }}>
+            {/* ⚠️ THE ALIGNMENT IS NOT SET HERE. This used to carry `text-right`
+                and removing it changed nothing — `.rj-eyebrow` right-aligns
+                every caption on the site from royal.css, and the Vault's
+                override lives beside that rule. Putting a `text-left` back on
+                this one element would fix the wordmark and leave the other
+                sixteen eyebrows on the page where they were. */}
+            <p className="rj-eyebrow" style={{ color: "var(--color-champagne-300)" }}>
               {hero.eyebrow ?? "Jamin Bazaar"}
             </p>
-            <h1 className="mt-phi2 text-balance text-4xl text-white lg:text-5xl">
+            {/* One step down (report 6: "keep The Vault as the main focal point,
+                but reduce its size slightly"). It stays the largest thing in
+                the plate — the lead below is `xl` — so it is still the focal
+                point, just no longer competing with the painting. */}
+            <h1 className="mt-phi2 text-balance text-3xl text-white lg:text-4xl">
               {hero.title ?? "The Vault"}
             </h1>
             <p className="rj-voice mt-phi2 text-pretty text-xl text-white">
@@ -395,10 +411,17 @@ export default async function VaultPage() {
                 ⚠️ NO NEW COLOUR — every value here already existed on this
                 page, which is the same restraint the 2026-08-14 pass held to.
 
-                ⚠️ The arrows are GONE with the centring, not overlooked: a
-                centred label with a right-pinned arrow reads as mis-set, an
-                inline arrow un-centres the text it sits after, and each label
-                already says where it goes.
+                ⚠️ THE ARROWS ARE BACK, AND THE CENTRING GAVE WAY TO THEM
+                (report 6, 2026-08-19: "keep the → arrow on every CTA and align
+                all arrows consistently"). This note used to argue the opposite
+                and the argument still holds — a centred label with a
+                right-pinned arrow does read as mis-set — but "aligned
+                consistently" can only mean the arrows line up, and they cannot
+                line up under labels of six very different lengths unless each
+                one is pinned to its own right edge. So the label goes left, the
+                arrow goes right, and every arrow in a row sits at the same x.
+                Restoring the centring means dropping the arrows again; the two
+                requests are mutually exclusive.
 
                 ⚠️ Below `sm` the grid collapses back to one column — six
                 half-width tap targets at 375px would be under the 44px
@@ -410,15 +433,17 @@ export default async function VaultPage() {
                   duty; the class never declares position. */}
               <Link
                 href="/vault/request?intent=buy"
-                className="rj-velvet rj-rim relative rounded-full px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
+                className="rj-velvet rj-rim relative flex items-center justify-between gap-3 rounded-full px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
               >
                 I want to buy
+                <span aria-hidden="true">→</span>
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="rj-rim relative rounded-full border border-champagne-300 px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="rj-rim relative flex items-center justify-between gap-3 rounded-full border border-champagne-300 px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
               >
                 I want to rent
+                <span aria-hidden="true">→</span>
               </Link>
               {[
                 { href: "/vault/offer?intent=sell", label: "I want to sell", tone: "text-white/80" },
@@ -437,9 +462,13 @@ export default async function VaultPage() {
                 <Link
                   key={r.href}
                   href={r.href}
-                  className={`rounded-full border border-champagne-500/30 px-5 py-3 text-center text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
+                  className={`flex items-center justify-between gap-3 rounded-full border border-champagne-500/30 px-5 py-3 text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
                 >
                   {r.label}
+                  {/* Decoration — the label already says where it goes, so the
+                      arrow is hidden from the tree rather than read out six
+                      times as "right arrow". */}
+                  <span aria-hidden="true">→</span>
                 </Link>
               ))}
             </div>
@@ -454,12 +483,40 @@ export default async function VaultPage() {
           know that this page works backwards, and everything after it depends
           on their knowing. */}
       <Container className="py-phi6">
-        <div className="grid gap-phi5 lg:grid-cols-[1fr_1.618fr]">
+        {/* 🚨 THE LEFT COLUMN HAD TWO LINES IN IT (report 6, 2026-08-19: "the
+            section has excessive empty space, weak visual hierarchy, and the
+            content/cards feel disconnected from the premium nature of The
+            Vault").
+
+            All three complaints have one cause. An eyebrow and a two-line
+            heading were holding open 38% of the band's width against a column
+            of body copy nearly four times as tall, so the left half was mostly
+            air and the heading — the thing meant to lead the section — was the
+            smallest object in it.
+
+            ⚠️ THE PICTURE IS `VaultPlate`, NOT A NEW ASSET. That component
+            already backs every family card on this page and DRAWS a plate when
+            it has no photograph, so the column is never empty and nothing new
+            has to be commissioned or shipped. Give `settings.familyImages` a
+            key and it becomes a real property visual with no code change. */}
+        <div className="grid items-start gap-phi5 lg:grid-cols-[1fr_1.618fr]">
           <div>
             <p className="rj-eyebrow text-jamin-gold-ink">The idea</p>
+            {/* ⚠️ BACK TO `2xl/3xl` — the size bump was wrong and measuring
+                caught it. At `lg:text-4xl` this h2 rendered at 67.8px, which is
+                exactly what the hero h1 now renders at: a section heading the
+                same size as the page title is not a stronger hierarchy, it is
+                no hierarchy. The report's "strengthen the THE IDEA heading" is
+                answered structurally instead — the column beside it is no
+                longer empty, so the heading stops floating in white space —
+                and by the rule and plate below it. */}
             <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
               You do not have to find it. You have to describe it.
             </h2>
+            <div className="rj-fret mt-phi3 max-w-[10rem]" aria-hidden="true" />
+            <div className="relative mt-phi4 hidden aspect-[4/5] overflow-hidden rounded-xl border border-champagne-500/35 lg:block">
+              <VaultPlate seed="the-idea" sizes="(min-width: 1024px) 32vw, 100vw" />
+            </div>
           </div>
           <div>
             <p className="text-lg leading-relaxed text-ink-soft">
@@ -472,13 +529,33 @@ export default async function VaultPage() {
               there.
             </p>
 
-            <ul className="mt-phi4 grid gap-2 sm:grid-cols-2">
+            {/* ⚠️ THESE ARE QUOTATIONS, SO THEY ARE SET AS QUOTATIONS. They were
+                plain bordered boxes carrying curly quotes as punctuation, which
+                is what made them read as "disconnected" — a spoken sentence
+                looked like a form field. Each now gets a champagne rule down
+                its speaking edge and a drawn quote mark, so the group reads as
+                things people say rather than as a list of options.
+
+                ⚠️ The gold is a HAIRLINE AND A MARK, never the words:
+                champagne-500 measures 2.36:1 on this ground and would fail as
+                text. The sentence itself stays `ink-soft`. */}
+            <ul className="mt-phi4 grid gap-2.5 sm:grid-cols-2">
               {SPOKEN.map((line) => (
                 <li
                   key={line}
-                  className="rounded-card border border-line bg-canvas-alt px-phi3 py-2.5 text-base text-ink-soft"
+                  className="relative overflow-hidden rounded-card border border-champagne-500/30 bg-canvas-alt py-3 pl-phi4 pr-phi3 text-base leading-relaxed text-ink-soft"
                 >
-                  “{line}”
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-y-0 left-0 w-[3px] bg-champagne-500/60"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute left-3 top-1.5 text-lg leading-none text-champagne-500/50"
+                  >
+                    “
+                  </span>
+                  {line}
                 </li>
               ))}
             </ul>
@@ -666,19 +743,22 @@ export default async function VaultPage() {
       {heritage ? (
         <section className="border-y border-line bg-canvas-alt py-phi6">
           <Container>
-            <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
-                {/* Reads the same `familyImages` map as every other family
-                    (0085) rather than a key of its own — it is a family that
-                    happens to get a bigger frame, not a different kind of
-                    thing. No picture in the map and it falls back to the drawn
-                    plate, exactly as this band shipped. */}
-                <VaultPlate
-                  src={settings.familyImages[heritage.slug]}
-                  seed={heritage.slug}
-                  sizes="(min-width: 1024px) 60vw, 100vw"
-                />
-              </div>
+            {/* 🚨 THE WORDS COME FIRST NOW (report 6, 2026-08-19: "the text
+                content is positioned on the right side, which creates an
+                unbalanced layout… place HERITAGE INDIA at the top-left").
+
+                The picture was in the 1.618 column and the copy in the 1, so
+                the section opened on an image and the reader met the heading
+                two-thirds of the way across. Swapping the ORDER and the RATIO
+                — text in the wide column, picture in the narrow one — puts the
+                eyebrow at the top-left where every other section on this page
+                already starts.
+
+                ⚠️ Source order changed, not just `order-*`. A visual-only swap
+                would leave a screen reader and a phone (where the grid is one
+                column) still meeting the picture first, which is the same
+                complaint in a different medium. */}
+            <div className="grid items-start gap-phi5 lg:grid-cols-[1.618fr_1fr]">
               <div>
                 <p className="rj-eyebrow text-jamin-gold-ink">Heritage India</p>
                 <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
@@ -689,6 +769,19 @@ export default async function VaultPage() {
                   palace-style residences. These rarely reach a portal — they change hands through
                   families, lawyers and long conversations, which is the way The Vault works anyway.
                 </p>
+              </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
+                {/* Reads the same `familyImages` map as every other family
+                    (0085) rather than a key of its own — it is a family that
+                    happens to get a bigger frame, not a different kind of
+                    thing. No picture in the map and it falls back to the drawn
+                    plate, exactly as this band shipped. */}
+                <VaultPlate
+                  src={settings.familyImages[heritage.slug]}
+                  seed={heritage.slug}
+                  /* 38vw now, not 60 — the frame moved to the narrow column. */
+                  sizes="(min-width: 1024px) 38vw, 100vw"
+                />
               </div>
             </div>
 

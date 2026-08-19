@@ -307,6 +307,31 @@ export function MasterPlan({
         </div>
       </div>
 
+      {/* 🚨 ABOVE THE DRAWING, NOT BELOW IT (report 6, 2026-08-19). It used to
+          sit under the plan, where it answers a question the reader has
+          already stopped asking: by then they have either discovered the plots
+          are tappable or scrolled past. An instruction that arrives after the
+          thing it describes is decoration.
+
+          It sits below the status key and above the plan — the position the
+          report asked for — so it is the last thing read before the drawing is
+          looked at.
+
+          ⚠️ STILL GATED ON `!selected`. Once a plot sheet is open the reader
+          has plainly worked it out, and leaving the prompt up would be the
+          interface talking over itself. */}
+      {!selected && (
+        <p className="mt-phi3 flex items-center gap-2 text-base text-ink-muted">
+          <span
+            aria-hidden="true"
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-jamin-gold-soft text-tiny text-jamin-gold-ink"
+          >
+            ☝
+          </span>
+          Tap any plot on the plan for its dimensions, facing and road width.
+        </p>
+      )}
+
       {/* the drawing — scrollable at zoom, so a phone can pan it. The floater
           overlays this wrapper rather than the scroller, so it stays put while
           the plan pans underneath. */}
@@ -680,18 +705,6 @@ export function MasterPlan({
           </div>
         </>,
         document.body,
-      )}
-
-      {!selected && (
-        <p className="mt-phi3 flex items-center gap-2 text-base text-ink-muted">
-          <span
-            aria-hidden="true"
-            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-jamin-gold-soft text-tiny text-jamin-gold-ink"
-          >
-            ☝
-          </span>
-          Tap any plot on the plan for its dimensions, facing and road width.
-        </p>
       )}
 
       {/* 🚨 THE CAVEAT SHIPS WITH THE TOOL, VISIBLY, NOT ONLY IN <desc>.

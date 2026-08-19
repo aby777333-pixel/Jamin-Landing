@@ -400,7 +400,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 subprocess down with a stack overflow; the h1 above is written
                 the same way for the same reason. */
             <div
-              className="relative hidden self-stretch xl:block"
+              className="rj-print-drop relative hidden self-stretch xl:block"
               style={{ minHeight: "clamp(24rem, 46vh, 30rem)" }}
               aria-hidden="true"
             >
@@ -701,14 +701,54 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           )}
 
           {investment.length > 0 && sellable && (
+            /* 🚨 REWORKED (report 6, 2026-08-19: "the section is very plain and
+                text-heavy, with excessive empty space and limited visual
+                hierarchy").
+
+                Three things were wrong and they compound. The rows were a
+                full-width `<dl>`, so a four-word label sat alone on one line
+                with its sentence on the next and the rest of the measure empty
+                — the "excessive empty space" was the label column that was
+                never drawn. The label was `ink-faint` at 12.6px against a
+                16px value, so the pair read as caption-then-body rather than
+                as term-and-definition. And nothing marked the section as being
+                about growth.
+
+                ⚠️ A TWO-COLUMN `<dl>` FROM `sm`, which is what closes the gap:
+                the term takes a fixed 13rem rail and the value takes the rest,
+                so each fact is one line instead of two and the whitespace goes
+                back into line-height. It stays stacked below `sm`, where 13rem
+                of a 375px screen would leave the value 8 words wide.
+
+                ⚠️ The icon is `growth` from SurveyIcon — a drawn mark traceable
+                to a document, per the standing rule, not a lifestyle
+                pictogram. It is `aria-hidden`: the heading already says what
+                the section is. */
             <Block id="investment" title="Why this location">
-              <dl className="divide-y divide-line border-y border-line">
+              <div className="flex items-start gap-phi3 rounded-card border border-line bg-canvas-alt p-phi3">
+                <span
+                  aria-hidden="true"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-canopy-soft text-canopy"
+                >
+                  <SurveyIcon name="growth" size="h-5 w-5" />
+                </span>
+                <p className="text-base leading-relaxed text-ink-muted">
+                  What the land around this development is doing — the facts we hold on record, not
+                  a forecast.
+                </p>
+              </div>
+              <dl className="mt-phi3 divide-y divide-line border-y border-line">
                 {investment.map(([k, v]) => (
-                  <div key={k} className="py-3">
-                    <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">
+                  <div
+                    key={k}
+                    className="gap-phi3 py-phi2 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline"
+                  >
+                    <dt className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft">
                       {humanKey(k)}
                     </dt>
-                    <dd className="mt-1 text-base leading-relaxed text-ink-soft">{String(v)}</dd>
+                    <dd className="mt-1 text-base leading-relaxed text-ink-soft sm:mt-0">
+                      {String(v)}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -744,7 +784,29 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         </div>
 
         {/* ---- sticky enquiry rail ---- */}
-        <aside className="lg:sticky lg:top-28 lg:self-start">
+        {/* 🚨 THE RAIL SCROLLS ITSELF (report 6, 2026-08-19: "the bottom
+            section containing See the Plot Layout and Save This Development is
+            cut off and not fully visible").
+
+            It was `lg:sticky lg:top-28` and nothing else. A sticky element is
+            pinned to the viewport, so anything below `100vh − 7rem` of its own
+            content is simply unreachable: the page scrolls, the rail does not,
+            and the last two buttons sit permanently past the bottom edge. It
+            reads like a cut-off popup, which is exactly how it was reported.
+            On a 13" laptop the rail is ~640px of content in ~610px of room —
+            which is why it hid two buttons and not ten, and why it never
+            reproduced on a tall monitor.
+
+            The fix is the pair: cap the height to the space a sticky element
+            actually has, then let it scroll inside that. `dvh` rather than
+            `vh` so a mobile browser's collapsing chrome cannot re-open the
+            same gap. `overscroll-contain` stops the page from taking over the
+            moment the rail hits its end.
+
+            ⚠️ BOTH HALVES OR NEITHER. `max-h` alone clips the buttons for good
+            instead of hiding them; `overflow-y-auto` alone does nothing,
+            because without a cap the element has no overflow to scroll. */}
+        <aside className="lg:sticky lg:top-28 lg:max-h-[calc(100dvh-8rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain">
           <div className="rounded-card border border-line bg-canvas-alt p-phi3 shadow-lift">
             <dl className="space-y-phi2">
               <Stat label="Type" value={typeLabel(p)} />

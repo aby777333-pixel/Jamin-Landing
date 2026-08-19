@@ -160,6 +160,36 @@
 }
 
 /**
+ * ⚠️ THE VAULT REVERSES IT (report 6, 2026-08-19).
+ *
+ * Two items in that report are the same fact seen twice: "Jamin Bazaar keep
+ * this text in the left side instead of right side", and "reposition the
+ * HERITAGE INDIA, Where, The off-market Vault, Vault bespoke search, for
+ * clients, for owners, before you write, please note content to the left…
+ * place [them] at the top-left". That list is not a list of sections — it is
+ * the list of every `.rj-eyebrow` on /vault. They were not misplaced in the
+ * markup; they were being right-aligned by the rule above, so each one sat at
+ * the far edge of its column while the h2 directly beneath it started at the
+ * left. That mismatch is what reads as "unbalanced".
+ *
+ * ⚠️ SCOPED TO THE VAULT, NOT GLOBAL. The 2026-08-17 instruction said
+ * "everywhere" and this report only reviews /vault, so the rest of the site
+ * keeps the right-aligned caption it was given. Removing `text-align: right`
+ * from the base class instead would silently move eyebrows on /tools, the
+ * offer and request forms, HeroConsole and the shared `SectionLabel` — none of
+ * which anyone has looked at. `[data-theme="vault"]` is on <html> for every
+ * route in the division, so this covers /vault, /vault/[slug], /vault/offer
+ * and /vault/request together.
+ *
+ * ⚠️ Deleting a `text-right` utility in the JSX does NOT do this — that was
+ * tried first and changed nothing, because the alignment never came from the
+ * markup.
+ */
+[data-theme="vault"] .rj-eyebrow {
+  text-align: left;
+}
+
+/**
  * Editorial voice — the "quietly presented" register.
  *
  * One typeface, so this is Inter at 300 on a longer measure and a looser
@@ -1948,10 +1978,29 @@ header .glass,
     display: none !important;
   }
 
-  /* Photographs do not bleed; the hero picture is not part of the record. */
-  section img,
-  .cd-photo img,
-  [class*="hero"] img {
+  /* 🚨 `section img` USED TO BE HERE AND IT WAS THE BUG (report 6,
+     2026-08-19: "Property images are not displayed in the generated property
+     record", priority High).
+
+     The intent was right — the hero photograph is decoration and costs a
+     buyer's toner, so it should not print. The SELECTOR was far too wide.
+     Every meaningful element on a property page sits inside a `<section>`, so
+     `section img` also silenced the gallery and the layout photographs, which
+     are not decoration — they are the record. What came off the printer was
+     the reported symptom exactly: the figure boxes still laid out, so a large
+     blank area appeared where the pictures should have been.
+
+     ⚠️ HERO ART IS NOW OPTED OUT BY NAME. `.rj-print-drop` sits on each of the
+     four surfaces that own one, instead of art being caught by where it
+     happens to sit in the document. A new hero cannot silently take the
+     gallery with it, and a new gallery cannot be silenced by being wrapped in
+     a section.
+
+     `.cd-photo img` stays — those are listing-card thumbnails, genuinely
+     decoration on a printed index. */
+  .rj-print-drop,
+  .rj-print-drop img,
+  .cd-photo img {
     display: none !important;
   }
 
