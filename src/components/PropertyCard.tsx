@@ -201,7 +201,7 @@ export function PropertyCard({
           </div>
           <div className="flex items-center gap-2">
             {!sellable && (
-              <span className="rounded-full bg-ink/85 px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] text-white backdrop-blur">
+              <span className="rounded-full bg-onyx-900/85 px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.1em] text-white backdrop-blur">
                 {p.status === "sold" ? "Sold Out" : p.status}
               </span>
             )}

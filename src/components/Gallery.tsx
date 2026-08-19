@@ -11,6 +11,20 @@ import { useCallback, useEffect, useState } from "react";
  * keyboard exit is a trap — and the listener is only bound while the lightbox
  * is actually open.
  */
+/**
+ * The three lightbox controls share one recipe so they cannot drift apart
+ * again — same height, same ring, same scrim. Only the width and the label
+ * differ at the call sites.
+ *
+ * ⚠️ `bg-onyx-900`, NEVER `bg-ink`. The dark scope sets
+ * `--color-ink: var(--color-bone)`, so an ink scrim INVERTS to a light wash
+ * in carbon while `text-white` on it does not — which is exactly how these
+ * three came to be white on white. `--color-onyx-900` is not remapped by
+ * that scope, so it is the same colour in both modes.
+ */
+const CONTROL =
+  "grid h-12 place-items-center rounded-full border border-white/40 bg-onyx-900/80 text-white shadow-raise backdrop-blur transition hover:bg-onyx-900";
+
 export function Gallery({ images, title }: { images: string[]; title: string }) {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -87,7 +101,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                     one thing here a reader has to be able to read. Above the
                     sheen, the sweep passes beneath it untouched. */}
                 {i === 1 && images.length > 3 && (
-                  <span className="absolute inset-0 z-10 grid place-items-center bg-ink/72 text-base font-medium text-white backdrop-blur-[2px]">
+                  <span className="absolute inset-0 z-10 grid place-items-center bg-onyx-900/72 text-base font-medium text-white backdrop-blur-[2px]">
                     +{images.length - 3} more
                   </span>
                 )}
@@ -107,7 +121,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
           the plot sheet were the two that had not been given the same fix. */}
       {open != null && createPortal(
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/95 p-4"
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-onyx-900/95 p-4"
           role="dialog"
           aria-modal="true"
           aria-label={`${title} gallery`}
@@ -133,7 +147,20 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
 
           <button
             onClick={() => setOpen(null)}
-            className="absolute right-4 top-4 rounded-full border border-white/30 bg-ink/70 px-4 py-2 text-tiny uppercase tracking-[0.12em] text-white backdrop-blur transition hover:bg-ink/90"
+            /* 🚨 THREE THINGS AT ONCE (owner, 2026-08-19 evening: "close and
+                 forward, backward arrows are not visible. Drag the tab
+                 little down. make the tabs same height").
+
+                 · `bg-onyx-900`, not `bg-ink` — the note on CONTROL above
+                   explains it. That is the whole reason it was invisible.
+                 · `top-6 sm:top-8`, down from `top-4`. It sat hard against
+                   the window edge, level with the site header showing
+                   through the (then light) scrim.
+                 · `h-12` via CONTROL, which is the arrows' height. It was
+                   `py-2` — about 34px against their 48 — so the three
+                   controls were two different sizes. `px-5` keeps the word
+                   off the ends now the box is taller. */
+              className={`absolute right-3 top-6 px-5 text-tiny uppercase tracking-[0.12em] sm:right-4 sm:top-8 ${CONTROL}`}
           >
             Close
           </button>
@@ -145,7 +172,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                   e.stopPropagation();
                   move(-1);
                 }}
-                className="absolute left-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-ink/70 text-xl text-white backdrop-blur transition hover:bg-ink/90 sm:left-4"
+                className={`absolute left-3 top-1/2 w-12 -translate-y-1/2 text-xl sm:left-4 ${CONTROL}`}
                 aria-label="Previous image"
               >
                 ←
@@ -155,12 +182,12 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
                   e.stopPropagation();
                   move(1);
                 }}
-                className="absolute right-3 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full border border-white/30 bg-ink/70 text-xl text-white backdrop-blur transition hover:bg-ink/90 sm:right-4"
+                className={`absolute right-3 top-1/2 w-12 -translate-y-1/2 text-xl sm:right-4 ${CONTROL}`}
                 aria-label="Next image"
               >
                 →
               </button>
-              <div className="ledger absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full bg-ink/70 px-3 py-1 text-tiny text-white/85 backdrop-blur">
+              <div className="ledger absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/25 bg-onyx-900/80 px-3 py-1 text-tiny text-white/90 backdrop-blur">
                 {open + 1} / {images.length}
               </div>
             </>

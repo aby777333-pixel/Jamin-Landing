@@ -275,7 +275,7 @@ export function PropertiesMap({
                 exactly what is true: the district, and how many of its projects
                 are pinned inside this circle. */}
             <span
-              className="pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/85 px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white backdrop-blur"
+              className="pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-full bg-onyx-900/85 px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white backdrop-blur"
               style={{
                 left: `calc(50% + ${halo.x}px)`,
                 top: `calc(50% + ${halo.y - halo.r - 12}px)`,
