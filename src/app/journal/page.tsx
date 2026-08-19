@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
-import { Container, EmptyState, ButtonLink } from "@/components/ui";
+import { ButtonLink, Container, EmptyState, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { JournalIndex, type JournalCard } from "@/components/JournalIndex";
 import { CallbackBand } from "@/components/CallbackBand";
 import { Masthead } from "@/components/Masthead";
@@ -119,7 +120,14 @@ export default async function JournalPage() {
           </p>
         }
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/journal")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
         {/* The nameplate. `count` is the published rows and `issue` is this
             build's date — the same stamp the title block carries, in the
             office's own timezone rather than the builder's. */}
@@ -156,6 +164,7 @@ export default async function JournalPage() {
               .map((c) => ({ slug: c.slug, name: c.name }))}
           />
         )}
+      </Pane>
       </Container>
 
       {/* ⚠️ THE hero-54 DIVIDER IS GONE (owner 2026-08-18 second report:

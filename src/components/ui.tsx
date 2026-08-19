@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { paneHue } from "@/lib/stones";
 
 /**
  * The shared primitives. §54 of the brief: one visual system, not forty pages
@@ -11,11 +12,75 @@ import type { ReactNode } from "react";
 export function Container({
   children,
   className = "",
+  hue,
 }: {
   children: ReactNode;
   className?: string;
+  /**
+   * The route's pane colour, stated ONCE per page (owner 2026-08-19).
+   *
+   * Every `.rj-pane` inside inherits `--rj-hue` from here, so a page names its
+   * hue in one place instead of threading a prop into every block. Pass
+   * `paneHue("/about")` — the map lives in lib/stones.ts and is meaning-led.
+   */
+  hue?: string;
 }) {
-  return <div className={`mx-auto max-w-[1280px] px-5 lg:px-10 ${className}`}>{children}</div>;
+  return (
+    <div
+      className={`mx-auto max-w-[1280px] px-5 lg:px-10 ${className}`}
+      style={hue ? ({ "--rj-hue": hue } as CSSProperties) : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
+/**
+ * A PANE — one of the route's coloured blocks (owner 2026-08-19).
+ *
+ * ⚠️ THE HUE IS A ROUTE PROPERTY, NOT A PER-BLOCK CHOICE. Pass `route` and the
+ * pane looks its colour up in lib/stones.ts. Every block on a page therefore
+ * wears the same hue and the page reads as one object — the alternative, a
+ * different colour per block, is a paint chart, not a design. `hue` exists for
+ * the one case a route genuinely varies: a property page takes its own
+ * development's district stone.
+ *
+ * ⚠️ IT RE-SCOPES ITS OWN INK, and that is why 40% is safe. `--color-ink-muted`
+ * measures under 4.5:1 on every pungent pane; the class overrides the token
+ * inside the pane so every Tailwind utility beneath it follows, which is the
+ * same mechanism PropertyCard's `data-tier` uses to re-scope a Crown card to
+ * onyx. Nothing at the call site has to know.
+ */
+export function Pane({
+  children,
+  route,
+  hue,
+  className = "",
+  as: Tag = "div",
+}: {
+  children: ReactNode;
+  route?: string;
+  hue?: string;
+  className?: string;
+  as?: "div" | "section";
+}) {
+  return (
+    <Tag
+      className={`rj-pane ${className}`}
+      /* 🚨 UNDEFINED WHEN NEITHER IS GIVEN — it must INHERIT, not default.
+         This shipped as `hue ?? paneHue(route ?? "/")`, which meant a bare
+         <Pane> wrote the HOME hue onto itself and beat the `--rj-hue` its
+         Container had just set. Every page came out vermilion; /about was
+         salmon instead of canopy and it looked like the route map was wrong
+         when the map was right. An inline style beats the cascade, so writing
+         a fallback here is writing an override. */
+      style={
+        hue || route ? ({ "--rj-hue": hue ?? paneHue(route!) } as CSSProperties) : undefined
+      }
+    >
+      {children}
+    </Tag>
+  );
 }
 
 /** The small gold-ruled eyebrow that opens every section. */

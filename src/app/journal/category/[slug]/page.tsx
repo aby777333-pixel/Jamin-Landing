@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Container, SectionLabel, Badge, EmptyState, ButtonLink } from "@/components/ui";
+import { Badge, ButtonLink, Container, EmptyState, Pane, SectionLabel } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import {
   KIND_LABEL,
   getJournalCategories,
@@ -62,7 +63,9 @@ export default async function JournalCategoryPage({
   // cached 404 for a page that was perfectly real.
 
   return (
-    <Container className="py-phi5">
+    <Container className="py-phi5" hue={paneHue("/journal")}>
+    {/* The route's pane. Hue stated once above; see lib/stones.ts. */}
+    <Pane className="p-phi3 sm:p-phi5">
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
         <Link href="/journal" className="hover:text-jamin-red-deep">
           Jamin Journal
@@ -156,6 +159,7 @@ export default async function JournalCategoryPage({
         ))}
       </div>
       )}
+    </Pane>
     </Container>
   );
 }

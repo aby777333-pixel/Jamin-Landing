@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { PlanningTools } from "@/components/PlanningTools";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
@@ -72,7 +73,14 @@ export default function ToolsPage() {
         title="Work out what it costs before you visit."
         lead="Four calculators, using your figures rather than ours. Jamin publishes no rate — every number below is one you enter, and nothing here is an offer of finance."
       />
-      <Container className="py-phi6">
+      <Container className="py-phi6" hue={paneHue("/tools")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
       <nav aria-label="Tools" className="flex flex-wrap gap-2">
         {[
           ["#emi", "EMI"],
@@ -110,6 +118,7 @@ export default function ToolsPage() {
           Ask the desk instead →
         </Link>
       </div>
+      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

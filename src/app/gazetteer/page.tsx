@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CompassRose } from "@/components/cadastral/Engravings";
 import { Reveal } from "@/components/Reveal";
 import { CallbackBand } from "@/components/CallbackBand";
@@ -103,7 +104,14 @@ export default async function GazetteerPage() {
         lead="Every district, taluk, town, village and locality on record, with the projects that sit in each. Names appear exactly as they are written on the documents."
       />
 
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/gazetteer")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
         {/* Aesthetics item 15: the compass rose settles north as it arrives
             — the index of places opens with the instrument that orders
             them. Decoration; static without JS. */}
@@ -172,6 +180,7 @@ export default async function GazetteerPage() {
             </section>
           ))}
         </div>
+      </Pane>
       </Container>
 
       <CallbackBand />

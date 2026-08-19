@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CompareTable } from "@/components/CompareTable";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties } from "@/lib/properties";
@@ -40,8 +41,16 @@ export default async function ComparePage() {
         title="Compare Jamin developments"
         lead="Two or three at a time. Rows where the projects agree are hidden, so what is left on the page is what actually separates them."
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/compare")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
         <CompareTable all={all} />
+      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

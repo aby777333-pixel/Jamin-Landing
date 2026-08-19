@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PageHero, type HeroArt } from "@/components/PageHero";
-import { Container, EmptyState, ButtonLink } from "@/components/ui";
+import { ButtonLink, Container, EmptyState, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties } from "@/lib/properties";
 import { PHASE_META, PHASE_ORDER, type Phase } from "@/lib/site";
@@ -222,7 +223,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           </>
         }
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/projects")}>
+      {/* The route's pane. Hue stated once above; see lib/stones.ts. */}
+      <Pane className="p-phi3 sm:p-phi5">
       <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
         <Link href="/projects" className="hover:text-jamin-red-deep">
           Projects
@@ -259,6 +262,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           </>
         )}
       </div>
+      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

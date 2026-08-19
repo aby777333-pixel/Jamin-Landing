@@ -9,7 +9,7 @@ import { Tilt } from "@/components/Tilt";
 import { IsoMark } from "@/components/cadastral/Engravings";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
-import { Container, SectionLabel, ButtonLink } from "@/components/ui";
+import { ButtonLink, Container, Pane, SectionLabel } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
   coverImage,
@@ -21,7 +21,7 @@ import {
   type Property,
 } from "@/lib/properties";
 import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
-import { STAGE_STONE } from "@/lib/stones";
+import { STAGE_STONE, paneHue } from "@/lib/stones";
 
 /** Revalidate hourly so admin edits reach the website without a redeploy,
  *  while every visitor still gets a cached, server-rendered page. */
@@ -122,7 +122,8 @@ export default async function HomePage() {
       </Container>
 
       {/* ---- what we are, in plain search terms ---- */}
-      <Container className="py-phi6">
+      <Container className="py-phi6" hue={paneHue("/")}>
+      <Pane className="p-phi3 sm:p-phi4">
           {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the
               section indices of a bound document, the ornament running
               between its chapters. Decoration only. */}
@@ -216,10 +217,12 @@ export default async function HomePage() {
             ))}
           </dl>
         </div>
+      </Pane>
       </Container>
 
       {/* ---- live inventory ---- */}
-      <Container className="pb-phi6">
+      <Container className="pb-phi6" hue={paneHue("/")}>
+      <Pane className="p-phi3 sm:p-phi4">
         <div className="flex flex-wrap items-end justify-between gap-phi3 border-t border-line pt-phi5">
           <div>
             <SectionLabel>Now selling</SectionLabel>
@@ -286,6 +289,7 @@ export default async function HomePage() {
               </section>
             );
           })}
+      </Pane>
       </Container>
 
       {/* ---- from plan to plot: the motif, made literal ---- */}
@@ -453,7 +457,8 @@ export default async function HomePage() {
           links to carries the plot plan. What was missing was the first step.
           "Plots available today" stays above this and the record below it. */}
       {facets.districts.length > 0 && (
-        <Container className="py-phi6">
+        <Container className="py-phi6" hue={paneHue("/")}>
+        <Pane className="p-phi3 sm:p-phi4">
           {/* Same empty-right-half problem as the purpose section above, and the
               photograph the owner chose for it — a Jamin entrance wall with a
               layout being built behind it: gardeners planting, a roller and a
@@ -508,6 +513,7 @@ export default async function HomePage() {
             </div>
           </div>
           <LocationExplorer items={all} />
+        </Pane>
         </Container>
       )}
 
@@ -597,7 +603,8 @@ export default async function HomePage() {
 
       {/* ---- track record ---- */}
       {completed.length > 0 && (
-        <Container className="py-phi6">
+        <Container className="py-phi6" hue={paneHue("/")}>
+        <Pane className="p-phi3 sm:p-phi4">
           {/* The MINI HERO (owner 2026-08-17 night: "add a mini hero image
               here") — the JAMIN CROWN gate fills the half of this opener that
               was bare sand, beside the heading. Standing rule: it names a
@@ -629,6 +636,7 @@ export default async function HomePage() {
               <PropertyCard key={p.id} p={p} />
             ))}
           </div>
+        </Pane>
         </Container>
       )}
 
@@ -638,7 +646,8 @@ export default async function HomePage() {
           roughly 288px of empty canvas between the closing band and the footer
           and read as the page having ended early. The footer's own margin is
           the separation. */}
-      <Container>
+      <Container hue={paneHue("/")}>
+      <Pane className="p-phi3 sm:p-phi4">
         {/* ⚠️ THE COPY CAME OFF THE FOOTAGE, 2026-08-11. It used to sit over the
             video with a `veil` behind it, which is the right treatment for a
             still and the wrong one for this clip: somebody is speaking to
@@ -732,6 +741,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
+      </Pane>
       </Container>
 
       {/* CARTOUCHE §4.2 — the Sweep, surface 1 of exactly 3 (here, /contact,

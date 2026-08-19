@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { PageHero } from "@/components/PageHero";
 import { KolamCorner } from "@/components/cadastral/Engravings";
 import { getDeskContact, telHref, waHref } from "@/lib/site";
@@ -145,7 +146,9 @@ export default async function TamilPage() {
         }
       />
 
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/ta")}>
+      {/* The route's pane. Hue stated once above; see lib/stones.ts. */}
+      <Pane className="p-phi3 sm:p-phi5">
         {/* Aesthetics item 6: the sindoor thread — most at home on the
             Tamil page's own headings. */}
         <h2 className="rj-sindoor text-3xl text-ink">வாங்கும் முறை — நான்கு படிகள்</h2>
@@ -205,6 +208,7 @@ export default async function TamilPage() {
             பக்கங்களில்.
           </p>
         </div>
+      </Pane>
       </Container>
     </article>
   );

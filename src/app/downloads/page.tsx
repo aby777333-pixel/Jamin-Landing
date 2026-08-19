@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container, EmptyState, ButtonLink } from "@/components/ui";
+import { ButtonLink, Container, EmptyState, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { DownloadList, downloadsFor } from "@/components/Downloads";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, getProperty, isSellable, locationLine, propertyHref } from "@/lib/properties";
@@ -58,7 +59,14 @@ export default async function DownloadsPage() {
         }
       />
 
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/downloads")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
         {/* The printable visit checklist (do-all round 2026-08-18) — offered
             where a buyer is already collecting papers for a visit. */}
         <Link
@@ -118,6 +126,7 @@ export default async function DownloadsPage() {
             </p>
           </>
         )}
+      </Pane>
       </Container>
 
       <script

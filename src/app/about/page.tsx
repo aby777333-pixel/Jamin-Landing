@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { CallbackBand } from "@/components/CallbackBand";
@@ -77,7 +78,14 @@ export default async function AboutPage() {
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/about")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
 
       {/* 🚨 THE LEDGER PANEL — figures computed from the live database, never
           hand-typed, and as of 2026-08-13 no longer three loose divs.
@@ -194,6 +202,7 @@ export default async function AboutPage() {
           See our developments
         </Link>
       </section>
+      </Pane>
       </Container>
       {/* ⚠️ THE hero-53 DIVIDER IS GONE (owner 2026-08-18 second report:
           "hide the image"). It began as a crop band, became a full-frame band

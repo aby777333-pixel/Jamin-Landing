@@ -114,6 +114,60 @@ export function navStone(href: string): { stone: string; ink: string } {
 }
 
 /**
+ * ═══════════════════════════════════════════════════════════════════════════
+ * PANE HUES (§6.1b) — the colour a whole ROUTE wears on its content blocks.
+ *
+ * Owner, 2026-08-19: "in the whole site, the beige is prominent… why can't we
+ * add related glassy pungent colors to page blocks". He is describing a real
+ * property of the design: the sand ground is a strong warm, and it was the only
+ * large surface on every page, so 31 routes read as one field.
+ *
+ * ⚠️ THIS IS NOT A SECOND PALETTE. Every value below is a stone this file
+ * already owns; what changes is where it is spent — from a dot and an inlay
+ * (NAV_STONE, ~40px of jewellery per page) to the page's blocks. A route's pane
+ * hue and its nav stone are the SAME colour wherever both exist, so the tab you
+ * came in on and the blocks you land among agree.
+ *
+ * ⚠️ FOUR ROUTES DELIBERATELY DIVERGE FROM NAV_STONE, on the owner's call the
+ * same day. Home and /ta wore champagne and About wore platinum, and at pane
+ * strength those are still beige — which is the exact complaint. They take
+ * vermilion and canopy instead. `/account` KEEPS platinum on purpose: it is the
+ * one signed-in surface and §2 assigns platinum to secondary interface, so a
+ * quiet page there is the design working, not the design failing. `/vault`
+ * keeps champagne because that route flips the whole interface to onyx and its
+ * panes sit on a dark ground where champagne is the correct metal.
+ *
+ * ⚠️ MEANING-LED, LIKE NAV_STONE. Land is emerald, stage is sapphire, district
+ * is amethyst, writing is jade, the desk and the action are the signal reds,
+ * paperwork is the bronze family, and the checklist that gets walked on site
+ * takes the deep canopy.
+ * ═══════════════════════════════════════════════════════════════════════════
+ */
+export const PANE_HUE: Record<string, string> = {
+  "/": "var(--color-vermilion)",
+  "/ta": "var(--color-vermilion)",
+  "/properties": "var(--color-emerald)",
+  "/projects": "var(--color-sapphire)",
+  "/locations": "var(--color-amethyst)",
+  "/journal": "var(--color-jade)",
+  "/about": "var(--color-canopy)",
+  "/account": "var(--color-plat-500)",
+  "/vault": "var(--color-champagne-500)",
+  "/compare": "var(--color-topaz)",
+  "/contact": "var(--color-jamin-red)",
+  "/downloads": "var(--color-champagne-500)",
+  "/faq": "var(--color-jade)",
+  "/gazetteer": "var(--color-amethyst)",
+  "/tools": "var(--color-ruby)",
+  "/visit-checklist": "var(--color-emerald-deep)",
+};
+
+/** The hue for a route, falling back to the identity metal. */
+export function paneHue(route: string): string {
+  return PANE_HUE[route] ?? "var(--color-champagne-500)";
+}
+
+/**
  * FORWARD MAP — the marketplace taxonomy (§5c).
  *
  * ⚠️ Constants only, wired to nothing. Every property in the database is

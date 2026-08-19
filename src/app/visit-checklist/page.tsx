@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { PassportButton } from "@/components/PassportButton";
 import { CallbackBand } from "@/components/CallbackBand";
 
@@ -113,7 +114,14 @@ export default function VisitChecklistPage() {
         <div className="mt-2 text-[9pt]">Sheet taken {taken}</div>
       </div>
 
-      <Container className="py-phi5 print:py-0">
+      <Container className="py-phi5 print:py-0" hue={paneHue("/visit-checklist")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5 print:p-0">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 print:hidden">
           <p className="text-base text-ink-muted">
             Save it as a PDF from the print dialogue, or take it on paper.
@@ -150,6 +158,7 @@ export default function VisitChecklistPage() {
             number, survey numbers and plot schedule are published on the project page.
           </p>
         </div>
+      </Pane>
       </Container>
       <div className="print:hidden">
         <CallbackBand />

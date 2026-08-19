@@ -124,7 +124,7 @@ export default async function ProjectsPage() {
              ⚠️ THE WHOLE BAND WEARS IT NOW (owner 2026-08-19: "I don't see any
              hue changes… can we have different hues for the blocks"). The
              stone was real but it was spending itself on a 3px bar and a link,
-             which is a key you have to go looking for. `rj-stage-band` puts it
+             which is a key you have to go looking for. `rj-pane` puts it
              on the GROUND, so Ongoing, Future and Completed are three visibly
              different blocks at a glance. Nothing about the mapping changed —
              same stones, same fallback, just spent where it can be seen. */
@@ -132,20 +132,24 @@ export default async function ProjectsPage() {
           return (
           <section key={g.phase} className="mt-phi6 first:mt-phi5">
             <div
-              className="rj-stage-band rounded-xl p-phi3 sm:p-phi4"
-              /* ⚠️ TWO variables, and the split is the fill/word rule that runs
-                 through lib/stones.ts. `--rj-stage` is the FILL and is only
-                 ever mixed down into a ground or a rim. `--rj-stage-ink` is the
-                 value that survives being looked at — it is what the cap bar
-                 uses, because plat-500 (Completed's fill) measures 2.70:1
-                 against the band and would read as a smudge, while plat-800
-                 (its ink) reads as a bar. Emerald and sapphire are their own
-                 ink, so only Completed actually differs. */
+              className="rj-pane p-phi3 sm:p-phi4"
+              /* ⚠️ `rj-pane`, NOT the bespoke `rj-stage-band` it replaced — and
+                 the hue is the stage's INK, not its fill.
+
+                 This page is the one route whose blocks are not all one colour:
+                 the three stages ARE the subject, so each band takes its own
+                 stone rather than the route's. Folding them into the shared
+                 pane is what lets them go from the 13% they shipped at to the
+                 40% everything else wears — the ceiling was never the tint, it
+                 was `--color-ink-muted`, and the pane re-scopes it.
+
+                 ⚠️ THE INK, NOT THE FILL, because the pane's cap bar paints
+                 `--rj-hue` at full strength. Completed's fill is plat-500 and
+                 measures 2.70:1 against its own band — a smudge where a bar
+                 should be. Its ink (plat-800) reads. Emerald and sapphire are
+                 their own ink, so only Completed actually moves. */
               style={
-                {
-                  "--rj-stage": stone?.stone ?? "var(--color-champagne-500)",
-                  "--rj-stage-ink": stone?.ink ?? "var(--color-champagne-700)",
-                } as React.CSSProperties
+                { "--rj-hue": stone?.ink ?? "var(--color-champagne-700)" } as React.CSSProperties
               }
             >
             <div

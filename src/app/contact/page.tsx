@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/PageHero";
 import { Sweep } from "@/components/brand/Sweep";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { VisitBooking } from "@/components/VisitBooking";
 import { DeskActions } from "@/components/DeskActions";
@@ -38,7 +39,14 @@ export default async function ContactPage() {
         title="Book a site visit"
         lead="Walk the layout, see the approvals and stand on the plot before you decide. Visits are arranged at your convenience and carry no obligation."
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/contact")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
       <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
         <div>
 
@@ -128,6 +136,7 @@ export default async function ContactPage() {
           </div>
         </aside>
       </div>
+      </Pane>
       </Container>
 
       {/* CARTOUCHE §4.2 — the Sweep, surface 2 of exactly 3. On /contact the

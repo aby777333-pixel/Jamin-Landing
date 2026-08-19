@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 import { districtFromSlug, districtNames, districtSlug } from "@/lib/site";
@@ -245,7 +246,9 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           a reader here is already thinking in districts. */}
       <ThumbIndex districts={districtNames(await getProperties())} current={name} />
 
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/locations")}>
+      {/* The route's pane. Hue stated once above; see lib/stones.ts. */}
+      <Pane className="p-phi3 sm:p-phi5">
         <div className="flex items-start justify-between gap-4">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
             <Link href="/properties" className="hover:text-ink">
@@ -272,6 +275,7 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
         <div className="mt-phi3">
           <PropertyExplorer all={items} />
         </div>
+      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

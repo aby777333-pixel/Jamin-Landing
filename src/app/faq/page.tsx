@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, Pane } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
@@ -140,7 +141,14 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Container className="py-phi5">
+      <Container className="py-phi5" hue={paneHue("/faq")}>
+      {/* ⚠️ ONE pane for the page body, not one per element (owner
+          2026-08-19). Converting the bordered elements instead would have
+          tinted the CARDS too, and the cards are what has to stay on
+          `bg-canvas` so they lift off the sheet — that lift is half of
+          what the hue buys. The colour itself is stated once, on the
+          Container above, and every `.rj-pane` inside inherits it. */}
+      <Pane className="p-phi3 sm:p-phi5">
         <dl className="mx-auto max-w-3xl">
           {FAQS.map((f) => (
             <div key={f.q} className="border-t border-line py-phi4 first:border-t-0">
@@ -163,6 +171,7 @@ export default function FaqPage() {
             </div>
           ))}
         </dl>
+      </Pane>
       </Container>
       <CallbackBand />
     </>
