@@ -31,7 +31,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80;
+  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -105,6 +105,10 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
   77: 887,
   /* hero-80 — the survey-desk flat-lay v2 (/journal), COMPOSED not supplied. */
   80: 941,
+  /* hero-81 — the JAMIN GRAND avenue at dusk (owner's swap 2026-08-19),
+     replacing hero-69 on /projects. 1672x941, the register's common
+     geometry, so the rendition ladder is the existing one. */
+  81: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -347,6 +351,28 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      representation only" disclaimer that covers it. alt="", aria-hidden,
      decoration only. */
   80: 1672,
+  /* hero-81 — JAMIN GRAND at dusk ("kl.png", 1672x941) → /projects,
+     replacing hero-69, which returns to SPARES.
+
+     ⚠️ IT NEEDS `artPosition="right"` AND THE REASON IS THE MIRROR OF
+     hero-69's. Both frames carry the JAMIN BAZAAR lockup baked in, but
+     hero-69 wears it on the LEFT of an arch and this one wears it on a
+     plinth at the FAR RIGHT. The paper hero's art box is 58% of the
+     viewport and `object-cover` at the default `left` throws the right
+     side away: simulated at 1440x800 the box is 835x620, the frame scales
+     to 1101 wide, and the 266px it drops are exactly the plinth — the
+     lockup came out sliced down the middle. `right` keeps the lockup and
+     the JAMIN GRAND plaque whole and puts the dissolving left edge on
+     empty road, which is the best possible thing to feed `hero-fade`.
+
+     ⚠️ NO ALPHA SWEEP, because `paper` carries no plate — nothing overlays
+     the render, which is the same reason hero-69's cinematic sweep numbers
+     were retired when this page moved to `paper` on 2026-08-18. If a
+     future round puts it back on `cinematic`, sweep it first.
+
+     Standing rule at full strength: names a community not in the
+     catalogue, so alt="", aria-hidden, never a caption. */
+  81: 1672,
   /* hero-75 — the JAMIN SOULFUL gate in daylight (owner-supplied 2026-08-18
      13:00) → /compare, replacing hero-73 the same day at the owner's ask.
      Lockup TOP-CENTRE on the arch, "Welcome to a Life Well Planned" plinth

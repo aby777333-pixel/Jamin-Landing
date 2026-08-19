@@ -42,14 +42,22 @@ export default async function ProjectsPage() {
   // cover in the grid below.
   const showcase = all.find((p) => secondaryImage(p));
   // Kept live for the one-prop restore recorded on the PageHero call.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unused BY DESIGN while hero-69 carries the page
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- unused BY DESIGN while hero-81 carries the page
   const photo = showcase
     ? { src: secondaryImage(showcase)!, alt: `${showcase.title}, a Jamin development` }
     : undefined;
 
   return (
     <>
-      {/* ⚠️ hero-69 (JAMIN GRAND, owner-named 2026-08-17) REPLACES THE REAL
+      {/* ⚠️ hero-81 (JAMIN GRAND at dusk, owner's swap 2026-08-19) REPLACES
+          hero-69, the daylight roundabout view of the same community. Same
+          name, same page, a later hour and a closer stand — the avenue now
+          recedes into the frame instead of being seen across a lawn.
+
+          The paragraph below still describes why a RENDER carries this page
+          at all, and it still holds. hero-69 → SPARES.
+
+          ⚠️ hero-69 (JAMIN GRAND, owner-named 2026-08-17) REPLACED THE REAL
           PHOTOGRAPH this page carried by rule — the owner supplied the frame
           for this page, the hero-40 precedent standing for the third time. The
           `photo`/`secondaryImage` path stays live below the fold and in code;
@@ -57,10 +65,22 @@ export default async function ProjectsPage() {
           named-community render on the projects index is alt="", aria-hidden,
           never a caption. */}
       <PageHero
-        art={69}
+        art={81}
+        /* 🚨 `right`, NOT the default `left` — the ONE thing that has to
+           travel with this frame. hero-69 wore its lockup on the left of an
+           arch, hero-81 wears it on a plinth at the far right, and the 58%
+           art box crops from whichever edge `objectPosition` does not
+           anchor. Simulated at 1440x800 before shipping: at `left` the box
+           drops the rightmost 266px of the scaled frame and cuts the JAMIN
+           BAZAAR mark in half; at `right` the lockup and the JAMIN GRAND
+           plaque are whole and the fade eats empty road instead. Full note
+           on the id in PageHero's width register. */
+        artPosition="right"
         /* 🚨 `paper`, NOT `cinematic` (owner report 2026-08-18): the dark copy
            plate was covering the JAMIN BAZAAR lockup baked into the LEFT of
-           hero-69's arch, and on desktop the geometry has NO fix — measured
+           hero-69's arch — and the reasoning survives the 2026-08-19 swap
+           unchanged, because hero-81 carries a lockup too and `paper` is
+           still the tone that overlays nothing. and on desktop the geometry has NO fix — measured
            at 1440x800: the gap between the hero's top edge and the plate's
            top is 73px, the lockup is 84px tall at the width-bound scale, and
            the frame is width-bound so horizontal steering has zero travel.

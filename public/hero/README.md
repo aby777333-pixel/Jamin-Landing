@@ -1216,3 +1216,33 @@ hero-61, no PageHero id). No alpha sweep needed — the home plate is the sand
 ⚠️ "evening.png" from the same batch is deliberately UNUSED — the owner kept
 hero-61 as dusk; it waits in Downloads as a spare. Standing rule on both:
 named communities, alt="", aria-hidden, never a caption.
+
+## hero-81 — JAMIN GRAND at dusk (/projects, 2026-08-19, owner's swap)
+
+Owner-supplied as `kl.png`, 1672x941 — the register's common geometry, so the
+ladder is the existing 768/1280/1672 at q80 with no crop or letterbox.
+
+Replaces **hero-69** on /projects: the same named community, a later hour and a
+much closer stand. hero-69 saw the entrance across a lawn from the roundabout;
+this one stands in the avenue itself, gate open, family walking in. hero-69 →
+**SPARES** (it keeps its ids and renditions).
+
+⚠️ **It ships with `artPosition="right"`, and that is not a taste call.** Both
+frames carry the JAMIN BAZAAR lockup baked in, on opposite sides: hero-69 on the
+LEFT of an arch, hero-81 on a plinth at the FAR RIGHT. The paper hero's art box
+is 58% of the viewport under `object-cover`, so it crops from whichever edge
+`objectPosition` does not anchor. Simulated at 1440x800 before shipping — box
+835x620, frame scales to 1101 wide, 266px discarded — and at the default `left`
+those 266px are exactly the plinth: the mark came out sliced down the middle.
+At `right` the lockup and the JAMIN GRAND plaque are whole, and the edge
+`hero-fade` dissolves is empty road, which is the best thing that mask can be
+given.
+
+⚠️ **No alpha sweep**, because /projects is `paper` and paper carries no plate —
+nothing overlays the render. This is the same reason hero-69's cinematic sweep
+numbers (0.34 photograph, 0.58 Grand) were retired when the page moved to
+`paper` on 2026-08-18. Put the page back on `cinematic` and this frame needs
+sweeping first.
+
+Standing rule at full strength — names a community not in the catalogue:
+`alt=""`, `aria-hidden`, never a caption.
