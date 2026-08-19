@@ -3232,3 +3232,100 @@ header .glass,
     animation: none;
   }
 }
+
+/**
+ * ── THE STAGE BAND (owner 2026-08-19: "I don't see any hue changes… can we
+ *    have different hues for the blocks") ──────────────────────────────────
+ *
+ * /projects groups its developments into Ongoing, Future and Completed, and
+ * every one of those stages ALREADY owned a stone in lib/stones.ts. The colour
+ * was real and correctly mapped; it was simply spending itself on a 3px left
+ * bar, a border tint and one link — a key a reader has to go looking for. This
+ * puts the same stone on the GROUND, so the three blocks differ at a glance.
+ *
+ * ⚠️ 7%, AND THAT NUMBER IS A CONTRAST BUDGET, NOT A TASTE. The band carries
+ * `--color-ink-muted` for the stage blurb, which measures 6.46:1 on the plain
+ * canvas. Every percent of stone mixed in darkens the ground and spends some of
+ * that margin. At 7% the worst of the three (sapphire, the darkest stone) still
+ * clears AA comfortably; the measured values are in the commit. Raising this
+ * without re-measuring the blurb is how the band becomes an accessibility bug.
+ *
+ * ⚠️ THE CARDS ARE NOT TINTED, AND THAT IS THE POINT. `PropertyCard` stays on
+ * `bg-canvas`, which is now LIGHTER than the band — so the cards lift off it
+ * rather than dissolving into a flat sand page. Tinting both would cancel the
+ * effect and put the stone underneath every word on the card, which is exactly
+ * the contrast surface this block is written to protect.
+ *
+ * ⚠️ `--rj-stage` IS SET BY THE CALL SITE, once. Everything here mixes from it,
+ * so a stage's colour is stated in one place (lib/stones.ts, via the page) and
+ * never restated in CSS. A stage with no stone falls back to champagne, which
+ * is the same fallback the page's header already used.
+ */
+.rj-stage-band {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--rj-stage, var(--color-champagne-500)) 13%, var(--color-canvas));
+  border: 1px solid color-mix(in srgb, var(--rj-stage, var(--color-champagne-500)) 45%, var(--color-line));
+}
+
+/**
+ * THE CAP — 6px of the stage's ink across the top of the block.
+ *
+ * ⚠️ THIS IS THE PART THAT IS ACTUALLY VISIBLE, and it exists because the tint
+ * alone was not. Shipped at 7% first and the owner's report was blunt: "I don't
+ * see any hue changes". Measured, he was right — 7% of a desaturated stone over
+ * a ground as warm as #f0e1d6 moved the three grounds 2 to 8 RGB points apart,
+ * which is a difference you can compute and cannot see. Sand is a strong warm,
+ * so a cool stone mixed into it at low alpha just reads as slightly greyer sand
+ * whatever the hue underneath was.
+ *
+ * The fix is not "more tint" — the tint has a hard ceiling (below). It is to
+ * spend the stone SOMEWHERE WITH NO TEXT ON IT, where it can be used at full
+ * strength. A 6px bar carries no words, so it has no contrast budget to spend
+ * and the hue arrives undiluted.
+ *
+ * ⚠️ It uses `--rj-stage-ink`, not `--rj-stage`. See the note at the call site:
+ * Completed's fill is plat-500 and measures 2.70:1 against the band, which is a
+ * smudge, not a bar.
+ *
+ * ⚠️ Decoration, and it must stay that way: every block states its stage in an
+ * h2 directly under this bar, so the colour is never the only carrier of the
+ * meaning — the standing rule in lib/stones.ts.
+ */
+.rj-stage-band::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: var(--rj-stage-ink, var(--color-champagne-700));
+}
+
+/**
+ * ⚠️ 13% IS A MEASURED CEILING, NOT A PREFERENCE — do not raise it.
+ *
+ * The band carries the stage blurb in `--color-ink-muted` (#5d5548), and that
+ * ink is what sets the limit. Solving for AA on the darkest of the three stones
+ * (sapphire) puts the floor at a ground luminance of 0.5934; 13% lands the
+ * worst band at roughly 4.8:1 and 20% would take it under 4.5:1. If a future
+ * round wants a heavier ground it has to move the BLURB first — `ink-soft`
+ * would buy headroom all the way to ~45% — and that is a change to the type
+ * hierarchy, not a change to this number.
+ */
+
+/**
+ * Carbon. The mix is written against `--color-canvas`, which is already the
+ * onyx ground in dark mode, so the band inverts on its own — but 7% of a stone
+ * over near-black is almost invisible, and the rim has to carry more of the
+ * separation instead. Deeper tint, brighter rim.
+ */
+[data-mode="dark"] .rj-stage-band {
+  background: color-mix(in srgb, var(--rj-stage, var(--color-champagne-500)) 22%, var(--color-canvas));
+  border-color: color-mix(in srgb, var(--rj-stage, var(--color-champagne-500)) 45%, var(--color-line));
+}
+/* ⚠️ The cap inverts to the FILL in carbon. The inks are dark-ground values
+   there (plat-800 remaps to plat-300, emerald and sapphire stay deep), and a
+   deep bar on a near-black band is invisible — the exact mirror of why the
+   light mode uses the ink. */
+[data-mode="dark"] .rj-stage-band::before {
+  background: var(--rj-stage, var(--color-champagne-500));
+}

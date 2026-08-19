@@ -80,7 +80,10 @@ export default async function ProjectsPage() {
            plate was covering the JAMIN BAZAAR lockup baked into the LEFT of
            hero-69's arch — and the reasoning survives the 2026-08-19 swap
            unchanged, because hero-81 carries a lockup too and `paper` is
-           still the tone that overlays nothing. and on desktop the geometry has NO fix — measured
+           still the tone that overlays nothing.
+
+           The original finding, kept because it is why the tone is what it
+           is: on desktop the geometry has NO fix — measured
            at 1440x800: the gap between the hero's top edge and the plate's
            top is 73px, the lockup is 84px tall at the width-bound scale, and
            the frame is width-bound so horizontal steering has zero travel.
@@ -116,10 +119,35 @@ export default async function ProjectsPage() {
              pages"): each shelf wears its stage's own stone as a left bar, an
              underline tint and the link's ink - the same key the cards, pills
              and fore-edge tabs already speak. Stages without a stone (a future
-             taxonomy addition) fall back to the champagne. */
+             taxonomy addition) fall back to the champagne.
+
+             ⚠️ THE WHOLE BAND WEARS IT NOW (owner 2026-08-19: "I don't see any
+             hue changes… can we have different hues for the blocks"). The
+             stone was real but it was spending itself on a 3px bar and a link,
+             which is a key you have to go looking for. `rj-stage-band` puts it
+             on the GROUND, so Ongoing, Future and Completed are three visibly
+             different blocks at a glance. Nothing about the mapping changed —
+             same stones, same fallback, just spent where it can be seen. */
           const stone = STAGE_STONE[g.phase as keyof typeof STAGE_STONE];
           return (
           <section key={g.phase} className="mt-phi6 first:mt-phi5">
+            <div
+              className="rj-stage-band rounded-xl p-phi3 sm:p-phi4"
+              /* ⚠️ TWO variables, and the split is the fill/word rule that runs
+                 through lib/stones.ts. `--rj-stage` is the FILL and is only
+                 ever mixed down into a ground or a rim. `--rj-stage-ink` is the
+                 value that survives being looked at — it is what the cap bar
+                 uses, because plat-500 (Completed's fill) measures 2.70:1
+                 against the band and would read as a smudge, while plat-800
+                 (its ink) reads as a bar. Emerald and sapphire are their own
+                 ink, so only Completed actually differs. */
+              style={
+                {
+                  "--rj-stage": stone?.stone ?? "var(--color-champagne-500)",
+                  "--rj-stage-ink": stone?.ink ?? "var(--color-champagne-700)",
+                } as React.CSSProperties
+              }
+            >
             <div
               className="flex flex-wrap items-end justify-between gap-phi2 border-b pb-phi2"
               style={{
@@ -144,10 +172,16 @@ export default async function ProjectsPage() {
                 View {g.meta.label.toLowerCase()} →
               </Link>
             </div>
+            {/* The cards stay on `bg-canvas`, which is now LIGHTER than the
+                band they sit in — so they lift off it instead of dissolving
+                into the page as they did on a flat sand ground. That is the
+                second half of what the tint buys and the reason the tint is on
+                the band rather than on the cards. */}
             <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
               {g.items.map((p, i) => (
                 <PropertyCard key={p.id} p={p} priority={i === 0 && g.phase === PHASE_ORDER[0]} />
               ))}
+            </div>
             </div>
           </section>
           );
