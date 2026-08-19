@@ -143,7 +143,35 @@ export function Hero({
           keeps hero-61 untouched. Cross-surface reuse (72 also carries
           /downloads) under the where-we-build/hero-39 precedent — a phone
           band and a desktop hero are never on screen together. */}
-      <div className="relative h-44 w-full sm:h-56 xl:hidden">
+      {/* 🚨 `left 28%`, NOT `left center` (report 7, 2026-08-19: "the hero image
+          is being cropped from the top on mobile, causing important parts of
+          the property entrance and branding to be cut off", priority High).
+
+          The horizontal half was always right — hero-72 is the register's one
+          LEFT-lockup frame and `left` is what keeps the wall sign in view. The
+          VERTICAL half was never checked, and it is what cut the arch.
+
+          Measured. hero-72 is 1536×1024 (1.5:1). In the 375×176 band it scales
+          to 375×250, so 74px of height is discarded; at `center` that is 37px
+          off the top, and the arch lockup begins at 15% of the frame — i.e.
+          exactly where the cut lands, which is why the top of "JAMIN BAZAAR"
+          was shaved rather than the whole sign being missing. At `sm` it is far
+          worse: 640×224 scales to 640×427, discards 203px, and `center` takes
+          101px — 24% — off the top, well into the sign.
+
+          The two things worth keeping are the arch lockup (15–29% of the
+          frame's height) and the wall lockup with the family (51–65%). At 28%
+          the visible window is 8–79% on a phone and 13–66% at `sm`, which holds
+          both at both sizes. `top` would also save the arch and would throw the
+          family away at `sm`.
+
+          ⚠️ The band also grows `sm:h-56` → `sm:h-64`. At 224px the window is
+          only 52.5% of the frame against the 50% those two elements span — a
+          4px margin, which is not a margin. 256px opens it to 60%.
+
+          ⚠️ If this frame is ever swapped, re-measure. This number is solved
+          against hero-72's composition, not a house default. */}
+      <div className="relative h-44 w-full sm:h-64 xl:hidden">
         <Image
           src="/hero/hero-72-1536.webp"
           alt=""
@@ -152,7 +180,7 @@ export function Hero({
           sizes="100vw"
           priority
           className="object-cover"
-          style={{ objectPosition: "left center" }}
+          style={{ objectPosition: "left 28%" }}
         />
       </div>
 

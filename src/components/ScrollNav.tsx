@@ -61,7 +61,7 @@ export function ScrollNav() {
          medallion is twelve pixels wider the corner then reads as a ragged
          edge rather than one column. Centring on the medallion's axis is what
          makes the three controls look like one control. */
-      className="fixed bottom-[4.75rem] right-5 z-30 flex w-[2.875rem] flex-col items-center gap-1.5 print:hidden"
+      className="rj-scroll-nav fixed bottom-[4.75rem] right-5 z-30 flex w-[2.875rem] flex-col items-center gap-1.5 print:hidden"
       aria-label="Scroll"
     >
       <button

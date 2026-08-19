@@ -103,6 +103,22 @@ export default async function JournalPage() {
            sheets against the bleed edge and gives `hero-fade` the calm paper
            at the composition's left to dissolve. */
         artPosition="right"
+        /* 🚨 THE PHONE BAND CROPS THE EMPTY MARGIN OFF (report 7, 2026-08-19).
+           hero-80 is 1672×941 and its left ~28% is bare grid paper — on the
+           desktop hero that ground is what `hero-fade` dissolves into, and it
+           is the whole reason the frame composes. On a phone the default band
+           is the art's own 1.777 ratio with `object-contain`, so that margin
+           arrived at full width and the sheets were squeezed into the right of
+           the screen.
+
+           A 5/4 band is taller than the art, so `cover` takes the difference
+           off the SIDES, and `right` takes all of it off the left. Measured at
+           375: the box is 375×300, the frame scales to 533×300, and the 158px
+           discarded is 29.6% of the width — the margin, and almost nothing
+           else. The sheets now fill the phone's width, which is what the report
+           asked for, and nothing is cropped off the layouts themselves. */
+        mobileBandRatio="5/4"
+        mobileBandPosition="right"
         eyebrow="Jamin Journal"
         title="Land, and the things worth knowing before you decide."
         /* ONE LINE now, where this was three paragraphs (owner, 2026-08-15).

@@ -420,6 +420,8 @@ export function PageHero({
      "left" below, where it always was; `cinematic` falls back to its own
      `object-center` class. Passing a value now reaches both. */
   artPosition,
+  mobileBandRatio,
+  mobileBandPosition,
   sheerEdge = false,
   plateXl = "46rem",
   copyAlign = "center",
@@ -472,6 +474,12 @@ export function PageHero({
    * the empty ground beside her and walks the subject leftward into the frame.
    */
   artPosition?: string;
+  /** Phone-band shape, e.g. "5/4". Defaults to the artwork's own ratio, which
+   *  letterboxes instead of cropping. Pass a TALLER ratio to crop the sides. */
+  mobileBandRatio?: string;
+  /** Which part of the frame the phone band keeps once `mobileBandRatio` makes
+   *  it a crop. Ignored unless the band actually overflows. */
+  mobileBandPosition?: string;
   /** Fade the cinematic plate out across its right edge, so the artwork
    *  behind it reads. Only for heroes whose copy is left-aligned and whose
    *  subject sits right — see the note on `.rj-gilt-sheer-edge`. */
@@ -525,7 +533,20 @@ export function PageHero({
    * letterbox rather than becoming a crop. If a photograph ever needs the same
    * treatment, the ratio has to travel with it from `lib/properties`.
    */
-  const bandRatio = photo ? "16/9" : `${TOP_WIDTH[art]}/${TOP_HEIGHT[art]}`;
+  /**
+   * ⚠️ `bandRatio` DEFAULTS TO THE ART'S OWN RATIO so a phone letterboxes
+   * rather than crops — but a frame whose composition is off-centre pays for
+   * that by showing its empty half at full size. hero-80's flat-lay is two
+   * sheets on the right of a grid-paper ground, and /journal was reported
+   * (report 7, 2026-08-19) as "the hero content is positioned only on the
+   * right side, while the left side remains completely empty on mobile".
+   *
+   * That is not a CSS fault — it is the artwork, shown whole. So a caller can
+   * override the band's shape and its anchor, which turns the phone band from
+   * `contain the whole frame` into `cover the interesting part`. Nothing
+   * changes for the callers that do not pass them.
+   */
+  const bandRatio = mobileBandRatio ?? (photo ? "16/9" : `${TOP_WIDTH[art]}/${TOP_HEIGHT[art]}`);
   const bandStyle = { "--hero-band": bandRatio } as React.CSSProperties;
 
   if (tone === "cinematic") {
@@ -808,7 +829,13 @@ export function PageHero({
           fill
           sizes="100vw"
           priority={priority}
-          className="object-contain object-center mix-blend-multiply"
+          /* `cover` only when the caller has asked for a band shape that does
+             not match the art — otherwise `contain`, and the whole frame shows
+             exactly as before. */
+          className={`mix-blend-multiply ${
+            mobileBandRatio ? "object-cover" : "object-contain object-center"
+          }`}
+          style={mobileBandPosition ? { objectPosition: mobileBandPosition } : undefined}
         />
       </div>
 

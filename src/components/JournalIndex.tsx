@@ -110,12 +110,29 @@ export function JournalIndex({
       {/* Categories are a second way in, so they step aside while a search is
           running rather than offering a competing filter that would clear it. */}
       {!searching && categories.length > 1 && (
-        <nav className="mt-phi3 flex flex-wrap gap-2" aria-label="Journal categories">
+        <nav className="mt-phi4" aria-label="Journal categories">
+          {/* 🚨 THE RAIL HAS A NAME NOW (report 7, 2026-08-19: "add a clear
+              Categories or related heading above the category navigation").
+              A row of arrowed pills under a hero reads as breadcrumbs or as
+              filters; the word is what tells a reader these are places to go.
+              `id` + `aria-labelledby` so the nav announces itself by the same
+              word it shows, instead of by a label only a screen reader hears. */}
+          <h2 id="journal-categories" className="rj-eyebrow text-jamin-gold-ink">
+            Categories
+          </h2>
+          <div className="mt-phi2 flex flex-wrap gap-2" aria-labelledby="journal-categories">
           {categories.map((c) => (
             <Link
               key={c.slug}
               href={`/journal/category/${c.slug}`}
-              className="group inline-flex items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-jamin-red-deep transition-colors hover:border-jamin-gold hover:bg-jamin-gold-soft"
+              /* ⚠️ `min-h-[44px]` + `whitespace-nowrap` (same report: "keep all
+                 category buttons equal in height and consistent in size"). The
+                 padding was already identical, so the pills only ever differed
+                 when a two-word category wrapped inside one — which made that
+                 pill twice as tall as its neighbours and dragged the whole row
+                 with it. `nowrap` removes the cause, the min-height guarantees
+                 the floor, and 44px is the tap target this site keeps to. */
+              className="group inline-flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-medium text-jamin-red-deep transition-colors hover:border-jamin-gold hover:bg-jamin-gold-soft"
               style={{ "--rj-stone": "var(--color-jade)" } as React.CSSProperties}
             >
               <span className="rj-dot" aria-hidden="true" />
@@ -128,6 +145,7 @@ export function JournalIndex({
               </span>
             </Link>
           ))}
+          </div>
         </nav>
       )}
 
@@ -301,7 +319,23 @@ function ArticleCard({ post }: { post: JournalCard }) {
   return (
     <Link
       href={`/journal/${post.slug}`}
-      className="group block overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
+      /* 🚨 `flex h-full flex-col` (report 7, 2026-08-19: "keep all article
+         cards the same overall size and structure… do not allow individual
+         cards to become taller or shorter based on title length").
+
+         The image was already a fixed 2/1 box — that half was solved on
+         2026-08-13. What still varied was the TEXT: an unclamped `h3` runs one
+         line for "Buying land" and three for a full sentence, so cards in the
+         same row ended at different heights and the grid row stretched to the
+         tallest, leaving the short ones with dead space under the excerpt.
+
+         Three things together make the shape fixed, and all three are needed:
+         `h-full` so the card fills whatever height its grid row has, a clamp
+         AND a reserved minimum on both text blocks so the content cannot ask
+         for more or less than two lines, and `flex-1` on the body so any
+         remainder collects in one predictable place rather than under the
+         title. */
+      className="group flex h-full flex-col overflow-hidden rounded-card border border-line bg-canvas shadow-lift transition-all duration-500 hover:-translate-y-1 hover:shadow-raise"
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >
       {/* 🚨 2/1 AND `object-cover object-left-top`, AND EVERY PART OF THAT IS A
@@ -371,7 +405,9 @@ function ArticleCard({ post }: { post: JournalCard }) {
       {/* Aesthetics item 21: `rj-pageturn` — the cover lifts a corner on
           hover, the dog-ear made literal. Rides the IMAGE BOX (the card
           root's pseudos belong to its own chrome). */}
-      <div className="rj-sheen rj-pageturn relative aspect-[2/1] overflow-hidden">
+      {/* `shrink-0` — in a flex column the image box would otherwise be
+          squeezed by a tall body and stop being the fixed 2/1 it exists to be. */}
+      <div className="rj-sheen rj-pageturn relative aspect-[2/1] shrink-0 overflow-hidden">
         {post.coverUrl ? (
           <Image
             src={post.coverUrl}
@@ -386,14 +422,22 @@ function ArticleCard({ post }: { post: JournalCard }) {
           </div>
         )}
       </div>
-      <div className="p-phi3">
+      <div className="flex flex-1 flex-col p-phi3">
         <Meta post={post} />
-        <h3 className="mt-2 text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
+        {/* ⚠️ `min-h` AS WELL AS `line-clamp`, and in `em` so it tracks the
+            type scale. The clamp stops a long title growing; only the minimum
+            stops a short one shrinking, and a card is uneven either way. Two
+            lines at this leading is 2.5em. */}
+        <h3 className="mt-2 line-clamp-2 min-h-[2.5em] text-xl text-ink transition-colors group-hover:text-jamin-red-deep">
           {post.title}
         </h3>
-        {post.excerpt && (
-          <p className="mt-1.5 line-clamp-2 text-base text-ink-muted">{post.excerpt}</p>
-        )}
+        {/* ⚠️ RENDERED EVEN WHEN EMPTY. Conditionally omitting it is what let a
+            post with no excerpt sit 3em shorter than its neighbours — the exact
+            variance the report is about. The element reserves the space; with
+            no text there is nothing to announce, so nothing is read out. */}
+        <p className="mt-1.5 line-clamp-2 min-h-[3em] text-base text-ink-muted">
+          {post.excerpt ?? ""}
+        </p>
       </div>
     </Link>
   );
@@ -425,32 +469,69 @@ function categoryStone(name: string) {
   return STONE_POOL[h % STONE_POOL.length];
 }
 
+/**
+ * 🚨 TWO FIXED ROWS, NOT ONE WRAPPING ROW (report 7, 2026-08-19: "maintain
+ * consistent image dimensions, card height, title area, and metadata placement
+ * across every article card").
+ *
+ * This was `flex flex-wrap` carrying up to four items — a kind badge, a
+ * category chip, a reading time and a date. Three of them fit on one line and
+ * four do not, so a single post with all four ("Project story · Project
+ * Stories · 11 min read · 11 August 2026") wrapped to a second line and stood
+ * 27px taller than the other thirty-eight cards in the grid. Measured: 46px
+ * against 72px.
+ *
+ * ⚠️ THE FIX IS A SECOND ROW THAT IS ALWAYS THERE, not a reserved minimum on
+ * one. Both make the cards equal; only this one puts something in the space.
+ * A `min-h` sized to the worst case would have added 26px of white to
+ * thirty-eight cards to accommodate one — which is the "excessive empty space"
+ * this same report objects to two items further down.
+ *
+ * ⚠️ The rows are chips-then-facts, and that split is why it can never wrap
+ * again: row one holds at most two short pills, row two at most two short
+ * phrases. Adding a THIRD chip would reopen the bug.
+ *
+ * ⚠️ `min-h` on row two, because a post with neither a reading time nor a date
+ * would otherwise collapse it and take the card back down with it.
+ */
 function Meta({ post }: { post: JournalCard }) {
   const cat = post.categoryName ? categoryStone(post.categoryName) : null;
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Badge tone="gold">{post.kindLabel}</Badge>
-      {post.categoryName && cat && (
-        <span
-          className="rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.14em]"
-          style={{
-            color: cat.ink,
-            background: `color-mix(in srgb, ${cat.stone} 13%, transparent)`,
-          }}
-        >
-          {post.categoryName}
+    <div className="flex flex-col gap-1.5">
+      {/* ⚠️ `flex-nowrap` + `min-w-0` + `truncate`, ALL THREE. Splitting the
+          meta into two rows fixed most of the variance but not this: a post
+          whose kind and category are both long ("Project story" + "Project
+          Stories") still overflowed row one and wrapped it, standing 15px
+          taller than the other thirty-eight. `truncate` alone does nothing
+          inside a flex row — the item's default `min-width: auto` lets it push
+          the row wider rather than ellipsing — which is the same trap this repo
+          has paid for in the footer's district column and the account sidebar.
+          The badge is `shrink-0` because the kind is the one word that must
+          never be cut; the category ellipses instead. */}
+      <div className="flex min-w-0 flex-nowrap items-center gap-2">
+        <span className="shrink-0">
+          <Badge tone="gold">{post.kindLabel}</Badge>
         </span>
-      )}
-      {post.minutes !== null && (
-        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-          <span className="ledger">{post.minutes}</span> min read
-        </span>
-      )}
-      {post.dateLabel && (
-        <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-          {post.dateLabel}
-        </span>
-      )}
+        {post.categoryName && cat && (
+          <span
+            className="min-w-0 truncate rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.14em]"
+            style={{
+              color: cat.ink,
+              background: `color-mix(in srgb, ${cat.stone} 13%, transparent)`,
+            }}
+          >
+            {post.categoryName}
+          </span>
+        )}
+      </div>
+      <div className="flex min-h-[1.1rem] items-center gap-2 text-micro uppercase tracking-[0.14em] text-ink-faint">
+        {post.minutes !== null && (
+          <span>
+            <span className="ledger">{post.minutes}</span> min read
+          </span>
+        )}
+        {post.dateLabel && <span>{post.dateLabel}</span>}
+      </div>
     </div>
   );
 }

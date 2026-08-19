@@ -3481,3 +3481,111 @@ header .glass,
     display: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE PHONE DOCK'S CLEARANCE (report 7, 2026-08-19: "the ai image buttons are
+   overlapping the bottom navigation/action bar… overlap the Call / WhatsApp /
+   Book a Site Visit buttons").
+
+   The Jamindar seal is `fixed bottom-5 right-5 z-40` and lives in the ROOT
+   LAYOUT; `MobileDeskDock` is `fixed inset-x-0 bottom-0 z-30` and lives inside
+   a page. Neither can see the other. The seal is 46px tall starting 20px up,
+   so it occupies 20–66px — and the dock is about 60px tall from 0. They were
+   always going to collide on the pages that carry a dock, and the seal wins on
+   z-index, so it sat on top of the buttons.
+
+   ⚠️ `:has()`, AND THE FAILURE MODE IS THE STATUS QUO. A browser without it
+   ignores the whole block and the overlap stays exactly as it is today —
+   nothing else regresses, and nothing shifts on the ~30 routes that have no
+   dock. The alternative, offsetting the seal unconditionally, would leave a
+   60px hole under it on every page that does not have a bar to clear.
+
+   ⚠️ SCOPED BELOW `lg`, because the dock itself is `lg:hidden`. Above that the
+   bar is gone and the seal must drop back to its normal corner.
+
+   ⚠️ THE SCROLL NAV MOVES WITH IT. It sits at 4.75rem, directly above the
+   seal, so lifting only the seal would put the two on top of each other —
+   trading one overlap for another. They travel as a pair.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root {
+  /* The dock's own height: 1px border + 8px pt + ~38px control + 8px pb, then
+     rounded up so the gap reads as deliberate rather than as a near miss. */
+  --rj-dock-h: 4rem;
+}
+
+@media (max-width: 1023.98px) {
+  /* ⚠️ `env(safe-area-inset-bottom)` IS IN THE SUM, and it has to be. The dock
+     pads itself by that inset, so on a notched phone the bar grows ~34px
+     taller and its top edge climbs — a fixed offset that clears it on this
+     desktop browser (measured: 74px tall, 10px gap) would be overlapped again
+     on the device the bar was padded for. Adding the same inset here moves the
+     seal by exactly what the dock moved by. */
+  body:has(.rj-mobile-dock) .rj-medallion,
+  body:has(.rj-mobile-dock) .rj-hail {
+    bottom: calc(1.25rem + var(--rj-dock-h) + env(safe-area-inset-bottom, 0px));
+  }
+  body:has(.rj-mobile-dock) .rj-scroll-nav {
+    bottom: calc(4.75rem + var(--rj-dock-h) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE SCROLL HINT (report 7, 2026-08-19: "the property details section uses
+   horizontal scrolling, but the current design does not clearly communicate
+   that additional information is available by swiping").
+
+   The strip already scrolls and already leaves the next entry half-visible at
+   the right edge — what it did not have was any signal, because `.cd-noscroll`
+   removes the scrollbar. A reader has no reason to try.
+
+   ⚠️ THE WHOLE THING IS FOUR BACKGROUND LAYERS AND NO JAVASCRIPT, which
+   matters because ApprovalStrip is a server component and adding state to it
+   would make the property header a client island for a gradient.
+
+   ⚠️ THE TRICK IS `local` VERSUS `scroll`, and it is the entire mechanism. The
+   two COVER layers are attached to the content, so they travel with it; the
+   shadow and the chevron are attached to the scrollport, so they stay put. At
+   rest the left cover sits exactly on top of the left shadow and hides it —
+   scroll right and the cover slides away, revealing it. The effect is
+   therefore SELF-HIDING: no hint at an edge you have already reached, and none
+   at all when the strip fits and never scrolls. A static arrow would have
+   promised more content on a strip that had none.
+
+   ⚠️ LAYER ORDER IS LOAD-BEARING. First layer paints on top, so the two covers
+   must be listed BEFORE the shadow and the chevron they are there to mask.
+   ⚠️ The covers must be the scroller's own opaque ground (`canvas-alt`) or
+   they mask nothing.
+   ══════════════════════════════════════════════════════════════════════════ */
+.cd-scrollhint {
+  background:
+    linear-gradient(to right, var(--color-canvas-alt) 55%, rgba(255, 255, 255, 0)) 0 0 / 2.75rem 100%
+      no-repeat local,
+    linear-gradient(to left, var(--color-canvas-alt) 55%, rgba(255, 255, 255, 0)) 100% 0 / 2.75rem 100%
+      no-repeat local,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='18' viewBox='0 0 11 18'%3E%3Cpath d='M2.5 2.5l6 6.5-6 6.5' fill='none' stroke='%236c533b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 0.6rem center no-repeat scroll,
+    linear-gradient(to right, rgba(41, 31, 21, 0.14), rgba(255, 255, 255, 0)) 0 0 / 1.6rem 100%
+      no-repeat scroll,
+    linear-gradient(to left, rgba(41, 31, 21, 0.14), rgba(255, 255, 255, 0)) 100% 0 / 2.4rem 100%
+      no-repeat scroll;
+}
+
+/* Carbon: the covers have to become the dark ground or they paint two pale
+   slabs over the ends of the strip. */
+[data-mode="dark"] .cd-scrollhint {
+  background:
+    linear-gradient(to right, var(--color-canvas-alt) 55%, rgba(0, 0, 0, 0)) 0 0 / 2.75rem 100%
+      no-repeat local,
+    linear-gradient(to left, var(--color-canvas-alt) 55%, rgba(0, 0, 0, 0)) 100% 0 / 2.75rem 100%
+      no-repeat local,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='18' viewBox='0 0 11 18'%3E%3Cpath d='M2.5 2.5l6 6.5-6 6.5' fill='none' stroke='%236c533b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 0.6rem center no-repeat scroll,
+    linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) 0 0 / 1.6rem 100% no-repeat scroll,
+    linear-gradient(to left, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0)) 100% 0 / 2.4rem 100% no-repeat scroll;
+}
+
+/* On paper there is no scrolling and no hint. */
+@media print {
+  .cd-scrollhint {
+    background: none !important;
+  }
+}

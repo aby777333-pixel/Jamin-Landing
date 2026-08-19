@@ -86,7 +86,11 @@ export function ApprovalStrip({ p }: { p: Property }) {
           ⚠️ `min-w-0` on the item, or a long survey number sets its own track
           and pushes the band wider than the page — the same trap the footer's
           district column and the account sidebar both paid for. */}
-      <dl className="cd-noscroll flex items-stretch gap-0 overflow-x-auto">
+      {/* `cd-scrollhint` is the swipe affordance — a self-hiding edge fade
+          and chevron, explained in royal.css. It pairs with `cd-noscroll`
+          rather than replacing it: the scrollbar stays hidden, the hint
+          replaces what the scrollbar used to say. */}
+      <dl className="cd-noscroll cd-scrollhint flex items-stretch gap-0 overflow-x-auto">
         {entries.map((e, i) => (
           <div
             key={e.label}

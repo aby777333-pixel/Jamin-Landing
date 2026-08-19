@@ -296,7 +296,44 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
   /* DERIVED, not an effect (the repo's eslint bans setState in an effect
      body): with a filter active the rows stay shown, so a shared filtered
      URL always explains its own short list. */
-  const filtersShown = mobileFiltersOpen || activeFilterCount > 0;
+  /**
+   * ═══════════════════════════════════════════════════════════════════════
+   * 🚨 `|| activeFilterCount > 0` USED TO BE HERE AND IT WAS THE BUG (report
+   * 7, 2026-08-19: "District and Stage options are displayed as multiple chips
+   * directly on the page, making the filter section look cluttered and pushing
+   * the property content downward").
+   *
+   * The intent was kind — if a filter is on, show the reader where it came
+   * from. The effect was that the FIRST tap permanently unfolded every option
+   * in every facet: eleven chips on a 375px screen, pushing the first property
+   * card most of a screen down, with no way to fold them back because the
+   * Filters button could no longer close what the count was holding open.
+   *
+   * A panel is now a panel: it is open when the reader opened it. What an
+   * active filter gets instead is the thing that was actually missing — a
+   * summary chip that names the choice and carries a × to undo it, which is
+   * both a smaller footprint and a better answer to "where did this come
+   * from".
+   * ═══════════════════════════════════════════════════════════════════════
+   */
+  const filtersShown = mobileFiltersOpen;
+
+  /** The active choices, as {label, clear} — the mobile summary row and
+   *  nothing else reads this. Built here so the row stays declarative. */
+  const activeChips: { key: string; label: string; clear: () => void }[] = [];
+  if (f.district) activeChips.push({ key: "district", label: f.district, clear: () => set({ district: null }) });
+  if (f.phase)
+    activeChips.push({
+      key: "phase",
+      label: PHASE_META[f.phase]?.label ?? f.phase,
+      clear: () => set({ phase: null }),
+    });
+  if (f.purpose)
+    activeChips.push({
+      key: "purpose",
+      label: purposeByKey(f.purpose)?.label ?? f.purpose,
+      clear: () => set({ purpose: null }),
+    });
   const filterRowCls = filtersShown ? "grid" : "hidden sm:grid";
 
   /* "Pick one more" OFFERS THE OTHER PROJECTS (owner 2026-08-17, second
@@ -440,6 +477,48 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
               </span>
             )}
           </button>
+        )}
+
+        {/* 🚨 THE ACTIVE CHOICES, ON A PHONE, WITH A WAY OUT (report 7,
+            2026-08-19: "display the selected District and Stage clearly as
+            active filter chips… use a visible × icon on each active chip to
+            remove it").
+
+            This is what replaces the unfolded option rows above. One chip per
+            choice instead of eleven options, and the × is a real control rather
+            than "go back into the panel and tap the pill again" — which was the
+            only way to undo a filter on a phone before.
+
+            ⚠️ `sm:hidden`. From `sm` the full facets are always on show and a
+            pressed pill already says what is selected, so a summary row there
+            would state the same fact twice.
+
+            ⚠️ The × is INSIDE the button and the button's accessible name says
+            what it removes — "Remove Salem filter" — so a screen reader is
+            never left with a row of unlabelled crosses. */}
+        {activeChips.length > 0 && (
+          <div className="flex flex-wrap gap-2 sm:hidden">
+            {activeChips.map((c) => (
+              <button
+                key={c.key}
+                type="button"
+                onClick={c.clear}
+                aria-label={`Remove ${c.label} filter`}
+                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-ink bg-ink/85 px-3 py-1.5 text-tiny font-medium text-canvas backdrop-blur-sm transition-opacity hover:opacity-80"
+              >
+                {c.label}
+                <svg viewBox="0 0 12 12" className="h-3 w-3 shrink-0" aria-hidden="true">
+                  <path
+                    d="M2.5 2.5l7 7M9.5 2.5l-7 7"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </button>
+            ))}
+          </div>
         )}
 
         {districts.length > 1 && (

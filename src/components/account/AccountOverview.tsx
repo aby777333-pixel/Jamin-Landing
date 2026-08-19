@@ -103,7 +103,26 @@ export function AccountOverview() {
           Tell our desk the district, the extent and roughly when you want to build, and we will
           call you when something fits — including before it is listed.
         </p>
-        <div className="mt-phi3 flex flex-wrap gap-2">
+        {/* 🚨 A GRID ON A PHONE, A ROW FROM `sm` (report 7, 2026-08-19: the two
+            buttons "are currently stacked vertically, creating unnecessary
+            space and making the section look unbalanced").
+
+            `flex flex-wrap` sizes each button to its own label, so at 375px
+            "Talk to Jamin" and "Browse properties" cannot share a line and wrap
+            to two rows of DIFFERENT widths — a short pill above a long one,
+            which is the unbalanced look reported.
+
+            The report offers two acceptable answers and this takes the second
+            deliberately: equal widths, consistently stacked. One line was tried
+            first and does not survive measurement — at 375px the container is
+            293px inside the card's padding, and the two labels need 316px at
+            this button's `px-6` and 0.12em tracking, so `grid-cols-2` puts a
+            line break inside "Browse properties". Two full-width buttons of
+            identical height and spacing is the honest version of the same
+            request.
+
+            From `sm` there is room, so they return to a row. */}
+        <div className="mt-phi3 grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
           <ButtonLink href="/contact">Talk to Jamin</ButtonLink>
           <ButtonLink href="/properties" variant="secondary">
             Browse properties

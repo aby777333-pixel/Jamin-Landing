@@ -36,7 +36,11 @@ export async function MobileDeskDock({ context }: { context?: string }) {
       {/* The dock's landing room — without it the last section's copy ends
           underneath the bar. */}
       <div className="h-16 lg:hidden" aria-hidden="true" />
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden">
+      {/* `rj-mobile-dock` is a HOOK, not a style. The floating controls in the
+          root layout — the Jamindar seal and the scroll nav — have no way of
+          knowing this bar exists, so royal.css lifts them off it by looking for
+          this class. See the note there. */}
+      <div className="rj-mobile-dock fixed inset-x-0 bottom-0 z-30 border-t border-line bg-canvas/95 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur lg:hidden">
         <div className="mx-auto flex max-w-xl gap-2">
           {tel && (
             <a href={tel} className={`${base} border border-jamin-red-deep/40 bg-jamin-red-soft text-jamin-red-deep`}>

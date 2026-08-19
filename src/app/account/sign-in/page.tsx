@@ -71,10 +71,34 @@ export default async function SignInPage() {
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 
       <Container className="relative py-phi5 lg:py-phi6">
-        {/* `items-stretch` (the default), not `items-start` — equal card
-            heights are the report's headline ask, and `items-start` was the
-            single property preventing them. */}
-        <div className="grid gap-phi4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:gap-phi5">
+        {/* 🚨 FOUR CELLS IN A 2×2 GRID, NOT TWO STACKED COLUMNS (report 7,
+            2026-08-19 — two separate items: "the left Sign in with your mobile
+            card and the right What an account is for card have different
+            heights", and "the left property image and the right On the books
+            today information card have different heights").
+
+            The 2026-08-18 round made the two COLUMNS end flush (`h-full` on the
+            aside, `flex-1` on its first card) and that property still holds —
+            but flush columns say nothing about what happens inside them. The
+            form is short and the features card is tall, so the seam between
+            block one and block two sat at a different height on each side, and
+            the reader sees the seams, not the outer edges.
+
+            Rows can only be equalised by rows. All four blocks are now direct
+            children of ONE grid with explicit `row-start`/`col-start` from
+            `lg`, so the browser's default `items-stretch` makes each PAIR the
+            same height: form ↔ features, picture ↔ statistics.
+
+            ⚠️ SOURCE ORDER IS THE PHONE ORDER, and it changed with this. Below
+            `lg` the grid is one column and reads form → why an account →
+            picture → statistics. The picture used to sit directly under the
+            form; it now breaks between the two right-hand plates instead,
+            which keeps "do this" and "here is why" adjacent on a phone.
+
+            ⚠️ The placement classes are `lg:` only. Removing them without also
+            restoring the column wrappers collapses the page to a single
+            stack. */}
+        <div className="grid gap-phi4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:grid-rows-[auto_auto] lg:gap-phi5">
           {/* `next` deliberately is NOT read from the query string. An open
               redirect on a sign-in page is a phishing primitive, and the only
               place a buyer needs to land afterwards is their own account. */}
@@ -90,17 +114,20 @@ export default async function SignInPage() {
               directly under the form, which is also where it reads best: it
               breaks the page between "do this" and "here is why", rather than
               trailing off the bottom where nobody scrolls to. */}
-          <div className="flex flex-col gap-phi4">
+          <div className="flex flex-col lg:col-start-1 lg:row-start-1">
             <Suspense fallback={null}>
               <SignInForm next="/account" />
             </Suspense>
+          </div>
 
             {/* hero-76 — the Premium Villas Chennai gate, owner-supplied
                 2026-08-18 (12:58, "swap image with the attached"), replacing
                 hero-12's pin-in-plot render. ⚠️ It names a city with no
                 catalogue project, so the standing rule binds at full
                 strength: alt="", aria-hidden, never a caption. */}
-            <div className="overflow-hidden rounded-card border border-line bg-canvas-alt">
+          {/* The picture is the second LEFT cell now, paired with the
+              statistics plate opposite. `lg:row-start-2` is what pairs them. */}
+          <div className="overflow-hidden rounded-card border border-line bg-canvas-alt lg:col-start-1 lg:row-start-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/hero/hero-76-1280.webp"
@@ -115,9 +142,14 @@ export default async function SignInPage() {
                 aria-hidden="true"
                 loading="lazy"
                 decoding="async"
-                className="h-auto w-full"
+                /* ⚠️ `h-full object-cover` from `lg`, not `h-auto`. Stretching
+                   the CELL is only half of equal heights — an `h-auto` image
+                   sits at its natural height inside a stretched box and leaves
+                   the difference as dead space under it, which is the same
+                   complaint one level down. Below `lg` there is nothing to
+                   match, so it keeps its own height and is never cropped. */
+                className="h-auto w-full lg:h-full lg:object-cover"
               />
-            </div>
           </div>
 
           {/* ── TWO INDIVIDUAL CARDS (owner report 2026-08-18), where the
@@ -127,10 +159,12 @@ export default async function SignInPage() {
               still `h-full` with the features card taking `flex-1`, so the
               pair of columns keep ending flush — the property the previous
               round existed to win stays won, just across two plates. */}
-          <aside className="flex h-full flex-col gap-phi4">
+          {/* The aside is gone as a wrapper — its two plates are grid cells in
+              their own right now, which is what lets each pair with the block
+              opposite. */}
             {/* Aesthetics item 2: whisper grain — the account plate reads as
                 paper. `relative` is the grain's host duty. */}
-            <div className="cd-plate rj-grain relative flex flex-1 flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+          <div className="cd-plate rj-grain relative flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:col-start-2 lg:row-start-1 lg:p-phi5">
               <span className="mb-phi3 block h-px w-16 rule-red" aria-hidden="true" />
               <h2 className="text-2xl text-ink">What an account is for</h2>
 
@@ -152,10 +186,10 @@ export default async function SignInPage() {
                   </div>
                 ))}
               </dl>
-            </div>
+          </div>
 
-            {stats.length > 0 && (
-              <div className="cd-plate flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+          {stats.length > 0 && (
+              <div className="cd-plate flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:col-start-2 lg:row-start-2 lg:p-phi5">
                 <div className="ledger-label">On the books today</div>
                 {/* ⚠️ VERTICAL REGISTER ROWS with FIXED COLUMNS (owner report
                     2026-08-18, two items): the 2/4-column grid compressed the
@@ -192,7 +226,6 @@ export default async function SignInPage() {
                 </p>
               </div>
             )}
-          </aside>
         </div>
       </Container>
     </section>

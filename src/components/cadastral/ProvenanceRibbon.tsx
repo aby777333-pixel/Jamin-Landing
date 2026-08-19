@@ -94,54 +94,75 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
       <h2 id="provenance-heading" className="ledger-label text-ink-muted">
         Chain of record
       </h2>
-      {/* ⚠️ `items-start`, not `items-center`: the values are different lengths
-          and centring them would make the connecting rule step up and down
-          between seals, which is exactly the thing a chain must not do. */}
-      {/* THE CHAIN DRAWS ITSELF (do-all #2): Reveal + rj-stagger assemble
-          the links in order on scroll — form saying what the component says.
-          No-JS and reduced-motion readers get the finished chain, per
-          Reveal's own guarantee. */}
+      {/* 🚨 A RECORD CARD OF ROWS, NOT A FIVE-COLUMN CHAIN (report 7,
+          2026-08-19: "redesign the Chain of Record section into a structured
+          record card… use consistent icon → label → value rows… increase
+          spacing and readability… make key values more prominent… remove
+          excessive empty space").
+
+          The chain was five equal columns from `lg`, and that shape is what
+          created the empty space the report objects to: the columns are sized
+          by the LONGEST value — a survey number like "789/3B2E2A1A3C" — so
+          every other column carried a two-word value in a track built for
+          thirteen characters, and the value sat under its label at `text-tiny`,
+          smaller than the body text around it. Five short facts were occupying
+          a full-width band and reading as a diagram rather than as a record.
+
+          Rows fix both at once. One line per fact, the icon in a fixed track so
+          every label starts on the same x, the label in a fixed track from `sm`
+          so every value does too, and the value promoted from `text-tiny` to
+          `text-base` — it is the thing a buyer came to read.
+
+          ⚠️ THE CONNECTING RULE IS GONE, and it should be. It existed to say
+          "these link", which is what a horizontal chain has to assert visually;
+          a ruled register says it by construction, the way every other ledger
+          on this site does. The `<ol>` still carries the sequence for a screen
+          reader, which is where the ordering claim actually belongs.
+
+          ⚠️ The final link keeps its teal seal — the chain's payoff, and the
+          one resolved fact in the list. Card, rule and seal all stay inside the
+          existing beige/red register; no new colour was introduced. */}
       <Reveal className="rj-stagger">
-      <ol className="mt-phi3 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-5 lg:items-start">
-        {links.map((l, i) => (
-          <li key={l.term} className="relative flex gap-3 lg:flex-col lg:gap-2">
-            {/* The rule between links. Drawn from each seal EXCEPT the first, so
-                it never trails off the start of the chain, and hidden below `lg`
-                where the layout stacks and a horizontal rule would point at
-                nothing. `aria-hidden` — the ordered list already carries the
-                sequence for a screen reader. */}
-            {i > 0 && (
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute right-full top-[1.125rem] hidden h-px w-[calc(var(--spacing-phi3,1rem))] bg-line lg:block"
-              />
-            )}
-            {/* The FINAL link resolves in teal — the chain's payoff, the same
-                once-per-surface move the record strip and the calculators
-                make (anti-beige item 4). */}
-            <span
-              className={`rj-foil-seal flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-                i === links.length - 1 ? "text-white" : "text-champagne-900"
-              }`}
-              style={
-                i === links.length - 1
-                  ? { background: "var(--color-emerald-deep)", boxShadow: "inset 0 0 0 2px var(--color-jamin-gold-light)" }
-                  : undefined
-              }
+      <div className="mt-phi3 overflow-hidden rounded-card border border-line bg-canvas-alt shadow-lift">
+        <ol className="divide-y divide-line">
+          {links.map((l, i) => (
+            <li
+              key={l.term}
+              className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-phi2 gap-y-1 px-phi3 py-phi2 sm:grid-cols-[2.25rem_9rem_minmax(0,1fr)] sm:items-center"
             >
-              <SurveyIcon name={l.icon} size="h-4 w-4" />
-            </span>
-            <div className="min-w-0">
+              {/* The FINAL link resolves in teal — the chain's payoff, the same
+                  once-per-surface move the record strip and the calculators
+                  make (anti-beige item 4). */}
+              <span
+                className={`rj-foil-seal flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                  i === links.length - 1 ? "text-white" : "text-champagne-900"
+                }`}
+                style={
+                  i === links.length - 1
+                    ? {
+                        background: "var(--color-emerald-deep)",
+                        boxShadow: "inset 0 0 0 2px var(--color-jamin-gold-light)",
+                      }
+                    : undefined
+                }
+              >
+                <SurveyIcon name={l.icon} size="h-4 w-4" />
+              </span>
               <div className="ledger-label text-ink-muted">{l.term}</div>
               {/* `break-words`: a survey number like "789/3B2E2A1A3C" has no
                   spaces and would otherwise set the column's minimum width and
                   push the page sideways — the `min-w-0` trap this repo has paid
-                  for twice already. */}
-              <div className="ledger mt-0.5 break-words text-tiny text-ink">{l.value}</div>
-            </div>
-          </li>
-        ))}
-      </ol>
+                  for twice already.
+                  ⚠️ `col-start-2` below `sm`: the label and the value stack in
+                  the SECOND column so both clear the seal, rather than the
+                  value sliding back under the icon. */}
+              <div className="ledger col-start-2 break-words text-base text-ink sm:col-start-3">
+                {l.value}
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
       </Reveal>
     </section>
   );

@@ -281,26 +281,6 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               the artwork, by construction. */}
           <header className="relative z-10 flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-2xl">
-              <div className="flex flex-wrap items-center gap-2">
-                {phaseLabel(p) && (
-                  <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
-                    {phaseLabel(p)}
-                  </span>
-                )}
-                {approvals.map((a) => (
-                  <span
-                    key={a}
-                    className="rounded-full bg-canopy-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-canopy"
-                  >
-                    {a} Approved
-                  </span>
-                ))}
-                {!sellable && (
-                  <span className="rounded-full bg-ink px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white">
-                    {p.status === "sold" ? "Sold Out" : p.status}
-                  </span>
-                )}
-              </div>
               {/* 🚨 ONE LINE, AND THE SIZE IS MEASURED RATHER THAN CHOSEN.
                   `text-4xl` clamps to 4.236rem — 67.8px at 1440 — and the
                   longest title on the site, "Jamin Garden — Shastri Nagar",
@@ -328,6 +308,47 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 {p.title}
               </h1>
               <p className="mt-phi2 text-lg text-ink-muted">{locationLine(p)}</p>
+
+              {/* 🚨 UNDER THE NAME, NOT UNDER THE BREADCRUMB (report 7,
+                  2026-08-19: "the ONGOING and DTCP APPROVED badges are
+                  currently mixed with the breadcrumb/filter area, making them
+                  look like page filters… move the status badges to the property
+                  information section, directly below or beside the property
+                  name").
+
+                  They were the first thing in the header, sitting between the
+                  breadcrumb and the h1 — a row of pills directly beneath a row
+                  of navigation reads as a filter bar, because that is exactly
+                  what a row of pills under navigation is everywhere else on
+                  this site. Nothing about the badges changed; only where they
+                  sit. They now open the property's own facts, immediately above
+                  the price-and-availability card that continues them.
+
+                  ⚠️ Still ABOVE the status card, not inside it. That card
+                  carries price and availability — what it costs and whether you
+                  can have it. Stage and approval are what the development IS,
+                  and folding them in would put four different kinds of fact in
+                  one box. */}
+              <div className="mt-phi3 flex flex-wrap items-center gap-2">
+                {phaseLabel(p) && (
+                  <span className="rounded-full bg-jamin-gold-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
+                    {phaseLabel(p)}
+                  </span>
+                )}
+                {approvals.map((a) => (
+                  <span
+                    key={a}
+                    className="rounded-full bg-canopy-soft px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-canopy"
+                  >
+                    {a} Approved
+                  </span>
+                ))}
+                {!sellable && (
+                  <span className="rounded-full bg-ink px-3 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-white">
+                    {p.status === "sold" ? "Sold Out" : p.status}
+                  </span>
+                )}
+              </div>
 
               {/* 🚨 THE STATUS CARD — directly under the location, which is where
                   the report asked for it and where it belongs: price and
@@ -498,8 +519,16 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               record rather than up beside the title on purpose — a reader who
               has just read the evidence is the one who wants to keep it, and a
               print control offered before the record reads as a brochure
-              download. `print:hidden` lives on the button itself. */}
-          <div className="mt-phi4">
+              download. `print:hidden` lives on the button itself.
+
+              🚨 CLOSER, AND RULED OFF (report 7, 2026-08-19: "keep Print this
+              record as a clearly separated action at the bottom"). It was
+              `mt-phi4` — the same gap the gallery below it gets — so it read as
+              a third unrelated block rather than as the record card's action.
+              `mt-phi2` plus a hairline pulls it up under the card it belongs to
+              while the rule keeps it visibly outside it, which is what
+              "separated" has to mean here: attached, not merged. */}
+          <div className="mt-phi2 border-t border-line pt-phi3">
             <PassportButton />
           </div>
 
