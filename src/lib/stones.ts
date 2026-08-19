@@ -31,7 +31,7 @@ export const DISTRICT_STONE: Record<string, string> = {
  * as data rather than as class names so a chip, a band and a map polygon can
  * each render it in their own idiom without three copies of the mapping.
  */
-export type StageKey = "ongoing" | "future" | "completed" | "available" | "reserved" | "booked" | "sold";
+export type StageKey = "ongoing" | "current" | "future" | "completed" | "available" | "reserved" | "booked" | "sold";
 
 /**
  * ⚠️ `stone` IS THE FILL. `ink` IS THE WORD. They are the same value only where
@@ -46,6 +46,15 @@ export const STAGE_STONE: Record<
   { stone: string; ink: string; label: string; tone: "solid" | "glass" }
 > = {
   ongoing: { stone: "var(--color-emerald)", ink: "var(--color-emerald)", label: "Ongoing", tone: "solid" }, // 5.20:1
+  /* ⚠️ `current` IS THE PHASE THE BUYER READS AS "UPCOMING" — the slug and
+     the word differ, which is why PHASE_META in site.ts spells it out. It
+     had no stone at all until Trichy's Tulip became the first development
+     to sit in it, so the shelf fell through to the champagne fallback and
+     wore Reserved's colour. Amethyst measures 5.78:1 on `--color-canvas`
+     (#f0e1d6), between emerald's 6.09 and sapphire's 7.78 as measured on
+     the same ground — legible as a word, which is the test that matters
+     here, and the one gemstone not already spent on another state. */
+  current: { stone: "var(--color-amethyst)", ink: "var(--color-amethyst)", label: "Upcoming", tone: "solid" }, // 5.78:1
   future: { stone: "var(--color-sapphire)", ink: "var(--color-sapphire)", label: "Future", tone: "solid" }, // 9.68:1
   /* The handed-over object is the finished object — platinum, not a gemstone. */
   completed: { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)", label: "Completed", tone: "solid" }, // 6.14:1

@@ -1235,6 +1235,12 @@ const PRINTED_SHEET: Record<string, { src: string; width: number; height: number
      ISSUED, never edited; the discrepancy is the owner's record to
      reconcile, not this page's to hide. */
   "jamin-new-project-jul-2026": { src: "/plan/edappadi-official-2026-1055.webp", width: 1055, height: 1491 },
+  /* The sanctioned layout sheet for Trichy's Tulip. Landscape where
+     Edappadi's is portrait, so it is written wider: the 120-row schedule is
+     set in small type and this is the drawing a buyer opens the lightbox to
+     read. Checked legible at 1500 before choosing it over 2200, which cost
+     70% more bytes for no gain at the size the lightbox actually shows. */
+  "trichys-tulip": { src: "/plan/trichys-tulip-sheet-1500.webp", width: 1500, height: 1061 },
 };
 
 const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: string }> = {
@@ -1304,6 +1310,17 @@ const HEADER_ART: Record<string, { file: string; widths: number[]; focus?: strin
     file: "udumalaipet-3",
     widths: [960, 1440, 1672],
     focus: "50% 35%",
+  },
+  "trichys-tulip": {
+    /* The entrance arch, owner-supplied 2026-08-19 as the hero. Native
+       1672x941 — the same 1.777 as Edappadi's and Udumalaipet's gates — so
+       the renditions are cuts of the original and nothing is upscaled.
+       NO `focus`: at 1.777 the box keeps ~85% of the height at 1440, and
+       the two things that must survive — the TRICHY'S TULIP lettering on
+       the beam and the JAMIN BAZAAR board on the left pier — both sit above
+       the midline, so centre holds them with room to spare. */
+    file: "trichys-tulip",
+    widths: [960, 1440, 1672],
   },
 };
 

@@ -262,6 +262,23 @@ const LOCAL_GALLERY: Record<string, string[]> = {
     "/property/gallery/jamin-garden-varapatty/04.webp",
     "/property/gallery/jamin-garden-varapatty/05.webp",
   ],
+  /* Trichy's Tulip, owner-supplied 2026-08-19. 01 is the entrance arch and
+     therefore the cover — the frame the card, the homepage rail and Compare
+     all read. The order walks in: gate, the development seen from a balcony,
+     the gatehouse, the street, the avenue, an elevation, the park, a room.
+     ⚠️ These are RENDERS of an upcoming layout, not photographs of a built
+     place, and nothing on the page may caption them as the site as it
+     stands today. */
+  "trichys-tulip": [
+    "/property/gallery/trichys-tulip/01.webp",
+    "/property/gallery/trichys-tulip/02.webp",
+    "/property/gallery/trichys-tulip/03.webp",
+    "/property/gallery/trichys-tulip/04.webp",
+    "/property/gallery/trichys-tulip/05.webp",
+    "/property/gallery/trichys-tulip/06.webp",
+    "/property/gallery/trichys-tulip/07.webp",
+    "/property/gallery/trichys-tulip/08.webp",
+  ],
 };
 
 function withLocalArt<

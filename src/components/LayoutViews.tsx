@@ -118,9 +118,13 @@ export function LayoutViews({
 
   return (
     <div ref={rootRef}>
-      {(hasPlan || hasMetricFigures) && (
+      {/* ⚠️ `sheet` JOINS THE GATE (2026-08-19). It was `hasPlan ||
+          hasMetricFigures`, which meant a development whose only drawing is
+          the sanctioned sheet had no control to reach it — the sheet option
+          existed but nothing rendered the switch. */}
+      {(hasPlan || sheet || hasMetricFigures) && (
         <div className="mb-phi3 flex flex-wrap items-center justify-between gap-phi2">
-          {hasPlan ? (
+          {hasPlan || sheet ? (
             <Segmented
               label="Layout view"
               value={view}
@@ -151,7 +155,11 @@ export function LayoutViews({
                  uncommenting two lines. Only the OPTIONS are gone, so a new
                  visitor sees plan and plot list. */
               options={[
-                { value: "plan", label: "Approved plan" },
+                /* ⚠️ CONDITIONAL NOW. It was unconditional, which was safe only
+                   while the whole control was gated on `hasPlan`; with the sheet
+                   able to open the control on its own, an untraced project would
+                   otherwise be offered an Approved plan that renders nothing. */
+                ...(hasPlan ? [{ value: "plan", label: "Approved plan" }] : []),
                 // { value: "relief", label: "3D view" },
                 /* ⚠️ Sun & shadow HIDDEN AGAIN (owner 2026-08-18 night:
                    "hide the sun and shadow"), reversing the same day's

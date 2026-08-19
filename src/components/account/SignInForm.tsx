@@ -105,7 +105,17 @@ export function SignInForm({ next }: { next: string }) {
    * Container; a small card centred in an empty viewport was the whole problem.
    */
   return (
-    <div className="cd-plate cd-fold overflow-hidden rounded-card p-phi4 shadow-lift lg:p-phi5">
+    /* 🚨 `lg:flex-1` IS WHAT MAKES THE TWO CARDS END LEVEL (owner,
+       2026-08-19: "make the tab heights equal"). The grid already stretched
+       the CELL this plate sits in — the card opposite IS its own cell, so it
+       filled the row on its own — but the plate was one level down inside a
+       `flex flex-col` wrapper with no height of its own, so it sat at its
+       natural height and left the difference as dead space beneath it.
+       That is the identical one-level-down failure the note on the image in
+       sign-in/page.tsx already records for the frame below.
+       Scoped to `lg` because below it the grid is a single column, the
+       wrapper is content-height, and there is nothing to be level with. */
+    <div className="cd-plate cd-fold flex flex-col overflow-hidden rounded-card p-phi4 shadow-lift lg:flex-1 lg:p-phi5">
       <div>
         {/* A document header, because that is what this is: a form that opens
             a record. The rule is the one under BAZAAR in the logo. */}
