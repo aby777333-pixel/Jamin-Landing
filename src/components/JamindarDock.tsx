@@ -43,6 +43,77 @@ const SUGGESTIONS = [
   "What does DTCP approval cover?",
 ];
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE HAIL — Jamindar introducing himself (owner 2026-08-19: "it is very hard
+   to notice it").
+
+   The medallion is deliberately discreet (§6.8), and discreet turned out to
+   mean invisible: readers were leaving without ever learning the site can be
+   asked questions. So the seal now HAILS — a small glass card unfurls beside
+   it on arrival and again at intervals, and the medallion wears the pulsar
+   ring for as long as the card is up.
+
+   ⚠️ IT HAILS, IT DOES NOT OPEN. Auto-opening the panel was the obvious
+   reading of "pop up" and is the wrong one on a phone: below `sm` the panel is
+   FULL SCREEN (see the class list on #jamindar-panel), so an automatic open
+   would put a chat window over the whole site five seconds after arrival, on
+   every page, before the reader has read a line. The card is loud enough to be
+   noticed and costs the reader nothing to ignore. Flip AUTO_OPEN to true if
+   the full panel is genuinely wanted — everything else here already works.
+
+   ⚠️ IT GIVES UP. Three rules stop it, and any one of them is enough:
+   opening the panel once (`engaged`), dismissing the card (`×`, remembered for
+   the session), or simply having been shown MAX_HAILS times. A nudge that
+   never stops is an advertisement.
+   ══════════════════════════════════════════════════════════════════════════ */
+const AUTO_OPEN = false;
+/** First hail. Late enough that the hero has been looked at, early enough to
+ *  land before a reader who is only skimming has gone. */
+const HAIL_FIRST_MS = 5_000;
+/** And again, every so often, for a reader who is still browsing. */
+const HAIL_EVERY_MS = 75_000;
+/** How long the card stays up before it withdraws by itself. */
+const HAIL_DWELL_MS = 11_000;
+/** Per session, across every page — see the sessionStorage counter. */
+const MAX_HAILS = 4;
+const HAIL_KEY = "jamin.jamindar.hail";
+
+/** What he says. Rotates, so the second hail is not the first one repeated —
+ *  a card that says the same thing twice reads as a bug. */
+const HAIL_LINES = [
+  "Ask me anything about our projects.",
+  "Want to know what DTCP approval covers?",
+  "I can tell you what is selling right now.",
+  "Buying a plot? Ask me what to check first.",
+];
+
+/**
+ * The session counter lives in `sessionStorage` rather than in state.
+ *
+ * ⚠️ Every route is a fresh mount. This is the App Router: a click to another
+ * page re-runs the layout's client tree, so a counter held in React would
+ * reset to zero on each navigation and a reader browsing six pages would be
+ * hailed twenty-four times. The store is also what makes "×" mean *stop*
+ * rather than *stop until the next click*.
+ */
+function readHailState(): { count: number; off: boolean } {
+  try {
+    const raw = sessionStorage.getItem(HAIL_KEY);
+    if (raw === "off") return { count: MAX_HAILS, off: true };
+    return { count: raw ? Number(raw) || 0 : 0, off: false };
+  } catch {
+    // Private mode, or storage disabled. Hail once per page rather than not at
+    // all; the dwell timer still takes it away.
+    return { count: 0, off: false };
+  }
+}
+function writeHailCount(n: number) {
+  try { sessionStorage.setItem(HAIL_KEY, String(n)); } catch {}
+}
+function silenceHail() {
+  try { sessionStorage.setItem(HAIL_KEY, "off"); } catch {}
+}
+
 /* ---------- browser speech, typed just enough ---------- */
 
 type SpeechAlt = { transcript: string };
@@ -109,6 +180,13 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
   const [language, setLanguage] = useState("en-IN");
   const [listening, setListening] = useState(false);
   const [speak, setSpeak] = useState(false);
+  /** The hail card is up right now. */
+  const [hailing, setHailing] = useState(false);
+  /** The reader has opened the panel at least once — he never hails again. */
+  const [engaged, setEngaged] = useState(false);
+  /** Which line he says. Driven off the session count, so the second hail of
+   *  the visit is the second line even when it lands on a different page. */
+  const [hailIndex, setHailIndex] = useState(0);
   // A mic button that does nothing on Firefox is worse than no mic button.
   const canListen = useSyncExternalStore(noSubscribe, hasRecognition, notOnServer);
   const canSpeak = useSyncExternalStore(noSubscribe, hasSynthesis, notOnServer);
@@ -127,6 +205,74 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
   useEffect(() => {
     if (open) inputRef.current?.focus();
   }, [open]);
+
+  /**
+   * Opening it once retires the hail for the rest of the session.
+   *
+   * ⚠️ A handler, NOT an effect on `open`. Writing it as
+   * `useEffect(() => { if (open) setEngaged(true) }, [open])` is the obvious
+   * shape and `react-hooks/set-state-in-effect` rejects it: a setState in an
+   * effect body is a second render for a value that was already known at the
+   * moment of the click. Every path that opens the panel goes through here.
+   */
+  const openPanel = useCallback(() => {
+    setOpen(true);
+    setEngaged(true);
+    setHailing(false);
+    silenceHail();
+  }, []);
+
+  /**
+   * THE HAIL TIMER.
+   *
+   * ⚠️ `document.hidden` is checked at fire time, not at schedule time. A
+   * reader who opens the site in a background tab and comes back four minutes
+   * later would otherwise arrive to find the whole session's hails already
+   * spent on a tab nobody was looking at. Skipping a hidden fire costs
+   * nothing — the interval brings the next one round.
+   *
+   * ⚠️ The count is re-read from the store on every fire rather than held in a
+   * closure, so two hails cannot be spent by two mounts of this component
+   * racing across a navigation.
+   */
+  useEffect(() => {
+    if (engaged) return;
+    if (readHailState().off) return;
+
+    let dwell: number | undefined;
+    let repeat: number | undefined;
+
+    const withdraw = () => setHailing(false);
+
+    const hail = () => {
+      if (document.hidden) return;
+      const { count, off } = readHailState();
+      if (off || count >= MAX_HAILS) {
+        window.clearInterval(repeat);
+        return;
+      }
+      writeHailCount(count + 1);
+      setHailIndex(count % HAIL_LINES.length);
+      if (AUTO_OPEN) {
+        openPanel();
+        return;
+      }
+      setHailing(true);
+      window.clearTimeout(dwell);
+      dwell = window.setTimeout(withdraw, HAIL_DWELL_MS);
+    };
+
+    const first = window.setTimeout(() => {
+      hail();
+      repeat = window.setInterval(hail, HAIL_EVERY_MS);
+    }, HAIL_FIRST_MS);
+
+    return () => {
+      window.clearTimeout(first);
+      window.clearTimeout(dwell);
+      window.clearInterval(repeat);
+    };
+  }, [engaged, openPanel]);
 
   /**
    * Stop whatever is talking, whichever engine is talking.
@@ -390,13 +536,57 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
           without it this button would announce as "button" and the assistant
           would be unreachable by screen reader. The label that appears on hover
           is decoration and is hidden from the tree to avoid saying it twice. */}
+      {/* ---- the hail ----
+          Sits beside the seal, pointing at it, so the card and the button read
+          as one object rather than as a stray toast. `aria-live="polite"`, not
+          an alert: it interrupts nothing and waits its turn. */}
+      {hailing && !open && (
+        <div className="rj-hail fixed bottom-5 right-[4.75rem] z-40 print:hidden">
+          <div className="rj-hail-card" role="status" aria-live="polite">
+            <button
+              type="button"
+              onClick={openPanel}
+              className="rj-hail-say"
+            >
+              <span className="rj-hail-name">Jamindar</span>
+              <span className="rj-hail-line">{HAIL_LINES[hailIndex]}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setHailing(false);
+                setEngaged(true);
+                silenceHail();
+              }}
+              aria-label="Don't show this again"
+              className="rj-hail-dismiss"
+            >
+              <svg viewBox="0 0 12 12" className="h-3 w-3" aria-hidden="true">
+                <path
+                  d="M2.5 2.5l7 7M9.5 2.5l-7 7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => (open ? setOpen(false) : openPanel())}
         aria-expanded={open}
         aria-controls="jamindar-panel"
         aria-label={open ? "Close Jamindar" : "Ask Jamindar"}
-        className={`rj-medallion fixed bottom-5 right-5 z-40 inline-flex items-center justify-center print:hidden ${open ? "hidden sm:inline-flex" : ""}`}
+        /* ⚠️ `rj-pulsar` is CONDITIONAL, and the note beside that rule in
+           royal.css explains why it must stay so: on the base class it would
+           set the seal beating on every page for the life of the visit. Here
+           it rides only for the eleven seconds the card is up, which is what
+           makes it a hail rather than a notification badge. */
+        className={`rj-medallion fixed bottom-5 right-5 z-40 inline-flex items-center justify-center print:hidden ${hailing && !open ? "rj-pulsar" : ""} ${open ? "hidden sm:inline-flex" : ""}`}
       >
         <span className="rj-medallion-label" aria-hidden="true">
           {open ? "Close ✦" : "Ask Jamindar ✦"}

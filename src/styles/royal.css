@@ -2766,3 +2766,139 @@ header .glass,
     transition: none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE JAMINDAR HAIL (owner 2026-08-19) — the seal speaks first.
+   Paired with the `hailing` state in components/JamindarDock.tsx; the
+   medallion borrows `.rj-pulsar` for the same eleven seconds.
+
+   ⚠️ THIS IS GLASS OVER CONTENT, WHICH IS THE ONE PLACE THE BRIEF ALLOWS IT
+   (see the glass note in cadastral.css). The card floats over whatever the
+   page happens to be showing — a photograph as often as paper — so a solid
+   panel would read as a browser dialog pasted on top. But the tint is the
+   audited 0.9 of `--glass-tint`, NOT a sheer one: the card carries small ink
+   at `--color-ink-soft`, and the whole point of that number is that the
+   effective background stays knowable whatever is behind it.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rj-hail-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  /* Held off the two screen edges the seal already occupies. `100vw` minus the
+     seal, its gutter and the card's own gutter — so on a 360px phone it is a
+     card, not a full-width bar shoved against the glass. */
+  max-width: min(17.5rem, calc(100vw - 7rem));
+  padding: 0.5rem 0.4rem 0.5rem 0.75rem;
+  border: 1px solid var(--glass-edge);
+  border-radius: 14px;
+  background: var(--glass-tint);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  box-shadow: var(--shadow-raise);
+}
+
+/* The tail, pointing back at the seal. A rotated square rather than a border
+   triangle so it inherits the card's own tint and edge and cannot drift out of
+   step with them. `backdrop-filter` is deliberately NOT repeated on it —
+   blurring the same pixels twice makes a visible darker notch. */
+.rj-hail-card::after {
+  content: "";
+  position: absolute;
+  right: -5px;
+  bottom: 1.1rem;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  background: var(--glass-tint);
+  border-right: 1px solid var(--glass-edge);
+  border-top: 1px solid var(--glass-edge);
+}
+.rj-hail {
+  position: fixed;
+}
+.rj-hail .rj-hail-card {
+  position: relative;
+}
+
+.rj-hail-say {
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+.rj-hail-name {
+  display: block;
+  font-size: var(--text-micro);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-jamin-gold-ink);
+}
+.rj-hail-line {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: var(--text-tiny);
+  line-height: 1.45;
+  color: var(--color-ink-soft);
+}
+/* The whole card is the target, so the underline goes on the line rather than
+   on a separate "ask" button — one more control in a 280px card is clutter. */
+.rj-hail-say:hover .rj-hail-line,
+.rj-hail-say:focus-visible .rj-hail-line {
+  text-decoration: underline;
+  text-decoration-color: var(--color-line-red);
+  text-underline-offset: 3px;
+}
+
+.rj-hail-dismiss {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 999px;
+  color: var(--color-ink-faint);
+  transition: color 200ms var(--ease-silk);
+}
+.rj-hail-dismiss:hover,
+.rj-hail-dismiss:focus-visible {
+  color: var(--color-ink);
+}
+
+/* Unfurls from the seal — origin bottom-right, so it grows OUT of the button
+   it belongs to instead of appearing beside it. */
+@keyframes rj-hail-in {
+  from {
+    opacity: 0;
+    transform: translateX(8px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .rj-hail-card {
+    transform-origin: 100% 85%;
+    animation: rj-hail-in 340ms var(--ease-silk) both;
+  }
+}
+
+/* Carbon twin. The light glass tint would be a white slab in the dark mode. */
+[data-mode="dark"] .rj-hail-card,
+[data-mode="dark"] .rj-hail-card::after {
+  background: var(--glass-onyx);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+[data-mode="dark"] .rj-hail-line {
+  color: var(--color-bone);
+}
+[data-mode="dark"] .rj-hail-name {
+  color: var(--color-jamin-gold-pale);
+}
+[data-mode="dark"] .rj-hail-dismiss {
+  color: var(--color-bone-soft);
+}
+[data-mode="dark"] .rj-hail-dismiss:hover,
+[data-mode="dark"] .rj-hail-dismiss:focus-visible {
+  color: var(--color-bone);
+}
