@@ -379,12 +379,31 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      inheriting it from the base. `bg-ink/85` over a bright photograph without
      any blur is a muddy rectangle, and writing it here means the two states do
      not silently depend on which stylesheet wins. */
+  /* 🚨 A FIXED CELL, NOT AN INLINE PILL (report 8, 2026-08-19: "filter options
+     are using inconsistent spacing and occupying unnecessary vertical
+     space… keep all filter cards/chips at a consistent fixed size… do not let
+     the filter card size change based on the text length").
+
+     `inline-flex` sized every chip to its own label, so "Coimbatore 1" and
+     "Salem 1" were different widths and the row wrapped wherever it happened
+     to run out — a ragged block whose height changed with the district names.
+     The chips are now CELLS of a two-column grid (see `facetGridCls`): equal
+     width, equal height, equal gutters, and a predictable number of rows.
+
+     ⚠️ `justify-between` + `truncate`, because a fixed cell and a long label
+     are only compatible if the label can give way. The count stays pinned to
+     the right so the column of numbers lines up. */
   const chip = (on: boolean) =>
-    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium transition-colors ${
+    `group flex min-h-[44px] w-full items-center justify-between gap-2 overflow-hidden rounded-full border px-3.5 py-2 text-tiny font-medium transition-colors ${
       on
         ? "border-ink bg-ink/85 text-canvas backdrop-blur-sm"
         : "rj-chip-glass border-line text-ink-soft hover:border-ink-faint hover:text-ink"
     }`;
+
+  /* Two per row everywhere the facets appear — the report asks for District and
+     Stage to share one structure. In the `xl` rail the column is 17rem, which
+     still takes two cells comfortably at this padding. */
+  const facetGridCls = "grid grid-cols-2 gap-2";
 
   return (
     <>
@@ -526,7 +545,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className={facetGridCls}>
             {districts.map(([d, n]) => {
               const on = f.district === d;
               const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
@@ -570,7 +589,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>
-            <div className="flex flex-wrap gap-2">
+            <div className={facetGridCls}>
             {phases.map(([k, n]) => {
               const on = f.phase === k;
               const stone = STAGE_STONE[k as keyof typeof STAGE_STONE]?.stone ?? STONE_FALLBACK;
@@ -827,9 +846,32 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 {/* ⚠️ The swap key carries the GROUP as well as the filters, or
                     all three grids would share one animation identity and only
                     the first would replay. */}
+                {/* 🚨 THE SHAPE FOLLOWS THE COUNT (report 8, 2026-08-19: "the
+                    current layout leaves excessive empty space when a section
+                    contains only one property… make the property layout dynamic
+                    based on the number of properties").
+
+                    A fixed `lg:grid-cols-3` is right for a full stage and absurd
+                    for a stage with one development in it — that card took a
+                    third of the band and left two thirds of coloured pane doing
+                    nothing, which is the "large unused area" the report names.
+
+                      1  → one horizontal featured card across the full width
+                      2  → two equal columns
+                      3+ → the three-column grid, unchanged
+
+                    ⚠️ The card is the SAME component in all three; only its
+                    `featured` modifier and the track count change, so the
+                    dimensions stay fixed within each layout as asked. */}
                 <div
                   key={`${swapKey}|${g.key}`}
-                  className="rj-swap mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3"
+                  className={`rj-swap mt-phi4 grid gap-phi3 ${
+                    g.items.length === 1
+                      ? "grid-cols-1"
+                      : g.items.length === 2
+                        ? "sm:grid-cols-2"
+                        : "sm:grid-cols-2 lg:grid-cols-3"
+                  }`}
                 >
                   {g.items.map((p, i) =>
                     g.selling ? (
@@ -840,8 +882,31 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                         {/* `priority` only in the first group: it is the LCP
                             candidate and marking every grid's first three would
                             spend the preload budget on images below the fold. */}
-                        <PropertyCard p={p} priority={gi === 0 && i < 3} />
-                        <div className="absolute right-3 top-3 z-10">
+                        <PropertyCard
+                          p={p}
+                          priority={gi === 0 && i < 3}
+                          featured={g.items.length === 1}
+                        />
+                        {/* 🚨 BOTTOM-RIGHT, NOT TOP-RIGHT (report 8,
+                            2026-08-19: "the Compare button is overlapping the
+                            Wishlist (heart) icon in the property card image
+                            area").
+
+                            It was `right-3 top-3`, and PropertyCard puts the
+                            heart in a top-right cluster at `p-4` — two
+                            absolutely-positioned controls claiming the same
+                            corner from two different components, neither able
+                            to see the other.
+
+                            ⚠️ THE TOP-LEFT CORNER IS NOT FREE, which is why
+                            this goes down rather than across: the stage and
+                            approval badges live there and they are content,
+                            not chrome. Bottom-right is the one empty corner,
+                            and it already has a scrim under it (the Docket's
+                            gradient) so a control reads cleanly on it. The
+                            heart keeps top-right on every card, so both are
+                            consistent and diagonally opposed. */}
+                        <div className="absolute bottom-3 right-3 z-10">
                           <CompareToggle
                             on={compared.includes(p.id)}
                             disabled={compared.length >= MAX_COMPARE && !compared.includes(p.id)}
@@ -854,7 +919,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                       /* Completed and sold-out carry no compare control — there
                          is nothing to weigh up against anything. */
                       <div key={p.id} data-pid={p.id} className="flex">
-                        <PropertyCard p={p} />
+                        <PropertyCard p={p} featured={g.items.length === 1} />
                       </div>
                     ),
                   )}

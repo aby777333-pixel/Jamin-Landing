@@ -39,7 +39,28 @@ import {
  * approval that a buyer can verify against the DTCP file is the thing that
  * gets the metal. One seal, and it is the true one.
  */
-export function PropertyCard({ p, priority = false }: { p: Property; priority?: boolean }) {
+export function PropertyCard({
+  p,
+  priority = false,
+  featured = false,
+}: {
+  p: Property;
+  priority?: boolean;
+  /**
+   * 🚨 THE HORIZONTAL FORM (report 8, 2026-08-19: "1 property: display as a
+   * large horizontal featured card using the available section width").
+   *
+   * A stage section holding one development put a single vertical card in a
+   * three-column track and left two thirds of the pane empty. `featured` turns
+   * the SAME card on its side from `sm` — picture left, record right — so one
+   * property fills the band instead of hiding in the corner of it.
+   *
+   * ⚠️ It is a modifier on this component, not a second component. Every badge,
+   * docket, gem band and tier rule below is shared; a parallel "FeaturedCard"
+   * would be forty lines of duplication waiting to drift.
+   */
+  featured?: boolean;
+}) {
   const cover = coverImage(p);
   const approvals = approvalBadges(p);
   const area = formatArea(p);
@@ -94,7 +115,9 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
          colour tokens to onyx, and every child follows, including the two
          cadastral components this file does not own. See royal.css. */
       data-tier={tier.key}
-      className="cd-card cd-fold cd-photo rj-lift rj-lamplight group flex h-full w-full flex-col rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500"
+      className={`cd-card cd-fold cd-photo rj-lift rj-lamplight group flex h-full w-full rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500 ${
+        featured ? "flex-col sm:flex-row" : "flex-col"
+      }`}
       /* The lift is `.rj-lift` (transform only). The shadow tint is the card's
          own stone at very low alpha, so a row lifts in slightly different
          light — set here rather than in CSS because it is per-district data. */
@@ -127,7 +150,17 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           dog-ear and its shadow), and because the sweep should be clipped to the
           picture: the box is already `relative overflow-hidden`, which is
           exactly what the class asks of its host. */}
-      <div className="rj-sheen relative aspect-[1.618/1] shrink-0 overflow-hidden rounded-t-xl bg-canvas-sunken">
+      {/* ⚠️ `sm:aspect-auto` with a width, not a taller aspect box. Sideways the
+          picture has to match the RECORD's height, which is set by its content —
+          an aspect ratio would fix the height instead and leave one of the two
+          columns short. `self-stretch` is what makes it take the row. */}
+      <div
+        className={`rj-sheen relative shrink-0 overflow-hidden bg-canvas-sunken ${
+          featured
+            ? "aspect-[1.618/1] rounded-t-xl sm:aspect-auto sm:w-[44%] sm:self-stretch sm:rounded-l-xl sm:rounded-tr-none"
+            : "aspect-[1.618/1] rounded-t-xl"
+        }`}
+      >
         {/* Certificate corners (Gilded Register §5): four gold brackets draw
             in when the card is touched. On the PICTURE box — the card root's
             pseudo-elements belong to cd-fold. */}
@@ -216,7 +249,7 @@ export function PropertyCard({ p, priority = false }: { p: Property; priority?: 
           in others", and both halves of that had one cause: everything below
           the title was sized by its own content, so no two cards in a row
           agreed about where anything sat. */}
-      <div className="flex flex-1 flex-col p-phi3">
+      <div className={`flex flex-1 flex-col p-phi3 ${featured ? "sm:justify-center sm:p-phi4" : ""}`}>
         {/* ── 1. status · location, title, address ────────────────────────────
             `flex-1` absorbs the difference between a one-line and a two-line
             title so everything below lands at the same height across the row. */}

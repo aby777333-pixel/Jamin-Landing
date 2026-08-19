@@ -1246,3 +1246,43 @@ sweeping first.
 
 Standing rule at full strength — names a community not in the catalogue:
 `alt=""`, `aria-hidden`, never a caption.
+
+## hero-65 RETOUCHED — "JAMIN MONARCH" removed from the board (2026-08-19)
+
+Report 8: "the entrance gate currently displays both Jamin Monarch and Jamin
+Bazaar, which makes the branding overlapped with the text on the image… remove
+'Jamin Monarch' completely from the gate board."
+
+The gold lettering is **painted out of the source**, not hidden by framing —
+there is no crop that removes it and keeps the gate. All three renditions were
+regenerated from the retouched 1672 master; the originals are in git history at
+`87dd21e` if the frame is ever re-supplied.
+
+**How, in case it has to be repeated.** The board face is a smooth cream with a
+slow vertical gradient, which is the one condition under which per-column
+vertical interpolation reconstructs a surface convincingly. The letters sit on a
+slanted baseline (the beam is in perspective), measured off a 3× gridded crop:
+
+    top of caps    y = 248 − 0.131 · (x − 945)
+    bottom of caps y = 287 − 0.131 · (x − 945)      x from 934 to 1330
+
+⚠️ **The donor rows are searched for, not assumed.** A fixed margin above the
+band walks into the top lip's warm shadow at the right-hand end, where the face
+is much shallower — that is what left the final "H" standing on the first pass
+(34 columns skipped). Each column now searches outward for genuinely cream
+pixels, any column that still fails inherits a donor interpolated from its
+neighbours, and only the fill itself is feathered, through a soft mask. Blurring
+a rectangular band instead leaves the band's own edges visible.
+
+⚠️ **THE LOCKUP WAS NOT MOVED, and the report asked for it** ("position the Jamin
+Bazaar branding slightly right of the visual center"). It was attempted and
+withdrawn: on a perspective surface the move is three transforms — right, up
+along the −0.131 baseline, and ~3% larger because the right of the board is
+nearer the camera — and the erase left behind is 108px tall, spanning the lit
+top and the shaded lower face, which vertical interpolation cannot reconstruct.
+The result was a pale striped rectangle where the mark used to be. That needs a
+re-render or content-aware fill, not PIL. The lockup currently sits at 49% of
+the frame's width — near centre, slightly left of the board's own centre.
+
+⚠️ Framing cannot deliver it either: at 1440 the hero shows the full frame width
+(visible X 0–100%), so there is no horizontal crop to steer.

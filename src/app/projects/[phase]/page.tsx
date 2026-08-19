@@ -175,6 +175,36 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
     completed: "right",
   };
 
+  /**
+   * 🚨 THE VERTICAL ANCHOR IS PER PHASE NOW (report 8, 2026-08-19: "the hero
+   * image is incorrectly cropped… display the complete hero composition
+   * without cutting important architectural elements", priority High).
+   *
+   * It used to be one shared `"50% 30%"` for both ongoing and future, and on
+   * hero-65 that is a hair from disaster. Measured at 1440x900: the art box is
+   * 1602x605, the frame scales to 1602x901, and 30% puts the visible window at
+   * 9.9%-77% of the frame. The gate's arch begins at 10.6% — inside by 0.7%.
+   *
+   * That margin is not a margin, it is luck, and it runs out as soon as the
+   * window is shorter: at a 500px box the same 30% moves the window to
+   * 13.3%-68.8% and the top of the arch is gone. A gate photographed head-on
+   * with its beam near the top edge cannot be anchored at a third of the way
+   * down.
+   *
+   * 14% holds the arch at every height this hero renders at — at the 605px box
+   * the window becomes 4.9%-72%, at 500px it is 6.7%-62%, and the board
+   * (16%-35% of the frame) is comfortably inside both.
+   *
+   * ⚠️ `future` KEEPS 30% deliberately. It carries hero-64, a different
+   * composition, and this number was solved against hero-65's arch. Re-measure
+   * before assuming one value serves both.
+   */
+  const ART_VERTICAL_BY_PHASE: Record<string, string> = {
+    ongoing: "50% 14%",
+    future: "50% 30%",
+    completed: "50% 50%",
+  };
+
   return (
     <>
       <script
@@ -207,7 +237,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         art={ART_BY_PHASE[phase] ?? 5}
         tone={phase === "current" ? "paper" : "cinematic"}
         artPosition={
-          phase === "current" ? (ART_POSITION_BY_PHASE[phase] ?? "left") : phase === "completed" ? "50% 50%" : "50% 30%"
+          phase === "current"
+            ? (ART_POSITION_BY_PHASE[phase] ?? "left")
+            : (ART_VERTICAL_BY_PHASE[phase] ?? "50% 30%")
         }
         sheer
         sheerAlpha={phase === "current" ? 0.26 : phase === "ongoing" ? 0.52 : 0.58}

@@ -134,6 +134,26 @@ function Block({
   );
 }
 
+/**
+ * The survey mark that fits an amenity's words (report 8, 2026-08-19).
+ *
+ * ⚠️ SUBSTRING MATCHING ON PURPOSE, and ordered most-specific first. Amenities
+ * are free text typed into the admin console — "24x7 water", "Water supply",
+ * "Overhead tank" all mean the same thing and no enum will ever cover them. A
+ * lookup table would silently drop everything it had not seen; this degrades to
+ * `leaf`, which is the mark every row carried before, so an unmatched amenity is
+ * no worse off than it was.
+ */
+function amenityIcon(a: string): "junction" | "stamp" | "growth" | "grid" | "deed" | "leaf" {
+  const s = a.toLowerCase();
+  if (/water|tank|borewell|drain|sewer/.test(s)) return "junction";
+  if (/power|electric|light|solar|street ?light/.test(s)) return "growth";
+  if (/road|approach|avenue|pave/.test(s)) return "grid";
+  if (/security|guard|gate|cctv|fenc|compound/.test(s)) return "stamp";
+  if (/club|gym|play|park|walk|jog|community|hall/.test(s)) return "deed";
+  return "leaf";
+}
+
 /** Turn `dtcp_approval_no` into `DTCP approval no`, without a lookup table that
  *  would silently drop any key the admin adds later. */
 function humanKey(k: string) {
@@ -602,19 +622,39 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           )}
 
           {amenities.length > 0 && (
+            /* 🚨 CARDS OF ONE HEIGHT, WITH A MARK CHOSEN PER AMENITY (report 8,
+                2026-08-19: "the Amenities section has inconsistent spacing and
+                alignment, and use appropriate icon for each… keep every amenity
+                item at a consistent fixed height… use subtle borders/dividers
+                instead of plain text rows").
+
+                Two faults, one cause. Every row carried the SAME `leaf` mark,
+                so the icon column said nothing and a reader scanning it learned
+                only that there were amenities; and the rows were bare text in a
+                grid, so a two-line amenity ("24-hour water supply and overhead
+                tank") made its own row taller than its neighbour and the two
+                columns fell out of step down the whole list.
+
+                `amenityIcon` reads the words and picks from the survey set —
+                water, power, road, planting, security, recreation — falling back
+                to `leaf`, which is what every row used to get. The mark is still
+                `aria-hidden`: it supports the word, it does not replace it.
+
+                ⚠️ `min-h` + `items-center`, not a fixed height. A hard height
+                would clip the long amenity the report asks us to handle; a floor
+                makes the short ones agree and lets a long one grow to two lines
+                without dragging its neighbour. */
             <Block id="amenities" title="Amenities">
-              <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
+              <ul className="grid gap-2 sm:grid-cols-2">
                 {amenities.map((a) => (
-                  <li key={a} className="flex items-start gap-2.5 text-base text-ink-soft">
-                    {/* A drawn mark instead of a dot. `leaf` is the set's mark
-                        for planting and open space, which is what an amenity on
-                        a plotted layout is; the services list below takes
-                        `junction`, the mark for a formed road meeting another.
-                        Both are `aria-hidden` — the words carry the meaning. */}
+                  <li
+                    key={a}
+                    className="flex min-h-[3.25rem] items-center gap-2.5 rounded-card border border-line bg-canvas-alt px-phi2 py-2 text-base leading-snug text-ink-soft"
+                  >
                     <SurveyIcon
-                      name="leaf"
+                      name={amenityIcon(a)}
                       size="h-4 w-4"
-                      className="mt-0.5 shrink-0 text-jamin-gold-ink"
+                      className="shrink-0 text-jamin-gold-ink"
                     />
                     {a}
                   </li>
@@ -687,18 +727,36 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             >
               {(legal.length > 0 || p.rera_number) && (
                 <dl className="divide-y divide-line border-y border-line">
+                  {/* 🚨 LABEL LEFT, VALUE LEFT (report 8, 2026-08-19: "the property
+                      information values are currently right-aligned, while the
+                      labels are on the left. This creates excessive empty space
+                      and makes the content feel disconnected").
+
+                      `justify-between` pushed each value to the far edge of the
+                      column, so a two-word label and a three-word value sat at
+                      opposite ends of a 780px row with a river of nothing
+                      between them — the reader has to traverse it to pair them,
+                      which is exactly the "disconnected" the report describes.
+                      The same fixed-track register the Chain of Record and Why
+                      this location now use: the term takes a 13rem rail, the
+                      value starts immediately after it, and both read as one
+                      line. Stacked below `sm`, where 13rem of a phone leaves
+                      the value nothing. */}
                   {p.rera_number && (
-                    <div className="flex flex-wrap items-baseline justify-between gap-3 py-3">
+                    <div className="gap-phi3 py-3 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline">
                       <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">RERA</dt>
-                      <dd className="text-base text-ink">{p.rera_number}</dd>
+                      <dd className="mt-1 text-base text-ink sm:mt-0">{p.rera_number}</dd>
                     </div>
                   )}
                   {legal.map(([k, v]) => (
-                    <div key={k} className="flex flex-wrap items-baseline justify-between gap-3 py-3">
+                    <div
+                      key={k}
+                      className="gap-phi3 py-3 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline"
+                    >
                       <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">
                         {humanKey(k)}
                       </dt>
-                      <dd className="max-w-md text-right text-base text-ink">{String(v)}</dd>
+                      <dd className="mt-1 text-base text-ink sm:mt-0">{String(v)}</dd>
                     </div>
                   ))}
                 </dl>
@@ -766,21 +824,60 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   a forecast.
                 </p>
               </div>
-              <dl className="mt-phi3 divide-y divide-line border-y border-line">
-                {investment.map(([k, v]) => (
-                  <div
-                    key={k}
-                    className="gap-phi3 py-phi2 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline"
-                  >
-                    <dt className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft">
-                      {humanKey(k)}
-                    </dt>
-                    <dd className="mt-1 text-base leading-relaxed text-ink-soft sm:mt-0">
-                      {String(v)}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              {/* 🚨 THE ROWS SHARE THE BAND WITH A PICTURE (report 8,
+                  2026-08-19: "the right side of the investment section has
+                  unused empty space… add a realistic real-estate
+                  investment/planning image in the right-side empty area, as
+                  the other sections").
+
+                  The two-column register this section gained in report 6 fixed
+                  the label/value pairing but left the consequence the report
+                  now names: these values are short — a yield, a corridor, a
+                  distance — so a 13rem label rail plus five words used about
+                  half the measure and the rest was blank.
+
+                  ⚠️ THE PICTURE IS hero-80, THE PLANNING FLAT-LAY, and it is
+                  reused rather than commissioned — the approved layout sheets
+                  on a drawing desk, which is literally what this section is
+                  about. Cross-surface reuse of a register frame is the
+                  hero-39/72 precedent; it also carries /journal, and the two are
+                  never on screen together.
+
+                  ⚠️ Standing rule, at full strength: it is a render, so `alt=""`,
+                  `aria-hidden`, and never a caption. It is decoration beside the
+                  facts, not evidence of them — which is also why it is
+                  `lg:block` only. On a phone it would push the facts down the
+                  page to say nothing. */}
+              <div className="mt-phi3 gap-phi4 lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
+                <dl className="divide-y divide-line border-y border-line">
+                  {investment.map(([k, v]) => (
+                    <div
+                      key={k}
+                      className="gap-phi3 py-phi2 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline"
+                    >
+                      <dt className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft">
+                        {humanKey(k)}
+                      </dt>
+                      <dd className="mt-1 text-base leading-relaxed text-ink-soft sm:mt-0">
+                        {String(v)}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className="hidden overflow-hidden rounded-card border border-line bg-canvas-alt lg:block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/hero/hero-80-768.webp"
+                    srcSet="/hero/hero-80-768.webp 768w, /hero/hero-80-1280.webp 1280w"
+                    sizes="18rem"
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
             </Block>
           )}
 

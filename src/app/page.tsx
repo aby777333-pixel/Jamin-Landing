@@ -647,7 +647,20 @@ export default async function HomePage() {
           and read as the page having ended early. The footer's own margin is
           the separation. */}
       <Container hue={paneHue("/")}>
-      <Pane className="p-phi3 sm:p-phi4">
+      {/* 🚨 NO PANE ON THIS BAND (report 8, 2026-08-19: "a red/pink outer card
+          contains another dark card, creating a double-card effect… remove the
+          outer red/pink container and keep one dark rounded card directly on
+          the page background").
+      
+          The pane round wrapped five of this page's nine Containers without
+          checking what was already inside them, and this one closes on a
+          `bg-charcoal` card of its own. A 40% vermilion ground behind a dark
+          slab is two cards deep and reads as a mount around a photograph.
+      
+          ⚠️ THE RULE THIS ESTABLISHES: a pane is a ground for content that has
+          none. A section that already brings its own card, band or scrim does
+          not get one — the same reason the velvet and bone-paper bands were
+          left alone in that round. */}
         {/* ⚠️ THE COPY CAME OFF THE FOOTAGE, 2026-08-11. It used to sit over the
             video with a `veil` behind it, which is the right treatment for a
             still and the wrong one for this clip: somebody is speaking to
@@ -741,7 +754,6 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </Pane>
       </Container>
 
       {/* CARTOUCHE §4.2 — the Sweep, surface 1 of exactly 3 (here, /contact,
