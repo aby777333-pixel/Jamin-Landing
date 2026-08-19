@@ -40,7 +40,15 @@ export function ShortlistTray() {
   return (
     <div className="fixed bottom-24 left-4 z-40 lg:bottom-6 lg:left-6 print:hidden">
       {open && (
-        <div className="mb-2 w-72 max-w-[calc(100vw-2rem)] rounded-card border border-line bg-canvas p-3 shadow-raise">
+        /* ⚠️ `rj-glass rj-crystal` REPLACES `bg-canvas` (do-all round, menu
+           item 10). This panel floats over whatever the reader was looking
+           at, which is the one place the brief licenses glass. `rj-glass`
+           carries the audited 0.9 ivory tint, so the ink inside it keeps a
+           knowable backdrop however dark the page behind is; `rj-crystal`
+           puts the light on the top edge. The `bg-` utility has to GO, not
+           merely be overridden — leaving it would make the panel depend on
+           which stylesheet happens to win. */
+        <div className="rj-glass rj-crystal mb-2 w-72 max-w-[calc(100vw-2rem)] rounded-card border border-line p-3 shadow-raise">
           <p className="px-1 pb-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
             Your shortlist
           </p>
@@ -86,9 +94,14 @@ export function ShortlistTray() {
         type="button"
         aria-expanded={open}
         onClick={openTray}
+        /* ⚠️ THE HEART IS VERMILION, THE WORD IS NOT. `text-jamin-red-deep`
+           stays on the button because it carries the label "Shortlist" and
+           vermilion fails AA as small text on this ground (3.64:1); the mark
+           beside it takes the reader's colour explicitly. Same split as
+           ShortlistHeart, for the same measured reason. */
         className="inline-flex items-center gap-2 rounded-full border border-jamin-red-deep/40 bg-canvas/95 px-4 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep shadow-lift backdrop-blur transition-all hover:-translate-y-0.5"
       >
-        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true" fill="currentColor">
+        <svg viewBox="0 0 24 24" className="h-4 w-4 text-vermilion" aria-hidden="true" fill="currentColor">
           <path d="M12 20.3 4.9 13a4.6 4.6 0 0 1 0-6.5 4.4 4.4 0 0 1 6.4 0l.7.8.7-.8a4.4 4.4 0 0 1 6.4 0 4.6 4.6 0 0 1 0 6.5Z" />
         </svg>
         Shortlist

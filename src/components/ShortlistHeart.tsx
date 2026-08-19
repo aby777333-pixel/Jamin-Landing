@@ -33,7 +33,17 @@ export function ShortlistHeart({ propertyId, title }: { propertyId: string; titl
       }}
       className={`inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur transition-all ${
         on
-          ? "border-jamin-red-deep/50 bg-jamin-red-soft text-jamin-red-deep"
+          /* ⚠️ VERMILION, NOT THE BRAND RED (do-all round, menu item 2).
+             Every red on this site meant one thing — the company asking you
+             to act: Ask, Enquire, Book a visit. A kept heart is the opposite
+             direction of travel, the reader marking the page for themselves,
+             and it was wearing the same hue as the buttons pushing at them.
+             `--color-vermilion` is the sindoor thread and had no call sites
+             until now. It measures 3.93:1 against `jamin-red-soft`, over the
+             3:1 a graphic needs; it is NOT used as a word anywhere, because
+             on the canvas it is 3.64:1 and would fail for text. The heart is
+             a filled shape and its accessible name lives in `aria-label`. */
+          ? "border-vermilion/50 bg-jamin-red-soft text-vermilion"
           : "border-canvas/60 bg-canvas/90 text-ink-faint hover:border-ink-faint hover:text-ink"
       }`}
     >

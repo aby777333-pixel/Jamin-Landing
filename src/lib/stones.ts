@@ -52,7 +52,22 @@ export const STAGE_STONE: Record<
   available: { stone: "var(--color-emerald)", ink: "var(--color-emerald)", label: "Available", tone: "glass" }, // 5.20:1
   reserved: { stone: "var(--color-champagne-500)", ink: "var(--color-champagne-700)", label: "Reserved", tone: "glass" }, // 6.20:1
   booked: { stone: "var(--color-ruby)", ink: "var(--color-ruby)", label: "Booked", tone: "glass" }, // 7.89:1
-  sold: { stone: "var(--color-plat-300)", ink: "var(--color-plat-800)", label: "Sold", tone: "glass" }, // 6.14:1
+  /* ⚠️ GARNET IS THE WORD, PLATINUM IS STILL THE FILL (do-all round,
+     2026-08-19 — menu item 2). `--color-garnet` shipped in the 2026-08-18
+     round as "the red foil's deep stop" and then had ZERO call sites; this
+     is the one place where spending it changes meaning rather than merely
+     adding a colour. Sold and Completed both read platinum today, and they
+     are opposite facts — one is finished and handed over, the other is
+     closed to you. Garnet measures 8.91:1 on the canvas against plat-800's
+     6.14:1, so this is also the more legible of the two. The FILL stays
+     platinum: garnet as a band would read as an alarm.
+
+     ⚠️ 8.91:1 is the GEMSTONE garnet (#7a0404). Putting this token to work
+     is what turned up a second `--color-garnet` (#8e1c22) declared earlier
+     in globals.css and overridden by it — dead since the day it shipped,
+     deleted 2026-08-19. If a future round re-adds one, this ratio is the
+     thing that quietly changes. */
+  sold: { stone: "var(--color-plat-300)", ink: "var(--color-garnet)", label: "Sold", tone: "glass" }, // 7.03:1
 };
 
 /**

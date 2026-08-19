@@ -47,7 +47,14 @@ export function ModeToggle() {
       onClick={toggle}
       aria-pressed={dark}
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
-      className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-line bg-canvas/60 text-ink-soft transition-colors hover:border-jamin-gold hover:text-ink"
+      /* ⚠️ `rj-coin` owns the radius, the ring, the light-catch, the hover
+         lift and the transition (do-all round, menu item 9). It was a
+         bordered circle at `bg-canvas/60` — a hole punched in the header
+         rather than an object lying on it. Do not put `border` or a `bg-`
+         utility back: the ring is an inset `box-shadow` so the coin has no
+         border box to fight with, and a background utility would cover the
+         gradient that IS the light on its top edge. */
+      className="rj-coin inline-flex h-9 w-9 shrink-0 items-center justify-center text-ink-soft"
     >
       <svg
         width="16"

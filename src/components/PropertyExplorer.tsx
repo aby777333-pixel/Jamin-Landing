@@ -81,6 +81,24 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
   // so there is no moment where the two can disagree.
   const search = useQueryString();
   const f = useMemo(() => parse(search), [search]);
+  /**
+   * Item 15 — the key that makes a filter change legible AS a change.
+   *
+   * Changing this string remounts the results container, which re-runs
+   * `rj-swap`'s 220ms settle. Cached images do not re-fetch on a remount, so
+   * the cards fade rather than flash.
+   *
+   * ⚠️ `view` IS DELIBERATELY NOT IN IT, and `compare` must never be. The
+   * three views are separate elements already, so including it would be
+   * redundant; including `compare` would replay the whole grid every time a
+   * reader ticks one card's compare box, which is a flash on an action that
+   * changed nothing about what is listed.
+   *
+   * ⚠️ IT IS NOT PUT ON THE MAP. `PropertiesMap` re-initialises on a
+   * remount, and paying for that on every keystroke is exactly the cost the
+   * rest of this component is written to avoid.
+   */
+  const swapKey = `${f.q}|${f.district ?? ""}|${f.phase ?? ""}|${f.purpose ?? ""}`;
   const [suggestOpen, setSuggestOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -184,11 +202,25 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      over a blur rather than solid — white copy still reads 10:1+ over any
      ground the sand system produces — and the resting pill's stone wash mixes
      with TRANSPARENT (set inline below), so the page shows through both. */
+  /* ⚠️ `rj-chip-glass` REPLACES `bg-canvas/40 backdrop-blur-sm` on the resting
+     pill and nothing else (do-all round, menu item 6). The old pair was half
+     glass: `blur-sm` is 4px and there was no saturation, so over a photograph
+     the rail read as fog rather than as material.
+
+     ⚠️ IT DOES NOT TOUCH THE STONE. Each resting pill is painted with its
+     district's colour through an INLINE `background`, and an inline style beats
+     a class — the tint inside `rj-chip-glass` is only the fallback for pills
+     that carry no stone. The colour key shipped on 2026-08-18 is untouched.
+
+     ⚠️ The pressed pill keeps `backdrop-blur-sm` EXPLICITLY rather than
+     inheriting it from the base. `bg-ink/85` over a bright photograph without
+     any blur is a muddy rectangle, and writing it here means the two states do
+     not silently depend on which stylesheet wins. */
   const chip = (on: boolean) =>
-    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium backdrop-blur-sm transition-colors ${
+    `group inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-medium transition-colors ${
       on
-        ? "border-ink bg-ink/85 text-canvas"
-        : "border-line bg-canvas/40 text-ink-soft hover:border-ink-faint hover:text-ink"
+        ? "border-ink bg-ink/85 text-canvas backdrop-blur-sm"
+        : "rj-chip-glass border-line text-ink-soft hover:border-ink-faint hover:text-ink"
     }`;
 
   return (
@@ -413,7 +445,18 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             )}
           </div>
 
-          <div className="flex items-center gap-1 self-start rounded-full border border-line bg-canvas p-1 sm:self-auto">
+          <div
+            className="rj-segment self-start sm:self-auto"
+            /* Three seats. The pill's index is the view's position in the same
+               order the buttons are written below — keep the two in step. */
+            style={
+              {
+                "--rj-n": 3,
+                "--rj-i": ["grid", "list", "map"].indexOf(f.view),
+              } as React.CSSProperties
+            }
+          >
+            <span className="rj-segment-pill" aria-hidden="true" />
             {/* ⚠️ The icon is DECORATION beside a label that stays — reported
                 2026-08-14 as the three controls being "less recognizable at a
                 glance", which is an argument for adding a mark, not for
@@ -436,9 +479,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 type="button"
                 aria-pressed={f.view === v}
                 onClick={() => set({ view: v })}
-                className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-tiny font-medium capitalize transition-colors ${
-                  f.view === v ? "bg-ink text-canvas" : "text-ink-soft hover:text-ink"
-                }`}
+                className="rj-segment-btn capitalize"
+                /* ⚠️ THE STONE WASH STAYS ON THE RESTING SEGMENTS ONLY, exactly
+                   as before. The pressed seat must be transparent or it would
+                   paint over the pill sliding underneath it — which is why the
+                   pressed branch returns `undefined` rather than a colour. */
                 style={
                   f.view === v
                     ? undefined
@@ -486,7 +531,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             which is what a screen reader navigates by. Visually redundant
             under the page title, so it is announced rather than shown. */}
         <h2 className="sr-only">Developments</h2>
-        <ul className="mt-phi5 divide-y divide-line border-y border-line">
+        <ul key={swapKey} className="rj-swap mt-phi5 divide-y divide-line border-y border-line">
           {results.map((p) => (
             /* Stacked on a phone. Wrapping a right-aligned price block under a
                left-aligned title is what made every row look differently
@@ -506,7 +551,13 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                     </span>
                   ))}
                   {!isSellable(p) && (
-                    <span className="text-micro uppercase tracking-[0.12em] text-ink-faint">
+                    /* ⚠️ Was `text-ink-faint` — a THIRD colour for a fact the
+                       stage system already owns (lib/stones.ts). Sold now reads
+                       garnet here, on the card, in Compare and in Jamindar's
+                       result rows, because all four ask stones.ts. A status
+                       that is not `sold` keeps the neutral: `reserved` and
+                       `booked` are not closed doors and must not look like one. */
+                    <span className={`text-micro uppercase tracking-[0.12em] ${p.status === "sold" ? "text-garnet" : "text-ink-faint"}`}>
                       {p.status === "sold" ? "Sold out" : p.status}
                     </span>
                   )}
@@ -541,7 +592,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           {live.length > 0 && (
             <section className="mt-phi5">
               <h2 className="sr-only">Developments currently selling</h2>
-              <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+              <div key={swapKey} className="rj-swap grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
                 {live.map((p, i) => (
                   /* `flex` so the card inside stretches to the row height the
                      grid gives this wrapper — without it the compare button's

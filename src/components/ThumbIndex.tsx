@@ -95,7 +95,13 @@ export function ThumbIndex({
               rotate: "180deg",
               padding: "24px 12px 24px 6px",
               background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, var(--color-canvas))`,
-              backdropFilter: "blur(8px)",
+              /* ⚠️ The site blur and the site saturation (do-all round, menu
+                 item 8). It was `blur(8px)` with no saturation, which over a
+                 photograph reads as fog — the saturation, not the
+                 transparency, is what makes a surface read as glass. The
+                 tab's own `color-mix` ground is unchanged, so the stone key
+                 and every contrast ratio on it hold. */
+              backdropFilter: "blur(18px) saturate(1.4)",
               boxShadow: `inset 3px 0 0 0 ${stone}, 0 6px 18px -8px rgba(41,31,21,0.35)`,
               borderColor: `color-mix(in srgb, ${stone} 60%, var(--color-line))`,
             }}

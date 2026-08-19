@@ -623,7 +623,17 @@ export function Prose({ markdown }: { markdown: string }) {
               </div>
             );
           case "hr":
-            return <hr key={i} className="border-line" />;
+            /* ⚠️ `rj-foil-rule`, and the `border-line` HAS to go with it (do-all
+               round, 2026-08-19 — menu item 12). The class paints the bronze ramp
+               as a background on a 1px box; leaving the border utility on would
+               draw a flat grey line straight over the gradient, which is the
+               failure mode that makes this look like nothing changed.
+
+               This is the last flat hairline the site had. `rj-foil-seal` and
+               `rj-foil-text` already struck the foil on seals and header words in
+               the 2026-08-18 round, and `rj-royal-rule` is the masthead's 7px
+               double band — a different object, not a duplicate of this one. */
+            return <hr key={i} className="rj-foil-rule" />;
         }
       })}
     </div>

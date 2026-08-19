@@ -542,7 +542,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
           an alert: it interrupts nothing and waits its turn. */}
       {hailing && !open && (
         <div className="rj-hail fixed bottom-5 right-[4.75rem] z-40 print:hidden">
-          <div className="rj-hail-card" role="status" aria-live="polite">
+          <div className="rj-hail-card rj-crystal" role="status" aria-live="polite">
             <button
               type="button"
               onClick={openPanel}
@@ -747,7 +747,14 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
                                 {p.location}
                               </span>
                             </span>
-                            <span className="shrink-0 text-micro uppercase tracking-[0.1em] text-jamin-gold-ink">
+                            {/* Gold for a stage you can still walk into, garnet
+                                for one you cannot. One span was carrying both
+                                facts in the same colour. */}
+                            <span
+                              className={`shrink-0 text-micro uppercase tracking-[0.1em] ${
+                                p.sellable ? "text-jamin-gold-ink" : "text-garnet"
+                              }`}
+                            >
                               {p.sellable ? (p.phase ?? "View") : "Sold out"}
                             </span>
                           </Link>

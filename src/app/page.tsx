@@ -328,7 +328,22 @@ export default async function HomePage() {
           — canvas-alt regraded LIGHTER than the page field, so the old
           alternation had quietly inverted into near-nothing. Sunken restores
           a real printed rhythm: field, recess, field. */}
-      <section className="relative overflow-hidden border-y border-line bg-canvas-sunken">
+      {/* ⚠️ `bg-bone-paper`, a rung the page did not use (do-all round,
+          2026-08-19 — menu item 4). The homepage ran canvas → sunken →
+          canvas → sunken, so its two banded sections were the same sheet
+          twice and the page read flat. This band now sits one rung above
+          the closing one, so scrolling descends: canvas → bone-paper →
+          velvet → canvas → sunken.
+
+          ⚠️ THE RAMP STOPS AT `canvas-sunken` AND `kraft` IS NOT IN IT. The
+          paper stack's deep rung measures 3.80:1 against `--color-ink-faint`,
+          which is the ink every caption and every metadata line on this page
+          uses — it would have failed AA on the exact text a deeper sheet was
+          supposed to flatter. Every rung used here is lighter than or equal
+          to `canvas-sunken`, so every ratio already on the ledger either
+          holds or improves. kraft stays where DeskActions uses it, on a band
+          whose words were picked for it. */}
+      <section className="relative overflow-hidden border-y border-line bg-bone-paper">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
         <Container className="relative py-phi6">
           <div className="grid items-center gap-phi5 lg:grid-cols-[1fr_1.1fr]">
@@ -390,7 +405,10 @@ export default async function HomePage() {
               stays the signal red — the resolved fact ends the sequence, the
               same move the reference creative makes. Text colours are the
               audited ink cousins, never the fills (the fill/word rule). */}
-          <Reveal>
+          {/* Item 14: the four steps land one after another rather than all
+              at once — this list is a SEQUENCE, so arriving in order is the
+              argument it makes, in form. */}
+          <Reveal className="rj-cascade">
           <ol className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["Land and title", "We buy only where the chain of title is continuous and the encumbrance is clean.", "bg-canopy", "text-canopy", "var(--color-canopy)"],
@@ -401,7 +419,16 @@ export default async function HomePage() {
               <li
                 key={t}
                 className="overflow-hidden rounded-card bg-canvas/70 backdrop-blur-sm"
-                style={{ background: `color-mix(in srgb, ${stone} 7%, var(--color-canvas))` }}
+                /* ⚠️ ONE `style`, carrying both. The card already painted its own
+                   stone wash here; `--rj-i` is the cascade's index and has to join
+                   it rather than sit in a second attribute — JSX takes the last
+                   `style` and silently drops the first. */
+                style={
+                  {
+                    "--rj-i": n,
+                    background: `color-mix(in srgb, ${stone} 7%, var(--color-canvas))`,
+                  } as React.CSSProperties
+                }
               >
                 <span className={`block h-1.5 w-full ${bar}`} aria-hidden="true" />
                 <div className="p-phi3">
@@ -528,15 +555,15 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <Reveal>
+          <Reveal className="rj-cascade">
           <ul className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ["emi", "EMI calculator", "Estimate your monthly EMI.", "ledger", "bg-jamin-gold-soft/50"],
               ["eligibility", "Loan eligibility", "Check your eligible loan amount.", "stamp", "bg-canopy-soft/50"],
               ["cost", "Purchase cost", "Understand the complete cost of buying a plot.", "deed", "bg-jamin-red-soft/45"],
               ["yield", "Rental yield", "Estimate potential rental returns.", "growth", "bg-canvas-sunken/80"],
-            ].map(([anchor, title, note, icon, ground]) => (
-              <li key={anchor} className="flex">
+            ].map(([anchor, title, note, icon, ground], n) => (
+              <li key={anchor} className="flex" style={{ "--rj-i": n } as React.CSSProperties}>
                 {/* Items 9 + 12: the card lifts into lamplight and tilts a
                     few degrees under a mouse (touch and reduced motion are
                     exempt inside Tilt). */}

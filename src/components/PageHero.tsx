@@ -684,7 +684,14 @@ export function PageHero({
             )}
             {/* `text-balance` evens the line lengths instead of filling each one
                 to the measure and orphaning whatever is left over. */}
-            <h1 className="mt-phi3 text-balance text-4xl text-white">{title}</h1>
+            {/* Item 16: `rj-ink-settle` had exactly ONE call site — the
+                homepage h1 in Hero.tsx — and this component is the h1 of the
+                other thirty routes. It is a MOUNT animation, which is why it
+                belongs here and not on a heading further down a page: a hero
+                is on screen when the page loads, so the ink settles where the
+                reader is actually looking. Collapsed under reduced motion at
+                the end of royal.css with the rest of its round. */}
+            <h1 className="rj-ink-settle mt-phi3 text-balance text-4xl text-white">{title}</h1>
             {/* ⚠️ ON THE 52rem RUNG THE LEAD RUNS THE PLATE'S FULL MEASURE
                 (owner 2026-08-18, /ta: "widen the text and decrease the
                 height of the tab") — the max-w-xl cap inside a wide plate
@@ -822,7 +829,7 @@ export function PageHero({
               </span>
             </div>
           )}
-          <h1 className="mt-phi3 text-balance text-4xl text-ink">{title}</h1>
+          <h1 className="rj-ink-settle mt-phi3 text-balance text-4xl text-ink">{title}</h1>
           {lead && (
             <div className="mt-phi3 text-pretty text-lg leading-relaxed text-ink-soft">{lead}</div>
           )}

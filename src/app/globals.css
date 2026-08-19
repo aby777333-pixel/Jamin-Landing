@@ -98,7 +98,15 @@
   /* ---- THE RED REGISTER (same round) — materials, never words. Vermilion
      is the sindoor thread; garnet is the red foil's deep stop. */
   --color-vermilion: #d3401f;
-  --color-garnet: #8e1c22;
+  /* ⚠️ `--color-garnet: #8e1c22` USED TO BE DECLARED HERE AND WAS DEAD ON
+     ARRIVAL (found 2026-08-19, first time anything consumed the token). The
+     gemstone set below declares the same name at #7a0404 and wins on source
+     order, so this line had never once painted a pixel — the exact failure
+     the note on the MAHARAJA block warns about: 'two sources of truth for a
+     colour is how a site ends up with two of it'. Deleting it changes
+     nothing at runtime and removes the trap. Garnet is the GEMSTONE below,
+     which is also the better value: 8.91:1 on the canvas against #8e1c22's
+     7.03:1. Do not re-add a second one here. */
   /* Hairline red, the same line-work as the renders. Structure, never text. */
   --color-line-red: #f0cfc7;
 
@@ -149,7 +157,17 @@
 
   /* Elevation is warm — never neutral grey (Cartouche §3.3). */
   --shadow-lift: 0 1px 2px rgba(41, 31, 21, 0.05), 0 8px 24px -8px rgba(41, 31, 21, 0.12);
-  --shadow-raise: 0 2px 4px rgba(41, 31, 21, 0.06), 0 20px 48px -16px rgba(41, 31, 21, 0.2);
+  /* ⚠️ THREE STOPS, NOT TWO (do-all round, 2026-08-19 — menu item 13). The
+     old pair jumped straight from a 4px contact shadow to a 48px bloom, and
+     the gap between them is exactly where a card stops looking like an
+     object lying on paper. The middle stop fills it. Deeper too — the far
+     stop went 0.2 → 0.28 and 48 → 60px — because `raise` is the tier the
+     property cards and the floating panels use, and it was reading at the
+     same altitude as `lift`. Still warm ink, never neutral grey (§3.3). */
+  --shadow-raise:
+    0 1px 2px rgba(41, 31, 21, 0.05),
+    0 4px 10px -3px rgba(41, 31, 21, 0.09),
+    0 28px 60px -18px rgba(41, 31, 21, 0.28);
   --shadow-hero: 0 40px 120px -40px rgba(41, 31, 21, 0.45);
 
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
@@ -230,6 +248,9 @@
   --color-emerald-deep: #2f4749;
   --color-jade: #587270;
   --color-ruby: #a80303;
+  /* THE garnet — see the note in the red register above. Now carries the
+     word 'Sold out' site-wide (lib/stones.ts), so it is a text colour and
+     any retune has to hold 4.5:1 on --color-canvas. */
   --color-garnet: #7a0404;
   --color-sapphire: #1b3e8c;
   --color-amethyst: #6b3fa0;

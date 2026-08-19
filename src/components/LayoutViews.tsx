@@ -287,24 +287,39 @@ function Segmented({
   onChange: (v: string) => void;
   options: { value: string; label: string }[];
 }) {
+  /* ⚠️ CLAMPED, not just `findIndex`. A stored or deep-linked `view` can name
+     an option that is currently commented out — `relief` and `sun` both are —
+     and `findIndex` returns -1 for those. Feeding -1 to the pill would park it
+     one whole seat to the LEFT of the rail, outside the capsule. Falling back
+     to 0 puts it under the first option, which is what the reader sees
+     highlighted anyway. */
+  const index = Math.max(
+    0,
+    options.findIndex((o) => o.value === value),
+  );
+
   return (
-    <div role="group" aria-label={label} className="flex items-center rounded-full border border-line bg-canvas p-0.5">
-      {options.map((o) => {
-        const on = o.value === value;
-        return (
-          <button
-            key={o.value}
-            type="button"
-            onClick={() => onChange(o.value)}
-            aria-pressed={on}
-            className={`rounded-full px-3.5 py-1.5 text-tiny font-medium transition-colors ${
-              on ? "bg-ink text-canvas" : "text-ink-soft hover:text-ink"
-            }`}
-          >
-            {o.label}
-          </button>
-        );
-      })}
+    <div
+      role="group"
+      aria-label={label}
+      className="rj-segment"
+      /* The two numbers the pill's arithmetic needs. See `.rj-segment-pill`. */
+      style={{ "--rj-n": options.length, "--rj-i": index } as React.CSSProperties}
+    >
+      {/* Decoration only — `aria-pressed` on each button is still what is
+          announced, so the pill is hidden from the tree. */}
+      <span className="rj-segment-pill" aria-hidden="true" />
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onChange(o.value)}
+          aria-pressed={o.value === value}
+          className="rj-segment-btn"
+        >
+          {o.label}
+        </button>
+      ))}
     </div>
   );
 }
