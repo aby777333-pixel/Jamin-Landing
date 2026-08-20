@@ -95,11 +95,13 @@ export function LayoutViews({
   const [sheetZoom, setSheetZoom] = useState(1);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  /* Escape closes the drawing, and every open resets the magnification —
-     re-opening a sheet still at 4x would look broken rather than zoomed. */
+  /* Escape closes the drawing. The open-time zoom reset lives in the open
+     button's onClick, not here — setState directly in an effect body is
+     the banned pattern (react-hooks/set-state-in-effect, the ModeToggle
+     lesson), and resetting on open is an event concern anyway: re-opening a
+     sheet still at 4x would look broken rather than zoomed. */
   useEffect(() => {
     if (!sheetOpen) return;
-    setSheetZoom(1);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSheetOpen(false);
       if (e.key === "+" || e.key === "=") setSheetZoom((z) => Math.min(6, z * 1.4));
@@ -216,7 +218,11 @@ export function LayoutViews({
               readers who never click. */}
           <button
             type="button"
-            onClick={() => setSheetOpen(true)}
+            onClick={() => {
+              /* Every open starts at fit — see the effect's note above. */
+              setSheetZoom(1);
+              setSheetOpen(true);
+            }}
             aria-haspopup="dialog"
             className="block w-full cursor-zoom-in overflow-auto rounded-xl border border-line bg-canvas text-left"
             style={{ maxHeight: "min(78vh, 900px)" }}

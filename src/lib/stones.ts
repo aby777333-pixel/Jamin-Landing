@@ -157,7 +157,15 @@ export const PANE_HUE: Record<string, string> = {
   "/ta": "var(--color-vermilion)",
   "/properties": "var(--color-emerald)",
   "/projects": "var(--color-sapphire)",
-  "/locations": "var(--color-amethyst)",
+  /* ⚠️ WAS amethyst (report 10, 2026-08-20: "the current purple background
+     section feels inconsistent with the overall Jamin Bazaar visual style…
+     replace it with a warm cream/beige tone such as #F3E7DA"). At the pane's
+     40% mix, canvas-alt over the sand canvas measures #F2E5DB — within three
+     RGB points of the requested tone — so the district pages keep the pane's
+     gloss and gold hairline while the ground goes back to warm paper. The
+     district TAB keeps its amethyst jewellery in NAV_STONE above; only the
+     page ground moved. */
+  "/locations": "var(--color-canvas-alt)",
   "/journal": "var(--color-jade)",
   "/about": "var(--color-canopy)",
   "/account": "var(--color-plat-500)",

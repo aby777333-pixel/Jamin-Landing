@@ -125,10 +125,26 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
       <Reveal className="rj-stagger">
       <div className="mt-phi3 overflow-hidden rounded-card border border-line bg-canvas-alt shadow-lift">
         <ol className="divide-y divide-line">
+          {/* 🚨 THE REGISTER SPREADS ACROSS THE CARD NOW (report 10,
+              2026-08-20: "expand the content/value area so the information
+              uses more of the available horizontal space… increase the
+              spacing between the record label and the record value… reduce
+              the excessive empty space on the right").
+
+              The rows were right in shape and mean in measure: a 9rem label
+              rail and `text-base` values left more than half of a 780px card
+              blank, because these values are short. Three moves, no new
+              devices: the label rail widens to the 13rem track every other
+              register on this page already uses (Approvals, Why this
+              location — one x for every value on the page), the value steps
+              up to `text-lg` — it is the thing a buyer came to read — and
+              the rows take a step more air (`px-phi4`, `py-phi3`, wider
+              gaps) so five facts occupy the card rather than huddling in
+              its corner. */}
           {links.map((l, i) => (
             <li
               key={l.term}
-              className="grid grid-cols-[2.25rem_minmax(0,1fr)] items-start gap-x-phi2 gap-y-1 px-phi3 py-phi2 sm:grid-cols-[2.25rem_9rem_minmax(0,1fr)] sm:items-center"
+              className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-x-phi3 gap-y-1 px-phi3 py-phi2 sm:grid-cols-[2.5rem_13rem_minmax(0,1fr)] sm:items-center sm:px-phi4 sm:py-phi3"
             >
               {/* The FINAL link resolves in teal — the chain's payoff, the same
                   once-per-surface move the record strip and the calculators
@@ -156,7 +172,7 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
                   ⚠️ `col-start-2` below `sm`: the label and the value stack in
                   the SECOND column so both clear the seal, rather than the
                   value sliding back under the icon. */}
-              <div className="ledger col-start-2 break-words text-base text-ink sm:col-start-3">
+              <div className="ledger col-start-2 break-words text-base text-ink sm:col-start-3 sm:text-lg">
                 {l.value}
               </div>
             </li>

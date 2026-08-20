@@ -95,11 +95,15 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   // page whose subject genuinely IS a Jamin project should carry a real
   // photograph rather than brand imagery of nowhere.
   const ART_BY_PHASE: Record<string, HeroArt> = {
-    /* hero-65 (JAMIN MONARCH, owner-named 2026-08-17) replaces hero-31 —
-       the register's real-photo preference on this page is overruled by the
-       owner's own supply, the hero-40 precedent. Lockup centred on the arch,
-       so the right anchor keeps it whole. */
-    ongoing: 65,
+    /* ⚠️ WAS hero-65 (JAMIN MONARCH; owner 2026-08-20: "swap the hero image
+       with the attached"). hero-83 is the JAMIN GEMSTONE daylight gate —
+       lockup plaque on the RIGHT pier, clear of the left copy plate. Swept
+       at this geometry: p95 0.548 vs audited hero-38's 0.604 → darker, holds
+       the same 0.52 hero-65 held, so the alpha below did not move. The
+       `50% 14%` anchor was re-checked against the new frame, not carried:
+       at the worst 500px box the visible window is 5.3%–67% of the frame,
+       and the beam (~15–30%) and plaque (~45–62%) both stay inside. */
+    ongoing: 83,
     /* ⚠️ WAS hero-11 (owner, 2026-08-19 night: "swap the hero image of the
        upcoming project"). hero-82 is the Trichy's Tulip entrance arch —
        the one development actually in this phase — so the page now opens
@@ -173,6 +177,10 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    * the artefact hero-33 was trimmed to avoid. Anchoring right keeps it whole
    * and drops the far-left pavement instead, which carries nothing.
    */
+  /* eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept
+     deliberately unreferenced (see the note below): it is the record of why a
+     horizontal anchor was ever needed, the `photo` precedent. Delete it the
+     day a hero wants one again. */
   const ART_POSITION_BY_PHASE: Record<string, string> = {
     ongoing: "right",
     future: "right",

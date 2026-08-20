@@ -66,7 +66,15 @@ export default async function SignInPage() {
   ].filter((s) => s.value > 0);
 
   return (
-    <section className="relative overflow-hidden border-b border-line bg-canvas-alt">
+    /* ⚠️ `-mb-phi5 lg:-mb-phi7` swallows the footer's page-end margin after
+       this band (report 10, 2026-08-20: "large unnecessary empty space between
+       the main content and the footer… let the footer move directly after the
+       page content"). The CallbackBand precedent exactly: SiteFooter carries
+       `mt-phi5 lg:mt-phi7` on every page, and on a page that ENDS on a
+       full-width banded section that margin is a hole, not breathing room —
+       this section already separates itself with its own ground and border.
+       Pages not ending on a band are unaffected. */
+    <section className="relative -mb-phi5 overflow-hidden border-b border-line bg-canvas-alt lg:-mb-phi7">
       {/* The sheet the plate is drawn on. */}
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 

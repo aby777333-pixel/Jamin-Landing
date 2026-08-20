@@ -31,7 +31,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81 | 82;
+  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81 | 82 | 83;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -113,6 +113,10 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
      than every other hero here (they are 16:9 or taller), so it is the
      one to watch if a hero surface is ever given a tall band. */
   82: 887,
+  /* hero-83 — the JAMIN GEMSTONE gate ("gem.png", owner-supplied
+     2026-08-20) → /projects/ongoing, replacing hero-65. 1672x941, the
+     register's common geometry. */
+  83: 941,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -378,6 +382,17 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      catalogue, so alt="", aria-hidden, never a caption. */
   81: 1672,
   82: 1774,
+  /* hero-83 — the JAMIN GEMSTONE gate ("gem.png", owner-supplied 2026-08-20)
+     → /projects/ongoing, replacing hero-65 (JAMIN MONARCH), which returns to
+     SPARES. A daylight avenue gate: flat beam across the top, the lockup
+     plaque on the RIGHT pier wall — outside the 38rem copy plate, so
+     `sheerEdge` lets it read through the plate's dissolve. Swept
+     comparatively vs audited hero-38 at the ongoing full geometry: p95 lum
+     0.548 against 38's 0.604 — darker, holds 0.52 exactly as hero-65 did, so
+     the caller's alpha did not move. Names a community not in the catalogue →
+     the standing rule at full strength: alt="", aria-hidden, never a
+     caption. */
+  83: 1672,
   /* hero-75 — the JAMIN SOULFUL gate in daylight (owner-supplied 2026-08-18
      13:00) → /compare, replacing hero-73 the same day at the owner's ask.
      Lockup TOP-CENTRE on the arch, "Welcome to a Life Well Planned" plinth
@@ -432,6 +447,7 @@ export function PageHero({
   copyAlign = "center",
   copyCenter = false,
   plateBare = false,
+  eyebrowAlign = "end",
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -523,6 +539,14 @@ export function PageHero({
    *  source text, and a class it never sees written out is a class it never
    *  generates. Re-measure before adding a value. */
   plateXl?: "38rem" | "42rem" | "46rem" | "52rem" | "full";
+  /** ⚠️ Where the eyebrow sits on the plate. `end` is the house default —
+   *  captions and tabs sit right (owner 2026-08-17) — and `start` is the
+   *  per-page override that report 10 (2026-08-20) asked for on /about:
+   *  "move the WHO WE ARE label to the left side and align it consistently
+   *  with the main heading below it." When a page takes `start` the label
+   *  leads and the gilt rule follows, mirroring the right-aligned order.
+   *  `copyCenter` still wins: a centred plate centres its caption. */
+  eyebrowAlign?: "start" | "end";
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -724,17 +748,30 @@ export function PageHero({
             {eyebrow && (
               /* Right-aligned (owner 2026-08-17): tabs and captions sit
                  right — except on a centred plate, where the caption joins
-                 the centre line. */
-              <div className={`flex items-center gap-3 ${copyCenter ? "justify-center" : "justify-end"}`}>
+                 the centre line, and on a page that passes
+                 `eyebrowAlign="start"` (report 10, /about), where the label
+                 leads from the left above the heading and the rule follows. */
+              <div
+                className={`flex items-center gap-3 ${
+                  copyCenter
+                    ? "justify-center"
+                    : eyebrowAlign === "start"
+                      ? "justify-start"
+                      : "justify-end"
+                }`}
+              >
                 {/* Gilt, where this was a plain white hairline — the same rule
                     that sits under BAZAAR in the logo. Gold as a RULE may be the
                     fill gold; gold as a WORD may not, so the label takes
                     `jamin-gold-light`, which holds on the plate. */}
-                <span className="h-px w-12 rule-gold" />
+                {eyebrowAlign !== "start" && <span className="h-px w-12 rule-gold" />}
                 <span className={`text-micro font-medium uppercase tracking-brand ${sheer || plateBare ? "" : "text-jamin-gold-pale"}`}
                   style={sheer || plateBare ? { color: "var(--color-champagne-50)" } : undefined}>
                   {eyebrow}
                 </span>
+                {eyebrowAlign === "start" && !copyCenter && (
+                  <span className="h-px w-12 rule-gold" />
+                )}
               </div>
             )}
             {/* `text-balance` evens the line lengths instead of filling each one

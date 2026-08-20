@@ -846,32 +846,27 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                 {/* ⚠️ The swap key carries the GROUP as well as the filters, or
                     all three grids would share one animation identity and only
                     the first would replay. */}
-                {/* 🚨 THE SHAPE FOLLOWS THE COUNT (report 8, 2026-08-19: "the
-                    current layout leaves excessive empty space when a section
-                    contains only one property… make the property layout dynamic
-                    based on the number of properties").
+                {/* 🚨 ONE GRID FOR EVERY COUNT AGAIN (report 10, 2026-08-20:
+                    "the Tiruchirappalli, Completed and Upcoming project cards
+                    are not properly contained within their layout and are
+                    extending outside the intended card boundaries… ensure
+                    [they] have consistent dimensions and alignment").
 
-                    A fixed `lg:grid-cols-3` is right for a full stage and absurd
-                    for a stage with one development in it — that card took a
-                    third of the band and left two thirds of coloured pane doing
-                    nothing, which is the "large unused area" the report names.
-
-                      1  → one horizontal featured card across the full width
-                      2  → two equal columns
-                      3+ → the three-column grid, unchanged
-
-                    ⚠️ The card is the SAME component in all three; only its
-                    `featured` modifier and the track count change, so the
-                    dimensions stay fixed within each layout as asked. */}
+                    This REVERSES report 8's count-driven shapes (2026-08-19:
+                    1 → full-width featured, 2 → halves). What that bought —
+                    less empty pane beside a lone card — is exactly what the
+                    owner now reads as a card escaping its boundary: the
+                    featured card ran the full band while its neighbours held
+                    a third of it, so the stages disagreed about what a card
+                    IS. Every stage now sets the same `sm:2 / lg:3` tracks,
+                    so a lone development is one card in the standard slot
+                    and every card on the page shares one dimension. Do not
+                    re-introduce the dynamic shape without the owner naming
+                    report 8's complaint again — the two reports want
+                    opposite things and this file follows the newer word. */}
                 <div
                   key={`${swapKey}|${g.key}`}
-                  className={`rj-swap mt-phi4 grid gap-phi3 ${
-                    g.items.length === 1
-                      ? "grid-cols-1"
-                      : g.items.length === 2
-                        ? "sm:grid-cols-2"
-                        : "sm:grid-cols-2 lg:grid-cols-3"
-                  }`}
+                  className="rj-swap mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3"
                 >
                   {g.items.map((p, i) =>
                     g.selling ? (
@@ -882,11 +877,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                         {/* `priority` only in the first group: it is the LCP
                             candidate and marking every grid's first three would
                             spend the preload budget on images below the fold. */}
-                        <PropertyCard
-                          p={p}
-                          priority={gi === 0 && i < 3}
-                          featured={g.items.length === 1}
-                        />
+                        {/* `featured` retired with the uniform grid above —
+                            the horizontal card was the full-width shape's
+                            other half. The prop stays on PropertyCard for a
+                            future surface that genuinely wants a lead card. */}
+                        <PropertyCard p={p} priority={gi === 0 && i < 3} />
                         {/* 🚨 BOTTOM-RIGHT, NOT TOP-RIGHT (report 8,
                             2026-08-19: "the Compare button is overlapping the
                             Wishlist (heart) icon in the property card image
@@ -919,7 +914,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                       /* Completed and sold-out carry no compare control — there
                          is nothing to weigh up against anything. */
                       <div key={p.id} data-pid={p.id} className="flex">
-                        <PropertyCard p={p} featured={g.items.length === 1} />
+                        <PropertyCard p={p} />
                       </div>
                     ),
                   )}

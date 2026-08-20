@@ -74,6 +74,11 @@ export default async function AboutPage() {
            old 0.14 this bright daylight frame fails outright; 0.58 matches the
            audited hero-38 figure at the same geometry. */
         sheerAlpha={0.58}
+        /* Report 10 (2026-08-20): "move the WHO WE ARE label to the left side
+           and align it consistently with the main heading below it." The
+           per-page override the captions-right rule allows — see the prop's
+           note in PageHero. */
+        eyebrowAlign="start"
         eyebrow="Who we are"
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
@@ -136,26 +141,48 @@ export default async function AboutPage() {
               ["ledger", plots, "plots planned across all projects"],
             ] as const
           ).map(([icon, value, label]) => (
+            /* 🚨 CENTRED, STACKED, AND ROOMIER FROM `sm` (report 10,
+               2026-08-20: "the statistics card feels too compressed…
+               increase the size and visibility of the 4, 1 and 258 figures…
+               equal-width columns with clear vertical separators… improve
+               spacing between icon, number and label"). The reference the
+               report supplies stacks icon → figure → label on the column's
+               centre line, so that is the `sm+` layout now: the icon in its
+               own round chip above the number instead of squeezed beside it,
+               the figure a step louder, the label under both. The columns
+               were already equal (`grid-cols-3`) and the separators already
+               drawn (`divide-x`); what changed is the room inside each.
+
+               ⚠️ THE PHONE LAYOUT IS UNTOUCHED — the compact ruled row
+               (number and label on one line) was the 2026-08-13 fix for a
+               screen-and-a-bit of stacked whitespace, and a centred stack
+               below `sm` would reopen exactly that. */
             <div
               key={label}
-              className="flex items-baseline gap-phi3 p-phi3 sm:block sm:p-phi4"
+              className="flex items-baseline gap-phi3 p-phi3 sm:block sm:p-phi5 sm:text-center"
             >
-              {/* ⚠️ `text-4xl` at every width, NOT `sm:text-5xl`. The scale here
-                  is fluid — `text-5xl` clamps to 6.854rem, which measured 109px
-                  at 1280 and turned a statistic into a hero headline. `text-4xl`
-                  runs 41.6px on a phone to 67.8px on a desktop, which is louder
-                  than the `text-3xl` this replaced and still reads as a figure. */}
-              <dd className="flex shrink-0 items-center gap-2.5 text-4xl leading-none text-jamin-red-deep">
+              {/* ⚠️ `sm:text-5xl` is deliberate NOW where it was rejected in
+                  2026-08-13 — that audit measured it against the old inline
+                  icon+number+label row, where 109px at 1280 read as a hero
+                  headline. In a centred stack the figure IS the column's
+                  subject, which is what the report's reference shows. */}
+              <dd className="flex shrink-0 items-center gap-2.5 text-4xl leading-none text-jamin-red-deep sm:flex-col sm:items-center sm:gap-phi3 sm:text-5xl">
+                <span
+                  aria-hidden="true"
+                  className="hidden h-14 w-14 items-center justify-center rounded-full border border-line bg-canvas text-jamin-gold sm:flex"
+                >
+                  <SurveyIcon name={icon} className="h-7 w-7" />
+                </span>
                 <SurveyIcon
                   name={icon}
-                  className="h-[22px] w-[22px] self-center text-jamin-gold sm:h-7 sm:w-7"
+                  className="h-[22px] w-[22px] self-center text-jamin-gold sm:hidden"
                 />
                 <LedgerCount value={value} className="ledger" />
               </dd>
               {/* `min-w-0` because the third label is long and this is a flex
                   item on a phone — a flex item's default minimum is its content,
                   which is the same trap the footer's district column paid for. */}
-              <dt className="ledger-label min-w-0 sm:mt-phi2 sm:block">{label}</dt>
+              <dt className="ledger-label min-w-0 sm:mt-phi3 sm:block">{label}</dt>
             </div>
           ))}
         </dl>

@@ -499,7 +499,22 @@ export default async function VaultPage() {
             it has no photograph, so the column is never empty and nothing new
             has to be commissioned or shipped. Give `settings.familyImages` a
             key and it becomes a real property visual with no code change. */}
-        <div className="grid items-start gap-phi5 lg:grid-cols-[1fr_1.618fr]">
+        {/* 🚨 REARRANGED TO THE REPORT'S OWN REFERENCE (report 10, 2026-08-20:
+            "use the first layout as the reference design, keep the larger hero
+            image on the right side, keep the heading and description on the
+            left side, arrange the six property examples in a clean 3×2 card
+            grid below the main content").
+
+            The report-6 build put the picture UNDER the heading in the narrow
+            left column and the six spoken examples in the right one — which is
+            the proportion problem it now names: a 4:5 portrait stretched the
+            left column past the copy beside it. Words (heading + both
+            paragraphs) now hold the wide left column, the picture stands alone
+            on the right, and the six examples run full-width below in three
+            columns — two rows of three, the reference's grid. Source order is
+            still words → picture → examples, so a phone and a screen reader
+            read the argument before the illustration. */}
+        <div className="grid items-center gap-phi5 lg:grid-cols-[1.618fr_1fr]">
           <div>
             <p className="rj-eyebrow text-jamin-gold-ink">The idea</p>
             {/* ⚠️ BACK TO `2xl/3xl` — the size bump was wrong and measuring
@@ -524,16 +539,7 @@ export default async function VaultPage() {
                 cropped to the photograph before saving; the border below is
                 the page's, and two of them read as a mount. If this frame is
                 ever replaced, crop the new one the same way. */}
-            <div className="relative mt-phi4 hidden aspect-[4/5] overflow-hidden rounded-xl border border-champagne-500/35 lg:block">
-              <VaultPlate
-                src="/vault/the-idea.webp"
-                seed="the-idea"
-                sizes="(min-width: 1024px) 32vw, 100vw"
-              />
-            </div>
-          </div>
-          <div>
-            <p className="text-lg leading-relaxed text-ink-soft">
+            <p className="mt-phi4 text-lg leading-relaxed text-ink-soft">
               {hero.note ?? VAULT_FALLBACK.hero.note}
             </p>
             <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -542,39 +548,52 @@ export default async function VaultPage() {
               is a desk to speak to. Tell us what you want, and a representative takes it from
               there.
             </p>
-
-            {/* ⚠️ THESE ARE QUOTATIONS, SO THEY ARE SET AS QUOTATIONS. They were
-                plain bordered boxes carrying curly quotes as punctuation, which
-                is what made them read as "disconnected" — a spoken sentence
-                looked like a form field. Each now gets a champagne rule down
-                its speaking edge and a drawn quote mark, so the group reads as
-                things people say rather than as a list of options.
-
-                ⚠️ The gold is a HAIRLINE AND A MARK, never the words:
-                champagne-500 measures 2.36:1 on this ground and would fail as
-                text. The sentence itself stays `ink-soft`. */}
-            <ul className="mt-phi4 grid gap-2.5 sm:grid-cols-2">
-              {SPOKEN.map((line) => (
-                <li
-                  key={line}
-                  className="relative overflow-hidden rounded-card border border-champagne-500/30 bg-canvas-alt py-3 pl-phi4 pr-phi3 text-base leading-relaxed text-ink-soft"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute inset-y-0 left-0 w-[3px] bg-champagne-500/60"
-                  />
-                  <span
-                    aria-hidden="true"
-                    className="absolute left-3 top-1.5 text-lg leading-none text-champagne-500/50"
-                  >
-                    “
-                  </span>
-                  {line}
-                </li>
-              ))}
-            </ul>
+          </div>
+          {/* The owner's picture holds the RIGHT column now, 4:3 rather than
+              4:5 — the report's "larger hero image on the right side", sized
+              to end near the copy's own foot instead of a storey past it.
+              Hidden below `lg` as before: on a phone it would push the desk's
+              argument down a screen to say nothing new. */}
+          <div className="relative hidden aspect-[4/3] overflow-hidden rounded-xl border border-champagne-500/35 lg:block">
+            <VaultPlate
+              src="/vault/the-idea.webp"
+              seed="the-idea"
+              sizes="(min-width: 1024px) 38vw, 100vw"
+            />
           </div>
         </div>
+
+        {/* ⚠️ THESE ARE QUOTATIONS, SO THEY ARE SET AS QUOTATIONS. They were
+            plain bordered boxes carrying curly quotes as punctuation, which
+            is what made them read as "disconnected" — a spoken sentence
+            looked like a form field. Each keeps its champagne rule down the
+            speaking edge and the drawn quote mark. Full-width in THREE columns
+            from `lg` now — six examples, two rows of three, the report's 3×2 —
+            two columns at `sm`, one on a phone.
+
+            ⚠️ The gold is a HAIRLINE AND A MARK, never the words:
+            champagne-500 measures 2.36:1 on this ground and would fail as
+            text. The sentence itself stays `ink-soft`. */}
+        <ul className="mt-phi5 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+          {SPOKEN.map((line) => (
+            <li
+              key={line}
+              className="relative overflow-hidden rounded-card border border-champagne-500/30 bg-canvas-alt py-3 pl-phi4 pr-phi3 text-base leading-relaxed text-ink-soft"
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-y-0 left-0 w-[3px] bg-champagne-500/60"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute left-3 top-1.5 text-lg leading-none text-champagne-500/50"
+              >
+                “
+              </span>
+              {line}
+            </li>
+          ))}
+        </ul>
       </Container>
 
       {/* ── §3 THE FOUR PATHS ──────────────────────────────────────────────*/}
@@ -772,7 +791,20 @@ export default async function VaultPage() {
                 would leave a screen reader and a phone (where the grid is one
                 column) still meeting the picture first, which is the same
                 complaint in a different medium. */}
-            <div className="grid items-start gap-phi5 lg:grid-cols-[1.618fr_1fr]">
+            {/* 🚨 RATIO REVERSED AND THE FRAME RESHAPED (report 10, 2026-08-20:
+                "the image is too long, creating excessive empty space on the
+                left… reduce the paragraph width, increase the width of the
+                heritage image, reduce the height of the image slightly").
+
+                The report-6 swap put the words first — that stands — but it
+                left the picture as a 4:5 PORTRAIT in the narrow column, so the
+                row's height was set by the tallest possible frame beside five
+                lines of copy: the band was mostly the air under the paragraph.
+                Text now takes the 1fr column (a more compact measure), the
+                picture takes the 1.618fr column as a 16:10 LANDSCAPE — wider
+                than before and roughly 20% shorter in absolute height, so both
+                sides end near the same line. Source order still words-first. */}
+            <div className="grid items-center gap-phi5 lg:grid-cols-[1fr_1.618fr]">
               <div>
                 <p className="rj-eyebrow text-jamin-gold-ink">Heritage India</p>
                 <h2 className="mt-phi2 text-balance text-2xl text-ink lg:text-3xl">
@@ -784,7 +816,7 @@ export default async function VaultPage() {
                   families, lawyers and long conversations, which is the way The Vault works anyway.
                 </p>
               </div>
-              <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken">
                 {/* Reads the same `familyImages` map as every other family
                     (0085) rather than a key of its own — it is a family that
                     happens to get a bigger frame, not a different kind of
@@ -793,8 +825,10 @@ export default async function VaultPage() {
                 <VaultPlate
                   src={settings.familyImages[heritage.slug]}
                   seed={heritage.slug}
-                  /* 38vw now, not 60 — the frame moved to the narrow column. */
-                  sizes="(min-width: 1024px) 38vw, 100vw"
+                  /* Back to 60vw — the frame moved to the WIDE column in the
+                     report-10 rebalance above; a `sizes` that lags the box
+                     makes the browser upscale a small rendition. */
+                  sizes="(min-width: 1024px) 60vw, 100vw"
                 />
               </div>
             </div>

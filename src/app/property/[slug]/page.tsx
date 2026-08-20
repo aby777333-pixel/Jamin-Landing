@@ -111,6 +111,8 @@ function Block({
   lead,
   children,
   className = "",
+  flush = false,
+  centerTitle = false,
 }: {
   id: string;
   title: string;
@@ -119,16 +121,33 @@ function Block({
   /** Ornament hook only — `rj-sheet` puts registration ticks at the corners of
    *  a block that genuinely is a drawing. Never anything structural. */
   className?: string;
+  /** Drops the section's own `mt-phi5`, for a Block whose WRAPPER already
+   *  carries the spacing — the Approvals vault box (report 10, 2026-08-20:
+   *  "excessive top padding"): the box's inner padding plus this margin
+   *  compounded into the hole the report names. */
+  flush?: boolean;
+  /** Centre the heading and its lead (report 10: "center-align the Approvals
+   *  & Documents heading"). Per-block, owner-asked — every other Block keeps
+   *  the left register. */
+  centerTitle?: boolean;
 }) {
   return (
-    <section id={id} className={`mt-phi5 scroll-mt-28 ${className}`}>
+    <section id={id} className={`${flush ? "" : "mt-phi5"} scroll-mt-28 ${className}`}>
       {/* The gold rule now rules ITSELF across, the way a guide line is drawn
           before the words — see SurveyReveal. On a page this long the sections
           otherwise run into one another as an undifferentiated column. */}
       <SurveyReveal className="mb-phi3">
-        <h2 className="text-2xl text-ink">{title}</h2>
+        <h2 className={`text-2xl text-ink ${centerTitle ? "text-center" : ""}`}>{title}</h2>
       </SurveyReveal>
-      {lead ? <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">{lead}</p> : null}
+      {lead ? (
+        <p
+          className={`mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted ${
+            centerTitle ? "mx-auto text-center" : ""
+          }`}
+        >
+          {lead}
+        </p>
+      ) : null}
       <div className="mt-phi3">{children}</div>
     </section>
   );
@@ -152,6 +171,47 @@ function amenityIcon(a: string): "junction" | "stamp" | "growth" | "grid" | "dee
   if (/security|guard|gate|cctv|fenc|compound/.test(s)) return "stamp";
   if (/club|gym|play|park|walk|jog|community|hall/.test(s)) return "deed";
   return "leaf";
+}
+
+/**
+ * The Appreciation card's five supporting points (report 10, 2026-08-20) —
+ * TRANSCRIBED FROM THE REPORT'S OWN REFERENCE LAYOUT, not authored here: the
+ * owner's mock names these five, with these subtexts. Each mark is a drawn
+ * survey glyph from the standing set (`SurveyIcon`'s vocabulary rule: every
+ * shape traces to a land document or an instrument, never a lifestyle
+ * pictogram). The card these render in only appears where the admin has
+ * RECORDED an appreciation value — see the `appreciation` derivation.
+ */
+const APPRECIATION_POINTS = [
+  {
+    icon: "building",
+    t: "Well-developed residential area",
+    d: "Surrounded by established communities",
+  },
+  { icon: "junction", t: "Excellent connectivity", d: "Easy access to major roads" },
+  { icon: "pin", t: "Close to key amenities", d: "Schools, colleges, hospitals nearby" },
+  {
+    icon: "growth",
+    t: "Infrastructure growth",
+    d: "Ongoing & upcoming developments in the vicinity",
+  },
+  { icon: "ledger", t: "Positive price movement", d: "Consistent land value increase in the area" },
+] as const;
+
+/**
+ * The survey mark that fits a service's words (report 10, 2026-08-20 — the
+ * `amenityIcon` pattern, tuned for the utilities vocabulary: substations,
+ * formed roads, reserved plots, open space). Same rules: substring matching on
+ * free admin text, most-specific first, and the fallback is `junction` — the
+ * mark every row carried before, so an unmatched service is no worse off.
+ */
+function utilityIcon(u: string): "junction" | "growth" | "grid" | "stamp" | "leaf" {
+  const s = u.toLowerCase();
+  if (/power|electric|substation|tangedco|transformer|solar|light/.test(s)) return "growth";
+  if (/road|street|approach|avenue|pave|kerb/.test(s)) return "grid";
+  if (/local body|panchayat|authority|reserved|civic/.test(s)) return "stamp";
+  if (/open space|green|park|garden|osr|strip|plant/.test(s)) return "leaf";
+  return "junction";
 }
 
 /** Turn `dtcp_approval_no` into `DTCP approval no`, without a lookup table that
@@ -219,6 +279,12 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
   const downloads = downloadsFor(p);
   const legal = Object.entries(p.legal ?? {}).filter(([, v]) => v);
   const investment = Object.entries(p.investment ?? {}).filter(([, v]) => v);
+  /* Report 10 (2026-08-20): the recorded appreciation value leads its own
+     full-width card; the register below carries every OTHER recorded fact.
+     Matched by key so an admin rename to `appreciation_notes` still routes. */
+  const appreciationEntry = investment.find(([k]) => /appreciation/i.test(k));
+  const appreciation = appreciationEntry ? String(appreciationEntry[1]) : null;
+  const investmentRows = investment.filter(([k]) => !/appreciation/i.test(k));
 
   const plots = p.plot_layout ?? [];
   const hasGeometry = !!p.plot_plan?.viewBox && plots.some((x) => Array.isArray(x.poly));
@@ -670,12 +736,34 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           )}
 
           {utilities.length > 0 && (
+            /* 🚨 CARDS IN A 2×2, NOT BARE TEXT ROWS (report 10, 2026-08-20:
+                "the Services on site section currently displays the four
+                points as plain text in a basic two-column layout… convert all
+                four service points into individual cards arranged in a clean
+                2×2 grid, each with a suitable, relevant icon and consistent
+                card height, spacing, padding and alignment").
+
+                The same treatment the Amenities list above already wears, one
+                register up: each service in its own bordered card with an icon
+                CHOSEN FOR THE WORDS (`utilityIcon`, the `amenityIcon`
+                pattern), in the round canopy chip this section already used
+                as its accent. The grid's default `items-stretch` is what
+                makes the four heights agree — a two-line service grows its
+                row, and its neighbour grows with it. */
             <Block id="utilities" title="Services on site">
-              <ul className="grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
+              <ul className="grid gap-phi3 sm:grid-cols-2">
                 {utilities.map((u) => (
-                  <li key={u} className="flex items-start gap-2.5 text-base text-ink-soft">
-                    <SurveyIcon name="junction" size="h-4 w-4" className="mt-0.5 shrink-0 text-canopy" />
-                    {u}
+                  <li
+                    key={u}
+                    className="flex items-start gap-phi2 rounded-card border border-line bg-canvas-alt p-phi3 shadow-lift"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-canopy-soft text-canopy"
+                    >
+                      <SurveyIcon name={utilityIcon(u)} size="h-5 w-5" />
+                    </span>
+                    <span className="self-center text-base leading-relaxed text-ink-soft">{u}</span>
                   </li>
                 ))}
               </ul>
@@ -715,7 +803,16 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                corner, beside the verify-with-the-authority line, where it
                reads as the closing press of the record instead of crowding
                the heading. */
-            <div data-theme="vault" className="relative overflow-hidden rounded-xl bg-canvas">
+            /* 🚨 THE BOX CARRIES ITS OWN `mt-phi5` NOW AND THE BLOCK INSIDE IS
+               `flush` (report 10, 2026-08-20: "excessive top padding, causing
+               it to touch the Transport card above… reduce the top padding…
+               center-align the heading"). The two faults were one layout
+               inverted: the Block's `mt-phi5` sat INSIDE the dark box (a deep
+               dead band above the heading) while the box itself had no margin
+               at all against the Where-it-is section — so the padding was in
+               the wrong place, not merely too big. The margin moved from the
+               Block to the box: clear separation outside, `pt-phi3` inside. */
+            <div data-theme="vault" className="relative mt-phi5 overflow-hidden rounded-xl bg-canvas">
               {/* In FLOW at the very top — the absolute version left a sliver
                   of ground showing through its gap band ("still the spacing is
                   not right"); as the first flow child the rule sits tight on
@@ -730,6 +827,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               id="legal"
               title="Approvals & documents"
               lead="What has been sanctioned, and the paperwork behind it."
+              flush
+              centerTitle
             >
               {(legal.length > 0 || p.rera_number) && (
                 <dl className="divide-y divide-line border-y border-line">
@@ -830,6 +929,80 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   a forecast.
                 </p>
               </div>
+
+              {/* 🚨 APPRECIATION IS A FULL-WIDTH CARD NOW, NOT A REGISTER ROW
+                  (report 10, 2026-08-20: "convert the Appreciation row into a
+                  full-width card with a clear Appreciation Potential heading,
+                  key supporting points with suitable icons, the existing
+                  property image positioned on the right, better spacing and
+                  balanced use of the available width — maintain the existing
+                  premium beige/gold design style").
+
+                  The five supporting points are the REPORT'S OWN reference
+                  layout, transcribed — owner-supplied content, not invented
+                  here — and each mark is a drawn survey glyph from the
+                  standing set, per the SurveyIcon vocabulary rule. The lead
+                  statement stays the RECORDED `investment.appreciation`
+                  value, so the card renders only where the admin has recorded
+                  one — no record, no card, and the row never reappears in the
+                  register below because it is filtered out there either way.
+
+                  ⚠️ The picture is the property's own first photograph — the
+                  report's words: "existing property image" — decoration
+                  beside the record (`alt=""`, `aria-hidden`), `lg` only so a
+                  phone is not pushed a screen down by it. */}
+              {appreciation && (
+                <div className="mt-phi3 overflow-hidden rounded-card border border-line bg-canvas-alt shadow-lift">
+                  <div className="lg:grid lg:grid-cols-[minmax(0,1.618fr)_minmax(0,1fr)] lg:items-stretch">
+                    <div className="p-phi4">
+                      <div className="flex items-center gap-phi2">
+                        <span
+                          aria-hidden="true"
+                          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-jamin-gold/40 bg-jamin-gold-soft text-jamin-gold-ink"
+                        >
+                          <SurveyIcon name="growth" size="h-5 w-5" />
+                        </span>
+                        <p className="rj-eyebrow text-jamin-gold-ink" style={{ textAlign: "left" }}>
+                          Appreciation potential
+                        </p>
+                      </div>
+                      <p className="mt-phi3 text-lg leading-relaxed text-ink">{appreciation}</p>
+                    </div>
+                    {images[0] && (
+                      <div className="relative hidden lg:block">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={images[0]}
+                          alt=""
+                          aria-hidden="true"
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <ul className="grid grid-cols-2 gap-px border-t border-line bg-line sm:grid-cols-3 lg:grid-cols-5">
+                    {APPRECIATION_POINTS.map((pt) => (
+                      <li
+                        key={pt.t}
+                        className="flex h-full flex-col items-center bg-canvas-alt px-phi2 py-phi3 text-center"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-canvas text-jamin-gold-ink"
+                        >
+                          <SurveyIcon name={pt.icon} size="h-5 w-5" />
+                        </span>
+                        <p className="mt-phi2 text-tiny font-semibold leading-snug text-ink">
+                          {pt.t}
+                        </p>
+                        <p className="mt-1 text-tiny leading-relaxed text-ink-faint">{pt.d}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               {/* 🚨 THE ROWS SHARE THE BAND WITH A PICTURE (report 8,
                   2026-08-19: "the right side of the investment section has
                   unused empty space… add a realistic real-estate
@@ -854,9 +1027,13 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   facts, not evidence of them — which is also why it is
                   `lg:block` only. On a phone it would push the facts down the
                   page to say nothing. */}
+              {/* Appreciation now leads its own card above, so the register
+                  carries the OTHER recorded facts — and renders nothing when
+                  appreciation was the only one. */}
+              {investmentRows.length > 0 && (
               <div className="mt-phi3 gap-phi4 lg:grid lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start">
                 <dl className="divide-y divide-line border-y border-line">
-                  {investment.map(([k, v]) => (
+                  {investmentRows.map(([k, v]) => (
                     <div
                       key={k}
                       className="gap-phi3 py-phi2 sm:grid sm:grid-cols-[13rem_minmax(0,1fr)] sm:items-baseline"
@@ -884,6 +1061,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                   />
                 </div>
               </div>
+              )}
             </Block>
           )}
 

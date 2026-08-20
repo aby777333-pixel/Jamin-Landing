@@ -1286,3 +1286,22 @@ the frame's width — near centre, slightly left of the board's own centre.
 
 ⚠️ Framing cannot deliver it either: at 1440 the hero shows the full frame width
 (visible X 0–100%), so there is no horizontal crop to steer.
+
+## hero-83 — the JAMIN GEMSTONE gate (2026-08-20)
+
+Owner-supplied `gem.png` (1672x941, Downloads), report-10 round: "swap the hero
+image with the attached" → `/projects/ongoing`, replacing hero-65 (JAMIN
+MONARCH), which returns to SPARES with its renditions intact.
+
+A daylight avenue gate: flat concrete beam across the top, planted verges, the
+JAMIN GEMSTONE lockup on a plaque on the RIGHT pier wall — clear of the 38rem
+copy plate, reading through `sheerEdge`. Renditions 768/1280/1672 webp built
+with PIL (LANCZOS, quality 82, method 6).
+
+Swept comparatively vs audited hero-38 at the ongoing full-height geometry:
+plate-footprint p95 luminance **0.548** against 38's 0.604 — darker, so it
+holds **0.52**, the same figure hero-65 held; the caller's alpha did not move.
+Vertical anchor `50% 14%` re-checked against this frame (beam ~15–30%, plaque
+~45–62% of frame height; worst-case 500px box shows 5.3%–67%) — both stay in
+shot. Names a community not in the catalogue → standing rule at full strength:
+alt="", aria-hidden, never a caption.

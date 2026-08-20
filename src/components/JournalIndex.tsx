@@ -117,7 +117,20 @@ export function JournalIndex({
               filters; the word is what tells a reader these are places to go.
               `id` + `aria-labelledby` so the nav announces itself by the same
               word it shows, instead of by a label only a screen reader hears. */}
-          <h2 id="journal-categories" className="rj-eyebrow text-jamin-gold-ink">
+          {/* 🚨 LEFT, overriding `.rj-eyebrow`'s central `text-align: right`
+              (report 10, 2026-08-20: "move the Categories heading and category
+              buttons to the left side and align them with the main
+              content/search area"). The pills below were always left — only
+              this label sat right, so the rail read as two blocks. The
+              captions-right rule already splits by role (SectionLabel went
+              left 2026-08-18); this label now follows the control row it
+              names. Inline style rather than a utility because the class sets
+              alignment centrally and utility order is not a contract. */}
+          <h2
+            id="journal-categories"
+            className="rj-eyebrow text-jamin-gold-ink"
+            style={{ textAlign: "left" }}
+          >
             Categories
           </h2>
           <div className="mt-phi2 flex flex-wrap gap-2" aria-labelledby="journal-categories">
