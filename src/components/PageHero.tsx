@@ -31,7 +31,7 @@ export type HeroArt =
   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 17 | 18 | 19 | 21 | 23 | 25 | 27 | 28
   | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 43 | 44 | 45
   | 46 | 47 | 48 | 49 | 50 | 51 | 52 | 53 | 54 | 55 | 56 | 57 | 58 | 59
-  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81 | 82 | 83;
+  | 62 | 63 | 64 | 65 | 66 | 67 | 68 | 69 | 70 | 71 | 72 | 73 | 75 | 77 | 80 | 81 | 82 | 83 | 84;
 
 /**
  * 🚨 THE NATIVE HEIGHT OF EACH TOP RENDITION, AND IT IS NOT DECORATION.
@@ -117,6 +117,11 @@ const TOP_HEIGHT: Record<HeroArt, number> = {
      2026-08-20) → /projects/ongoing, replacing hero-65. 1672x941, the
      register's common geometry. */
   83: 941,
+  /* hero-84 — the JAMIN JADE CITY gate in full daylight (owner-supplied
+     2026-08-21) → /contact, replacing hero-72. 1774x887 — the same 2:1
+     geometry as hero-82, so the warning on that entry applies here too: it
+     is WIDER than the 16:9 the register mostly uses. */
+  84: 887,
 };
 
 /** The widest rendition that exists for each source image. */
@@ -393,6 +398,8 @@ const TOP_WIDTH: Record<HeroArt, number> = {
      the standing rule at full strength: alt="", aria-hidden, never a
      caption. */
   83: 1672,
+  /* 1774 native, like hero-82. */
+  84: 1774,
   /* hero-75 — the JAMIN SOULFUL gate in daylight (owner-supplied 2026-08-18
      13:00) → /compare, replacing hero-73 the same day at the owner's ask.
      Lockup TOP-CENTRE on the arch, "Welcome to a Life Well Planned" plinth

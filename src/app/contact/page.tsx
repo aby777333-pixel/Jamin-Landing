@@ -57,14 +57,66 @@ export default async function ContactPage() {
            /projects): the knee lands at 667 and the lockup is solid from its
            own left edge. The anchor stays `right` — harmless with no travel,
            and correct the day this box stops being width-bound. */
-        art={72}
-        artPosition="right"
-        softFade
+        /* 🚨 hero-84 REPLACES hero-72 (owner-supplied 2026-08-21, "Book a site
+           visit page, swap the hero image with the attached"). The JAMIN JADE
+           CITY gate in full daylight: the boom up, a car and two residents
+           walking in past the guard post, villas and the avenue running back.
+           It keeps what report 14 asked hero-72 to provide — a frame whose
+           subject is arriving at a development rather than a generic gate —
+           and states it in daylight, which is when a site visit happens.
+
+           ⚠️ 1774x887, a 2:1 frame. Same geometry as hero-82, so the register's
+           note applies: this is WIDER than the 16:9 most heroes use.
+
+           🚨 `softFade` IS GONE, AND A MEASUREMENT IS WHY — this frame needs
+           the WIDE dissolve, not the narrow one.
+
+           The h1 runs to screen 688 and the art box starts at 601, so the last
+           ~88px of "Book a site visit" always sits over the picture. Under
+           hero-72 that strip was the dusk gate's own light stonework. Under
+           hero-84 it is deep tree shade: sampling the composite pixel by pixel,
+           the darkest backdrop under the title measures rgb(34,31,6) — against
+           the near-black heading ink, rgb(27,23,18), that is a contrast ratio
+           of 1.0. Invisible, not merely weak.
+
+           ⚠️ RAISING `sheerAlpha` WOULD HAVE MADE IT WORSE, WHICH IS THE TRAP
+           HERE. The plate is `rgba(16,14,12,a)` — a DARKENING tint. It rescues
+           light copy on a bright frame; this is dark copy on a dark frame, so
+           every step up the alpha closes the gap instead of opening it.
+           Measured at 0.42, 0.55 and 0.68: still 1.0 at all three.
+
+           The dissolve is the thing that had to move. `hero-fade`'s 22% puts
+           the knee at 182px, so the title's whole 88px overlap is inside the
+           dissolve and the heading sits on the page's own cream. The lockup is
+           untouched: the red logo chip starts at 270px in this crop, and the
+           cream arch runs to 727px, so nothing readable is inside the fade —
+           it eats foliage and part of the left pillar, which is exactly what a
+           fade is for.
+
+           ⚠️ 0.42 IS CARRIED, AND IT IS NO LONGER LOAD-BEARING FOR THE COPY.
+           With the heading clear of the photograph the plate protects no text
+           on this page; it is tinting picture only. Do not treat the number as
+           an audited floor — if copy is ever moved back over the art, sweep it
+           again from scratch, and remember the direction of the trap above.
+
+           🚨 THE ANCHOR IS `center` NOW, AND THE OLD NOTE'S REASONING IS THE
+           REASON IT HAD TO CHANGE. hero-72 was 1.5:1 in a 1.496:1 box, so the
+           frame was WIDTH-bound and the anchor had ZERO travel — which is why
+           `right` was described as "harmless with no travel, and correct the
+           day this box stops being width-bound". That day is today: hero-84 is
+           2:1, so `cover` scales it to 1108x554 in the 829x554 box and there
+           are 279px of horizontal travel to spend.
+
+           All three anchors were rendered at the real box size and compared.
+           `left` runs the sign off the right edge and cuts "CITY". `right`
+           amputates the arch's left pillar, so the gate loses its symmetry.
+           `center` keeps the WHOLE arch, the whole "JAMIN JADE CITY" lockup
+           and the "Welcome to a Life Well Planned" wall, with the sign
+           comfortably clear of `hero-fade-soft`'s knee at 8% (66px) — the
+           lockup starts around 250px into the box. */
+        art={84}
+        artPosition="center"
         sheer
-        /* 0.42 held for hero-52 because its overlap strip is greenery; hero-72
-           is a dusk frame and darker still under the plate, so the value is
-           carried rather than re-swept upward — a darker ground can only
-           improve ink on a light plate. */
         sheerAlpha={0.42}
         eyebrow="Talk to Jamin"
         title="Book a site visit"

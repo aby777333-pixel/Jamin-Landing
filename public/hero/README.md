@@ -1305,3 +1305,45 @@ Vertical anchor `50% 14%` re-checked against this frame (beam ~15–30%, plaque
 ~45–62% of frame height; worst-case 500px box shows 5.3%–67%) — both stay in
 shot. Names a community not in the catalogue → standing rule at full strength:
 alt="", aria-hidden, never a caption.
+
+## hero-84 — the JAMIN JADE CITY gate (2026-08-21)
+
+Owner-supplied in chat, this round: "Book a site visit page, swap the hero image
+with the attached" -> `/contact`, replacing hero-72 (the golden-hour gate walk),
+which returns to SPARES with its renditions intact.
+
+Full daylight: the boom up, a car and two residents walking in past the guard
+post, villas and the avenue running back, and "Welcome to a Life Well Planned"
+carved into the right wall. It keeps what report 14 asked hero-72 to provide - a
+frame whose subject is ARRIVING at a development rather than a generic gate -
+and states it at the hour a site visit actually happens. Renditions 768/1280/1774
+webp built with PIL (LANCZOS, quality 80, method 6).
+
+**1774x887, a 2:1 frame** - the same geometry as hero-82, so this is one of the
+two widest in the register.
+
+⚠️ THE ANCHOR AND THE FADE BOTH MOVED, AND THE 2:1 RATIO IS WHY. hero-72 was
+1.5:1 in the 829x554 contact box, so it was WIDTH-bound and `artPosition` had
+zero travel. At 2:1 `cover` renders 1108x554 and there are **279px of horizontal
+travel**. All three anchors were rendered at the real box size: `left` cuts
+"CITY" off the right edge, `right` amputates the arch's left pillar, `center`
+keeps the whole arch, the whole lockup and the Welcome wall. Centre it is.
+
+⚠️ IT NEEDS THE WIDE `hero-fade`, NOT `softFade`, AND RAISING THE PLATE ALPHA
+WOULD HAVE MADE IT WORSE. The h1 runs to screen 688 and the art box starts at
+601, so ~88px of "Book a site visit" sits over the picture; under this frame
+that strip is deep tree shade. Sampled composite: darkest backdrop under the
+title rgb(34,31,6) against heading ink rgb(27,23,18) = **1.0** - invisible.
+The plate is `rgba(16,14,12,a)`, a DARKENING tint, so it rescues light copy on a
+bright frame and does the opposite here; measured at 0.42 / 0.55 / 0.68, still
+1.0 at all three. `hero-fade`'s 22% knee lands at 182px, putting the whole
+overlap inside the dissolve - title on cream, 95px of clearance. Nothing
+readable is lost: the red logo chip starts at 270px in this crop and the cream
+arch runs to 727px, so the fade eats foliage and part of the left pillar only.
+
+Phone band re-checked at 375px: 375x188, ratio 2.0 against the source's 2.005,
+`object-fit: contain` - **letterboxed, not cropped**, and no copy overlaps it.
+Both breakpoints swept, per the standing two-sweep rule.
+
+Names a community not in the catalogue -> standing rule at full strength:
+alt="", aria-hidden, never a caption.
