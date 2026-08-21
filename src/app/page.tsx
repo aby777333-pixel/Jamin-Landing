@@ -18,6 +18,7 @@ import {
   locationLine,
   phaseLabel,
   propertyHref,
+  secondaryImage,
   type Property,
 } from "@/lib/properties";
 import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
@@ -100,6 +101,53 @@ const ASSURANCES = [
   },
 ];
 
+/**
+ * THE SIX TRUST POINTS (report 13, 2026-08-21) — the owner's own list, with a
+ * sentence under each naming where the reader can verify it on this site.
+ *
+ * ⚠️ NOTHING HERE IS A NEW CLAIM. Every line points at something already
+ * published: the approval number on the project page, the plot schedule on the
+ * plan, the sanctioned road widths in the area statement, the bookable visit,
+ * the documents panel. A trust section that asserts anything the rest of the
+ * site cannot show would be the exact opposite of what it is for.
+ *
+ * ⚠️ Marks are drawn survey glyphs from the standing set (`SurveyIcon`'s
+ * vocabulary rule: every shape traces to a land document or an instrument,
+ * never a pictogram of a lifestyle).
+ */
+const WHY_JAMIN = [
+  {
+    k: "DTCP approved",
+    d: "The sanction number is printed on every project page, so you can check it against the planning authority's own file.",
+    icon: "stamp" as const,
+  },
+  {
+    k: "Clear, marketable title",
+    d: "Title and encumbrance are settled before a plot is offered, and the status is stated on the record — not on request.",
+    icon: "deed" as const,
+  },
+  {
+    k: "Transparent plot information",
+    d: "Every plot's number, extent and availability is on the published schedule, and it is the same schedule our desk works from.",
+    icon: "grid" as const,
+  },
+  {
+    k: "Infrastructure as approved",
+    d: "Roads, water and open space are formed to the widths the sanctioned plan fixes — the plan is on the page beside them.",
+    icon: "junction" as const,
+  },
+  {
+    k: "Visit before you decide",
+    d: "Pick a day and walk the boundaries against the drawing. No payment, no obligation, and nothing is held back for the visit.",
+    icon: "pin" as const,
+  },
+  {
+    k: "Straightforward buying process",
+    d: "Four stages, in one order, every time: land and title, sanctioned layout, formed on the ground, registered to you.",
+    icon: "ledger" as const,
+  },
+];
+
 export default async function HomePage() {
   const [all, facets] = await Promise.all([getProperties(), getNavFacets()]);
   const slides = buildSlides(all);
@@ -134,7 +182,23 @@ export default async function HomePage() {
           Jamin plotted development (formed roads, plot rows, the water tank),
           the closest frame in the register to the report's example image.
           Brand imagery rule: `alt=""`, `aria-hidden`, never a caption. */}
+      {/* 🚨 A RULED BAND, AND THE FOLIO IS BACK (report 13, 2026-08-21:
+          "keep the existing 01 section indicator… remove that card layout for
+          the entire section and just maintain the border line for the section
+          before and after"). Report 10 took the card off and the folio went
+          with it — the numeral had been sitting inside the Pane's ornament row.
+          The rules above and below are what the report asks to replace the
+          card with, and they also put this band in step with "Find land near
+          you" below, which already carries a pair. */}
+      <section className="border-y border-line bg-canvas">
       <Container className="py-phi6">
+        {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the section
+            indices of a bound document. Decoration only, `aria-hidden`. */}
+        <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+          <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
+          <div className="rj-fret w-40 opacity-60" />
+          <span className="rj-folio rj-folio-red text-3xl">01</span>
+        </div>
         <div className="grid items-center gap-phi4 lg:grid-cols-[1.1fr_1fr]">
           <div className="max-w-2xl">
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
@@ -194,6 +258,81 @@ export default async function HomePage() {
           ))}
         </dl>
       </Container>
+      </section>
+
+      {/* ---- WHY JAMIN PROPERTIES (report 13, 2026-08-21) ----
+          "Add a 'Why Jamin Properties' section after the existing 'Land is the
+          one purchase where the paperwork matters more than the pitch'
+          section. Include 6 key trust points… add one authentic
+          site-development image alongside the section showing a real plotted
+          layout/site inspection."
+
+          ⚠️ EVERY POINT RESTATES SOMETHING THIS SITE ALREADY PUBLISHES, and
+          that is the constraint that makes a trust section honest rather than
+          marketing: the approval number is on each project page, the plot
+          schedule is on the plan, the roads are the sanctioned ones, and the
+          visit is bookable. The six headings are the owner's own list; the
+          sentence under each names WHERE the reader can go and check it. No
+          claim here is made for the first time.
+
+          ⚠️ THE PICTURE IS A REAL SITE, not a render — the report asks for "one
+          authentic site-development image… a real plotted layout/site
+          inspection", and `secondaryImage()` returns a photograph the admin
+          console uploaded against a real development. It renders only when
+          there is one; a missing photo drops the column rather than
+          substituting a gate render, because a render here would be exactly
+          the thing the section is arguing against. Decoration beside the
+          copy: alt="", aria-hidden, no caption. */}
+      {(() => {
+        const proof = all.map((p) => secondaryImage(p)).find(Boolean) ?? null;
+        return (
+          <Container className="py-phi6">
+            <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+              <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
+              <div className="rj-fret w-40 opacity-60" />
+              <span className="rj-folio rj-folio-red text-3xl">02</span>
+            </div>
+            <div className="grid gap-phi5 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+              <div>
+                <SectionLabel>Why Jamin Properties</SectionLabel>
+                <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
+                  Six things you can check before you believe us.
+                </h2>
+                <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
+                  {WHY_JAMIN.map((w) => (
+                    <div key={w.k} className="flex gap-phi2">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
+                      >
+                        <SurveyIcon name={w.icon} className="h-[21px] w-[21px]" />
+                      </span>
+                      <div className="min-w-0">
+                        <dt className="text-base font-semibold text-ink">{w.k}</dt>
+                        <dd className="mt-1 text-base leading-relaxed text-ink-muted">{w.d}</dd>
+                      </div>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {proof && (
+                <div className="relative hidden aspect-[4/5] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={proof}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
+          </Container>
+        );
+      })()}
 
       {/* ---- live inventory ----
           🚨 NO PANE, NO WASH (report 10, 2026-08-21: "Remove the large
@@ -503,12 +642,12 @@ export default async function HomePage() {
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
-                {/* ⚠️ Renumbered 02 → 01 when the Plotted-development section
-                    lost its folio in the report-10 restructure — the chapter
-                    sequence starts here now. */}
+                {/* ⚠️ Back to 03: the Plotted-development folio returned at
+                    report 13's ask and "Why Jamin Properties" took 02, so the
+                    chapter sequence runs 01 · 02 · 03 · 04 down the page. */}
                 <IsoMark name="road" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio rj-folio-red text-3xl">01</span>
+                <span className="rj-folio rj-folio-red text-3xl">03</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -561,7 +700,7 @@ export default async function HomePage() {
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
                 <IsoMark name="gate" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio rj-folio-red text-3xl">02</span>
+                <span className="rj-folio rj-folio-red text-3xl">04</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">

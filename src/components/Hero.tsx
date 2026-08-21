@@ -180,16 +180,46 @@ export function Hero({
 
           ⚠️ If this frame is ever swapped, re-measure. This number is solved
           against hero-72's composition, not a house default. */}
-      <div className="relative h-44 w-full sm:h-64 xl:hidden">
+      {/* 🚨 hero-83 REPLACES hero-72 ON THE PHONE BAND (report 13, 2026-08-21:
+          "the hero image is cropped too aggressively… the JAMIN BAZAAR title
+          appears twice — once in the header/top area and again inside the hero
+          image… this duplication makes the top section feel repetitive and
+          visually cluttered… target result: one clear Jamin Bazaar brand
+          presence at the top + a fully visible gate image").
+
+          ⚠️ THE DUPLICATION WAS DESIGNED IN, AND SO WAS THE TIGHT CROP — both
+          follow from hero-72 carrying the wordmark TWICE, on the arch beam
+          (15–29% of the frame) and on the wall (49–65%). The `left 28%` crop
+          existed to hold BOTH, which is exactly the repetition now reported,
+          and holding both is what forced a window of only 47% of the frame's
+          height. There is no crop of that frame that shows one wordmark and a
+          whole gate: at 375 the band is width-bound, so `objectPosition`'s X
+          has no travel at all and the wall can only be removed by throwing
+          away the bottom half of the picture with it.
+
+          hero-83 answers both halves at once. Its sign reads JAMIN GEMSTONE —
+          the community, not a second copy of the header's wordmark — so the
+          brand appears once at the top of the screen, and at 1.777:1 against
+          the band's 2.13:1 the frame is width-bound with only 35px of height
+          to lose: 83% of the picture survives, which is what "a fully visible
+          gate image" means here. Centre is the right anchor because the beam
+          and the sign sit either side of the midline.
+
+          ⚠️ Cross-surface reuse (it also carries /projects/ongoing) under the
+          hero-39/72 precedent — a phone band and a desktop hero are never on
+          screen together, and these are different routes. Standing rule at
+          full strength: the frame names a community not in the catalogue, so
+          alt="", aria-hidden, and never a caption. hero-72 stays on disk. */}
+      <div className="relative h-48 w-full sm:h-64 xl:hidden">
         <Image
-          src="/hero/hero-72-1536.webp"
+          src="/hero/hero-83-1672.webp"
           alt=""
           aria-hidden="true"
           fill
           sizes="100vw"
           priority
           className="object-cover"
-          style={{ objectPosition: "left 28%" }}
+          style={{ objectPosition: "50% 50%" }}
         />
       </div>
 
@@ -532,6 +562,22 @@ export function Hero({
                   <span className="rj-sheen relative h-16 w-24 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
                     <Image src={s.image} alt="" fill sizes="96px" className="object-cover" />
                   </span>
+                  {/* 🚨 THE NAME SETS ON TWO LINES (report 13, 2026-08-21:
+                      "the current shortcut cards are too short, causing
+                      project names and locations to be truncated and making
+                      the area name difficult to read… slightly increase the
+                      height of each shortcut card so the information is
+                      displayed on two lines: Line 1: Jamin Garden, Line 2:
+                      Varapatty").
+
+                      Every development is named "Jamin Garden — <place>", so
+                      one truncated line was spending its whole width on the
+                      half that is the same on every card and clipping the half
+                      that identifies it. Split on the em dash: the family name
+                      leads, the place sits under it in full. A title without
+                      that dash (Trichy's Tulip) simply takes the first line and
+                      the second never renders — no placeholder, no invented
+                      locality. */}
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5">
                       {/* The stage gets the pill in its own stone; the place
@@ -551,9 +597,22 @@ export function Hero({
                         </span>
                       )}
                     </span>
-                    <span className="mt-1 block truncate text-base font-semibold text-ink transition-colors group-hover:text-jamin-red-deep">
-                      {s.title}
-                    </span>
+                    {(() => {
+                      const [family, ...rest] = s.title.split(/\s+—\s+/);
+                      const locality = rest.join(" — ");
+                      return (
+                        <>
+                          <span className="mt-1 block truncate text-base font-semibold leading-tight text-ink transition-colors group-hover:text-jamin-red-deep">
+                            {family}
+                          </span>
+                          {locality && (
+                            <span className="block truncate text-base leading-tight text-ink-muted transition-colors group-hover:text-jamin-red-deep">
+                              {locality}
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
                   </span>
                   <span
                     aria-hidden="true"

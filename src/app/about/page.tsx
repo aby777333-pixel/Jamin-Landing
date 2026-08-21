@@ -160,7 +160,22 @@ export default async function AboutPage() {
                  stack stays, the padding drops phi5 → phi4, the figure a
                  step down at both widths and the chip 14 → 12. The phone
                  ROW layout (number + label on one line) is unchanged. */
-              className="flex items-baseline gap-phi3 p-phi3 sm:block sm:p-phi4 sm:text-center"
+              /* 🚨 THE PHONE ROW IS A TWO-TRACK GRID (report 13, 2026-08-21:
+                 "in the statistics card, the descriptive text on the right
+                 side of each number starts at slightly different positions,
+                 creating an uneven visual alignment… keep the icon + number in
+                 a fixed-width left column… align all descriptions to the same
+                 left starting position… vertically centre the description
+                 relative to its corresponding number").
+
+                 It was `flex items-baseline`, so the left group was sized by
+                 its own content — "4", "1" and "258" are one, one and three
+                 digits wide — and each label therefore began at a different x.
+                 A fixed `7.5rem` first track fixes all three at one column,
+                 and `items-center` centres the label against its figure
+                 instead of sitting it on the numeral's baseline. From `sm` the
+                 centred stack is unchanged. */
+              className="grid grid-cols-[7.5rem_minmax(0,1fr)] items-center gap-phi3 p-phi3 sm:block sm:p-phi4 sm:text-center"
             >
               <dd className="flex shrink-0 items-center gap-2.5 text-3xl leading-none text-jamin-red-deep sm:flex-col sm:items-center sm:gap-phi2 sm:text-4xl">
                 <span
@@ -171,13 +186,14 @@ export default async function AboutPage() {
                 </span>
                 <SurveyIcon
                   name={icon}
-                  className="h-[22px] w-[22px] self-center text-jamin-gold sm:hidden"
+                  className="h-[22px] w-[22px] shrink-0 self-center text-jamin-gold sm:hidden"
                 />
                 <LedgerCount value={value} className="ledger" />
               </dd>
-              {/* `min-w-0` because the third label is long and this is a flex
-                  item on a phone — a flex item's default minimum is its content,
-                  which is the same trap the footer's district column paid for. */}
+              {/* `min-w-0` because the third label is long and this is a grid
+                  item on a phone — a grid track's default minimum is its
+                  content, which is the same trap the footer's district column
+                  paid for. */}
               <dt className="ledger-label min-w-0 sm:mt-phi2 sm:block">{label}</dt>
             </div>
           ))}

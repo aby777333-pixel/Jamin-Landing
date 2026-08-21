@@ -552,9 +552,18 @@ export default async function VaultPage() {
           {/* The owner's picture holds the RIGHT column now, 4:3 rather than
               4:5 — the report's "larger hero image on the right side", sized
               to end near the copy's own foot instead of a storey past it.
-              Hidden below `lg` as before: on a phone it would push the desk's
-              argument down a screen to say nothing new. */}
-          <div className="relative hidden aspect-[4/3] overflow-hidden rounded-xl border border-champagne-500/35 lg:block">
+
+              🚨 IT SHOWS ON A PHONE TOO (report 13, 2026-08-21: "the current
+              section doesn't have image in mobile view, appears visually flat
+              without a strong supporting visual. Keep the image for the mobile
+              as well which is currently displayed in the desktop"). The old
+              `hidden lg:block` was argued as saving a phone reader a screen of
+              scrolling for a picture that "says nothing new" — the owner reads
+              the same absence as the section falling flat, and the newer word
+              wins. It sits BELOW the copy on a phone (source order is
+              unchanged), so the argument is still read before the
+              illustration. */}
+          <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-champagne-500/35">
             <VaultPlate
               src="/vault/the-idea.webp"
               seed="the-idea"
@@ -1033,6 +1042,20 @@ export default async function VaultPage() {
               ⚠️ Tighter only where it was reported. `gap-phi2` on a phone
               closes the stretch; from `sm` the grid is two and three columns,
               where the old rhythm was never the complaint. */}
+          {/* 🚨 A HEADING, BECAUSE THE BLOCK HAD NONE (report 13, 2026-08-21:
+              "the five-point content block appears as a standalone section
+              between the CTA cards above and the FAQ section below. Since
+              there is no heading, [readers] don't immediately understand the
+              purpose of these points. Add a section heading above the five
+              points, while keeping the existing layout and styling. Suggested
+              heading: Private opportunities, handled differently").
+
+              The owner's own words are used verbatim. The note above says the
+              numbering is what makes the five read as ONE list; the heading is
+              what says WHAT the list is — the two answer different halves of
+              the same confusion. Layout and styling below are untouched, as
+              the report asks. */}
+          <h2 className="mb-phi4 text-2xl text-ink">Private opportunities, handled differently.</h2>
           <ul className="grid gap-phi2 sm:grid-cols-2 sm:gap-phi3 lg:grid-cols-3">
             {promise.map((line, i) => (
               <li key={line} className="flex gap-phi3 border-t border-line pt-phi3">

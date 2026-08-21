@@ -58,8 +58,24 @@ export function LocationExplorer({ items }: { items: Property[] }) {
     [items, district],
   );
 
+  /* 🚨 A CELL, NOT AN INLINE PILL (report 13, 2026-08-21: "the district filter
+     buttons currently have different widths based on the length of their text,
+     making the row look uneven and inconsistent… maintain a uniform width and
+     height for every district filter card… same width for All Tamil Nadu,
+     Coimbatore, Erode, Salem, Tiruchirappalli, Tiruppur… keep the text
+     centred").
+
+     `inline-flex` in a `flex-wrap` row sized every button to its own label, so
+     "ALL TAMIL NADU 5" ran nearly three times the width of "ERODE 1" and the
+     row broke wherever it happened to run out. They are grid CELLS now — equal
+     width, equal height, centred — which is the same correction the
+     /properties facets took in report 8 and for the same reason.
+
+     ⚠️ `min-w-0` + `truncate` on the label, because a fixed cell and a long
+     word are only compatible if the label can give way; the COUNT stays
+     outside the truncation so a narrowed cell never hides the number. */
   const chip = (on: boolean) =>
-    `inline-flex items-center gap-2 rounded-full border px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
+    `flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border px-3 py-2 text-center text-tiny font-semibold uppercase tracking-[0.12em] transition-colors ${
       on
         ? "border-ink bg-ink text-white"
         : "border-line bg-canvas text-ink-soft hover:border-ink-faint"
@@ -69,15 +85,15 @@ export function LocationExplorer({ items }: { items: Property[] }) {
     <div>
       {/* Step 1 — the district. `All` first so the default state is the whole
           picture rather than an arbitrary district. */}
-      <div className="mt-phi4 flex flex-wrap gap-2">
+      <div className="mt-phi4 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
         <button
           type="button"
           onClick={() => setDistrict(null)}
           aria-pressed={district === null}
           className={chip(district === null)}
         >
-          All Tamil Nadu
-          <span className="ledger opacity-60">{items.length}</span>
+          <span className="min-w-0 truncate">All Tamil Nadu</span>
+          <span className="ledger shrink-0 opacity-60">{items.length}</span>
         </button>
         {districts.map(([d, n]) => (
           <button
@@ -87,8 +103,8 @@ export function LocationExplorer({ items }: { items: Property[] }) {
             aria-pressed={d === district}
             className={chip(d === district)}
           >
-            {d}
-            <span className="ledger opacity-60">{n}</span>
+            <span className="min-w-0 truncate">{d}</span>
+            <span className="ledger shrink-0 opacity-60">{n}</span>
           </button>
         ))}
       </div>

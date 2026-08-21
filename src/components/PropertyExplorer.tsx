@@ -285,40 +285,27 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
     set({ compare: next });
   }
 
-  /* MOBILE FILTERS FOLD BEHIND ONE BUTTON (owner report 2026-08-18: the
-     chip rows "look crowded on mobile… replace with a single Filters
-     button", Grid/List/Map staying visible). Phone-only — from `sm` the
-     rows show as always, and the xl rail is untouched. Opens automatically
-     when a filter is already active from the URL, so a shared filtered link
-     never hides the chips that explain the short list. */
-  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  /* THE FILTER SHEET, AT EVERY WIDTH (report 13, 2026-08-21) — one control,
+     one panel, phone and desktop alike. It replaces both the phone-only
+     `mobileFiltersOpen` fold and the `xl` sticky rail; see the note at the
+     control bar for the measurement that retired the rail. */
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const activeFilterCount = (f.district ? 1 : 0) + (f.phase ? 1 : 0) + (f.purpose ? 1 : 0);
-  /* DERIVED, not an effect (the repo's eslint bans setState in an effect
-     body): with a filter active the rows stay shown, so a shared filtered
-     URL always explains its own short list. */
   /**
    * ═══════════════════════════════════════════════════════════════════════
-   * 🚨 `|| activeFilterCount > 0` USED TO BE HERE AND IT WAS THE BUG (report
-   * 7, 2026-08-19: "District and Stage options are displayed as multiple chips
-   * directly on the page, making the filter section look cluttered and pushing
-   * the property content downward").
+   * 🚨 A PANEL IS OPEN WHEN THE READER OPENED IT (report 7, 2026-08-19, and
+   * the rule survives the report-13 rebuild).
    *
-   * The intent was kind — if a filter is on, show the reader where it came
-   * from. The effect was that the FIRST tap permanently unfolded every option
-   * in every facet: eleven chips on a 375px screen, pushing the first property
-   * card most of a screen down, with no way to fold them back because the
-   * Filters button could no longer close what the count was holding open.
-   *
-   * A panel is now a panel: it is open when the reader opened it. What an
-   * active filter gets instead is the thing that was actually missing — a
-   * summary chip that names the choice and carries a × to undo it, which is
-   * both a smaller footprint and a better answer to "where did this come
-   * from".
+   * `|| activeFilterCount > 0` once forced the facets open whenever a filter
+   * was set, so the FIRST tap permanently unfolded every option — eleven chips
+   * pushing the first card most of a screen down, with no way to fold them
+   * back. What an active filter gets instead is the summary chip row in the
+   * control bar: it names the choice and carries a × to undo it, which is both
+   * a smaller footprint and a better answer to "where did this come from".
    * ═══════════════════════════════════════════════════════════════════════
    */
-  const filtersShown = mobileFiltersOpen;
 
-  /** The active choices, as {label, clear} — the mobile summary row and
+  /** The active choices, as {label, clear} — the control bar's chip row and
    *  nothing else reads this. Built here so the row stays declarative. */
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
   if (f.district) activeChips.push({ key: "district", label: f.district, clear: () => set({ district: null }) });
@@ -334,7 +321,17 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
       label: purposeByKey(f.purpose)?.label ?? f.purpose,
       clear: () => set({ purpose: null }),
     });
-  const filterRowCls = filtersShown ? "grid" : "hidden sm:grid";
+
+  /* Escape closes the filter sheet — a full-height overlay with no keyboard
+     exit is a trap. Bound only while it is open. */
+  useEffect(() => {
+    if (!filtersOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setFiltersOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [filtersOpen]);
 
   /* "Pick one more" OFFERS THE OTHER PROJECTS (owner 2026-08-17, second
      report: "it should give other projects to pick") — the first fix scrolled
@@ -408,13 +405,14 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
     }`;
 
-  /* Two per row where the facets appear as a band — the report asks for
-     District and Stage to share one structure.
-     🚨 ONE per row in the `xl` rail (report 10, 2026-08-21: "Fix the
-     Tiruchirappalli, upcoming, completed clipping issue"): two cells in a
-     17rem column left ~7.5rem per label, and `truncate` was eating the long
-     district names. Full-width cells hold every name in the catalogue. */
-  const facetGridCls = "grid grid-cols-2 gap-2 xl:grid-cols-1";
+  /* 🚨 ONE PER ROW IN THE SHEET (report 10's "fix the Tiruchirappalli,
+     upcoming, completed clipping issue", carried into the report-13 rebuild).
+     The sheet is 22rem wide, so two cells would leave ~9rem per label and
+     `truncate` would eat the long district names again — the exact clipping
+     that report named. Full-width cells hold every name in the catalogue at
+     every width, which also makes the panel identical on a phone and a
+     desktop. */
+  const facetGridCls = "mt-2 grid grid-cols-1 gap-2";
 
   return (
     <>
@@ -473,41 +471,41 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
       </div>
 
-      {/* CARTOUCHE §5's /properties LEFT FILTER RAIL (do-all round,
-          2026-08-18): from `xl` the facets become a sticky rail beside the
-          results instead of a band above them. ONE DOM, two layouts — below
-          `xl` nothing changes, so the phone keeps the band the reports
-          already tuned. `min-w-0` on the results column or a wide map/table
-          would stretch the track. */}
-      <div className="xl:grid xl:grid-cols-[17rem_minmax(0,1fr)] xl:items-start xl:gap-phi4">
-      {/* ---- facets + view switch ---- */}
-      {/* `border-t` only. The bottom rule sat a hair above the first card and
-          read as a second divider stacked on the section's own spacing. */}
-      {/* ⚠️ TABULAR ROWS (2026-08-17 report round) — a fixed label track, so
-          DISTRICT's pills and STAGE's pills start on the same column instead
-          of each row's pills beginning wherever its own label ended. The
-          labels are a column now; the rows read as a register. In the `xl`
-          rail the tracks stack (`xl:grid-cols-1`) — a 5.5rem label column
-          inside a 17rem rail would leave the pills 10rem. */}
-      {/* 🚨 THE RAIL'S CARD IS GONE (report 10, 2026-08-21: "Remove the outer
-          rounded filter card, background and shadow. Place every thing
-          directly on the page background. Add a thin vertical divider between
-          the filter sidebar and property results"). The rounded border and
-          the canvas-alt wash came off; the facets sit bare on the page and
-          the divider is the `xl:border-l` on the results column, which runs
-          the full content height (a border here, on the sticky element,
-          would stop at the rail's own foot). `--rj-stone` set ONCE here makes
-          every facet dot the signal red — see the chip note above. */}
+      {/* 🚨 THE PERMANENT LEFT RAIL IS GONE (report 13, 2026-08-21: "remove the
+          permanent left filter panel because the cards are looking with less
+          width to display context… keep controls at the top beside search…
+          place a compact control bar directly below the header: Search bar |
+          FILTER | GRID | LIST | MAP. Keep this control bar sticky while
+          scrolling. Filter must open as an overlay popup at the right side").
+
+          ⚠️ THIS REVERSES THE 2026-08-18 RAIL AND THE 2026-08-21 DIVIDER, AND
+          THE MEASUREMENT IS WHY. The 17rem rail plus its gutter left a
+          three-column card 272px wide at 1440 — which is the same 272px that
+          made every area figure overflow its cell two reports ago. The rail
+          was spending a fifth of the page permanently on six pills a reader
+          touches once. Behind a control it costs nothing until it is wanted,
+          and the cards get the width back.
+
+          ⚠️ ONE FILTER UI AT EVERY WIDTH NOW, which is the simplification the
+          phone reports were circling: report 13 offered three options for
+          mobile and its third — "tapping it opens a bottom-sheet filter
+          panel" — is the same interaction as the desktop overlay, so both are
+          the one panel below. The separate `mobileFiltersOpen` state, the
+          `sm:hidden` summary row and the `filterRowCls` visibility switch all
+          go with it. */}
+      <div className="flex flex-col">
+      {/* ---- the control bar ---- */}
       <div
-        className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:mt-phi4 xl:gap-phi3 xl:border-t-0 xl:py-0"
+        className="rj-controlbar sticky top-[var(--header-h)] z-20 -mx-5 mt-phi3 flex flex-wrap items-center gap-phi2 border-y border-line bg-canvas/95 px-5 py-phi2 backdrop-blur lg:-mx-10 lg:px-10"
         style={{ "--rj-stone": "var(--color-jamin-red)" } as React.CSSProperties}
       >
         {(districts.length > 1 || phases.length > 1) && (
           <button
             type="button"
-            aria-expanded={filtersShown}
-            onClick={() => setMobileFiltersOpen((v) => !v)}
-            className="inline-flex items-center gap-2 self-start rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft sm:hidden"
+            aria-expanded={filtersOpen}
+            aria-haspopup="dialog"
+            onClick={() => setFiltersOpen(true)}
+            className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
           >
             <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M2 4h12M4.5 8h7M7 12h2" />
@@ -521,50 +519,132 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           </button>
         )}
 
-        {/* 🚨 THE ACTIVE CHOICES, ON A PHONE, WITH A WAY OUT (report 7,
-            2026-08-19: "display the selected District and Stage clearly as
-            active filter chips… use a visible × icon on each active chip to
-            remove it").
-
-            This is what replaces the unfolded option rows above. One chip per
-            choice instead of eleven options, and the × is a real control rather
-            than "go back into the panel and tap the pill again" — which was the
-            only way to undo a filter on a phone before.
-
-            ⚠️ `sm:hidden`. From `sm` the full facets are always on show and a
-            pressed pill already says what is selected, so a summary row there
-            would state the same fact twice.
+        {/* 🚨 THE ACTIVE CHOICES, WITH A WAY OUT (report 7, 2026-08-19:
+            "display the selected District and Stage clearly as active filter
+            chips… use a visible × icon on each active chip to remove it").
+            At EVERY width now — with the options behind a control there is no
+            longer a pressed pill on the page saying what is selected, so this
+            row is the only thing that does.
 
             ⚠️ The × is INSIDE the button and the button's accessible name says
             what it removes — "Remove Salem filter" — so a screen reader is
             never left with a row of unlabelled crosses. */}
-        {activeChips.length > 0 && (
-          <div className="flex flex-wrap gap-2 sm:hidden">
-            {activeChips.map((c) => (
-              <button
-                key={c.key}
-                type="button"
-                onClick={c.clear}
-                aria-label={`Remove ${c.label} filter`}
-                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-ink bg-ink/85 px-3 py-1.5 text-tiny font-medium text-canvas backdrop-blur-sm transition-opacity hover:opacity-80"
-              >
-                {c.label}
-                <svg viewBox="0 0 12 12" className="h-3 w-3 shrink-0" aria-hidden="true">
-                  <path
-                    d="M2.5 2.5l7 7M9.5 2.5l-7 7"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </button>
-            ))}
-          </div>
+        {activeChips.map((c) => (
+          <button
+            key={c.key}
+            type="button"
+            onClick={c.clear}
+            aria-label={`Remove ${c.label} filter`}
+            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-ink bg-ink/85 px-3 py-1.5 text-tiny font-medium text-canvas backdrop-blur-sm transition-opacity hover:opacity-80"
+          >
+            {c.label}
+            <svg viewBox="0 0 12 12" className="h-3 w-3 shrink-0" aria-hidden="true">
+              <path
+                d="M2.5 2.5l7 7M9.5 2.5l-7 7"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        ))}
+
+        {active && (
+          <span className="text-tiny text-ink-muted">
+            <span className="ledger">{results.length}</span> of{" "}
+            <span className="ledger">{all.length}</span> shown
+          </span>
         )}
 
+        {/* The view switch closes the bar on the right, as the report's
+            "Search bar | FILTER | GRID | LIST | MAP" asks. */}
+        <div
+          className="rj-segment ml-auto"
+          /* Three seats. The pill's index is the view's position in the same
+             order the buttons are written below — keep the two in step. */
+          style={
+            {
+              "--rj-n": 3,
+              "--rj-i": ["grid", "list", "map"].indexOf(f.view),
+            } as React.CSSProperties
+          }
+        >
+          <span className="rj-segment-pill" aria-hidden="true" />
+          {/* ⚠️ The icon is DECORATION beside a label that stays — reported
+              2026-08-14 as the three controls being "less recognizable at a
+              glance", which is an argument for adding a mark, not for
+              removing the word. The mark is `aria-hidden`; the button's
+              accessible name is still its text. */}
+          {(
+            [
+              { v: "grid", icon: "grid", stone: "var(--color-cta)" },
+              { v: "list", icon: "list", stone: "var(--color-emerald-deep)" },
+              { v: "map", icon: "map", stone: "var(--color-jamin-gold)" },
+            ] as const
+          ).map(({ v, icon, stone }) => (
+            <button
+              key={v}
+              type="button"
+              aria-pressed={f.view === v}
+              /* ⚠️ `setView`, not `set({ view })` — it captures the scroll
+                 anchor first. Calling `set` directly here is the bug coming
+                 back. */
+              onClick={() => setView(v)}
+              className="rj-segment-btn capitalize"
+              /* ⚠️ THE STONE WASH STAYS ON THE RESTING SEGMENTS ONLY. The
+                 pressed seat must be transparent or it would paint over the
+                 pill sliding underneath it. */
+              style={
+                f.view === v
+                  ? undefined
+                  : { background: `color-mix(in srgb, ${stone} 9%, transparent)` }
+              }
+            >
+              <SurveyIcon name={icon} size="h-3.5 w-3.5" className="shrink-0" />
+              <span className="hidden sm:inline">{v}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ---- the filter overlay ----
+          A right-hand sheet on every width: the report's "overlay popup at the
+          right side" and its own bottom-sheet suggestion are the same object,
+          so it is built once. Escape closes it, the scrim closes it, and the
+          panel traps nothing — a reader can still scroll the page behind on a
+          desktop, which is what makes it a sheet rather than a modal takeover. */}
+      {filtersOpen && (
+        <div
+          className="fixed inset-0 z-50 flex justify-end bg-ink/40 backdrop-blur-[2px] print:hidden"
+          onClick={() => setFiltersOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filter developments"
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-full w-full max-w-[22rem] flex-col overflow-y-auto border-l border-line bg-canvas p-phi4 shadow-raise"
+            style={{ "--rj-stone": "var(--color-jamin-red)" } as React.CSSProperties}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-tiny font-semibold uppercase tracking-brand text-jamin-gold-ink">
+                Filters
+              </p>
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Close filters"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
+              >
+                <svg viewBox="0 0 12 12" className="h-3.5 w-3.5" aria-hidden="true">
+                  <path d="M2.5 2.5l7 7M9.5 2.5l-7 7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+
         {districts.length > 1 && (
-          <div className={`${filterRowCls} grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5`}>
+          <div className="mt-phi4">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
@@ -593,7 +673,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
 
         {phases.length > 1 && (
-          <div className={`${filterRowCls} grid-cols-[5.5rem_1fr] items-center gap-2 xl:grid-cols-1 xl:items-start xl:gap-1.5`}>
+          <div className="mt-phi4">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>
@@ -630,106 +710,60 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             the one filter a visitor did not set on this page — if it were
             invisible, a short list would look like a small catalogue rather
             than a narrowed one. */}
+        {/* ⚠️ The purpose gets its OWN removable chip rather than joining the
+            district or stage rows. It arrives from a homepage card, so it is
+            the one filter a visitor did not set on this page — if it were
+            invisible, a short list would look like a small catalogue rather
+            than a narrowed one. */}
         {f.purpose && (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="mr-1 text-micro font-semibold uppercase tracking-brand text-ink-faint">
+          <div className="mt-phi4">
+            <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Purpose
             </span>
-            <button
-              type="button"
-              aria-pressed
-              onClick={() => set({ purpose: null })}
-              className={chip(true)}
-            >
-              <span className="rj-dot is-on" aria-hidden="true" />
-              {purposeByKey(f.purpose)?.label}
-              <span className="ml-1 text-canvas/60" aria-hidden="true">✕</span>
-            </button>
+            <div className="mt-2">
+              <button
+                type="button"
+                aria-pressed
+                onClick={() => set({ purpose: null })}
+                className={chip(true)}
+              >
+                <span className="rj-dot is-on" aria-hidden="true" />
+                {purposeByKey(f.purpose)?.label}
+                <span className="ml-1 text-canvas/60" aria-hidden="true">✕</span>
+              </button>
+            </div>
           </div>
         )}
 
-        <div className="flex flex-col gap-phi2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between xl:flex-col xl:items-start">
-          <div className="flex items-center gap-3">
-            {active && (
-              <>
-                <span className="text-tiny text-ink-muted">
-                  <span className="ledger">{results.length}</span> of{" "}
-                  <span className="ledger">{all.length}</span> shown
-                </span>
-                <button
-                  type="button"
-                  onClick={() => set({ q: "", district: null, phase: null, purpose: null })}
-                  className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep"
-                >
-                  Clear filters
-                </button>
-              </>
-            )}
-          </div>
-
-          <div
-            className="rj-segment self-start sm:self-auto"
-            /* Three seats. The pill's index is the view's position in the same
-               order the buttons are written below — keep the two in step. */
-            style={
-              {
-                "--rj-n": 3,
-                "--rj-i": ["grid", "list", "map"].indexOf(f.view),
-              } as React.CSSProperties
-            }
-          >
-            <span className="rj-segment-pill" aria-hidden="true" />
-            {/* ⚠️ The icon is DECORATION beside a label that stays — reported
-                2026-08-14 as the three controls being "less recognizable at a
-                glance", which is an argument for adding a mark, not for
-                removing the word. Icon-only would also cost the one thing this
-                switcher gets right: `capitalize` on a plain word needs no
-                tooltip and no guess. The mark is `aria-hidden`; the button's
-                accessible name is still its text. */}
-            {/* Colorized (owner 2026-08-17): each resting segment wears its
-                own stone wash — the Downloads trio, red/teal/gold — while the
-                pressed segment stays the ink pill, readable over any of them. */}
-            {(
-              [
-                { v: "grid", icon: "grid", stone: "var(--color-cta)" },
-                { v: "list", icon: "list", stone: "var(--color-emerald-deep)" },
-                { v: "map", icon: "map", stone: "var(--color-jamin-gold)" },
-              ] as const
-            ).map(({ v, icon, stone }) => (
+            {/* The sheet's own foot: clear everything, or take the narrowed
+                list. `mt-auto` pins the pair to the bottom of the panel, which
+                is where the report's bottom-sheet sketch puts them. */}
+            <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-phi3">
               <button
-                key={v}
                 type="button"
-                aria-pressed={f.view === v}
-                /* ⚠️ `setView`, not `set({ view })` — it captures the scroll
-                   anchor first. Calling `set` directly here is the bug coming
-                   back. */
-                onClick={() => setView(v)}
-                className="rj-segment-btn capitalize"
-                /* ⚠️ THE STONE WASH STAYS ON THE RESTING SEGMENTS ONLY, exactly
-                   as before. The pressed seat must be transparent or it would
-                   paint over the pill sliding underneath it — which is why the
-                   pressed branch returns `undefined` rather than a colour. */
-                style={
-                  f.view === v
-                    ? undefined
-                    : { background: `color-mix(in srgb, ${stone} 9%, transparent)` }
-                }
+                onClick={() => set({ q: "", district: null, phase: null, purpose: null })}
+                disabled={!active}
+                className="text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep disabled:opacity-40"
               >
-                <SurveyIcon name={icon} size="h-3.5 w-3.5" className="shrink-0" />
-                {v}
+                Clear all
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(false)}
+                className="rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+              >
+                Show {results.length} result{results.length === 1 ? "" : "s"}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* ---- results (the rail's right column from `xl`) ---- */}
+      {/* ---- results ---- */}
       {/* `resultsRef` is what the view switch pins in place; see the note on
-          `viewAnchor` above. The `xl:border-l` is report 10's "thin vertical
-          divider between the filter sidebar and property results" — on THIS
-          column because it is the tall one, so the rule runs the section's
-          full height. */}
-      <div ref={resultsRef} className="min-w-0 xl:border-l xl:border-line xl:pl-phi4">
+          `viewAnchor` above. Full width now that the rail is gone — which is
+          the point of report 13's change. */}
+      <div ref={resultsRef} className="min-w-0">
       {results.length === 0 ? (
         <div className="mt-phi5">
           <EmptyState
