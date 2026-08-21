@@ -35,6 +35,12 @@ const BUYER_NAV = [
   { href: "/account/assistant", label: "Ask Jamindar" },
 ];
 
+/** The mirror of PARTNER_NAV: offered only to somebody who is NOT one yet, so
+ *  the two sets are mutually exclusive and the menu never offers both "Become a
+ *  promoter" and the partner desk. Owner 2026-08-21 §3: "Inside the Buyer's
+ *  Account section, provide an option: Become a Promoter." */
+const UPGRADE_NAV = [{ href: "/account/become-a-promoter", label: "Become a promoter" }];
+
 /** Offered only to partners — a menu entry that leads to "partners only" is
  *  the dead control the owner's standing rule forbids. */
 const PARTNER_NAV = [
@@ -303,7 +309,7 @@ export function AccountShell({ title, children }: { title: string; children: Rea
             hanging off the right — one cause, both symptoms.
 
             ⚠️ It is worst for a PARTNER, which is why it can be missed: a buyer
-            sees four tabs, a partner sees eight. Test this signed in as a
+            sees five tabs, a partner sees eight. Test this signed in as a
             partner, not as a buyer.
 
             ⚠️ The content column at the foot of this grid already had `min-w-0`
@@ -350,7 +356,7 @@ export function AccountShell({ title, children }: { title: string; children: Rea
           aria-label="Account"
           className="cd-noscroll flex gap-2 overflow-x-auto overscroll-x-contain rounded-card border border-line bg-canvas-alt p-2 lg:flex-col lg:overflow-visible"
         >
-          {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : [])].map((n) => {
+          {[...BUYER_NAV, ...(isPartner(profile) ? PARTNER_NAV : UPGRADE_NAV)].map((n) => {
             const on = pathname === n.href;
             return (
               <Link

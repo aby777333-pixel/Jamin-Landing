@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getDeskContact, getNavFacets, telHref, waHref } from "@/lib/site";
+import { getAppDownload, type AppDownload } from "@/lib/app-download";
 import { TitleBlock } from "@/components/cadastral/TitleBlock";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
@@ -17,7 +18,11 @@ import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIc
  * /legal and /guide, neither of which was ever built.
  */
 export async function SiteFooter() {
-  const [desk, facets] = await Promise.all([getDeskContact(), getNavFacets()]);
+  const [desk, facets, app] = await Promise.all([
+    getDeskContact(),
+    getNavFacets(),
+    getAppDownload(),
+  ]);
   const tel = telHref(desk.mobile);
   const wa = waHref(desk.whatsapp, "Hello Jamin Properties — I'd like to know more about your plots.");
 
@@ -252,12 +257,15 @@ export async function SiteFooter() {
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/vault">The Vault</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>
-              {/* ⚠️ The app link is withdrawn until the Play Store listing is
-                  live. Sending a buyer to a raw Netlify URL and calling it "the
-                  app" is not the first impression the store page will make. */}
+              {/* ⚠️ The app link is NOT in this list. It is a band of its own
+                  below the columns — the owner asked for a "prominent Download
+                  Our App section", and a row in a column of fourteen text links
+                  is the opposite of prominent. */}
             </ul>
           </div>
         </div>
+
+        <AppBand app={app} />
 
         <div className="mt-phi5 flex flex-col gap-3 border-t border-line pt-phi3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-tiny text-ink-faint">
@@ -316,6 +324,101 @@ export async function SiteFooter() {
         />
       </div>
     </footer>
+  );
+}
+
+/**
+ * "Download Our App" (owner spec 2026-08-21 §6): the direct APK and the Play
+ * listing, side by side.
+ *
+ * 🚨 RENDERS NOTHING WHEN NEITHER URL IS SET, and each button is independent of
+ * the other. This is the site's standing rule about dead controls, and it
+ * matters more here than anywhere else on the page: the footer is on EVERY
+ * route, so one unset link would be one broken promise repeated across the
+ * whole site. The Play listing and the APK will very likely arrive on different
+ * days — whichever lands first shows on its own, with the copy adjusting rather
+ * than a greyed-out placeholder sitting beside it.
+ *
+ * ⚠️ Plain <a>, not FooterLink/Link. Both destinations are external and one of
+ * them is a binary; Next's Link would prefetch and client-navigate them.
+ *
+ * ⚠️ NO `download` ATTRIBUTE ON THE APK. The file is cross-origin, where the
+ * attribute is ignored by every current browser anyway, and the reader's own
+ * download UI is the honest place for a 60MB fetch to be confirmed. The size is
+ * printed instead, as the brochure pill above does.
+ */
+function AppBand({ app }: { app: AppDownload }) {
+  if (!app.apkUrl && !app.playUrl) return null;
+
+  return (
+    <section className="mt-phi5 rounded-card border border-jamin-gold/25 bg-jamin-gold/[0.05] p-phi4">
+      <div className="flex flex-col items-center gap-phi3 text-center lg:flex-row lg:items-center lg:justify-between lg:text-left">
+        <div className="max-w-xl">
+          <h2 className="flex items-center justify-center gap-2 text-tiny font-semibold uppercase tracking-[0.18em] text-ink lg:justify-start">
+            <SurveyIcon name="stamp" size="h-4 w-4" className="shrink-0 text-champagne-500" />
+            Download our app
+          </h2>
+          <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+            Your plots, your visits and your promoter tools in one place — the same account and the
+            same phone number you use here.
+          </p>
+        </div>
+
+        {/* ⚠️ `w-full sm:w-auto` on both: at 375px these two labels cannot share
+            a line, so they stack full-width and equal rather than wrapping to
+            two pills of different widths — the same finding written up on the
+            account overview's button pair. */}
+        <div className="flex w-full shrink-0 flex-col gap-2.5 sm:w-auto sm:flex-row">
+          {app.apkUrl && (
+            <a
+              href={app.apkUrl}
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-jamin-red px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep sm:w-auto"
+            >
+              <svg
+                viewBox="0 0 16 16"
+                className="h-4 w-4 shrink-0"
+                aria-hidden="true"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M8 2v8m0 0L5 7m3 3 3-3" />
+                <path d="M2.5 11.5v1a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-1" />
+              </svg>
+              Download directly
+            </a>
+          )}
+          {app.playUrl && (
+            <a
+              href={app.playUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2.5 rounded-full border border-jamin-gold/55 bg-jamin-gold/[0.07] px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-100 transition-colors hover:border-jamin-gold hover:bg-jamin-gold/15 sm:w-auto"
+            >
+              {/* The Play triangle, drawn rather than fetched — the store's own
+                  badge is a hosted asset with its own brand rules, and this
+                  footer has no external images. */}
+              <svg viewBox="0 0 16 16" className="h-4 w-4 shrink-0" aria-hidden="true" fill="currentColor">
+                <path d="M2.6 1.4a.8.8 0 0 0-.35.67v11.86a.8.8 0 0 0 .35.67l6.3-6.6-6.3-6.6Zm7.1 7.4 1.9 1.99-6.42 3.66 4.52-5.65Zm0-1.6L5.18 1.55 11.6 5.2 9.7 7.2Zm2.83 1.4-2.1-2.2 2.1-2.2 1.9 1.09c.63.36.63 1.26 0 1.62l-1.9 1.09Z" />
+              </svg>
+              Get it on Google Play
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Version and weight only where they are actually known — the reader is
+          told what they are about to fetch, and nothing is guessed. */}
+      {app.apkUrl && (app.version || app.sizeLabel) && (
+        <p className="mt-phi3 text-center text-tiny text-ink-faint lg:text-left">
+          Direct download: Android
+          {app.version ? ` · version ${app.version}` : ""}
+          {app.sizeLabel ? ` · ${app.sizeLabel}` : ""}
+        </p>
+      )}
+    </section>
   );
 }
 

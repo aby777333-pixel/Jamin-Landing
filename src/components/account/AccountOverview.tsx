@@ -7,6 +7,7 @@ import { Badge, ButtonLink } from "@/components/ui";
 import { useAuth } from "@/lib/auth";
 import { browserClient } from "@/lib/supabase-browser";
 import { fetchShortlistIds } from "@/lib/shortlist";
+import { isPartner } from "@/lib/partner";
 
 /**
  * The overview only reports what the database actually says. There is no
@@ -96,6 +97,24 @@ export function AccountOverview() {
           to edit anything here.
         </p>
       </section>
+
+      {/* ⚠️ NON-PARTNERS ONLY. `isPartner` covers the trap documented in
+          lib/partner.ts — the owner is a verified partner whose ROLE is
+          super_admin, so a bare `role === 'promoter'` test would offer the
+          owner an invitation to become one. */}
+      {!isPartner(profile) && (
+        <section className="mt-phi4 rounded-card border border-line bg-canvas-alt p-phi3">
+          <h2 className="text-xl text-ink">Become a Jamin promoter</h2>
+          <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
+            Introduce buyers to Jamin developments and earn on completed sales, keeping this same
+            account and number. Applications are reviewed by the desk before promoter access is
+            granted.
+          </p>
+          <div className="mt-phi3">
+            <ButtonLink href="/account/become-a-promoter">See what it involves</ButtonLink>
+          </div>
+        </section>
+      )}
 
       <section className="mt-phi4 rounded-card border border-line bg-canvas p-phi3">
         <h2 className="text-xl text-ink">Looking for something specific?</h2>

@@ -52,19 +52,28 @@ export function PartnerDashboard() {
   if (!partner) {
     return (
       <AccountShell title="Partner">
+        {/* 🚨 THE CTA IS AN IN-SITE ROUTE NOW, NOT AN OUTBOUND LINK TO /contact.
+            The website had no way to become a promoter — this panel told the
+            reader to go and telephone the desk, which is a dead end dressed as
+            a button. The owner's 2026-08-21 spec asks for the application to
+            live "inside the Buyer's Account section", so it does.
+
+            ⚠️ The old body text said "the role is granted straight away". That
+            is now false BY DESIGN and would be the worst possible sentence to
+            leave: the same spec is explicit that submitting must NOT convert
+            the account, so the copy has to set up a wait rather than promise an
+            instant grant. */}
         <EmptyState
           title="You are not registered as a Jamin partner"
-          body="Partners share verified projects, bring buyers and earn on completed sales. Joining takes a minute in the Talk to the desk — the role is granted straight away, and the Verified badge follows once KYC is approved."
+          body="Promoters share verified projects, bring buyers and earn on completed sales. You can apply from this account — a super admin reviews each application, and your promoter tools appear here once it is approved."
           action={
             <>
-              <a
-                href="/contact"
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href="/account/become-a-promoter"
                 className="inline-flex items-center rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white"
               >
-                Become a partner
-              </a>
+                Become a promoter
+              </Link>
               <ButtonLink href="/contact" variant="secondary">
                 Ask about it first
               </ButtonLink>
