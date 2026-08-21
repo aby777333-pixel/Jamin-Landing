@@ -3551,6 +3551,42 @@ header .glass,
   box-shadow: none;
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   THE PANE THAT CAN HOLD A FULLSCREEN OVERLAY (owner 2026-08-21: "there are no
+   hues in the properties pages…add").
+
+   🚨 `backdrop-filter` MAKES AN ELEMENT A CONTAINING BLOCK FOR EVERY
+   `position: fixed` DESCENDANT. That is the whole reason this modifier exists,
+   and it is not a style preference — it is the difference between a working
+   page and three broken overlays.
+
+   The property page carries three fixed layers INSIDE its body:
+
+     LayoutViews  `fixed inset-0 z-[60]`  — the fullscreen plan viewer
+     MasterPlan   `fixed inset-0 z-[55]`  — the plot-sheet scrim, and
+                  `fixed inset-x-0 bottom-0` — the sheet itself, whose own
+                  comment says it is fixed precisely so it stays "always fully
+                  visible however far down the drawing" the reader has gone
+
+   Wrap that body in a normal `.rj-pane` and all three stop being measured
+   against the viewport and start being measured against the pane: the
+   "fullscreen" viewer becomes pane-sized, and the plot sheet detaches from the
+   bottom of the screen. Nothing throws, nothing logs, and it only shows when
+   somebody opens a plot — which is the single most-used control on the page.
+
+   ⚠️ NOTHING IS LOST BY DROPPING THE FROST HERE. This pane sits on the page's
+   own canvas with no photograph behind it, and `.rj-console`'s note already
+   states the general case: sheer glass over a blank page shows a blank page.
+   The tint, the specular gloss and the gold hairline are what the eye reads as
+   glass on a plain ground, and all three are untouched.
+
+   ⚠️ Use this on ANY pane that contains a fixed overlay. Reach for it whenever
+   a `.rj-pane` wraps a dialogue, a drawer, a lightbox or a sticky dock.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rj-pane-nofrost {
+  backdrop-filter: none;
+}
+
 /**
  * ── THE RE-SCOPE, AND WHY IT IS ON THE CHILDREN ──────────────────────────
  *

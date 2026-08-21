@@ -21,6 +21,7 @@ import { PassportButton } from "@/components/PassportButton";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { SurveyReveal } from "@/components/cadastral/SurveyReveal";
 import { SITE_URL } from "@/lib/supabase";
+import { paneHue } from "@/lib/stones";
 import { seoDescription, seoTitle } from "@/lib/seo";
 import {
   approvalBadges,
@@ -652,9 +653,29 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         </div>
       </section>
 
-      <div className="mx-auto max-w-[1280px] px-5 pb-phi4 lg:px-10">
+      {/* 🚨 THE PAGE BODY CARRIES THE HUE (owner 2026-08-21: "there are no
+          hues in the properties pages…add"). Emerald, the same stone the
+          listing wears — see the note in stones.ts for why the destination
+          must not introduce a second colour.
 
-      <div className="mt-phi5 grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
+          ⚠️ `rj-pane-nofrost` IS LOAD-BEARING, NOT A TASTE CALL. This pane
+          contains the plan viewer and the plot sheet, both of which are
+          `position: fixed`, and a `backdrop-filter` ancestor would make them
+          measure against THIS BOX instead of the viewport — a fullscreen
+          viewer the size of a pane, and a bottom sheet detached from the
+          bottom of the screen. The modifier drops only the frost, which shows
+          nothing here anyway (no photograph behind it); the tint, the gloss
+          and the gold hairline all stay. Full reasoning in royal.css.
+
+          ⚠️ The hue sits on the OUTER measure and the pane inside it, which is
+          the same nesting every other paned page uses. */}
+      <div
+        className="mx-auto max-w-[1280px] px-5 pb-phi4 lg:px-10"
+        style={{ "--rj-hue": paneHue("/property") } as React.CSSProperties}
+      >
+      <div className="rj-pane rj-pane-nofrost mt-phi5 p-phi3 sm:p-phi5">
+
+      <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr]">
         <div>
           {p.description && (
             <section>
@@ -1394,6 +1415,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
           </div>
         </section>
       )}
+      </div>
       </div>
 
       {/* CARTOUCHE §4.2 — the Sweep, surface 3 of exactly 3 (home, /contact,

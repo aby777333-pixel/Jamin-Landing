@@ -156,6 +156,13 @@ export const PANE_HUE: Record<string, string> = {
   "/": "var(--color-vermilion)",
   "/ta": "var(--color-vermilion)",
   "/properties": "var(--color-emerald)",
+  /* ⚠️ THE SAME EMERALD AS THE LISTING, DELIBERATELY (owner 2026-08-21: "there
+     are no hues in the properties pages…add"). A development's own page is the
+     listing's destination, and this file's own rule is that "the tab you came
+     in on and the blocks you land among agree" — a second colour here would
+     make one journey read as two. Land is emerald; a single plot is still
+     land. */
+  "/property": "var(--color-emerald)",
   "/projects": "var(--color-sapphire)",
   /* ⚠️ WAS amethyst (report 10, 2026-08-20: "the current purple background
      section feels inconsistent with the overall Jamin Bazaar visual style…
