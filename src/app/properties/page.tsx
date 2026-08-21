@@ -107,13 +107,19 @@ export default async function PropertiesPage() {
           the gloss and the backdrop-filter, which is what is now missed. The
           `flat` pane returns all three without the rounded card: a full-bleed
           band, gold rule above and below. Both instructions hold. */}
-      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/properties") } as React.CSSProperties}>
-      <Container className="py-phi5">
+      {/* 🚨 CONTAINED, NOT FULL-BLEED (owner 2026-08-21, with a picture of the
+          rounded panel: "No not the full width hue, like before i want").
+          The pane now sits INSIDE the 1280px measure rather than wrapping it,
+          so the radius and the side borders have a margin to sit against and
+          the page ground shows down both sides. Same nesting as every other
+          paned page; the hue is stated once on the Container and inherited. */}
+      <Container className="py-phi5" hue={paneHue("/properties")}>
+      <div className="rj-pane p-phi3 sm:p-phi5">
       {/* The full list is rendered server-side; the filters narrow it after
           hydration, so the static HTML a crawler receives is complete. */}
         <PropertyExplorer all={all} />
-      </Container>
       </div>
+      </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

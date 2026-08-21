@@ -328,13 +328,22 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       <section className="relative overflow-hidden border-b border-line bg-canvas">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative mx-auto max-w-[1280px] px-5 pt-phi3 lg:px-10">
-          {/* 🚨 PRINT THIS RECORD SITS TOP-RIGHT OF THE HEADER (report 11,
-              2026-08-21: "Move 'Print this record' to the top-right of the
-              property header… compact secondary utility action. Do not place
-              it between the pricing section and gallery"). It shares the
-              breadcrumb's row — the one line that spans the whole header —
-              so it is genuinely top-RIGHT, not right of a 620px copy column.
-              `relative z-10` keeps it clickable above the header art burn. */}
+          {/* 🚨 PRINT THIS RECORD IS NO LONGER IN THIS ROW — it moved down to
+              the chain of record (owner 2026-08-21: "Print this record button
+              appears on top. It has to appear somewhere near the records").
+
+              ⚠️ THAT REVERSES REPORT 11, DELIBERATELY, so do not "restore" it
+              here on the strength of the older note. Report 11 asked for the
+              header's top right and report 14 agreed; the owner has now looked
+              at the result and asked for the opposite, because top-right of the
+              header puts the control a full screen away from the thing it
+              prints. The newer instruction wins. See the slot below the
+              ProvenanceRibbon for where it went and why that is not the slot
+              report 11 forbade.
+
+              `relative z-10` stays: it keeps the breadcrumb clickable above the
+              header art burn. `justify-between` also stays, so a future
+              right-hand control drops straight back into this row. */}
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
             <Link href="/" className="hover:text-jamin-red-deep">
@@ -351,7 +360,6 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </span>
             <span className="text-ink-soft">{p.title}</span>
           </nav>
-          <PassportButton />
           </div>
 
           {/* 🚨 THE HEADER IS A TWO-TRACK GRID FROM `xl`, AND THE RIGHT TRACK
@@ -617,10 +625,27 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               states the facts, the ribbon shows they link. */}
           <ProvenanceRibbon p={p} />
 
-          {/* ⚠️ The Print-this-record control moved to the header's top-right
-              (report 11, 2026-08-21) — this slot between the record and the
-              gallery is exactly where that report says it must NOT sit. The
-              report-7 "separated action" note travels with it. */}
+          {/* 🚨 PRINT THIS RECORD LIVES WITH THE RECORD (owner 2026-08-21:
+              "Print this record button appears on top. It has to appear
+              somewhere near the records").
+
+              ⚠️ IT IS ATTACHED TO THE RIBBON, NOT FLOATING BEFORE THE GALLERY,
+              and the difference is the whole reason this is not a repeat of
+              what report 11 rejected. That report's words were "do not place it
+              between the pricing section and gallery" — a loose control in the
+              gap, belonging to neither neighbour. Here it sits in the record's
+              own closing rule, hard against the ribbon above it (`mt-phi2`,
+              a gold hairline, right-aligned) and separated from the gallery
+              below by the gallery's own `mt-phi4`. It reads as the last line of
+              the chain of record, which is exactly what it prints.
+
+              ⚠️ The header slot it came from is documented up in the breadcrumb
+              row; do not put a second copy back there. One control, one place —
+              two Print buttons on one page is worse than either position. */}
+          <div className="mt-phi2 flex justify-end border-t border-jamin-gold/25 pt-phi3 print:hidden">
+            <PassportButton />
+          </div>
+
           <div className="mt-phi4">
             <Gallery images={images} title={p.title} />
           </div>

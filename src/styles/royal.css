@@ -3135,11 +3135,32 @@ header .glass,
  * transform never touches layout and this site's CLS budget is not
  * negotiable.
  *
- * ⚠️ THE BUTTONS MUST BE EQUAL WIDTH (`flex: 1 1 0`) or the arithmetic below
- * is a lie: the pill's width is `100% / n` and its offset is `i * 100%`, both
- * of which assume equal seats. "Feet" and "Metres" are not the same length, so
- * without the flex basis the pill would land short of the longer word. That is
- * also why `rj-segment-btn` sets `min-width: 0`.
+ * ⚠️ THE BUTTONS MUST BE EQUAL WIDTH or the arithmetic below is a lie: the
+ * pill's width is `100% / n` and its offset is `i * 100%`, both of which assume
+ * equal seats. "Feet" and "Metres" are not the same length, so without this the
+ * pill would land short of the longer word.
+ *
+ * 🚨 IT IS A GRID, NOT A FLEX ROW, AND THAT IS A BUG FIX (owner 2026-08-21,
+ * with a picture of the layout rail: "Letter and tab, spacing problem").
+ *
+ * `flex: 1 1 0` + `min-width: 0` makes the seats equal to EACH OTHER but sizes
+ * the rail from a zero flex-basis, so the rail never grows to fit its longest
+ * label — it settles near the width the short ones need and the long one
+ * spills straight out of its seat. On the layout switch that put "Approved
+ * plan" hanging over the edge of its own pill with the P clipped, while
+ * "Blocks" and "Plot list" sat comfortably. The rail was not too small for
+ * three words; it was sized as though every word were as short as "Blocks".
+ *
+ * `grid-auto-columns: 1fr` inside a `width: max-content` grid gives every
+ * column the width of the WIDEST item, which is the same equal-seat promise
+ * the pill needs and additionally guarantees the widest label fits. The pill
+ * arithmetic is untouched — `100% / n` and `i * 100%` are still exactly right,
+ * because the seats are still identical.
+ *
+ * ⚠️ `max-width: 100%` with `min-width: 0` on the buttons is the phone escape
+ * hatch: three long labels can still outgrow a 375px viewport, and when they do
+ * every seat shrinks by the same amount, so the pill stays aligned and the
+ * label ellipsises instead of overflowing the rail.
  *
  * ⚠️ THE PRESSED LABEL SITS ABOVE THE PILL (`z-index`) and the pill is
  * `aria-hidden`. The pill carries no meaning — `aria-pressed` on each button is
@@ -3147,7 +3168,11 @@ header .glass,
  */
 .rj-segment {
   position: relative;
-  display: flex;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: max-content;
+  max-width: 100%;
   align-items: center;
   padding: 3px;
   border-radius: 999px;
@@ -3180,7 +3205,6 @@ header .glass,
 .rj-segment-btn {
   position: relative;
   z-index: 1;
-  flex: 1 1 0;
   min-width: 0;
   display: inline-flex;
   align-items: center;
@@ -3190,7 +3214,12 @@ header .glass,
   padding: 0.375rem 0.875rem;
   font-size: var(--text-tiny);
   font-weight: 500;
+  /* nowrap + hidden + ellipsis together: the label never wraps to a second
+     line inside a pill, and if the rail is squeezed below its natural width it
+     truncates cleanly rather than spilling over the edge of its seat. */
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--color-ink-soft);
   /* ⚠️ Colour only. `transition: all` here would fight the pill's transform and
      produce a label that drifts while the pill slides under it. */
@@ -3485,6 +3514,14 @@ header .glass,
    THE FLAT PANE — the hue and the frost without the card (owner 2026-08-21:
    "all the hues, the homepage and all pages, the frosty glass stuff is gone.
    bring them back").
+
+   ⏸ CURRENTLY UNUSED — every page it was written for went back to the
+   CONTAINED pane the same day, after the owner saw the full-bleed result and
+   asked for the rounded panel instead ("No not the full width hue, like before
+   i want"). Kept, with its history, because this is now the second reversal on
+   the same question and a third is cheaper to serve from a class that still
+   exists than from one reconstructed from a commit message. `Pane`'s `flat`
+   prop is its only door and is likewise unused.
 
    🚨 IT EXISTS TO SETTLE TWO INSTRUCTIONS THAT LOOK OPPOSED AND ARE NOT.
    Reports 10, 11 and 13 stripped the pane from five pages, and every one of

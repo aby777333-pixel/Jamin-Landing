@@ -89,8 +89,14 @@ export default async function AboutPage() {
           radius, the side borders and the shadow and keeps the ground, the
           gloss and the backdrop-filter, so the page stays "cleaner, more
           spacious" while the hue returns. */}
-      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/about") } as React.CSSProperties}>
-      <Container className="py-phi5">
+      {/* 🚨 CONTAINED, NOT FULL-BLEED (owner 2026-08-21, with a picture of the
+          rounded panel: "No not the full width hue, like before i want").
+          The pane now sits INSIDE the 1280px measure rather than wrapping it,
+          so the radius and the side borders have a margin to sit against and
+          the page ground shows down both sides. Same nesting as every other
+          paned page; the hue is stated once on the Container and inherited. */}
+      <Container className="py-phi5" hue={paneHue("/about")}>
+      <div className="rj-pane p-phi3 sm:p-phi5">
 
       {/* 🚨 THE LEDGER PANEL — figures computed from the live database, never
           hand-typed, and as of 2026-08-13 no longer three loose divs.
@@ -264,8 +270,8 @@ export default async function AboutPage() {
           See our developments
         </Link>
       </section>
-      </Container>
       </div>
+      </Container>
       {/* ⚠️ THE hero-53 DIVIDER IS GONE (owner 2026-08-18 second report:
           "hide the image"). It began as a crop band, became a full-frame band
           the same morning, and at the artwork's own ratio it read as a second

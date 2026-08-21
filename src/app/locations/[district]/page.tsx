@@ -252,8 +252,14 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           class carried both. The `flat` pane restores the warm ground, the
           gloss and the backdrop-filter with no rounded container: the results
           still "sit directly within the main page layout". */}
-      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/locations") } as React.CSSProperties}>
-      <Container className="py-phi5">
+      {/* 🚨 CONTAINED, NOT FULL-BLEED (owner 2026-08-21, with a picture of the
+          rounded panel: "No not the full width hue, like before i want").
+          The pane now sits INSIDE the 1280px measure rather than wrapping it,
+          so the radius and the side borders have a margin to sit against and
+          the page ground shows down both sides. Same nesting as every other
+          paned page; the hue is stated once on the Container and inherited. */}
+      <Container className="py-phi5" hue={paneHue("/locations")}>
+      <div className="rj-pane p-phi3 sm:p-phi5">
         <div className="flex items-start justify-between gap-4">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
             <Link href="/properties" className="hover:text-ink">
@@ -280,8 +286,8 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
         <div className="mt-phi3">
           <PropertyExplorer all={items} />
         </div>
-      </Container>
       </div>
+      </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

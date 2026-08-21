@@ -204,8 +204,23 @@ export default async function HomePage() {
           ground is nowhere near that slab. Every other page keeps the audited
           40%; lightening is always contrast-safe (see the mix note in
           royal.css). */}
-      <Pane flat mix="24%" hue={paneHue("/")} as="section">
-      <Container className="py-phi6">
+      {/* 🚨 CONTAINED, NOT FULL-BLEED (owner 2026-08-21, with a picture of the
+          rounded panel: "No not the full width hue, like before i want").
+
+          ⚠️ THE NESTING IS THE FIX, not a class. Full-bleed was `Pane` OUTSIDE
+          `Container` — the pane spanned the viewport, so its radius and its
+          side borders had nothing to sit against and `flat` dropped them as
+          dead weight. Inverting the two puts the pane INSIDE the 1280px
+          measure, where the rounded card reads as a card and the page ground
+          shows down both margins. That is the shape every other paned page
+          already uses (contact, faq, journal, projects and six more), so this
+          band now agrees with them instead of being the exception.
+
+          The hue is stated once on the Container and inherited — see its own
+          note — so the Pane needs no `hue` prop. `mix` still overrides to 24%
+          for the reason below. */}
+      <Container className="py-phi6" hue={paneHue("/")}>
+      <Pane className="p-phi3 sm:p-phi5" mix="24%" as="section">
         {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the section
             indices of a bound document. Decoration only, `aria-hidden`. */}
         <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
@@ -271,8 +286,8 @@ export default async function HomePage() {
             </div>
           ))}
         </dl>
-      </Container>
       </Pane>
+      </Container>
 
       {/* ---- WHY JAMIN PROPERTIES (report 13, 2026-08-21) ----
           "Add a 'Why Jamin Properties' section after the existing 'Land is the
@@ -623,12 +638,11 @@ export default async function HomePage() {
           runs edge to edge on the page's own canvas; `border-y` is the
           report's rule above and below. */}
       {facets.districts.length > 0 && (
-        /* The hue + frost band, at the homepage's lighter 24% mix — see the
-           note on the plotted-development band above. Report 10's "make this
-           full width on the page and maintain a border for the section above
-           and below" is exactly what `flat` draws. */
-        <Pane flat mix="24%" hue={paneHue("/")} as="section" className="py-phi6">
-        <Container>
+        /* The hue + frost band, at the homepage's lighter 24% mix, and
+           CONTAINED rather than full-bleed — see the note on the
+           plotted-development band above for why the nesting changed. */
+        <Container className="py-phi6" hue={paneHue("/")}>
+        <Pane className="p-phi3 sm:p-phi5" mix="24%" as="section">
           {/* Same empty-right-half problem as the purpose section above, and the
               photograph the owner chose for it — a Jamin entrance wall with a
               layout being built behind it: gardeners planting, a roller and a
@@ -686,8 +700,8 @@ export default async function HomePage() {
             </div>
           </div>
           <LocationExplorer items={all} />
-        </Container>
         </Pane>
+        </Container>
       )}
 
       {/* ⚠️ NO "How buying works" rail here — one was BUILT in the do-all

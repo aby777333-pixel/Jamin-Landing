@@ -79,8 +79,14 @@ export default function ToolsPage() {
           around four small pills. It now wraps the heading, the lead, the
           tabs AND all four calculators, so there is no empty area left, and
           `flat` means it reads as a band rather than a card. */}
-      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/tools") } as React.CSSProperties}>
-      <Container className="py-phi6">
+      {/* 🚨 CONTAINED, NOT FULL-BLEED (owner 2026-08-21, with a picture of the
+          rounded panel: "No not the full width hue, like before i want").
+          The pane now sits INSIDE the 1280px measure rather than wrapping it,
+          so the radius and the side borders have a margin to sit against and
+          the page ground shows down both sides. Same nesting as every other
+          paned page; the hue is stated once on the Container and inherited. */}
+      <Container className="py-phi6" hue={paneHue("/tools")}>
+      <div className="rj-pane p-phi3 sm:p-phi5">
       {/* 🚨 A HEADING OVER THE NAV (same report: "there is no clear heading
           explaining what these options represent. Add a clear heading above
           the navigation: for example PROPERTY FINANCE TOOLS"). */}
@@ -126,8 +132,8 @@ export default function ToolsPage() {
           Ask the desk instead →
         </Link>
       </div>
-      </Container>
       </div>
+      </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a
