@@ -393,17 +393,28 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      ⚠️ `justify-between` + `truncate`, because a fixed cell and a long label
      are only compatible if the label can give way. The count stays pinned to
      the right so the column of numbers lines up. */
+  /* 🚨 NEUTRAL RESTING PILLS, CHARCOAL + RED ACTIVE (report 10, 2026-08-21:
+     "Use Jamin red / dark charcoal for the active filter. Remove unnecessary
+     blue accents"). The per-stone washes are gone from the FILTER pills only —
+     "Future" wore sapphire and "Upcoming" amethyst, which is exactly the blue
+     the report points at. Resting pills are quiet canvas cells; the pressed
+     pill stays the dark charcoal ink over blur, and every pill's dot is now
+     the signal red (`--rj-stone` set once on the container below). The colour
+     key survives everywhere else it shipped — cards, tray, nav. */
   const chip = (on: boolean) =>
     `group flex min-h-[44px] w-full items-center justify-between gap-2 overflow-hidden rounded-full border px-3.5 py-2 text-tiny font-medium transition-colors ${
       on
         ? "border-ink bg-ink/85 text-canvas backdrop-blur-sm"
-        : "rj-chip-glass border-line text-ink-soft hover:border-ink-faint hover:text-ink"
+        : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
     }`;
 
-  /* Two per row everywhere the facets appear — the report asks for District and
-     Stage to share one structure. In the `xl` rail the column is 17rem, which
-     still takes two cells comfortably at this padding. */
-  const facetGridCls = "grid grid-cols-2 gap-2";
+  /* Two per row where the facets appear as a band — the report asks for
+     District and Stage to share one structure.
+     🚨 ONE per row in the `xl` rail (report 10, 2026-08-21: "Fix the
+     Tiruchirappalli, upcoming, completed clipping issue"): two cells in a
+     17rem column left ~7.5rem per label, and `truncate` was eating the long
+     district names. Full-width cells hold every name in the catalogue. */
+  const facetGridCls = "grid grid-cols-2 gap-2 xl:grid-cols-1";
 
   return (
     <>
@@ -478,7 +489,19 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           labels are a column now; the rows read as a register. In the `xl`
           rail the tracks stack (`xl:grid-cols-1`) — a 5.5rem label column
           inside a 17rem rail would leave the pills 10rem. */}
-      <div className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:mt-phi4 xl:gap-phi3 xl:rounded-card xl:border xl:border-line xl:bg-canvas-alt/60 xl:p-phi3">
+      {/* 🚨 THE RAIL'S CARD IS GONE (report 10, 2026-08-21: "Remove the outer
+          rounded filter card, background and shadow. Place every thing
+          directly on the page background. Add a thin vertical divider between
+          the filter sidebar and property results"). The rounded border and
+          the canvas-alt wash came off; the facets sit bare on the page and
+          the divider is the `xl:border-l` on the results column, which runs
+          the full content height (a border here, on the sticky element,
+          would stop at the rail's own foot). `--rj-stone` set ONCE here makes
+          every facet dot the signal red — see the chip note above. */}
+      <div
+        className="mt-phi3 flex flex-col gap-phi2 border-t border-line py-phi3 xl:sticky xl:top-[calc(var(--header-h)+1rem)] xl:mt-phi4 xl:gap-phi3 xl:border-t-0 xl:py-0"
+        style={{ "--rj-stone": "var(--color-jamin-red)" } as React.CSSProperties}
+      >
         {(districts.length > 1 || phases.length > 1) && (
           <button
             type="button"
@@ -548,31 +571,16 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <div className={facetGridCls}>
             {districts.map(([d, n]) => {
               const on = f.district === d;
-              const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
               return (
+                /* ⚠️ The stone wash this button wore is gone with report 10's
+                   "remove unnecessary blue accents" — see the chip note. The
+                   dot reads the container's red `--rj-stone`. */
                 <button
                   key={d}
                   type="button"
                   aria-pressed={on}
                   onClick={() => set({ district: on ? null : d })}
                   className={chip(on)}
-                  /* Colour-coded beyond the dot now: the resting pill wears a
-                     wash and a border of its own stone, so the row reads as a
-                     colour key even before anything is picked. The stone never
-                     becomes the WORD (two stones are illegible at this size —
-                     lib/stones.ts) and the pressed state stays ink, which is
-                     readable over every stone in the set. */
-                  style={
-                    {
-                      "--rj-stone": stone,
-                      ...(on
-                        ? {}
-                        : {
-                            borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
-                            background: `color-mix(in srgb, ${stone} 10%, transparent)`,
-                          }),
-                    } as React.CSSProperties
-                  }
                 >
                   <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {d}{" "}
@@ -592,25 +600,15 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             <div className={facetGridCls}>
             {phases.map(([k, n]) => {
               const on = f.phase === k;
-              const stone = STAGE_STONE[k as keyof typeof STAGE_STONE]?.stone ?? STONE_FALLBACK;
               return (
+                /* ⚠️ No stone wash — report 10's blue-accent removal; see the
+                   chip note above. */
                 <button
                   key={k}
                   type="button"
                   aria-pressed={on}
                   onClick={() => set({ phase: on ? null : k })}
                   className={chip(on)}
-                  style={
-                    {
-                      "--rj-stone": stone,
-                      ...(on
-                        ? {}
-                        : {
-                            borderColor: `color-mix(in srgb, ${stone} 42%, transparent)`,
-                            background: `color-mix(in srgb, ${stone} 10%, transparent)`,
-                          }),
-                    } as React.CSSProperties
-                  }
                 >
                   <span className={`rj-dot ${on ? "is-on" : ""}`} aria-hidden="true" />
                   {PHASE_META[k].label}{" "}
@@ -727,8 +725,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
 
       {/* ---- results (the rail's right column from `xl`) ---- */}
       {/* `resultsRef` is what the view switch pins in place; see the note on
-          `viewAnchor` above. */}
-      <div ref={resultsRef} className="min-w-0">
+          `viewAnchor` above. The `xl:border-l` is report 10's "thin vertical
+          divider between the filter sidebar and property results" — on THIS
+          column because it is the tall one, so the rule runs the section's
+          full height. */}
+      <div ref={resultsRef} className="min-w-0 xl:border-l xl:border-line xl:pl-phi4">
       {results.length === 0 ? (
         <div className="mt-phi5">
           <EmptyState

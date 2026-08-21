@@ -4,6 +4,15 @@ import { HeroConsole } from "./HeroConsole";
 import { LivingHeroArt } from "./LivingHeroArt";
 import { Docket } from "@/components/ui/Docket";
 import { GoldDust } from "@/components/GoldDust";
+import { STAGE_STONE } from "@/lib/stones";
+
+/** The stage word as it arrives in a slide's eyebrow ("Ongoing · Salem"),
+ *  mapped back to its stone so the rail's badges speak the same colour key
+ *  as the cards and the filter pills. Label-keyed because `Slide` is a
+ *  one-line contract that deliberately does not carry the phase slug. */
+const STAGE_BY_LABEL: Record<string, { stone: string; ink: string }> = Object.fromEntries(
+  Object.values(STAGE_STONE).map((s) => [s.label, { stone: s.stone, ink: s.ink }]),
+);
 
 /**
  * The homepage hero — one frame, no carousel.
@@ -439,92 +448,101 @@ export function Hero({
         </div>
       </div>
 
-      {/* Live inventory as a glass rail below the console. It sits OUTSIDE the
-          banner block on purpose: inside it, its height would be taken off the
-          sides of a 3.3:1 frame. */}
+      {/* Live inventory below the console. It sits OUTSIDE the banner block on
+          purpose: inside it, its height would be taken off the sides of a
+          3.3:1 frame.
+
+          🚨 THE GLASS RAIL BECAME A LABELLED CARD ROW (report 10, 2026-08-21:
+          "Improve the project cards below with larger images, clearer status
+          badges and readable project names. Maintain consistent card width,
+          spacing and alignment" — and the mockup names the row: QUICK ACCESS
+          TO OUR LAYOUTS, with VIEW ALL PROPERTIES → on the right). The shared
+          glass tray is gone; each development is its own bordered card on the
+          page's own ground, the thumb grew 48x72 → 64x96, and the stage badge
+          wears its stage's stone instead of one red pill for every stage. */}
       {slides.length > 0 && (
         <div className="relative mx-auto max-w-[1280px] px-5 pb-phi5 lg:px-10">
-          {/* ⚠️ The `lg:-mx-[13px]` bleed this carried is GONE, and its removal
-              is the alignment fix, not a revert.
-
-              The bleed was right when the copy lay bare on the artwork: the
-              headline started at the container edge, and pulling the rail out by
-              its own chrome (1px border + 6px card + 6px item) put the first
-              thumbnail on that same column. Then the `gilt-light` plate arrived
-              and moved the headline 35px inside its own padding, which left the
-              hero with THREE left edges — rail card 99, plate and header logo
-              112, headline 147.
-
-              One column wins and it is the container's: every card edge in this
-              hero now starts where the logo above it and the body copy below it
-              start. Contents are then inset by each card's own padding, 6px for
-              a rail and 35px for a plate, which is what padding is. Aligning the
-              CONTENTS instead would require those two paddings to be equal —
-              a chunky rail or a cramped plate. */}
-          <div className="glass rj-crystal mt-phi3 rounded-xl p-1.5">
-            {/* The items SHARE the rail rather than queueing at its left edge:
-                `flex-1` from `sm` up divides the full width between however
-                many developments are selling, so three of them read as three
-                equal choices instead of a short row with dead space beside it.
-                Below `sm` they keep their minimum width and the rail scrolls,
-                because squeezing three cards into 375px reads as nothing. */}
-            <div className="flex gap-1 overflow-x-auto sm:overflow-x-visible">
-              {slides.map((s) => {
-                /* ⚠️ SPLIT, NOT A NEW FIELD. `eyebrow` arrives already joined
-                   as "Ongoing · Salem" (see the homepage's `slides`), and the
-                   report asks for the STAGE to be told apart from the place.
-                   Splitting here keeps `Slide` the one-line contract it is and
-                   degrades safely: an eyebrow with no separator becomes the
-                   stage and no place, which is what a project with no district
-                   should show anyway. */
-                const [stage, ...place] = s.eyebrow.split(" · ");
-                return (
-                  <Link
-                    key={s.href}
-                    href={s.href}
-                    /* 🚨 A BORDER AND A CHEVRON, BECAUSE THE WHOLE CARD WAS
-                       ALREADY CLICKABLE AND DID NOT LOOK IT — reported
-                       2026-08-14 as "just looking project name". The hit area
-                       never changed; what was missing was any mark saying so.
-                       The resting border is what makes it read as an object,
-                       and the chevron is the affordance every other card on
-                       this site uses. */
-                    className="group flex min-w-[13rem] shrink-0 items-center gap-2.5 rounded-[16px] border border-line/70 bg-canvas/40 p-1.5 transition-all duration-300 hover:border-jamin-gold hover:bg-canvas/80 sm:min-w-0 sm:flex-1 sm:shrink"
-                  >
-                    {/* 48x72, up from 40x56 — "increase the project thumbnail
-                        size slightly". `sizes` follows it or the browser keeps
-                        fetching the old rendition. */}
-                    <span className="rj-sheen relative h-12 w-[4.5rem] shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
-                      <Image src={s.image} alt="" fill sizes="72px" className="object-cover" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5">
-                        {/* The stage gets the pill; the place stays quiet
-                            beside it. Two levels where there was one run-on
-                            line in a single colour. */}
-                        <span className="rounded-full bg-jamin-red-soft px-1.5 py-px text-micro font-semibold uppercase tracking-[0.14em] text-jamin-red-deep">
-                          {stage}
+          <div className="mt-phi4 flex flex-wrap items-center justify-between gap-3">
+            <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+              Quick access to our layouts
+            </span>
+            <Link
+              href="/properties"
+              className="text-tiny font-semibold uppercase tracking-[0.14em] text-jamin-red-deep transition-opacity hover:opacity-70"
+            >
+              View all properties →
+            </Link>
+          </div>
+          {/* The items SHARE the row rather than queueing at its left edge:
+              `flex-1` from `sm` up divides the full width between however
+              many developments are selling, so three of them read as three
+              equal choices instead of a short row with dead space beside it.
+              Below `sm` they keep their minimum width and the row scrolls,
+              because squeezing four cards into 375px reads as nothing. */}
+          <div className="mt-phi2 flex gap-3 overflow-x-auto sm:overflow-x-visible">
+            {slides.map((s) => {
+              /* ⚠️ SPLIT, NOT A NEW FIELD. `eyebrow` arrives already joined
+                 as "Ongoing · Salem" (see the homepage's `slides`), and the
+                 report asks for the STAGE to be told apart from the place.
+                 Splitting here keeps `Slide` the one-line contract it is and
+                 degrades safely: an eyebrow with no separator becomes the
+                 stage and no place, which is what a project with no district
+                 should show anyway. */
+              const [stage, ...place] = s.eyebrow.split(" · ");
+              /* The stage's own stone — the same key the cards and the filter
+                 pills speak. An unknown label falls back to the signal red. */
+              const stone = STAGE_BY_LABEL[stage] ?? {
+                stone: "var(--color-jamin-red)",
+                ink: "var(--color-jamin-red-deep)",
+              };
+              return (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  /* 🚨 A BORDER AND A CHEVRON, BECAUSE THE WHOLE CARD WAS
+                     ALREADY CLICKABLE AND DID NOT LOOK IT — reported
+                     2026-08-14 as "just looking project name". The hit area
+                     never changed; what was missing was any mark saying so. */
+                  className="group flex min-w-[15rem] shrink-0 items-center gap-3 rounded-xl border border-line bg-canvas p-2 shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:border-jamin-gold hover:shadow-raise sm:min-w-0 sm:flex-1 sm:shrink"
+                >
+                  {/* 64x96, up from 48x72 — the report's "larger images".
+                      `sizes` follows it or the browser keeps fetching the old
+                      rendition. */}
+                  <span className="rj-sheen relative h-16 w-24 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
+                    <Image src={s.image} alt="" fill sizes="96px" className="object-cover" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-1.5">
+                      {/* The stage gets the pill in its own stone; the place
+                          stays quiet beside it. */}
+                      <span
+                        className="rounded-full px-2 py-0.5 text-micro font-semibold uppercase tracking-[0.12em]"
+                        style={{
+                          color: stone.ink,
+                          background: `color-mix(in srgb, ${stone.stone} 14%, transparent)`,
+                        }}
+                      >
+                        {stage}
+                      </span>
+                      {place.length > 0 && (
+                        <span className="truncate text-micro uppercase tracking-[0.14em] text-ink-faint">
+                          {place.join(" · ")}
                         </span>
-                        {place.length > 0 && (
-                          <span className="truncate text-micro uppercase tracking-[0.14em] text-ink-faint">
-                            {place.join(" · ")}
-                          </span>
-                        )}
-                      </span>
-                      <span className="mt-0.5 block truncate text-base text-ink transition-colors group-hover:text-jamin-red-deep">
-                        {s.title}
-                      </span>
+                      )}
                     </span>
-                    <span
-                      aria-hidden="true"
-                      className="shrink-0 pr-1 text-ink-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-jamin-red-deep"
-                    >
-                      &rsaquo;
+                    <span className="mt-1 block truncate text-base font-semibold text-ink transition-colors group-hover:text-jamin-red-deep">
+                      {s.title}
                     </span>
-                  </Link>
-                );
-              })}
-            </div>
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="shrink-0 pr-1 text-ink-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-jamin-red-deep"
+                  >
+                    &rsaquo;
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

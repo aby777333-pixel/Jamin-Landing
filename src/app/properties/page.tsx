@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
 import { PageHero } from "@/components/PageHero";
-import { Container, Pane } from "@/components/ui";
-import { paneHue } from "@/lib/stones";
+import { Container } from "@/components/ui";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 
@@ -37,16 +36,20 @@ export default async function PropertiesPage() {
            of horizontal slack; at 85vh the box is ~1.9–2.1:1, cover becomes
            HEIGHT-bound, and the crop gains real horizontal travel. */
         size="full"
-        /* ⚠️ `left center`, was 20% — and the old note here ("the gate barely
-           stirs") described the `tall` geometry, where cover left almost no
-           slack. Height-bound at `full`, anchoring left shows the picture from
-           its left edge and walks the symmetric gate (22%–78% of the frame) to
-           the RIGHT of the copy card: gate centre lands at ~57–60% of the
-           viewport at 1280–1440, clear of the card's right edge. The card
-           still overlaps the gate's left arch — that is the frame, not the
-           CSS; a re-cut with the gate right of centre remains the only full
-           answer and stays flagged to the owner. */
-        artPosition="left center"
+        /* 🚨 `right center`, was `left center` (report 10, 2026-08-21: "The
+           Jamin Bazaar branding/signboard on the right side of the hero is
+           partially outside the visible area, so the full name cannot be
+           seen. Reposition the hero image/composition slightly to the left").
+
+           hero-57's lockup wall runs to source x ≈ 1240 of 1280 — the last 3%
+           of the frame. At wide desktop boxes cover is width-bound and the
+           whole frame shows regardless of anchor; the clip the owner shot
+           happens where the box turns HEIGHT-bound (≈1024–1200 at 85vh),
+           where a left anchor discards the right ~12% — exactly the BAZAAR
+           half of the sign. Anchoring right keeps the sign whole at every
+           width and gives up the far-left villas instead, which the copy
+           plate covers anyway. */
+        artPosition="right center"
         sheer
         /* The plate fades out across its right fifth so the gate and the
            lockup behind it read — every glyph here ends by 77.6% of the
@@ -91,19 +94,15 @@ export default async function PropertiesPage() {
           </>
         }
       />
-      <Container className="py-phi5" hue={paneHue("/properties")}>
-      {/* ⚠️ ONE pane for the page body, not one per element (owner
-          2026-08-19). Converting the bordered elements instead would have
-          tinted the CARDS too, and the cards are what has to stay on
-          `bg-canvas` so they lift off the sheet — that lift is half of
-          what the hue buys. The colour itself is stated once, on the
-          Container above, and every `.rj-pane` inside inherits it. */}
-      <Pane className="p-phi3 sm:p-phi5">
-
+      {/* 🚨 NO PANE ON THIS BODY (report 10, 2026-08-21: "Remove the outer
+          rounded filter card, background and shadow. Place every thing
+          directly on the page background… Maintain: warm cream background").
+          The emerald pane came off with the filter card it framed; the whole
+          explorer sits on the page's own canvas now. */}
+      <Container className="py-phi5">
       {/* The full list is rendered server-side; the filters narrow it after
           hydration, so the static HTML a crawler receives is complete. */}
         <PropertyExplorer all={all} />
-      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

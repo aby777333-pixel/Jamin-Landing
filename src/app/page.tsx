@@ -9,7 +9,7 @@ import { Tilt } from "@/components/Tilt";
 import { IsoMark } from "@/components/cadastral/Engravings";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
-import { ButtonLink, Container, Pane, SectionLabel } from "@/components/ui";
+import { ButtonLink, Container, SectionLabel } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
   coverImage,
@@ -21,7 +21,7 @@ import {
   type Property,
 } from "@/lib/properties";
 import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
-import { STAGE_STONE, paneHue } from "@/lib/stones";
+import { STAGE_STONE } from "@/lib/stones";
 
 /** Revalidate hourly so admin edits reach the website without a redeploy,
  *  while every visitor still gets a cached, server-rendered page. */
@@ -121,60 +121,27 @@ export default async function HomePage() {
         <PurposeExplorer all={all} />
       </Container>
 
-      {/* ---- what we are, in plain search terms ---- */}
-      <Container className="py-phi6" hue={paneHue("/")}>
-      <Pane className="p-phi3 sm:p-phi4">
-          {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the
-              section indices of a bound document, the ornament running
-              between its chapters. Decoration only. */}
-          <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
-            {/* Aesthetics round: the survey-stone diorama (item 14) joins the
-                ornament row; the folio is struck in red foil (item 7). */}
-            <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
-            <div className="rj-fret w-40 opacity-60" />
-            <span className="rj-folio rj-folio-red text-3xl">01</span>
-          </div>
-        <div className="grid gap-phi4 lg:grid-cols-[1.618fr_1fr]">
-          {/* On the page's own canvas this block was a slab of text with nothing
-              holding it. The card is ivory on warm white — a step of luminance,
-              not a colour — with the gold hairline the rest of the system opens
-              a section with. Subtle enough that it reads as paper, not as a
-              callout box. */}
-          {/* ⚠️ `p-phi4 lg:p-phi4` and `overflow-hidden`, down from `lg:p-phi5`
-              — reported 2026-08-14 as unused space in this panel. It is the
-              tall half of a two-column band, so its own padding was being added
-              to height it already had from the grid.
+      {/* ---- what we are, in plain search terms ----
+          🚨 RESTRUCTURED LEFT-TO-RIGHT (report 10, 2026-08-21): "Top row:
+          Left side — heading and complete descriptive content; right side —
+          the plotted-development image. Bottom row: Place the 4 feature cards
+          in a single, evenly spaced row… Remove the current stacked
+          right-side cards… and remove that overall red card."
 
-              ⚠️ THE STAMP IS DRAWN, NOT FETCHED. The report asked for "a image
-              for the left side context", and the mockup shows an approval
-              stamp. `SurveyIcon name="stamp"` already IS that drawing — the
-              rubber impression with the tick — and this file's standing rule is
-              that one decorative mark should not cost a request. Oversized,
-              very faint, bottom-right, `aria-hidden`: it reads as watermarked
-              paper behind the copy rather than as an illustration beside it.
-              A photograph here would also have to obey the brand-imagery rule
-              (no caption, `alt=""`), which is a lot of freight for texture. */}
-          {/* ⚠️ `isolate` + `-z-10` on the mark, and both are required. A
-              positioned element paints ABOVE its static siblings, so an
-              absolute watermark declared first still lands on top of the
-              copy — even at 6% it would tint the headline. `isolate` opens a
-              stacking context on this panel so a negative z-index drops the
-              stamp behind the text without escaping to sit behind the panel's
-              own background. */}
-          {/* Aesthetics round: `bg-parchment` (the paper stack's top rung,
-              item 1) + `rj-grain` (item 2) — the panel becomes a sheet. */}
-          <div className="rj-grain relative isolate flex h-full flex-col overflow-hidden rounded-xl border border-line bg-parchment p-phi4">
-            <SurveyIcon
-              name="stamp"
-              size="h-64 w-64"
-              className="pointer-events-none absolute -bottom-10 -right-8 -z-10 text-jamin-red/[0.06]"
-            />
-            <span className="mb-phi3 block h-px w-16 rule-gold" aria-hidden="true" />
+          The vermilion Pane, the parchment sheet and the stacked <dl> column
+          are gone with the report's words. The copy sits directly on the
+          page's warm canvas; the right half is hero-37 — the aerial of a
+          Jamin plotted development (formed roads, plot rows, the water tank),
+          the closest frame in the register to the report's example image.
+          Brand imagery rule: `alt=""`, `aria-hidden`, never a caption. */}
+      <Container className="py-phi6">
+        <div className="grid items-center gap-phi4 lg:grid-cols-[1.1fr_1fr]">
+          <div className="max-w-2xl">
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
-            <h2 className="mt-phi3 max-w-2xl text-2xl text-ink">
+            <h2 className="mt-phi3 text-3xl text-ink">
               Land is the one purchase where the paperwork matters more than the pitch.
             </h2>
-            <div className="mt-phi3 max-w-2xl space-y-phi2 text-base leading-relaxed text-ink-soft">
+            <div className="mt-phi3 space-y-phi2 text-base leading-relaxed text-ink-soft">
               <p>
                 Jamin Properties plans and sells residential plots in approved layouts across{" "}
                 {districts.length > 1
@@ -192,37 +159,48 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* `content-between` so the four tiles distribute across the row rather
-              than stacking at the top and leaving the column visibly short
-              beside the card. */}
-          <dl className="grid h-full content-between gap-phi2">
-            {ASSURANCES.map((a) => (
-              <div
-                key={a.k}
-                className={`flex gap-phi2 rounded-card border border-line/70 ${a.ground} p-phi2 transition-all duration-500 hover:-translate-y-0.5 hover:border-line hover:shadow-lift`}
-                style={{ transitionTimingFunction: "var(--ease-silk)" }}
-              >
-                {/* Drawn, not typed — see components/cadastral/SurveyIcon. */}
-                <span
-                  aria-hidden="true"
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] ${a.tint}`}
-                >
-                  <SurveyIcon name={a.icon} className="h-[22px] w-[22px]" />
-                </span>
-                <div>
-                  <dt className="text-base font-semibold text-ink">{a.k}</dt>
-                  <dd className="mt-1 text-base leading-relaxed text-ink-muted">{a.d}</dd>
-                </div>
-              </div>
-            ))}
-          </dl>
+          <div className="relative aspect-[16/10] min-w-0 overflow-hidden rounded-xl border border-line">
+            <Image
+              src="/hero/hero-37-1916.webp"
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(max-width: 1024px) 100vw, 45vw"
+              className="object-cover object-center"
+            />
+          </div>
         </div>
-      </Pane>
+
+        {/* The four assurances in one evenly spaced row (the report's bottom
+            row). Vertical cards now — icon, promise, detail — so four of them
+            read as four equal columns instead of a stacked sidebar. */}
+        <dl className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+          {ASSURANCES.map((a) => (
+            <div
+              key={a.k}
+              className={`flex flex-col rounded-card border border-line/70 ${a.ground} p-phi3 transition-all duration-500 hover:-translate-y-0.5 hover:border-line hover:shadow-lift`}
+              style={{ transitionTimingFunction: "var(--ease-silk)" }}
+            >
+              {/* Drawn, not typed — see components/cadastral/SurveyIcon. */}
+              <span
+                aria-hidden="true"
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] ${a.tint}`}
+              >
+                <SurveyIcon name={a.icon} className="h-[22px] w-[22px]" />
+              </span>
+              <dt className="mt-phi2 text-base font-semibold text-ink">{a.k}</dt>
+              <dd className="mt-1 text-base leading-relaxed text-ink-muted">{a.d}</dd>
+            </div>
+          ))}
+        </dl>
       </Container>
 
-      {/* ---- live inventory ---- */}
-      <Container className="pb-phi6" hue={paneHue("/")}>
-      <Pane className="p-phi3 sm:p-phi4">
+      {/* ---- live inventory ----
+          🚨 NO PANE, NO WASH (report 10, 2026-08-21: "Remove the large
+          red/peach background and use the existing warm cream/off-white
+          background"). The vermilion pane came off; the section sits on the
+          page's own canvas. */}
+      <Container className="pb-phi6">
         <div className="flex flex-wrap items-end justify-between gap-phi3 border-t border-line pt-phi5">
           <div>
             <SectionLabel>Now selling</SectionLabel>
@@ -281,15 +259,45 @@ export default async function HomePage() {
                     View {PHASE_META[g.ph].label.toLowerCase()} →
                   </Link>
                 </div>
-                <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+                {/* 🚨 THE LAYOUT FOLLOWS THE COUNT (report 10, 2026-08-21:
+                    "Ongoing: display the two properties as equal-width cards
+                    in a 2-column grid. Upcoming: display the single property
+                    as a full-width horizontal card — image on the left,
+                    complete property information on the right. Future: use
+                    the same full-width horizontal layout… Make the layout
+                    dynamic based on the number of properties").
+
+                    One development takes PropertyCard's `featured` form —
+                    the horizontal full-width card built for exactly this.
+                    Two share the band as halves; three or more take the
+                    standard 3-column shelf.
+
+                    ⚠️ THIS IS THE HOMEPAGE ONLY. /properties keeps its
+                    uniform grid — report 10 of 2026-08-20 removed the
+                    count-driven shapes THERE and that instruction stands;
+                    this newer report asks for the dynamic layout HERE. The
+                    two surfaces are allowed to disagree. */}
+                <div
+                  className={`mt-phi4 grid gap-phi3 ${
+                    g.items.length === 1
+                      ? ""
+                      : g.items.length === 2
+                        ? "sm:grid-cols-2"
+                        : "sm:grid-cols-2 lg:grid-cols-3"
+                  }`}
+                >
                   {g.items.map((p, i) => (
-                    <PropertyCard key={p.id} p={p} priority={gi === 0 && i === 0} />
+                    <PropertyCard
+                      key={p.id}
+                      p={p}
+                      priority={gi === 0 && i === 0}
+                      featured={g.items.length === 1}
+                    />
                   ))}
                 </div>
               </section>
             );
           })}
-      </Pane>
       </Container>
 
       {/* ---- from plan to plot: the motif, made literal ---- */}
@@ -456,9 +464,14 @@ export default async function HomePage() {
           the same OSM map the properties page uses, and the property page it
           links to carries the plot plan. What was missing was the first step.
           "Plots available today" stays above this and the record below it. */}
+      {/* 🚨 FULL WIDTH, RULED, NO PANE (report 10, 2026-08-21: "Remove the
+          large peach/red outer background make this full width on the page
+          and maintain a border for the section above and below"). The band
+          runs edge to edge on the page's own canvas; `border-y` is the
+          report's rule above and below. */}
       {facets.districts.length > 0 && (
-        <Container className="py-phi6" hue={paneHue("/")}>
-        <Pane className="p-phi3 sm:p-phi4">
+        <section className="border-y border-line bg-canvas py-phi6">
+        <Container>
           {/* Same empty-right-half problem as the purpose section above, and the
               photograph the owner chose for it — a Jamin entrance wall with a
               layout being built behind it: gardeners planting, a roller and a
@@ -490,9 +503,12 @@ export default async function HomePage() {
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+                {/* ⚠️ Renumbered 02 → 01 when the Plotted-development section
+                    lost its folio in the report-10 restructure — the chapter
+                    sequence starts here now. */}
                 <IsoMark name="road" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio rj-folio-red text-3xl">02</span>
+                <span className="rj-folio rj-folio-red text-3xl">01</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -513,8 +529,8 @@ export default async function HomePage() {
             </div>
           </div>
           <LocationExplorer items={all} />
-        </Pane>
         </Container>
+        </section>
       )}
 
       {/* ⚠️ NO "How buying works" rail here — one was BUILT in the do-all
@@ -545,7 +561,7 @@ export default async function HomePage() {
 <div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
                 <IsoMark name="gate" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
-                <span className="rj-folio rj-folio-red text-3xl">03</span>
+                <span className="rj-folio rj-folio-red text-3xl">02</span>
               </div>
               <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
@@ -601,10 +617,12 @@ export default async function HomePage() {
         </Container>
       </section>
 
-      {/* ---- track record ---- */}
+      {/* ---- track record ----
+          🚨 NO PANE (report 10, 2026-08-21: "Remove the large salmon/red
+          outer background and use the normal warm cream/off-white
+          background"). The section sits on the page's canvas. */}
       {completed.length > 0 && (
-        <Container className="py-phi6" hue={paneHue("/")}>
-        <Pane className="p-phi3 sm:p-phi4">
+        <Container className="py-phi6">
           {/* The MINI HERO (owner 2026-08-17 night: "add a mini hero image
               here") — the JAMIN CROWN gate fills the half of this opener that
               was bare sand, beside the heading. Standing rule: it names a
@@ -631,12 +649,22 @@ export default async function HomePage() {
               />
             </div>
           </div>
-          <div className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+          {/* 🚨 A LONE COMPLETED PROJECT IS A FULL-WIDTH HORIZONTAL CARD
+              (report 10, 2026-08-21: "Convert the current small
+              completed-property card into a full-width horizontal card. Use
+              the layout: Project Image | Complete Project Information… remove
+              the large empty area beside the current card"). `featured` is
+              PropertyCard's horizontal form — picture left, record right.
+              More than one completed project falls back to the shelf. */}
+          <div
+            className={`mt-phi5 grid gap-phi3 ${
+              completed.length === 1 ? "" : "sm:grid-cols-2 lg:grid-cols-3"
+            }`}
+          >
             {completed.map((p) => (
-              <PropertyCard key={p.id} p={p} />
+              <PropertyCard key={p.id} p={p} featured={completed.length === 1} />
             ))}
           </div>
-        </Pane>
         </Container>
       )}
 
@@ -646,7 +674,7 @@ export default async function HomePage() {
           roughly 288px of empty canvas between the closing band and the footer
           and read as the page having ended early. The footer's own margin is
           the separation. */}
-      <Container hue={paneHue("/")}>
+      <Container>
       {/* 🚨 NO PANE ON THIS BAND (report 8, 2026-08-19: "a red/pink outer card
           contains another dark card, creating a double-card effect… remove the
           outer red/pink container and keep one dark rounded card directly on
