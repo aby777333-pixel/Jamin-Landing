@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot } from "@/lib/properties";
 import { plotRecordRows } from "@/lib/plot-record";
+import { PlotVisitForm } from "@/components/PlotVisitForm";
 import { type Unit } from "@/lib/units";
 
 /**
@@ -22,7 +23,20 @@ import { type Unit } from "@/lib/units";
  * RECORD, not just a number: a reader who picks blocks must not end up with
  * less than a reader who picks the plan.
  */
-export function PlotSchedule({ plots, unit = "ft" }: { plots: Plot[]; unit?: Unit }) {
+export function PlotSchedule({
+  plots,
+  unit = "ft",
+  title = "",
+  propertyId = null,
+}: {
+  plots: Plot[];
+  unit?: Unit;
+  /** The development's name, for the visit request's own message. */
+  title?: string;
+  /** Null hides the visit form rather than posting a request with nothing to
+   *  attach it to — see PlotVisitForm. */
+  propertyId?: string | null;
+}) {
   const [selected, setSelected] = useState<Plot | null>(null);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
 
@@ -132,11 +146,23 @@ export function PlotSchedule({ plots, unit = "ft" }: { plots: Plot[]; unit?: Uni
           <p className="mt-phi2 text-tiny leading-relaxed text-ink-muted">
             The rate for this plot is confirmed by the sales desk — we do not publish estimates.
           </p>
+          {/* 🚨 THE SAME THREE-FIELD REQUEST THE DRAWING'S PLOT SHEET TAKES
+              (owner 2026-08-21). Both views must offer it or choosing the grid
+              is a downgrade again — the same rule that put the shared record
+              builder in lib/plot-record. A sold or reserved plot gets no form:
+              there is nothing to walk somebody around. */}
+          {plotStatus(selected) === "available" ? (
+            <PlotVisitForm
+              propertyId={propertyId}
+              propertyTitle={title}
+              plot={selected.plot}
+            />
+          ) : null}
           <a
             href="/contact"
-            className="mt-phi2 inline-flex rounded-full bg-jamin-red px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-jamin-red-deep"
+            className="mt-2 inline-flex rounded-full border border-line px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
           >
-            Enquire about plot {selected.plot}
+            Ask about plot {selected.plot}
           </a>
         </div>
       ) : (

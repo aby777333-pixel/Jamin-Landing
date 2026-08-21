@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
 import { plotRecordRows } from "@/lib/plot-record";
+import { PlotVisitForm } from "@/components/PlotVisitForm";
 import { PlotDimensions } from "@/components/cadastral/PlotDimensions";
 import { PlanMeasure } from "@/components/cadastral/PlanMeasure";
 import {
@@ -37,10 +38,13 @@ export function MasterPlan({
   plan,
   title,
   unit = "ft",
+  propertyId = null,
 }: {
   plots: Plot[];
   plan: PlotPlan;
   title: string;
+  /** Passed to the plot sheet so a visit request carries the development. */
+  propertyId?: string | null;
   /** Which unit the reader has chosen. The drawing is stored in metres — see
    *  `lib/units.ts` for why this is a display layer and never a rewrite. */
   unit?: Unit;
@@ -700,6 +704,7 @@ export function MasterPlan({
               plan={plan}
               title={title}
               unit={unit}
+              propertyId={propertyId}
               closeRef={closeRef}
               onClose={() => setSelected(null)}
             />
@@ -848,6 +853,7 @@ function PlotSheet({
   plan,
   title,
   unit,
+  propertyId = null,
   closeRef,
   onClose,
 }: {
@@ -855,6 +861,7 @@ function PlotSheet({
   plan: PlotPlan;
   title: string;
   unit: Unit;
+  propertyId?: string | null;
   closeRef: React.RefObject<HTMLButtonElement | null>;
   onClose: () => void;
 }) {
@@ -970,13 +977,31 @@ function PlotSheet({
             nothing to book and the answer would only be "that one is gone". */}
         {available ? (
           <>
+            {/* 🚨 THE REQUEST IS TAKEN HERE NOW (owner 2026-08-21: "give an
+                option to book the site, when clicked, name phone and email,
+                submit, which adds to the admin in its respective area").
+
+                The jump to `#visit` remains underneath as the full booking —
+                the one that picks a real date and slot and writes a
+                `site_visits` appointment. This form is the short path: three
+                fields, straight to the desk's lead queue, with the plot number
+                attached. Two routes, and each is honest about what it books —
+                see PlotVisitForm for why a three-field form must NOT go
+                through the appointment RPC. */}
+            <div className="mt-phi3">
+              <PlotVisitForm
+                propertyId={propertyId}
+                propertyTitle={title}
+                plot={plot.plot}
+              />
+            </div>
             <a
               href="#visit"
               onClick={onClose}
-              className="mt-phi3 flex justify-center rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-500 hover:-translate-y-0.5 hover:bg-jamin-red-deep hover:shadow-raise"
+              className="mt-2 flex justify-center rounded-full border border-jamin-red/40 bg-jamin-red-soft/60 px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-red-deep transition-all duration-500 hover:-translate-y-0.5 hover:bg-jamin-red-soft"
               style={{ transitionTimingFunction: "var(--ease-silk)" }}
             >
-              Book a visit for plot {plot.plot}
+              Pick a date instead
             </a>
             {/* Tap-a-plot enquiry (do-all round 2026-08-18): the sheet is
                 where a buyer decides they want THIS plot, so the enquiry

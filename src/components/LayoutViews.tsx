@@ -57,6 +57,7 @@ export function LayoutViews({
   lat = null,
   lng = null,
   sheet = null,
+  propertyId = null,
 }: {
   plots: Plot[];
   /** Absent when the drawing was never traced — then there is only one view. */
@@ -71,6 +72,10 @@ export function LayoutViews({
    *  cannot be registered (measured, three incompatible scales), so the
    *  functions stay on the traced view where the geometry is real. */
   sheet?: { src: string; width: number; height: number } | null;
+  /** The development this layout belongs to, so a plot can carry a site-visit
+   *  request straight to the desk with the plot number attached. Null hides
+   *  the control rather than posting a request with nothing to attach it to. */
+  propertyId?: string | null;
 }) {
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
   /* ⚠️ THE SHEET OPENS THE SECTION WHERE THERE IS ONE (owner 2026-08-21). It
@@ -382,13 +387,13 @@ export function LayoutViews({
             )}
         </>
       ) : view === "plan" && plan ? (
-        <MasterPlan plots={plots} plan={plan} title={title} unit={unit} />
+        <MasterPlan plots={plots} plan={plan} title={title} unit={unit} propertyId={propertyId} />
       ) : view === "relief" && plan ? (
         <LayoutRelief plots={plots} plan={plan} unit={unit} />
       ) : view === "sun" && plan ? (
         <LayoutVR plots={plots} plan={plan} lat={lat} lng={lng} />
       ) : (
-        <PlotSchedule plots={plots} unit={unit} />
+        <PlotSchedule plots={plots} unit={unit} title={title} propertyId={propertyId} />
       )}
 
       {plan && <PlanParticulars plan={plan} unit={unit} />}

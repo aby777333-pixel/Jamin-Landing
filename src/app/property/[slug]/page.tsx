@@ -671,6 +671,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 title={p.title}
                 lat={p.lat}
                 lng={p.lng}
+                /* So a plot can take a site-visit request straight to the
+                   desk's lead queue with the plot number on it (owner
+                   2026-08-21) — see PlotVisitForm. */
+                propertyId={p.id}
                 /* The branded printed sheet (owner-supplied 2026-08-17) —
                    keyed by slug like HEADER_ART; a project without one simply
                    never shows the view. */
