@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot } from "@/lib/properties";
 import { plotRecordRows } from "@/lib/plot-record";
 import { PlotVisitForm } from "@/components/PlotVisitForm";
+import { PlotAskToggle } from "@/components/PlotAskToggle";
+import { EnquiryForm } from "@/components/EnquiryForm";
 import { type Unit } from "@/lib/units";
 
 /**
@@ -158,12 +160,33 @@ export function PlotSchedule({
               plot={selected.plot}
             />
           ) : null}
-          <a
-            href="/contact"
-            className="mt-2 inline-flex rounded-full border border-line px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
-          >
-            Ask about plot {selected.plot}
-          </a>
+          {/* 🚨 THE SAME DROP-DOWN ENQUIRY THE DRAWING'S PLOT SHEET OFFERS
+              (owner 2026-08-21). It was a link to /contact, which sent the
+              reader to a different page and lost the plot number on the way.
+              Both views now carry the identical control and the identical
+              form — see the note in MasterPlan for why `idPrefix` and `key`
+              are load-bearing. */}
+          {propertyId ? (
+            <PlotAskToggle plotNo={selected.plot}>
+              <EnquiryForm
+                key={selected.plot}
+                compact
+                propertyId={propertyId}
+                propertyTitle={title}
+                idPrefix={`plotlist-${selected.plot}`}
+                campaign="plot-enquiry"
+                submitLabel={`Ask about plot ${selected.plot}`}
+                initialMessage={`I'm interested in plot ${selected.plot} at ${title}. Please share the current rate and availability.`}
+              />
+            </PlotAskToggle>
+          ) : (
+            <a
+              href="/contact"
+              className="mt-2 inline-flex rounded-full border border-line px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
+            >
+              Ask about plot {selected.plot}
+            </a>
+          )}
         </div>
       ) : (
         /* ⚠️ "its record", not "its extent and facing" — the older wording

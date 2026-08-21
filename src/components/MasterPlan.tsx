@@ -6,6 +6,8 @@ import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotP
 import { useCanAnimate, useInView } from "@/hooks/useInView";
 import { plotRecordRows } from "@/lib/plot-record";
 import { PlotVisitForm } from "@/components/PlotVisitForm";
+import { PlotAskToggle } from "@/components/PlotAskToggle";
+import { EnquiryForm } from "@/components/EnquiryForm";
 import { PlotDimensions } from "@/components/cadastral/PlotDimensions";
 import { PlanMeasure } from "@/components/cadastral/PlanMeasure";
 import {
@@ -1003,27 +1005,42 @@ function PlotSheet({
             >
               Pick a date instead
             </a>
-            {/* Tap-a-plot enquiry (do-all round 2026-08-18): the sheet is
-                where a buyer decides they want THIS plot, so the enquiry
-                leaves from here carrying the plot number. The prefill rides a
-                CustomEvent because the form is a separate client island —
-                EnquiryForm listens for it; if this plan ever renders on a
-                page with no #enquire anchor the link is simply inert. Gold
-                guidance dress: the red above is "go", this is "next step". */}
-            <a
-              href="#enquire"
-              onClick={() => {
-                window.dispatchEvent(
-                  new CustomEvent("jamin:enquiry-prefill", {
-                    detail: `I'm interested in plot ${plot.plot} at ${title}. Please share the current rate and availability.`,
-                  }),
-                );
-                onClose();
-              }}
-              className="mt-2 flex justify-center rounded-full border border-jamin-gold bg-jamin-gold-soft/60 px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink transition-all hover:bg-jamin-gold/25"
-            >
-              Ask about plot {plot.plot}
-            </a>
+            {/* 🚨 IT DROPS THE FORM DOWN HERE NOW (owner 2026-08-21: "when
+                clicked ask about plot, it should drop down a creds fill
+                field… a copy of the bottom field").
+
+                Tap-a-plot enquiry shipped in the do-all round as a JUMP: it
+                dispatched `jamin:enquiry-prefill` and sent the reader to
+                `#enquire` at the foot of the page. That works, but it closes
+                the plot sheet and moves them away from the thing they were
+                looking at, and on a phone they land on a form with no visible
+                sign of which plot it belongs to. The form comes to them
+                instead — the SAME `EnquiryForm` the page carries at the
+                bottom, with the plot already named in its message.
+
+                ⚠️ `idPrefix` IS NOT OPTIONAL HERE. That form is already on
+                this page once, and its field ids were literals — two copies
+                would emit duplicate `eq-name`/`eq-mobile`/`eq-email`/`eq-msg`,
+                and a `<label for>` binds to the FIRST match in the document.
+                Tapping "Your name" up here would have focused the field at
+                the foot of the page.
+
+                ⚠️ `key` ON THE FORM, because `initialMessage` seeds state at
+                MOUNT. The sheet re-renders in place when the reader picks a
+                different plot, so without a key the message would still name
+                the plot they looked at before. */}
+            <PlotAskToggle plotNo={plot.plot}>
+              <EnquiryForm
+                key={plot.plot}
+                compact
+                propertyId={propertyId ?? undefined}
+                propertyTitle={title}
+                idPrefix={`plot-${plot.plot}`}
+                campaign="plot-enquiry"
+                submitLabel={`Ask about plot ${plot.plot}`}
+                initialMessage={`I'm interested in plot ${plot.plot} at ${title}. Please share the current rate and availability.`}
+              />
+            </PlotAskToggle>
             {/* The quiet third row (do-all #2): share the plot into WhatsApp
                 with a link that reopens THIS sheet (`#plot-N`, see the
                 arrival effect), ask the desk for a 48-hour hold (a lead the

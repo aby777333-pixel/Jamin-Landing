@@ -24,15 +24,45 @@ export function EnquiryForm({
   propertyId,
   propertyTitle,
   compact,
+  idPrefix = "eq",
+  initialMessage = "",
+  submitLabel,
+  campaign,
 }: {
   propertyId?: string;
   propertyTitle?: string;
   compact?: boolean;
+  /**
+   * 🚨 REQUIRED WHENEVER A SECOND COPY OF THIS FORM IS ON THE PAGE (owner
+   * 2026-08-21: the plot record's "Ask about plot N" drops this form down
+   * inline, and the property page already carries one at the foot).
+   *
+   * Every field id here used to be a hard-coded literal — `eq-name`,
+   * `eq-mobile`, `eq-email`, `eq-msg`. Two instances would therefore emit four
+   * duplicate ids, and a `<label for>` resolves to the FIRST match in the
+   * document: tapping "Your name" in the plot sheet would focus the field at
+   * the bottom of the page, and a screen reader would read the same label
+   * twice against different inputs. The prefix keeps the default markup
+   * byte-identical for the single-instance case and makes the second one safe.
+   */
+  idPrefix?: string;
+  /** Seeds "What are you looking for?" — the plot sheet opens with the plot
+   *  already named, so the visitor is not asked to type what the page already
+   *  knows. ⚠️ Read once, at mount: the caller keys the form per plot so a
+   *  different plot remounts it rather than silently keeping the old text. */
+  initialMessage?: string;
+  /** Overrides the button's wording where the context is narrower than a whole
+   *  development — "Ask about plot 36" rather than "Ask about this
+   *  development". */
+  submitLabel?: string;
+  /** Tags the lead so the desk can tell a plot-level question apart from a
+   *  general one. Falls back to the visitor's own campaign attribution. */
+  campaign?: string;
 }) {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(initialMessage);
   const [consent, setConsent] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +99,7 @@ export function EnquiryForm({
         p_message: message || null,
         p_ref: currentRef(),
         p_source_url: typeof window !== "undefined" ? window.location.href : null,
-        p_campaign: currentCampaign(),
+        p_campaign: campaign ?? currentCampaign(),
         p_consent: consent,
       });
       if (rpcError) throw new Error(rpcError.message);
@@ -120,11 +150,11 @@ export function EnquiryForm({
     >
       <div className={compact ? "" : "grid gap-phi2 sm:grid-cols-2"}>
         <div>
-          <label htmlFor="eq-name" className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
+          <label htmlFor={`${idPrefix}-name`} className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
             Your name
           </label>
           <input
-            id="eq-name"
+            id={`${idPrefix}-name`}
             required
             autoComplete="name"
             /* The phone keyboard's action key. Without it every field offers a
@@ -137,7 +167,7 @@ export function EnquiryForm({
           />
         </div>
         <div className={compact ? "mt-phi2" : ""}>
-          <label htmlFor="eq-mobile" className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
+          <label htmlFor={`${idPrefix}-mobile`} className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
             Mobile
           </label>
           <div className="flex items-center gap-2">
@@ -145,7 +175,7 @@ export function EnquiryForm({
               +91
             </span>
             <input
-              id="eq-mobile"
+              id={`${idPrefix}-mobile`}
               required
               inputMode="numeric"
               autoComplete="tel-national"
@@ -160,11 +190,11 @@ export function EnquiryForm({
       </div>
 
       <div>
-        <label htmlFor="eq-email" className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
+        <label htmlFor={`${idPrefix}-email`} className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
           Email <span className="normal-case tracking-normal">(optional)</span>
         </label>
         <input
-          id="eq-email"
+          id={`${idPrefix}-email`}
           type="email"
           inputMode="email"
           autoComplete="email"
@@ -176,11 +206,11 @@ export function EnquiryForm({
       </div>
 
       <div>
-        <label htmlFor="eq-msg" className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
+        <label htmlFor={`${idPrefix}-msg`} className="mb-1 block text-tiny uppercase tracking-[0.12em] text-ink-faint">
           What are you looking for? <span className="normal-case tracking-normal">(optional)</span>
         </label>
         <textarea
-          id="eq-msg"
+          id={`${idPrefix}-msg`}
           rows={compact ? 2 : 3}
           enterKeyHint="done"
           value={message}
@@ -218,7 +248,7 @@ export function EnquiryForm({
         disabled={busy}
         className="w-full rounded-full bg-jamin-red px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep disabled:opacity-50"
       >
-        {busy ? "Sending…" : propertyTitle ? "Ask about this development" : "Request a call back"}
+        {busy ? "Sending…" : (submitLabel ?? (propertyTitle ? "Ask about this development" : "Request a call back"))}
       </button>
     </form>
   );
