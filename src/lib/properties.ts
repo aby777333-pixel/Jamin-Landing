@@ -71,6 +71,20 @@ export type Property = {
   area_unit: string | null;
   plots_total: number | null;
   plots_available: number | null;
+  /**
+   * 🚨 THE PRESENCE OF A TRACED PLAN, NOT THE PLAN (2026-08-21). The site's
+   * best asset is the interactive DTCP layout and nothing outside the property
+   * page hinted it existed — a card could not say so because `plot_plan` is
+   * deliberately off the list query (see PropertyDetail's note: several
+   * kilobytes of polygons for data no listing renders).
+   *
+   * ⚠️ SO THIS SELECTS ONE KEY, NOT THE COLUMN. PostgREST's `plot_plan->viewBox`
+   * returns just that value, which is four numbers — the weight argument that
+   * kept the whole blob off the list is respected rather than reversed. It
+   * exists only to answer "is there a drawing?"; anything that needs the
+   * geometry must still load the detail row.
+   */
+  plot_plan_viewbox?: number[] | null;
   city: string | null;
   district: string | null;
   state: string | null;
@@ -152,6 +166,10 @@ const PUBLIC_COLUMNS = [
   "amenities", "approvals", "nearby_places", "brochure_url", "brochure_cover_url",
   "master_plan_url", "virtual_tour_url", "rera_number", "survey_number", "is_featured", "seo",
   "created_at", "updated_at",
+  /* ⚠️ A KEY, NOT THE COLUMN — `plot_plan->viewBox` aliased so the row carries
+     a plain `plot_plan_viewbox`. See the field's note on Property for why the
+     whole jsonb stays off this query. */
+  "plot_plan_viewbox:plot_plan->viewBox",
 ].join(",");
 
 /** Everything the list needs, plus the heavy per-plot and document payloads.

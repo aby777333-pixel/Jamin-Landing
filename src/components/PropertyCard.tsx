@@ -408,6 +408,34 @@ export function PropertyCard({
           </div>
         )}
 
+        {/* ── the interactive plan, announced ────────────────────────────────
+            🚨 THE BEST THING ON THIS SITE HAD NO SIGNPOST (owner
+            2026-08-21). A development with traced geometry opens a real
+            drawing: every plot clickable, its extent, facing and road width on
+            tap, and a sun-and-shadow view. None of that was visible until a
+            reader had already chosen a project and found the third tab of one
+            section. This chip is the hint.
+
+            ⚠️ IT IS DRIVEN BY DATA, NOT BY A LIST OF SLUGS. `plot_plan_viewbox`
+            is the one key the list query pulls; a project without traced
+            geometry simply does not show the chip. Today that means Edappadi
+            alone — the only property with a `viewBox` — and Shastri Nagar and
+            Trichy's Tulip, which have plot SCHEDULES but no drawing, correctly
+            stay quiet. A hardcoded list would have lied about both the day
+            somebody traced a second plan.
+
+            ⚠️ It is a label, not a second link. The whole card is already a
+            link to the property; a nested anchor is invalid HTML and would
+            give a keyboard user two tab stops to the same place. */}
+        {Array.isArray(p.plot_plan_viewbox) && p.plot_plan_viewbox.length === 4 && (
+          <div className="mt-phi2">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-jamin-gold/55 bg-jamin-gold/[0.07] px-2.5 py-1 text-micro font-semibold uppercase tracking-[0.12em] text-jamin-gold-ink">
+              <SurveyIcon name="grid" size="h-3.5 w-3.5" className="shrink-0" />
+              Interactive plan
+            </span>
+          </div>
+        )}
+
         {/* ── 4. the collection ───────────────────────────────────────────────
             Below the statistics on every card, which is what the report asked
             for — it used to share a line with the rate, so on a card whose rate

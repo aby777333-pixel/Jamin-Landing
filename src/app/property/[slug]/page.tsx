@@ -16,6 +16,7 @@ import { ApprovalStrip } from "@/components/cadastral/ApprovalStrip";
 import { ProvenanceRibbon } from "@/components/cadastral/ProvenanceRibbon";
 import { SurveyWatermark } from "@/components/cadastral/SurveyWatermark";
 import { NearbyGroups } from "@/components/cadastral/NearbyGroups";
+import { PrintCover } from "@/components/cadastral/PrintCover";
 import { PrintHeader } from "@/components/cadastral/PrintHeader";
 import { PassportButton } from "@/components/PassportButton";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
@@ -305,6 +306,22 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildBreadcrumbs(p)) }}
+      />
+
+      {/* 🚨 THE CERTIFICATE COVER, PAGE ONE OF THE PRINTED RECORD (owner
+          2026-08-21). Invisible on screen; on paper it fills the first sheet
+          and breaks, so the masthead below opens page two. It is FIRST in the
+          document for the same reason the masthead used to be: the hero is
+          suppressed in print, so whatever leads here leads the paper.
+          The two share fields deliberately — see the component. */}
+      <PrintCover
+        p={p}
+        taken={new Intl.DateTimeFormat("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          timeZone: "Asia/Kolkata",
+        }).format(new Date())}
       />
 
       {/* Invisible on screen, the masthead of the printed sheet. First in the

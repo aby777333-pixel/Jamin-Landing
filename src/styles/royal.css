@@ -4014,3 +4014,85 @@ header .glass,
   border-bottom: 1px dotted color-mix(in srgb, var(--color-ink-faint) 32%, transparent);
   transform: translateY(-0.18em);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE CERTIFICATE COVER (2026-08-21) — page one of the printed record.
+
+   ⚠️ THE CLASSES LIVE OUTSIDE `@media print` AND DO NOTHING ON SCREEN, because
+   `.rj-print-only` is `display: none` until the print block reveals it. Only
+   the page-break and the sizing need the print context; everything else can be
+   stated once. Same structure the deed sheet already uses.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media print {
+  /* 🚨 `min-height: 100vh` inside `@page`'s margins is what makes this a PAGE
+     rather than a tall block: the cover fills the first sheet and
+     `break-after: page` starts the masthead on the second. Without the height
+     the body would ride up under it and the cover would be a banner. */
+  .rj-print-cover {
+    /* 🚨 `!important` ON THE DISPLAY, AND IT IS NOT OPTIONAL. The reveal
+       rule for print-only content is `.rj-print-only { display: block
+       !important }`, which beats an ordinary `display: flex` however far down
+       the sheet it sits — the cover would print as a block, the centring would
+       do nothing and the "page" would be a banner at the top of page one.
+       Measured in the cascade, not guessed. */
+    display: flex !important;
+    /* ⚠️ A MILLIMETRE HEIGHT, NOT `100vh`. Viewport units in a paged context
+       are defined against the page box, but engines disagree about when that
+       box is known and the value serialised as a negative length when read in a
+       screen context. A4 is 297mm and `@page` takes 16mm top and bottom, so
+       235mm fills the sheet with room to spare and cannot resolve to nonsense.
+       ⚠️ If `@page` margins change, change this with them. */
+    min-height: 235mm;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    break-after: page;
+    page-break-after: always; /* the legacy name, for older print engines */
+  }
+  .rj-print-cover-inner {
+    max-width: 118mm; /* a comfortable measure inside a 182mm text block */
+  }
+  .rj-print-seal {
+    display: flex;
+    justify-content: center;
+    margin: 10mm 0 8mm;
+  }
+  .rj-print-cover-title {
+    /* ⚠️ Not the site's display scale. On paper the heading competes with
+       nothing, so it can be quiet: a large, lightly-tracked roman reads as a
+       document title where an 800 weight reads as an advertisement. */
+    font-size: 26pt;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.12;
+    margin: 6mm 0 10mm;
+  }
+  /* A ruled ledger again, in the same spirit as the area statement: label left,
+     value right, a hairline under each pair. */
+  .rj-print-cover-rows {
+    border-top: 1px solid #000;
+    text-align: left;
+  }
+  .rj-print-cover-rows > div {
+    display: grid;
+    grid-template-columns: 38mm 1fr;
+    gap: 0 6mm;
+    padding: 2.2mm 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+  }
+  .rj-print-cover-rows dt {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .rj-print-cover-rows dd {
+    font-size: 10pt;
+    font-weight: 500;
+  }
+  .rj-print-cover-note {
+    margin-top: 12mm;
+    font-size: 8pt;
+    line-height: 1.5;
+    text-align: left;
+  }
+}

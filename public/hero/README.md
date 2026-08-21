@@ -1347,3 +1347,46 @@ Both breakpoints swept, per the standing two-sweep rule.
 
 Names a community not in the catalogue -> standing rule at full strength:
 alt="", aria-hidden, never a caption.
+
+## The house standard, and `npm run heroes` (2026-08-21)
+
+**Masters are 2:1**, at three widths: 768, 1280 and native. Native should be
+1774x887 unless the source genuinely is larger.
+
+**The safe band.** Anything that must survive — a lockup, a plaque, carved
+wall text — belongs between **25% and 75% of the frame width**. That is not a
+taste rule, it is arithmetic: the contact page's art box is 829x554, a 2:1
+master renders into it at 1108x554 under `object-fit: cover`, and the 279px of
+overflow is split by `artPosition`. Centre it and 12.6% is cropped from each
+side; anchor it and 25.2% goes from one. A lockup inside the band survives every
+anchor. hero-84's begins at 15% of its own width and centre was the only anchor
+that kept the whole arch — see its entry above.
+
+**Why the existing heroes were NOT re-cut.** Nine of the twelve live frames are
+16:9 or 3:2. Cropping them to 2:1 removes 11% of their height, which moves every
+composition and invalidates the scrim sweep recorded for each page — a dozen
+audited contrast figures traded for tidiness. The standard governs NEW art; the
+audit reports the exceptions so nobody mistakes them for the rule.
+
+### The audit
+
+```
+npm run heroes              # every hero
+node scripts/hero-audit.mjs 84 --verbose
+```
+
+It checks the renditions exist and their pixel sizes match their filenames, that
+the `HeroArt` union and the TOP_WIDTH / TOP_HEIGHT manifests agree with the
+files on disk, and reports each frame's ratio and its anchor travel in the
+standard box. Errors on a LIVE hero exit non-zero; faults on spares warn.
+
+⚠️ **It deliberately does not judge the scrim.** Contrast under the copy depends
+on where the copy sits, which is a property of the page, not the image. That
+sweep stays manual — hero-84's entry above is the worked example, including the
+trap that raising `sheerAlpha` makes dark copy on a dark frame WORSE.
+
+⚠️ Two parser bugs were found writing it, both worth knowing: the manifest packs
+several entries per line, so a `^`-anchored regex sees only the first of each
+and reports 59 phantom faults; and the union spans five lines, so it must be
+sliced to its terminating semicolon rather than to the end of the first line.
+

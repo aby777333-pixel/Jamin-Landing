@@ -104,7 +104,14 @@ export default function FaqPage() {
            the arch, so the copy anchors low and the crop steers the board
            into the upper third (measured at 1440 and 1280 in the preview).
            sheerEdge + 38rem shrink what the plate can ever touch. */
-        art={67}
+        /* 🚨 GRADED COPY (2026-08-21). Same frame, warmed to join the
+           register's family — the actives measured a 57-point spread in
+           red-over-blue and this one sat at the cold end (-1.4 against a
+           median of 26). The grade is LUMINANCE-PRESERVING by construction, so
+           the scrim below is carried rather than re-swept: measured 121.17 →
+           121.21 mean luminance, and WCAG contrast is a function of luminance
+           alone. Geometry is untouched, so the anchor holds too. */
+        art={85}
         tone="cinematic"
         /* `full` (owner 2026-08-18 night: "make it full height") — and the
            headline steps down to 3xl with it (the /ta span treatment):

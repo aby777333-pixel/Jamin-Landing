@@ -94,7 +94,14 @@ export default async function TamilPage() {
           on the inner element — a Tamil headline sets wider than its English
           cousins, so the smaller size is also what keeps it to three lines. */}
       <PageHero
-        art={77}
+        /* 🚨 GRADED COPY (2026-08-21). Same frame, warmed to join the
+           register's family — the actives measured a 57-point spread in
+           red-over-blue and this one sat at the cold end (-1.4 against a
+           median of 26). The grade is LUMINANCE-PRESERVING by construction, so
+           the scrim below is carried rather than re-swept: measured 121.17 →
+           121.21 mean luminance, and WCAG contrast is a function of luminance
+           alone. Geometry is untouched, so the anchor holds too. */
+        art={86}
         tone="cinematic"
         /* `full` — at 85vh the frame is nearly uncropped, which is what
            gives the TRICHY TULIP lettering room to sit ABOVE the card
