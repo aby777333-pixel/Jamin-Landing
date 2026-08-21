@@ -360,6 +360,66 @@
     letter-spacing: -0.014em;
     line-height: 1.18;
   }
+
+  /* ══════════════════════════════════════════════════════════════════════
+     THE SETTING PASS (2026-08-21) — line-breaking and punctuation, the part
+     of typesetting the type patch above did not reach.
+     ⚠️ ADDITIVE ONLY. Nothing here changes a family, a weight, a size or a
+     tracking value; every declaration below governs only WHERE LINES BREAK
+     and how punctuation sits on the margin. No measured line-count in this
+     codebase can move as a result — `balance` and `pretty` re-break lines
+     inside the SAME box at the SAME size, which is precisely why they are
+     safe to apply site-wide.
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* 🚨 NO ORPHANED WORD ON A HEADING. `balance` levels the lines of a short
+     block so a two-line headline never leaves one word stranded — the single
+     most visible typesetting fault on a marketing page, and this site's
+     headings are display-sized, so a stranded word is enormous.
+     ⚠️ Browsers cap `balance` at a handful of lines (Chrome: 6) and fall back
+     to normal wrapping beyond it, so a long heading cannot be slowed down by
+     it. Unsupported browsers ignore the property entirely. */
+  h1,
+  h2,
+  h3,
+  h4,
+  figcaption,
+  blockquote,
+  .rj-voice {
+    text-wrap: balance;
+  }
+
+  /* `pretty` is the body-copy counterpart: it costs nothing at render time
+     and only prevents the LAST line of a paragraph being a single word.
+     ⚠️ Deliberately not `balance` here — balancing a long paragraph shortens
+     every line to level the last one, which narrows the measure and makes the
+     column look wrong. `pretty` touches the end of the block only. */
+  p,
+  li,
+  dd {
+    text-wrap: pretty;
+  }
+
+  /* Quotes and hyphens hang into the margin instead of indenting the line
+     they open. Safari-only today and simply ignored elsewhere — which is the
+     right shape of risk for an optical refinement: it can only ever improve,
+     never break a layout. */
+  body {
+    hanging-punctuation: first last;
+  }
+
+  /* ⚠️ PRINT ONLY, and it belongs with the setting pass rather than in the
+     deed-sheet block: a record that breaks with one line of a paragraph
+     stranded on the next page reads as a printing fault, and this site's
+     printed output is meant to be forwarded to a lawyer. */
+  @media print {
+    p,
+    li,
+    dd {
+      orphans: 2;
+      widows: 2;
+    }
+  }
   /* THE DATA VOICE (type patch §3) — what the mono face used to supply for
      free, Inter supplies through features: SLASHED ZERO + tabular lining
      numerals + a restrained 0.06em of tracking. `.ledger` is this site's

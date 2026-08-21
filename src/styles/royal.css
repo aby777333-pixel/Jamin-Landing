@@ -2728,6 +2728,32 @@ header .glass,
 .rj-arrive.rj-stagger li:nth-child(5) { animation-delay: 560ms; }
 .rj-arrive.rj-stagger li:nth-child(n + 6) { animation-delay: 680ms; }
 
+/* ── THE FOLIO ROW SIGNS THE SECTION (2026-08-21) ─────────────────────────
+   The same chain idea applied to a ROW of direct children rather than a list:
+   the isometric mark, then the gold fret, then the numeral. A section index
+   that assembles in that order reads as a page being stamped; all three
+   arriving together reads as a decoration that simply appeared.
+
+   ⚠️ A SIBLING OF `rj-stagger`, NOT A REPLACEMENT. `li` and `> *` are
+   different selectors for different markup, and the list version is load
+   bearing for the chain of record. Both share `@keyframes rj-arrive`, the
+   `--ease-rise` curve and the reduced-motion collapse below, so there is one
+   motion vocabulary here and not two.
+
+   ⚠️ The delays are shorter than the chain's (60/150/240 against 80/200/320).
+   Three ornaments in a corner should be quicker than six links making an
+   argument — the same curve, a tighter tempo.
+
+   ⚠️ EVERY CALLER MUST BE `decorative` ON THE Reveal. These rows are
+   `aria-hidden` ornament; see the prop's note in Reveal.tsx. */
+.rj-arrive.rj-stagger-row > * {
+  animation: rj-arrive 520ms var(--ease-rise) both;
+}
+.rj-arrive.rj-stagger-row > *:nth-child(1) { animation-delay: 60ms; }
+.rj-arrive.rj-stagger-row > *:nth-child(2) { animation-delay: 150ms; }
+.rj-arrive.rj-stagger-row > *:nth-child(3) { animation-delay: 240ms; }
+.rj-arrive.rj-stagger-row > *:nth-child(n + 4) { animation-delay: 330ms; }
+
 /* ── THE WAX SEAL PRESSES (same round) ────────────────────────────────────
    A scroll-driven animation, pure CSS: the seal descends onto the paper as
    the approvals band enters the viewport. `@supports` gates it to browsers
@@ -2758,7 +2784,12 @@ header .glass,
   .rj-wax {
     animation: none;
   }
-  .rj-arrive.rj-stagger li {
+  .rj-arrive.rj-stagger li,
+  .rj-arrive.rj-stagger-row > * {
+    /* ⚠️ COLLAPSED, NOT `animation: none` — the same reason recorded against
+       `.rj-arrive` itself: the keyframe starts at opacity 0, so removing the
+       animation would leave every staggered child permanently invisible. A
+       0.01ms duration runs it to its end frame instantly. */
     animation-duration: 0.01ms;
     animation-delay: 0ms;
   }
@@ -3836,4 +3867,150 @@ header .glass,
   .cd-scrollhint {
     background: none !important;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   NIGHT — carbon as a finished look, not an inverted one (2026-08-21)
+
+   The carbon mode's INK was audited when the toggle shipped: every token in
+   the `[data-mode="dark"]` block above has a measured reason and none of them
+   is touched here. What was never done is the MATERIAL — the panes, the metal
+   and the ground were left as light-mode surfaces with dark tokens poured into
+   them, which is what makes a dark mode read as a fallback.
+
+   🚨 EVERY RULE BELOW IS SCOPED TO `[data-mode="dark"]`, so the light site
+   cannot change by a single pixel. That is the containment: the worst case for
+   any mistake here is a worse night mode, never a broken day one.
+
+   ⚠️ AND EVERY ONE MOVES CONTRAST THE SAFE WAY. Carbon carries LIGHT ink, so
+   a darker surface can only improve a ratio and a lighter one can only cost.
+   Where a rule lightens (the metal, the signage) it lightens ORNAMENT, which
+   is measured as a graphic at 3:1 and had headroom. Where it touches a ground
+   that carries copy, it goes darker. No ratio on the ledger can fall.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── THE PANE, RE-GROUND FOR CARBON ──────────────────────────────────────
+   `.rj-pane` mixes its hue into `--color-canvas` at 40%. On sand that is a
+   tinted sheet. On onyx-900 it is 40% of a saturated stone over near-black,
+   which comes out as sludge — the colour is present but the surface stops
+   reading as glass and starts reading as paint.
+
+   22% instead: the hue is unmistakably there, the ground stays carbon, and
+   the specular gloss on top does the work of describing a surface. This is
+   also the SAFE direction — it moves the pane toward the canvas the ink was
+   audited against, so every ratio inside a pane improves.
+
+   ⚠️ Set on the pane itself, not on `:root`, so a caller that passes its own
+   `--rj-pane-mix` (the homepage's 24%) still wins in both modes. */
+[data-mode="dark"] .rj-pane {
+  --rj-pane-mix: 22%;
+  /* Lit brass rather than flat ochre: the same gold, brighter, because on
+     carbon a 62% gold hairline drops close to the ground it is meant to
+     describe. An edge is a graphic — 3:1 — and this raises it. */
+  border-color: color-mix(in srgb, var(--color-jamin-gold-light) 46%, transparent);
+}
+
+/* ── THE GLOSS, TURNED DOWN ──────────────────────────────────────────────
+   The pane's specular is white at up to 0.5 alpha — correct on paper, far too
+   hot on carbon, where it reads as a smear of fog across the top-left corner
+   rather than as a highlight. Same two layers, same geometry, roughly a third
+   of the strength. */
+[data-mode="dark"] .rj-pane {
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 248, 236, 0.16) 0%,
+      rgba(255, 248, 236, 0.06) 24%,
+      rgba(255, 248, 236, 0.02) 48%,
+      rgba(255, 248, 236, 0) 70%
+    ),
+    radial-gradient(125% 85% at 50% -12%, rgba(255, 236, 210, 0.1), rgba(255, 236, 210, 0) 62%);
+}
+
+/* ── DEEP PAPER — the ground stops being flat ────────────────────────────
+   A void reads as an unfinished page; a lit room reads as a design. This is a
+   vignette, so it DARKENS the edges and leaves the centre exactly as audited —
+   contrast for centred copy can only improve, and the corners carry no text.
+
+   ⚠️ `fixed` and behind everything: it must not scroll (a moving vignette is
+   a distraction) and it must not sit over content. `pointer-events: none` so
+   it cannot eat a click — the failure mode of every full-screen overlay. */
+[data-mode="dark"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(255, 214, 170, 0.05), rgba(0, 0, 0, 0) 45%),
+              radial-gradient(140% 120% at 50% 55%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+/* ── THE METAL CATCHES A LIGHT ───────────────────────────────────────────
+   The foil ramp is a fixed gradient tuned for daylight. At night the same
+   metal should look lit from above — brighter highlight, deeper shadow, same
+   hue family. Ornament only: seals, folio numerals and the royal rule.
+   ⚠️ `.rj-folio` clips this gradient to TEXT, so the stops must stay light
+   enough to read as metal and dark enough to keep the numeral's shape. */
+[data-mode="dark"] .rj-folio {
+  background: linear-gradient(
+    105deg,
+    #7a5c3f 0%,
+    #c79a6d 28%,
+    #ffeed6 50%,
+    #c79a6d 72%,
+    #7a5c3f 100%
+  );
+}
+[data-mode="dark"] .rj-foil-seal {
+  filter: brightness(1.12) saturate(1.05);
+}
+
+/* ── THE GATE BOARDS ARE LIT ─────────────────────────────────────────────
+   `rj-signage` already glows in carbon (item 10 of the aesthetics round) and
+   it is the single most characterful thing in this mode — it is what makes
+   the wordmark read as an illuminated board on a night gate. It was applied
+   to the footer wordmark alone. The section numerals are the same material in
+   the same room, so they take the same light, at a third of the strength
+   because a numeral is small and a halo at full strength would fur its edges.
+   ⚠️ Reduced motion is irrelevant here — this is a static shadow, not an
+   animation. */
+[data-mode="dark"] .rj-folio-red {
+  filter: drop-shadow(0 0 6px rgba(255, 170, 120, 0.22));
+}
+
+/* ── THE DOT LEADER (2026-08-21) ─────────────────────────────────────────
+   The oldest device in a printed index: a run of dots carrying the eye from a
+   label to its figure. Used by the sanctioned plan's area statement.
+
+   ⚠️ IT IS A BORDER, NOT TEXT. A row of "." characters would be read out by a
+   screen reader, would be selectable and copied into a paste, and would not
+   fill the space exactly. A dotted bottom border on an empty flex child does
+   all three correctly and costs one element.
+
+   ⚠️ `flex: 1` is what makes it fill whatever the label leaves, so it works at
+   every column width without a single measurement. The caller must place it
+   inside a flex line — it has no width of its own.
+
+   ⚠️ `translateY` drops it off the baseline to where a leader actually sits.
+   Without it the dots strike through the descenders of the label beside them.
+
+   ⚠️ 0.32 alpha, and it is deliberately faint. A leader is a guide, not a
+   rule: at full strength it competes with the `divide-y` hairlines that
+   separate the rows and the block starts to look like a spreadsheet. It
+   carries no information, so it never needs to meet a contrast minimum. */
+.rj-leader {
+  /* 🚨 `flex: 1 1 0` WITH `min-width: 0`, AND BOTH HALVES MATTER. The first
+     version was `1 1 auto` with a 1.5rem floor, which made the leader a
+     COMPETING flex item: it claimed its share of the line and squeezed the
+     label beside it, wrapping "Total extent of site" onto FOUR lines at 1440px
+     — a worse result than the plain string it replaced. A zero basis means the
+     leader grows only into space the label has already declined, so the label
+     keeps its full width and the leader takes the remainder. Where there is no
+     remainder it collapses to nothing, which is the correct behaviour for a
+     guide with nowhere to go. */
+  flex: 1 1 0;
+  min-width: 0;
+  align-self: baseline;
+  border-bottom: 1px dotted color-mix(in srgb, var(--color-ink-faint) 32%, transparent);
+  transform: translateY(-0.18em);
 }

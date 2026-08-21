@@ -20,9 +20,21 @@ import { useEffect, useRef } from "react";
 export function Reveal({
   children,
   className,
+  decorative = false,
 }: {
   children: React.ReactNode;
   className?: string;
+  /**
+   * ⚠️ Marks the whole wrapper as ornament (`aria-hidden`). Added 2026-08-21
+   * for the section folio rows, which were already `aria-hidden` on their own
+   * container — wrapping them in a Reveal that could not carry the attribute
+   * would have EXPOSED a decorative numeral and a fret pattern to a screen
+   * reader, which is a regression dressed as an animation.
+   *
+   * It is opt-in and defaults off, so the four existing callers are byte
+   * identical.
+   */
+  decorative?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -51,7 +63,7 @@ export function Reveal({
   }, []);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} aria-hidden={decorative || undefined}>
       {children}
     </div>
   );

@@ -450,9 +450,17 @@ export function formatPrice(p: Property): string {
     if (isSellable(p)) return "Price on request";
     return p.status === "sold" ? "Sold out" : "Not for sale";
   }
+  /* ⚠️ NBSP BEFORE THE UNIT (setting pass, 2026-08-21). "₹2.4 Cr" with an
+     ordinary space can break after the figure, leaving a bare "Cr" opening the
+     next line — which happens on the narrowest property cards, where the price
+     shares a row. A figure and its unit are one token and must wrap as one.
+     ⚠️ Safe against `areaParts`-style splitting: that regex already
+     accepts either character, and nothing else parses this string — it is
+     rendered as text. Both branches carry U+00A0 directly, the same way
+     `formatArea` below already joins its own value and unit. */
   const n = Number(p.price);
-  if (n >= 1e7) return `₹${(n / 1e7).toFixed(2).replace(/\.00$/, "")} Cr`;
-  if (n >= 1e5) return `₹${(n / 1e5).toFixed(2).replace(/\.00$/, "")} L`;
+  if (n >= 1e7) return `₹${(n / 1e7).toFixed(2).replace(/\.00$/, "")} Cr`;
+  if (n >= 1e5) return `₹${(n / 1e5).toFixed(2).replace(/\.00$/, "")} L`;
   return `₹${n.toLocaleString("en-IN")}`;
 }
 

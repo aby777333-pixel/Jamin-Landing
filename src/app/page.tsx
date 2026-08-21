@@ -223,11 +223,11 @@ export default async function HomePage() {
       <Pane className="p-phi3 sm:p-phi5" mix="24%" as="section">
         {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the section
             indices of a bound document. Decoration only, `aria-hidden`. */}
-        <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+        <Reveal className="rj-stagger-row mb-phi3 flex items-center justify-end gap-phi3" decorative>
           <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
           <div className="rj-fret w-40 opacity-60" />
           <span className="rj-folio rj-folio-red text-3xl">01</span>
-        </div>
+        </Reveal>
         <div className="grid items-center gap-phi4 lg:grid-cols-[1.1fr_1fr]">
           <div className="max-w-2xl">
             <SectionLabel>Plotted development in Tamil Nadu</SectionLabel>
@@ -316,11 +316,11 @@ export default async function HomePage() {
         const proof = all.map((p) => secondaryImage(p)).find(Boolean) ?? null;
         return (
           <Container className="py-phi6">
-            <div className="mb-phi3 flex items-center justify-end gap-phi3" aria-hidden="true">
+            <Reveal className="rj-stagger-row mb-phi3 flex items-center justify-end gap-phi3" decorative>
               <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
               <div className="rj-fret w-40 opacity-60" />
               <span className="rj-folio rj-folio-red text-3xl">02</span>
-            </div>
+            </Reveal>
             <div className="grid gap-phi5 lg:grid-cols-[1fr_0.85fr] lg:items-start">
               <div>
                 <SectionLabel>Why Jamin Properties</SectionLabel>
@@ -673,14 +673,14 @@ export default async function HomePage() {
           <div className="grid items-center gap-phi4 lg:grid-cols-[1fr_0.9fr]">
             <div className="max-w-xl">
               <SectionLabel>Where we build</SectionLabel>
-<div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+<Reveal className="rj-stagger-row mb-phi2 flex items-center justify-end gap-phi3" decorative>
                 {/* ⚠️ Back to 03: the Plotted-development folio returned at
                     report 13's ask and "Why Jamin Properties" took 02, so the
                     chapter sequence runs 01 · 02 · 03 · 04 down the page. */}
                 <IsoMark name="road" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
                 <span className="rj-folio rj-folio-red text-3xl">03</span>
-              </div>
+              </Reveal>
               <h2 className="mt-phi3 text-3xl text-ink">Find land near you</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
                 Pick a district to see every Jamin development in it on the map, then open a project
@@ -729,11 +729,11 @@ export default async function HomePage() {
           <div className="flex flex-wrap items-end justify-between gap-phi3">
             <div className="max-w-xl">
               <SectionLabel>Before you commit</SectionLabel>
-<div className="mb-phi2 flex items-center justify-end gap-phi3" aria-hidden="true">
+<Reveal className="rj-stagger-row mb-phi2 flex items-center justify-end gap-phi3" decorative>
                 <IsoMark name="gate" className="h-7 w-10 text-jamin-gold-ink/60" />
                 <div className="rj-fret w-40 opacity-60" />
                 <span className="rj-folio rj-folio-red text-3xl">04</span>
-              </div>
+              </Reveal>
               <h2 className="mt-phi3 text-3xl text-ink">Plan your property investment</h2>
               <p className="mt-phi3 text-lg leading-relaxed text-ink-muted">
                 Four calculators, using your figures rather than ours. Jamin publishes no rate, so

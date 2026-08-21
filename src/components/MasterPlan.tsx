@@ -762,7 +762,15 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
        below `lg` the columns stack and the rule would be a line across the
        middle of nothing, so it is scoped to `lg` and the Area statement's
        own heading carries the separation on a phone. */
-    <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2 lg:gap-phi5">
+    /* ⚠️ THE `lg` SPLIT STAYS, AND IT WAS RE-EXAMINED (2026-08-21).
+       Moving it to `xl` was tried, to win the area statement enough width for
+       the ruled ledger below, and it does not work: the property page's main
+       column is 638px at EVERY desktop width, so half of it is ~236px whether
+       the split fires at 1024 or at 1280. The only way to widen this block is
+       to stop dividing it, and the division is the owner's own request
+       recorded above. So the layout is unchanged and the ledger adapts to it
+       instead — see the container query on the list. */
+      <div className="mt-phi4 grid gap-phi4 border-t border-line pt-phi3 lg:grid-cols-2 lg:gap-phi5">
       {/* ⚠️ `@container`, so PlanRow can respond to THIS COLUMN's width
           rather than the viewport's. The column is 242px at 1024 and 337px
           at 1440 on a page whose main content sits beside a sticky aside —
@@ -782,7 +790,7 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
       </dl>
 
       {plan.areaStatement?.length ? (
-        <div className="lg:border-l lg:border-line lg:pl-phi5">
+        <div className="@container lg:border-l lg:border-line lg:pl-phi5">
           {/* h3: this sits under the "The layout" h2, and h4 would skip a level. */}
           <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
             Area statement
@@ -805,16 +813,73 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
               whatever its label does; `items-start` + `leading-snug` keeps a
               wrapped label's first line level with its value instead of
               hanging off the last one. */}
-          <ul className="mt-phi2 divide-y divide-line border-y border-line">
+          {/* 🚨 A RULED LEDGER, NOT A LIST OF STRINGS (2026-08-21). Report 14
+              put every value on one right-hand rule and that fix is kept
+              exactly — the outer grid is still `1fr auto` with `items-start`,
+              so a wrapped label's first line still sits level with its value.
+              What changed is INSIDE the value cell.
+
+              ⚠️ THE FIGURES DID NOT ACTUALLY ALIGN WITH EACH OTHER. The cell
+              was one string — "16,106.50 m² · 45.2%" — right-aligned as a
+              whole. A row carrying a percentage is therefore pushed left by
+              the width of "· 45.2%", so the m² column zig-zags down the block:
+              right-aligned, but only the last character of each row lines up,
+              and that character is sometimes "²" and sometimes "%". Splitting
+              the two into their own tracks is what makes it a ledger rather
+              than a ragged column that happens to end flush.
+
+              ⚠️ IT IS CONTAINER-QUERIED, AND THE MEASUREMENT IS WHY. On the
+              property page this block sits in the right half of a two-column
+              grid: the list measures 236px at 1440px viewport. Three tracks in
+              236px leaves the label 39px and wraps "Total extent of site" onto
+              three lines — worse than the single string it replaced. So the
+              ledger only appears from 20rem of CONTAINER width, exactly as
+              `PlanRow` beside it switches at 19rem; below that the row keeps
+              its original two-track shape.
+
+              🚨 SUBGRID, AND IT IS THE ONLY THING THAT ACTUALLY ALIGNS THE
+              FIGURES. A grid track is shared between ROWS OF ONE GRID, and
+              every `li` here is its own grid — so `auto` columns resolved
+              per-row and the extents landed at 619.5 and 614.2, five pixels
+              apart. Measured, not assumed. The `ul` now owns the tracks and
+              each row inherits them with `grid-cols-subgrid`, which is what
+              makes one vertical rule run down the whole block.
+              ⚠️ `display: contents` on the `li` would also share the tracks
+              and is the wrong tool: a row that generates no box loses the
+              `divide-y` hairline that separates it from the next.
+
+              ⚠️ The dot leader is `aria-hidden` and drawn with a border, so it
+              costs no glyphs and never reaches a screen reader — a reader
+              hearing "Total extent of site dot dot dot dot" would be worse off
+              than before. It sits in the label cell's own flex line, so a
+              label that wraps keeps its leader on the FIRST line, which is
+              where a printed index puts it. */}
+          <ul className="mt-phi2 divide-y divide-line border-y border-line @[20rem]:grid @[20rem]:grid-cols-[minmax(0,1fr)_auto_auto]">
             {plan.areaStatement.map((a) => (
               <li
                 key={a.label}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-2.5"
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 py-2.5 @[20rem]:col-span-3 @[20rem]:grid-cols-subgrid"
               >
-                <span className="text-base leading-snug text-ink-soft">{a.label}</span>
-                <span className="ledger whitespace-nowrap text-right text-base leading-snug text-ink">
-                  {a.areaSqm != null ? fmtArea(a.areaSqm, unit) : ""}
-                  {a.percent != null ? ` · ${a.percent}%` : ""}
+                <span className="flex min-w-0 items-baseline gap-2 text-base leading-snug text-ink-soft">
+                  <span>{a.label}</span>
+                  {/* Hidden below the threshold: a leader needs room to lead. */}
+                  <span aria-hidden="true" className="rj-leader hidden @[20rem]:block" />
+                </span>
+                {/* 🚨 `@[20rem]:contents` IS THE WHOLE MECHANISM. Below the
+                    threshold this wrapper is a flex line, so the extent and the
+                    percentage sit together on one right-aligned row — which is
+                    exactly the layout report 14 signed off. Above it the
+                    wrapper stops generating a box and its two children become
+                    grid items in their own tracks, which is the ledger. One
+                    markup, two honest layouts, and the narrow one is the
+                    original. */}
+                <span className="flex items-baseline justify-end gap-2 @[20rem]:contents">
+                  <span className="ledger whitespace-nowrap text-right text-base leading-snug text-ink">
+                    {a.areaSqm != null ? fmtArea(a.areaSqm, unit) : ""}
+                  </span>
+                  <span className="ledger whitespace-nowrap text-right text-base leading-snug text-ink-muted">
+                    {a.percent != null ? `${a.percent}%` : ""}
+                  </span>
                 </span>
               </li>
             ))}

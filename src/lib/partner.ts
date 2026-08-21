@@ -139,6 +139,6 @@ export const propertyShareLink = (id: string, ref?: string | null) =>
   `${APP_BASE}/s/${encodeURIComponent(id)}${ref ? `?ref=${encodeURIComponent(ref)}` : ""}`;
 
 export const inr = (n: number) =>
-  n >= 1e7 ? `₹${(n / 1e7).toFixed(2).replace(/\.00$/, "")} Cr`
-  : n >= 1e5 ? `₹${(n / 1e5).toFixed(2).replace(/\.00$/, "")} L`
+  n >= 1e7 ? `₹${(n / 1e7).toFixed(2).replace(/\.00$/, "")} Cr`
+  : n >= 1e5 ? `₹${(n / 1e5).toFixed(2).replace(/\.00$/, "")} L`
   : `₹${Math.round(n).toLocaleString("en-IN")}`;
