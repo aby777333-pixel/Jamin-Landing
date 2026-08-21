@@ -1904,34 +1904,49 @@
 }
 
 /**
- * ── THE BACKDROP-FILTER CAP (§9) ──────────────────────────────────────────
+ * ── THE BACKDROP-FILTER CAP (§9) — LIFTED 2026-08-21 ──────────────────────
  *
- * §9 limits blur to three surfaces — the header, the search console and the
- * Jamindar panel — because `backdrop-filter` is expensive on low-end Android
- * and the site had it in twenty-one places.
+ * 🚨 THIS RULE WAS THE "FROSTY GLASS IS GONE" (owner, 2026-08-21: "all the
+ * hues, the homepage and all pages, the frosty glass stuff is gone. bring them
+ * back"). It is worth reading before anyone reinstates it.
  *
- * ⚠️ THE TINT STAYS; ONLY THE BLUR GOES. This is safe precisely because
- * globals.css already raised `--glass-tint` to 0.90 for a contrast reason: at
- * that opacity the panel's backdrop can only sit between rgb(228) and rgb(253)
- * whatever the photograph does, so legibility never depended on the blur. What
- * is lost is the frosted LOOK on those surfaces, which is what §9 is trading
- * away deliberately.
+ * §9 capped blur to three surfaces because `backdrop-filter` is expensive on
+ * low-end Android and the site had it in twenty-one places. It was written as
+ * one unlayered blanket:
  *
- * ⚠️ Done here rather than by editing twenty components, and with no
- * `!important`. Tailwind's utilities live in `@layer utilities` and this file
- * is unlayered — unlayered CSS beats every layer regardless of order, which is
- * the same mechanism the palette switch relies on. Two plain rules therefore
- * override both `.glass` and every `backdrop-blur-*` utility.
+ *     .glass, .glass-dark, [class*="backdrop-blur"] { backdrop-filter: none; }
  *
- * cadastral.css defends eight of these as justified because they sit over
- * imagery, and that argument is still true — it is simply outranked here by a
- * performance budget. If the cap is ever lifted, lift it for those eight and
- * not for the ones sitting on the page's own canvas.
+ * Unlayered CSS beats every `@layer`, so that quietly outranked the compiled
+ * `.glass` utility — which still ships `backdrop-filter: blur(22px)
+ * saturate(140%)` in globals.css and still looks correct in the stylesheet.
+ * Measured on the live site in Chrome 148: `.glass` computed `none` while
+ * `.rj-glass-onyx` computed `blur(18px) saturate(1.3)`, which is why the
+ * header, the hero rail, the shortlist tray, the map label and the sign-in
+ * card had no frost while the console did. **Nothing looked broken in the
+ * source; only the computed value told the truth.**
+ *
+ * ⚠️ RESTORING THE BLUR CANNOT HURT CONTRAST, and that is what makes the lift
+ * safe rather than a gamble. Both tints were already raised to survive WITHOUT
+ * blur — `--glass-tint` to 0.90 for the audited rgb(228)–rgb(253) backdrop, and
+ * `--glass-tint-dark` to 0.72 after this very cap dropped a CTA to 2.64:1 (see
+ * the note below, which stays). Blur on top of an already-sufficient tint only
+ * ever makes what shows through flatter and calmer. **Do not lower either tint
+ * back now that the blur has returned** — they are contrast numbers, not
+ * decoration, and the frost is not permitted to be load-bearing again.
+ *
+ * ⚠️ THE PERFORMANCE ARGUMENT IS ANSWERED, NOT DISMISSED. The escape survives
+ * as `prefers-reduced-transparency`, which is the platform's own signal for
+ * exactly this — a reader who has asked their OS to cut transparency gets the
+ * flat tint, and every surface stays legible because of the paragraph above.
+ * `.rj-pane` already runs a blur across fifteen routes, so these surfaces are
+ * not the site's cost centre.
  */
-.glass,
-.glass-dark,
-[class*="backdrop-blur"] {
-  backdrop-filter: none;
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass-dark,
+  [class*="backdrop-blur"] {
+    backdrop-filter: none;
+  }
 }
 
 /**
@@ -3423,7 +3438,13 @@ header .glass,
   /* ⚠️ `background-color`, never the shorthand — the light-catch below is a
      `background-image` and the shorthand would reset it to `none`. Same trap
      the hail card hit. */
-  background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 40%, var(--color-canvas));
+  /* 🚨 THE MIX IS A VARIABLE NOW, DEFAULTING TO THE AUDITED 40% (2026-08-21).
+     A caller may lighten it — see `.rj-pane-flat` — and lightening is always
+     safe: every stop of the gloss above is white, and the ink re-scope below
+     was measured against the DEEPEST ground this class produces. A lower mix
+     moves the ground toward the canvas, so every ratio on the ledger can only
+     improve. ⚠️ Do NOT raise it past 40% without re-measuring `ink-soft`. */
+  background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) var(--rj-pane-mix, 40%), var(--color-canvas));
   /* 🚨 A GLOSSY GRADIENT, NOT A SINGLE TOP FADE (owner, 2026-08-19 evening:
      "the hues should have a glossy gradient glass finish as bg").
 
@@ -3458,6 +3479,39 @@ header .glass,
   backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
   box-shadow: var(--shadow-lift);
 
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE FLAT PANE — the hue and the frost without the card (owner 2026-08-21:
+   "all the hues, the homepage and all pages, the frosty glass stuff is gone.
+   bring them back").
+
+   🚨 IT EXISTS TO SETTLE TWO INSTRUCTIONS THAT LOOK OPPOSED AND ARE NOT.
+   Reports 10, 11 and 13 stripped the pane from five pages, and every one of
+   those complaints named the CARD rather than the colour: "remove the outer
+   rounded filter card, background and shadow", "remove the separate outer
+   card/container currently wrapping the property results", "remove the large
+   grey/blue outer card", "remove that card layout for the entire section and
+   just maintain the border line". Taking the card off took the hue, the gloss
+   and the backdrop-filter with it, because one class carried all four — and
+   that is what today's instruction is about.
+
+   So the card edges go and everything else stays: the ground, the specular,
+   the frost and the ink re-scope are untouched, the radius and the shadow are
+   dropped, and the gold hairline survives as a rule top and bottom — which is
+   literally report 10's own "just maintain the border line for the section
+   before and after".
+
+   ⚠️ IT MUST STAY A MODIFIER, never a second class. `.rj-pane` owns the
+   isolate, the gloss layers and the `> *` ink re-scope; a standalone twin
+   would have to restate all three and would drift the day either changes —
+   the same argument that retired `.rj-stage-band`.
+   ══════════════════════════════════════════════════════════════════════════ */
+.rj-pane-flat {
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+  box-shadow: none;
 }
 
 /**

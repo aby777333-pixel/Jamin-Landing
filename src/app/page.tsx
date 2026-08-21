@@ -9,7 +9,7 @@ import { Tilt } from "@/components/Tilt";
 import { IsoMark } from "@/components/cadastral/Engravings";
 import { PropertyCard } from "@/components/PropertyCard";
 import { PurposeExplorer } from "@/components/PurposeExplorer";
-import { ButtonLink, Container, SectionLabel } from "@/components/ui";
+import { ButtonLink, Container, Pane, SectionLabel } from "@/components/ui";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import {
   coverImage,
@@ -22,7 +22,7 @@ import {
   type Property,
 } from "@/lib/properties";
 import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
-import { STAGE_STONE } from "@/lib/stones";
+import { STAGE_STONE, paneHue } from "@/lib/stones";
 
 /** Revalidate hourly so admin edits reach the website without a redeploy,
  *  while every visitor still gets a cached, server-rendered page. */
@@ -190,7 +190,21 @@ export default async function HomePage() {
           The rules above and below are what the report asks to replace the
           card with, and they also put this band in step with "Find land near
           you" below, which already carries a pair. */}
-      <section className="border-y border-line bg-canvas">
+      {/* 🚨 THE HUE AND THE FROST RETURN AT A LIGHTER MIX (owner 2026-08-21:
+          "all the hues, the homepage and all pages, the frosty glass stuff is
+          gone. bring them back").
+
+          ⚠️ 24%, NOT THE STANDARD 40%, AND ONLY ON THIS PAGE. Home's hue is
+          `--color-vermilion` — the signal red — and at 40% over sand it makes
+          the salmon ground report 10 rejected three separate times ("remove
+          the large red/peach background", "the large peach/red outer
+          background", "the large salmon/red outer background"). Restoring it
+          at full strength would hand back the exact thing that was removed.
+          At 24% the colour and the glass are unmistakably present and the
+          ground is nowhere near that slab. Every other page keeps the audited
+          40%; lightening is always contrast-safe (see the mix note in
+          royal.css). */}
+      <Pane flat mix="24%" hue={paneHue("/")} as="section">
       <Container className="py-phi6">
         {/* Folio 01 + the gold fret thread (Gilded Register 3+6): the section
             indices of a bound document. Decoration only, `aria-hidden`. */}
@@ -258,7 +272,7 @@ export default async function HomePage() {
           ))}
         </dl>
       </Container>
-      </section>
+      </Pane>
 
       {/* ---- WHY JAMIN PROPERTIES (report 13, 2026-08-21) ----
           "Add a 'Why Jamin Properties' section after the existing 'Land is the
@@ -609,7 +623,11 @@ export default async function HomePage() {
           runs edge to edge on the page's own canvas; `border-y` is the
           report's rule above and below. */}
       {facets.districts.length > 0 && (
-        <section className="border-y border-line bg-canvas py-phi6">
+        /* The hue + frost band, at the homepage's lighter 24% mix — see the
+           note on the plotted-development band above. Report 10's "make this
+           full width on the page and maintain a border for the section above
+           and below" is exactly what `flat` draws. */
+        <Pane flat mix="24%" hue={paneHue("/")} as="section" className="py-phi6">
         <Container>
           {/* Same empty-right-half problem as the purpose section above, and the
               photograph the owner chose for it — a Jamin entrance wall with a
@@ -669,7 +687,7 @@ export default async function HomePage() {
           </div>
           <LocationExplorer items={all} />
         </Container>
-        </section>
+        </Pane>
       )}
 
       {/* ⚠️ NO "How buying works" rail here — one was BUILT in the do-all

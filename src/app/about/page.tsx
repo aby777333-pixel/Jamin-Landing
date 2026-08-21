@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Container, SectionLabel } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { CallbackBand } from "@/components/CallbackBand";
@@ -82,9 +83,13 @@ export default async function AboutPage() {
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
       />
-      {/* 🚨 NO PANE (report 11, 2026-08-21: "Remove the large grey/blue outer
-          card wrapping the entire section… make the page look cleaner, more
-          spacious"). The canopy pane is what read as the grey/blue card. */}
+      {/* 🚨 THE CANOPY HUE AND THE FROST ARE BACK AS A BAND (owner 2026-08-21).
+          Report 11 asked to "remove the large grey/blue outer card wrapping
+          the entire section" — and the card is still gone: `flat` drops the
+          radius, the side borders and the shadow and keeps the ground, the
+          gloss and the backdrop-filter, so the page stays "cleaner, more
+          spacious" while the hue returns. */}
+      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/about") } as React.CSSProperties}>
       <Container className="py-phi5">
 
       {/* 🚨 THE LEDGER PANEL — figures computed from the live database, never
@@ -260,6 +265,7 @@ export default async function AboutPage() {
         </Link>
       </section>
       </Container>
+      </div>
       {/* ⚠️ THE hero-53 DIVIDER IS GONE (owner 2026-08-18 second report:
           "hide the image"). It began as a crop band, became a full-frame band
           the same morning, and at the artwork's own ratio it read as a second

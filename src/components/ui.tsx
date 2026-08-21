@@ -57,16 +57,38 @@ export function Pane({
   hue,
   className = "",
   as: Tag = "div",
+  flat = false,
+  mix,
 }: {
   children: ReactNode;
   route?: string;
   hue?: string;
   className?: string;
   as?: "div" | "section";
+  /**
+   * 🚨 THE HUE AND THE FROST WITHOUT THE CARD (owner 2026-08-21: "all the
+   * hues… the frosty glass stuff is gone. bring them back").
+   *
+   * Five pages had the pane stripped in reports 10, 11 and 13 — and every one
+   * of those complaints named the outer CARD, not the colour. Because one
+   * class carried the card edges AND the hue AND the gloss AND the
+   * backdrop-filter, removing the first removed all four. `flat` keeps the
+   * ground, the specular and the frost and drops only the radius, the side
+   * borders and the shadow, leaving a gold rule above and below — which is
+   * report 10's own "just maintain the border line for the section before and
+   * after". Pair it with a full-bleed wrapper so it reads as a band.
+   */
+  flat?: boolean;
+  /**
+   * Overrides the ground's tint, e.g. `"24%"`. ⚠️ LOWER ONLY. The audited
+   * default is 40% and the ink re-scope was measured against it; a lighter
+   * ground can only improve those ratios, a heavier one invalidates them.
+   */
+  mix?: string;
 }) {
   return (
     <Tag
-      className={`rj-pane ${className}`}
+      className={`rj-pane ${flat ? "rj-pane-flat" : ""} ${className}`}
       /* 🚨 UNDEFINED WHEN NEITHER IS GIVEN — it must INHERIT, not default.
          This shipped as `hue ?? paneHue(route ?? "/")`, which meant a bare
          <Pane> wrote the HOME hue onto itself and beat the `--rj-hue` its
@@ -74,8 +96,17 @@ export function Pane({
          salmon instead of canopy and it looked like the route map was wrong
          when the map was right. An inline style beats the cascade, so writing
          a fallback here is writing an override. */
+      /* ⚠️ `--rj-pane-mix` rides the SAME style object. Two `style` attributes
+         on one element is not a merge — JSX keeps the last and silently drops
+         the first, which is the trap the homepage's stage cards already
+         record. Both properties are written here or neither is. */
       style={
-        hue || route ? ({ "--rj-hue": hue ?? paneHue(route!) } as CSSProperties) : undefined
+        hue || route || mix
+          ? ({
+              ...(hue || route ? { "--rj-hue": hue ?? paneHue(route!) } : {}),
+              ...(mix ? { "--rj-pane-mix": mix } : {}),
+            } as CSSProperties)
+          : undefined
       }
     >
       {children}

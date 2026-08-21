@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
 import { PageHero } from "@/components/PageHero";
 import { Container } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 
@@ -98,16 +99,21 @@ export default async function PropertiesPage() {
           </>
         }
       />
-      {/* 🚨 NO PANE ON THIS BODY (report 10, 2026-08-21: "Remove the outer
-          rounded filter card, background and shadow. Place every thing
-          directly on the page background… Maintain: warm cream background").
-          The emerald pane came off with the filter card it framed; the whole
-          explorer sits on the page's own canvas now. */}
+      {/* 🚨 THE HUE AND THE FROST ARE BACK, THE CARD IS NOT (owner 2026-08-21:
+          "all the hues… the frosty glass stuff is gone. bring them back").
+
+          Report 10 asked to "remove the outer rounded filter card, background
+          and shadow" and the emerald pane came off with it — taking the hue,
+          the gloss and the backdrop-filter, which is what is now missed. The
+          `flat` pane returns all three without the rounded card: a full-bleed
+          band, gold rule above and below. Both instructions hold. */}
+      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/properties") } as React.CSSProperties}>
       <Container className="py-phi5">
       {/* The full list is rendered server-side; the filters narrow it after
           hydration, so the static HTML a crawler receives is complete. */}
         <PropertyExplorer all={all} />
       </Container>
+      </div>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

@@ -554,7 +554,15 @@ export function Hero({
                      ALREADY CLICKABLE AND DID NOT LOOK IT — reported
                      2026-08-14 as "just looking project name". The hit area
                      never changed; what was missing was any mark saying so. */
-                  className="group flex min-w-[15rem] shrink-0 items-center gap-3 rounded-xl border border-line bg-canvas p-2 shadow-lift transition-all duration-300 hover:-translate-y-0.5 hover:border-jamin-gold hover:shadow-raise sm:min-w-0 sm:flex-1 sm:shrink"
+                  /* 🚨 `glass rj-crystal`, NOT `bg-canvas` (owner 2026-08-21:
+                     "the frosty glass stuff is gone. bring them back"). The
+                     report-13 rebuild turned the shared glass tray into
+                     individual cards — which was the ask — but painted them on
+                     flat canvas, so the hero lost the one frosted surface it
+                     had. The card SHAPE report 13 asked for is untouched; only
+                     the fill returns to the audited glass (0.90 ivory tint +
+                     blur + saturation) with `rj-crystal`'s lit top edge. */
+                  className="glass rj-crystal group flex min-w-[15rem] shrink-0 items-center gap-3 rounded-xl p-2 transition-all duration-300 hover:-translate-y-0.5 hover:border-jamin-gold hover:shadow-raise sm:min-w-0 sm:flex-1 sm:shrink"
                 >
                   {/* 64x96, up from 48x72 — the report's "larger images".
                       `sizes` follows it or the browser keeps fetching the old

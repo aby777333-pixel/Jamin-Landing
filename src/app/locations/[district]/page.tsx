@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { PropertyExplorer } from "@/components/PropertyExplorer";
 import { Container } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 import { getProperties, isSellable } from "@/lib/properties";
 import { districtFromSlug, districtNames, districtSlug } from "@/lib/site";
@@ -245,10 +246,13 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           a reader here is already thinking in districts. */}
       <ThumbIndex districts={districtNames(await getProperties())} current={name} />
 
-      {/* 🚨 NO PANE (report 11, 2026-08-21: "Remove the separate outer
-          card/container currently wrapping the property results. Property
-          results should sit directly within the main page layout" — asked
-          for every location page). */}
+      {/* 🚨 THE HUE AND THE FROST ARE BACK AS A BAND (owner 2026-08-21). Report
+          11 asked to "remove the separate outer card/container currently
+          wrapping the property results" — the card, not the colour, but one
+          class carried both. The `flat` pane restores the warm ground, the
+          gloss and the backdrop-filter with no rounded container: the results
+          still "sit directly within the main page layout". */}
+      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/locations") } as React.CSSProperties}>
       <Container className="py-phi5">
         <div className="flex items-start justify-between gap-4">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-muted">
@@ -277,6 +281,7 @@ export default async function DistrictPage({ params }: PageProps<"/locations/[di
           <PropertyExplorer all={items} />
         </div>
       </Container>
+      </div>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a

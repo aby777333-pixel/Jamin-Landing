@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { PlanningTools } from "@/components/PlanningTools";
 import { Container, SectionLabel } from "@/components/ui";
+import { paneHue } from "@/lib/stones";
 import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
@@ -72,13 +73,13 @@ export default function ToolsPage() {
         title="Work out what it costs before you visit."
         lead="Four calculators, using your figures rather than ours. Jamin publishes no rate — every number below is one you enter, and nothing here is an offer of finance."
       />
-      {/* 🚨 NO PANE (report 12, 2026-08-21: "the EMI, Loan Eligibility,
-          Purchase Cost and Rental Yield tabs are currently placed inside a
-          large empty peach/pink area"). That area was the ruby pane — the
-          tabs are four small pills, so a full-width tinted card around them
-          was mostly empty by construction. The page's own canvas carries
-          them now, the same de-carding reports 10 and 11 asked for on the
-          home, properties, locations and about pages. */}
+      {/* 🚨 THE RUBY HUE AND THE FROST ARE BACK AS A BAND (owner 2026-08-21).
+          Report 12's complaint was a "large EMPTY peach/pink area" — the
+          emptiness, not the colour: the pane was a full-width tinted CARD
+          around four small pills. It now wraps the heading, the lead, the
+          tabs AND all four calculators, so there is no empty area left, and
+          `flat` means it reads as a band rather than a card. */}
+      <div className="rj-pane rj-pane-flat" style={{ "--rj-hue": paneHue("/tools") } as React.CSSProperties}>
       <Container className="py-phi6">
       {/* 🚨 A HEADING OVER THE NAV (same report: "there is no clear heading
           explaining what these options represent. Add a clear heading above
@@ -126,6 +127,7 @@ export default function ToolsPage() {
         </Link>
       </div>
       </Container>
+      </div>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who
           would rather be called — the form is the only half that becomes a
