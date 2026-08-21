@@ -35,9 +35,42 @@ import { useSyncExternalStore } from "react";
    ⚠️ evening.png arrived in the same batch and is deliberately NOT wired —
    the instruction keeps hero-61 as the dusk identity; the file waits in
    Downloads as a spare. */
+/**
+ * 🚨 THE DAY FRAME'S CROP CARRIES TWO REPORT-12 FIXES, AND THEY ACT AT
+ * DIFFERENT VIEWPORTS — which is why one value can satisfy both (2026-08-21).
+ *
+ * hero-75 is 1774x887 (2:1) in a box that is 100svh less the header. Whether
+ * `cover` crops the SIDES or the TOP AND BOTTOM depends entirely on whether
+ * that box is narrower or wider than 2:1, and each complaint lives on one side
+ * of that line:
+ *
+ * · "the hero image is currently cropped too much at the bottom… a small
+ *   amount of cropping from the top is acceptable" (priority High). Measured at
+ *   1920x900: the box is 2.33:1, so the frame is WIDTH-bound, scales to 955px
+ *   tall in an 820px box, and 135px of height is discarded. At the old 30% that
+ *   was 40px off the top and 95px off the bottom — the brick forecourt, which
+ *   is the foreground the composition stands on. At 70% it is 95 off the top
+ *   and 41 off the bottom. The top can afford it: the arch beam carrying the
+ *   lockup sits at 20–34% of the frame and 95px is 9.9% of it, so the beam
+ *   keeps a full 10% of headroom.
+ *
+ * · "adjust the hero image position/crop so the JAMIN SOULFUL signage stays on
+ *   the right side". Measured at 1440x900: the box is 1.744:1, so the frame is
+ *   HEIGHT-bound, scales to 1640px wide in a 1430px box, and 210px of width is
+ *   discarded. The signage runs 36.3%–68.8% of the source, so anchoring the
+ *   crop at the LEFT edge (0%) walks it 105px to the right — the entire travel
+ *   the geometry has. The price is the rightmost 12.8% of the frame, which
+ *   holds the "Welcome to a Life Well Planned" plaque and no brand mark.
+ *
+ * ⚠️ 105px IS ALL THE CROP CAN GIVE, AND IT IS NOT ENOUGH ON ITS OWN. Solved
+ * rather than eyeballed: the plate's right edge sits at screen x 691 and the
+ * signage's left edge lands at 595 even at 0%, so clearing it by crop alone
+ * needs an object-position of −45%, which does not exist. That is why the copy
+ * plate's alpha moved with this change (see Hero.tsx) — the two are one fix.
+ */
 const FRAMES = {
   dawn: { id: "78", w: 1774, pos: "50% 30%" },
-  day: { id: "75", w: 1774, pos: "50% 30%" },
+  day: { id: "75", w: 1774, pos: "0% 70%" },
   dusk: { id: "61", w: 1581, pos: "50% 0%" },
   night: { id: "59", w: 1774, pos: "50% 30%" },
   midnight: { id: "79", w: 1840, pos: "50% 40%" },

@@ -277,8 +277,22 @@ export function PlanningTools() {
             bottom region is the disclaimer's breathing room rather than a
             gap. Same teal border — a calculator's answer is a resolved
             fact. */}
+        {/* 🚨 THE CARD IS CONTENT-HEIGHT NOW (report 12, 2026-08-21: "the
+            right result card has too much empty space… reduce the card height
+            and remove unnecessary empty space… bring the loan amount,
+            instalment and disclaimer closer together. Give the main loan
+            amount stronger visual emphasis").
+
+            The 2026-08-18 build answered the same complaint the other way:
+            the grid stretches this cell to the five-field form beside it, so
+            the card was made to SPEND that height with `mt-auto` pushing the
+            disclaimer to the foot. That trades a slab of empty border for a
+            gap in the middle — which is what the owner is now looking at.
+            `lg:self-start` refuses the stretch instead, so the card is as
+            tall as what it says and there is no space left to distribute.
+            The figure takes the room it gives back (`text-4xl`). */}
         <div
-          className="mt-phi4 flex flex-col rounded-xl border p-phi3 lg:mt-0"
+          className="mt-phi4 flex flex-col rounded-xl border p-phi4 lg:mt-0 lg:self-start"
           style={{
             borderColor: "var(--color-canopy)",
             background: "color-mix(in srgb, var(--color-canopy) 7%, var(--color-canvas-alt))",
@@ -287,18 +301,20 @@ export function PlanningTools() {
           <p className="text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint">
             Indicative loan amount
           </p>
-          <p className="ledger mt-2 text-3xl font-semibold text-canopy">{inr(eligible)}</p>
+          <p className="ledger mt-2 text-4xl font-semibold leading-none text-canopy">
+            {inr(eligible)}
+          </p>
           {words(eligible) ? (
-            <p className="mt-1 text-tiny text-ink-faint">≈ {words(eligible)}</p>
+            <p className="mt-2 text-tiny text-ink-faint">≈ {words(eligible)}</p>
           ) : null}
           <div className="mt-phi3 flex items-baseline justify-between gap-4 border-t border-line pt-phi3">
             <span className="text-base text-ink-muted">Instalment it assumes</span>
             <span className="ledger text-xl text-ink">{inr(maxEmi)}</span>
           </div>
-          {/* `mt-phi3` is the phone gap, where the column is content-sized and
-              `auto` would collapse to zero; from `lg` the stretch is real and
-              `mt-auto` is what anchors the foot. */}
-          <p className="mt-phi3 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint lg:mt-auto">
+          {/* No `mt-auto`: with the card content-height there is no free space
+              to anchor against, and the disclaimer sits where it reads — one
+              rule under the figure it qualifies. */}
+          <p className="mt-phi3 border-t border-line pt-phi3 text-tiny leading-relaxed text-ink-faint">
             Indicative only, and not an offer of finance. A lender decides on your credit record,
             employment, the property&rsquo;s own papers and its own policy — Jamin Bazaar does not
             lend and does not arrange loans.

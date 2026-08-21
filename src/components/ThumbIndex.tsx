@@ -1,28 +1,46 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { districtSlug } from "@/lib/site";
 import { DISTRICT_STONE, STONE_FALLBACK } from "@/lib/stones";
 
 /**
- * The thumb index: a ledger's cut tabs down the fore-edge, so a reader can go
- * straight to a district without going back through a menu.
+ * The district rail: a shortcut to the other districts, pinned to the right
+ * margin, so a reader can go straight to one without going back through a menu.
  *
  * It is the one navigation object that suits this site's shape exactly — four
- * districts, a fixed set that does not grow with the catalogue, which is
- * precisely when a thumb index works and precisely why it fails on a site with
- * forty sections.
+ * districts, a fixed set that does not grow with the catalogue.
  *
- * ⚠️ `xl` AND UP ONLY, and not because narrow screens are an afterthought.
- * Below that the rail would sit over the measure; a physical thumb index lives
- * on the margin outside the text block, and there is no margin to spare on a
- * phone. The districts are already in the header's Locations panel and in the
- * footer at every width, so nothing is lost — this is a shortcut, never the
- * only path.
+ * 🚨 IT WAS A FORE-EDGE THUMB INDEX AND IT IS A PANEL NOW (report 12,
+ * 2026-08-21: "the right-side district sidebar is being clipped. All district
+ * options are not fully visible, and the sidebar is squeezed into a very narrow
+ * vertical area. The district names are also displayed vertically, making the
+ * filter difficult to read and use. Expected: the complete district filter
+ * should be clearly visible as a proper right-side sticky panel").
  *
- * ⚠️ `aria-hidden` is WRONG here and was my first instinct. These are real
- * navigation links to real pages; hiding them would take four routes away from
- * a keyboard or screen-reader user to save them a duplicate. It is a labelled
- * `<nav>` with `aria-current` on the active tab instead — the duplication is
- * the honest cost of a shortcut.
+ * The ledger-tab metaphor was the problem, not its implementation. Cut tabs are
+ * 56px wide with the label set on its side, so "Tiruchirappalli" ran 130px of
+ * vertical type up a tab flush to the window edge — and at a shorter viewport
+ * the four tabs, centred as a group, ran past the top and bottom of the screen
+ * with no way to reach them. Every failure the report lists follows from
+ * turning the words on their side.
+ *
+ * So the names read horizontally in a real panel: a bordered card on the right
+ * margin with a heading, one row per district, the district's stone as a dot
+ * and the active row filled. `max-h` + `overflow-y-auto` means a fifth and
+ * sixth district scroll INSIDE the panel instead of off the screen — the
+ * clipping the report describes cannot come back by adding data.
+ *
+ * ⚠️ `xl` AND UP ONLY, unchanged and for the unchanged reason: below that there
+ * is no margin outside the measure to put it in. The districts are in the
+ * header's Locations panel and in the footer at every width, so nothing is
+ * lost — this is a shortcut, never the only path.
+ *
+ * ⚠️ `aria-hidden` is WRONG here. These are real navigation links to real
+ * pages; hiding them would take four routes away from a keyboard or
+ * screen-reader user to save them a duplicate. It is a labelled `<nav>` with
+ * `aria-current` on the active row instead.
  *
  * ⚠️ `fixed`, so it must clear the sticky header — `--header-h` is the token
  * that owns that, never a guessed pixel value.
@@ -34,82 +52,98 @@ export function ThumbIndex({
   districts: string[];
   current?: string | null;
 }) {
+  /**
+   * 🚨 IT STAYS OFF THE HERO (report 12, 2026-08-21, filed against the Salem
+   * page as "the Jamin Bazaar branding/signage in the hero image is partially
+   * covered by the hero content/overlay… the logo and JAMIN BAZAAR text on the
+   * right side are not clearly visible").
+   *
+   * ⚠️ THE OVERLAY WAS THIS COMPONENT, NOT THE HERO'S OWN COPY PLATE. Measured
+   * on the built page at 1440x900: hero-58's wall lockup lands at screen
+   * 1109–1391 and the plate ends at 723, so the plate never touches it — but
+   * the district rail is pinned to the right margin at the viewport's vertical
+   * centre, which on a `tall` hero is inside the hero. It was sitting directly
+   * on the lockup. Re-cropping the frame would have "fixed" a symptom whose
+   * cause is a different element entirely.
+   *
+   * So the rail waits: nothing is drawn until the reader has scrolled a
+   * viewport-ish distance, by which point the hero is behind them and the rail
+   * is over the listing it belongs to. That also answers the shortcut's own
+   * logic — it is for jumping between districts once you are reading one, and
+   * before the first scroll there is nothing to jump from.
+   *
+   * ⚠️ A passive scroll listener, the pattern HeaderShell already uses, and
+   * `useState` initialised FALSE so the server render and the first client
+   * render agree. It re-reads on mount, so a reader who lands deep-linked
+   * mid-page (or restores a scroll position) gets the rail immediately.
+   */
+  const [past, setPast] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setPast(window.scrollY > window.innerHeight * 0.75);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   if (districts.length < 2) return null;
 
   return (
     <nav
       aria-label="Districts"
-      className="fixed right-0 z-20 hidden -translate-y-1/2 flex-col gap-2 xl:flex"
-      style={{ top: "calc(var(--header-h) + 50vh - var(--header-h) / 2)" }}
+      /* ⚠️ `print:hidden` — a fixed panel would stamp itself over the sheet. */
+      className={`fixed right-4 top-1/2 z-20 hidden w-48 -translate-y-1/2 overflow-hidden rounded-card border border-line bg-canvas/95 shadow-lift backdrop-blur transition-opacity duration-500 print:hidden xl:block ${
+        past ? "opacity-100" : "pointer-events-none opacity-0"
+      }`}
+      /* The panel can never be taller than the space between the header and
+         the foot of the window; past that it scrolls itself. */
+      style={{ maxHeight: "calc(100vh - var(--header-h) - 4rem)" }}
     >
-      {districts.map((d) => {
-        const active = current?.toLowerCase() === d.toLowerCase();
-        /* CARTOUCHE round 2026-08-17 — "color code all the tabs". Each tab
-           carries its DISTRICT STONE, the same colour its filter pill and its
-           card jewellery already wear, so the fore-edge reads as a colour-coded
-           register. The stone is the TINT and the EDGE BAR, never the word —
-           the stones are illegible as 10px labels (see lib/stones.ts); the
-           label stays ink. */
-        const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
-        return (
-          <Link
-            key={d}
-            href={`/locations/${districtSlug(d)}`}
-            aria-current={active ? "page" : undefined}
-            /* The tab is rounded on its OUTER edge only and flush to the
-               viewport edge — a cut tab is part of the page, not a floating
-               pill beside it. `writing-mode` sets the label up the tab the way
-               a spine does; `rotate-180` on the vertical text makes it read
-               bottom-to-top, which is the direction a right-hand edge is read. */
-            /* ⚠️ `min-h-[44px]` and a 44px-wide box: these are the smallest
-               targets added in this round and WCAG 2.5.8's floor is 44x44. The
-               label is vertical, so height comes from the text and only the
-               WIDTH needed asserting — `pl-2.5 pr-2` plus the border lands it
-               at 44 exactly. */
-            /* ⚠️ REWORKED 2026-08-17 late — reported: "the place tabs are not
-               visible and not aligned or spaced or colorized properly". Three
-               fixes together: the wash mixes with the CANVAS again (over a
-               photograph a transparent wash disappeared entirely — the blur
-               stays for the frosted read, but the tab needs its own paper);
-               every tab is the same fixed width (`w-11 justify-center`) so the
-               column aligns; and the label sets in full ink at 600 with
-               breathing room, never the faint. */
-            /* ⚠️ CLEANED 2026-08-17 latest — reported: "the text touches the
-               border", and the cause is a TRAP: Tailwind 4's `py-*` is
-               `padding-block`, and in a `vertical-rl` element the block axis
-               runs HORIZONTALLY — the old `py-6` was silently padding the
-               tab's sides (24px each into a 48px fixed width, overflowing it)
-               while the label's ends sat 1px off the rounded corners. The
-               padding is now a PHYSICAL inline style, which no writing mode
-               remaps: 24px at the label's ends, 6px against the stone
-               edge-bar, 12px on the far side (padding and bar rotate
-               together, so they stay adjacent). `w-14` gives the glyph column
-               air on both long edges, and the border's stone mix comes up
-               45→60% so the edge draws cleanly over any photograph. NEVER put
-               a px/py utility back on this element. */
-            className={`rj-deboss flex w-14 min-h-[44px] items-center justify-center rounded-l-lg border border-r-0 font-semibold text-micro uppercase tracking-brand transition-all hover:w-[3.75rem] ${
-              active ? "text-ink" : "text-ink-soft hover:text-ink"
-            }`}
-            style={{
-              writingMode: "vertical-rl",
-              rotate: "180deg",
-              padding: "24px 12px 24px 6px",
-              background: `color-mix(in srgb, ${stone} ${active ? 30 : 14}%, var(--color-canvas))`,
-              /* ⚠️ The site blur and the site saturation (do-all round, menu
-                 item 8). It was `blur(8px)` with no saturation, which over a
-                 photograph reads as fog — the saturation, not the
-                 transparency, is what makes a surface read as glass. The
-                 tab's own `color-mix` ground is unchanged, so the stone key
-                 and every contrast ratio on it hold. */
-              backdropFilter: "blur(18px) saturate(1.4)",
-              boxShadow: `inset 3px 0 0 0 ${stone}, 0 6px 18px -8px rgba(41,31,21,0.35)`,
-              borderColor: `color-mix(in srgb, ${stone} 60%, var(--color-line))`,
-            }}
-          >
-            {d}
-          </Link>
-        );
-      })}
+      <p className="border-b border-line px-phi2 py-2 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
+        Districts
+      </p>
+      <ul className="max-h-[inherit] overflow-y-auto p-1.5">
+        {districts.map((d) => {
+          const active = current?.toLowerCase() === d.toLowerCase();
+          /* CARTOUCHE round 2026-08-17 — "color code all the tabs". Each row
+             carries its DISTRICT STONE, the same colour its filter pill and its
+             card jewellery already wear, so the rail reads as a colour-coded
+             register. The stone is the DOT and the wash, never the word — the
+             stones are illegible as 10px labels (see lib/stones.ts); the label
+             stays ink. */
+          const stone = DISTRICT_STONE[d] ?? STONE_FALLBACK;
+          return (
+            <li key={d}>
+              <Link
+                href={`/locations/${districtSlug(d)}`}
+                aria-current={active ? "page" : undefined}
+                /* `min-h-[44px]` — WCAG 2.5.8's floor, which the old vertical
+                   tab met by accident of its text length and this meets by
+                   construction. */
+                className={`flex min-h-[44px] items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-tiny font-semibold transition-colors ${
+                  active ? "text-ink" : "text-ink-soft hover:text-ink"
+                }`}
+                style={{
+                  background: active
+                    ? `color-mix(in srgb, ${stone} 18%, transparent)`
+                    : undefined,
+                  boxShadow: active ? `inset 3px 0 0 0 ${stone}` : undefined,
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ background: stone, opacity: active ? 1 : 0.55 }}
+                />
+                {/* The name reads across, which is the whole fix. `truncate`
+                    is the backstop for a district longer than any in the
+                    catalogue; at 12rem of row "Tiruchirappalli" fits. */}
+                <span className="truncate">{d}</span>
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
     </nav>
   );
 }

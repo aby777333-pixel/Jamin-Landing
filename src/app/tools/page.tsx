@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { PlanningTools } from "@/components/PlanningTools";
-import { Container, Pane } from "@/components/ui";
-import { paneHue } from "@/lib/stones";
+import { Container, SectionLabel } from "@/components/ui";
 import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
@@ -73,15 +72,23 @@ export default function ToolsPage() {
         title="Work out what it costs before you visit."
         lead="Four calculators, using your figures rather than ours. Jamin publishes no rate — every number below is one you enter, and nothing here is an offer of finance."
       />
-      <Container className="py-phi6" hue={paneHue("/tools")}>
-      {/* ⚠️ ONE pane for the page body, not one per element (owner
-          2026-08-19). Converting the bordered elements instead would have
-          tinted the CARDS too, and the cards are what has to stay on
-          `bg-canvas` so they lift off the sheet — that lift is half of
-          what the hue buys. The colour itself is stated once, on the
-          Container above, and every `.rj-pane` inside inherits it. */}
-      <Pane className="p-phi3 sm:p-phi5">
-      <nav aria-label="Tools" className="flex flex-wrap gap-2">
+      {/* 🚨 NO PANE (report 12, 2026-08-21: "the EMI, Loan Eligibility,
+          Purchase Cost and Rental Yield tabs are currently placed inside a
+          large empty peach/pink area"). That area was the ruby pane — the
+          tabs are four small pills, so a full-width tinted card around them
+          was mostly empty by construction. The page's own canvas carries
+          them now, the same de-carding reports 10 and 11 asked for on the
+          home, properties, locations and about pages. */}
+      <Container className="py-phi6">
+      {/* 🚨 A HEADING OVER THE NAV (same report: "there is no clear heading
+          explaining what these options represent. Add a clear heading above
+          the navigation: for example PROPERTY FINANCE TOOLS"). */}
+      <SectionLabel>Property finance tools</SectionLabel>
+      <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">
+        Jump to the calculator you need — each one works on its own, and they
+        share nothing but your figures.
+      </p>
+      <nav aria-label="Tools" className="mt-phi3 flex flex-wrap gap-2">
         {[
           ["#emi", "EMI"],
           ["#eligibility", "Loan eligibility"],
@@ -118,7 +125,6 @@ export default function ToolsPage() {
           Ask the desk instead →
         </Link>
       </div>
-      </Pane>
       </Container>
       {/* The desk, on a page that otherwise ends without one. Links for
           someone who wants to act now, and a three-field form for someone who

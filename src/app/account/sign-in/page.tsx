@@ -52,8 +52,46 @@ const REASONS = [
   },
 ];
 
-export default async function SignInPage() {
+/**
+ * 🚨 WHERE SIGN-IN MAY SEND YOU AFTERWARDS (report 12, 2026-08-21, the
+ * shortlist gate: "after successful sign-in, return the user to the same
+ * property and allow them to shortlist it").
+ *
+ * The old note here said `next` deliberately is NOT read from the query string,
+ * because "an open redirect on a sign-in page is a phishing primitive". That
+ * reasoning is right and it is preserved by CONSTRUCTION rather than by
+ * refusing the feature: this returns a value only for a path that begins with a
+ * single "/" and matches one of the shapes below, so nothing off this origin
+ * can ever be reached. Everything else — an absolute URL, a protocol-relative
+ * `//evil.example`, a backslash, an unknown route — falls back to `/account`.
+ *
+ * ⚠️ `//` IS THE ATTACK AND IT LOOKS LIKE A PATH. `//evil.example/x` starts
+ * with "/" and is a protocol-relative URL that leaves this origin; the second
+ * character has to be checked explicitly. Same for `/\evil.example`, which some
+ * engines normalise to the same thing.
+ */
+const RETURNABLE = [
+  /^\/$/,
+  /^\/property\/[^/?#]+$/,
+  /^\/properties$/,
+  /^\/locations\/[^/?#]+$/,
+  /^\/projects(\/[^/?#]+)?$/,
+  /^\/compare$/,
+];
+
+function safeNext(raw: string | string[] | undefined): string {
+  const v = Array.isArray(raw) ? raw[0] : raw;
+  if (!v || v.length > 200) return "/account";
+  if (!v.startsWith("/") || v.startsWith("//") || v.startsWith("/\\")) return "/account";
+  // Compare the PATH only; a query string is not part of what is allowlisted
+  // and is carried through untouched once the path itself is known-good.
+  const path = v.split(/[?#]/)[0];
+  return RETURNABLE.some((re) => re.test(path)) ? v : "/account";
+}
+
+export default async function SignInPage({ searchParams }: PageProps<"/account/sign-in">) {
   const facets = await getNavFacets();
+  const next = safeNext((await searchParams)?.next);
   const { developments, selling, plotsAvailable } = facets.totals;
 
   /* Icons per the 2026-08-17 report's own mapping: Developments → building,
@@ -107,9 +145,10 @@ export default async function SignInPage() {
             restoring the column wrappers collapses the page to a single
             stack. */}
         <div className="grid gap-phi4 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.85fr)] lg:grid-rows-[auto_auto] lg:gap-phi5">
-          {/* `next` deliberately is NOT read from the query string. An open
-              redirect on a sign-in page is a phishing primitive, and the only
-              place a buyer needs to land afterwards is their own account. */}
+          {/* `next` comes from the query string but only through `safeNext`
+              above — same-origin paths of known shapes, everything else lands
+              on /account. See the note there for why that keeps the original
+              open-redirect refusal intact. */}
           {/* ⚠️ The left column is a COLUMN now, not just the form. The report's
               words: the picture below the account information "creates
               additional vertical length and leaves the left side
@@ -124,7 +163,7 @@ export default async function SignInPage() {
               trailing off the bottom where nobody scrolls to. */}
           <div className="flex flex-col lg:col-start-1 lg:row-start-1">
             <Suspense fallback={null}>
-              <SignInForm next="/account" />
+              <SignInForm next={next} />
             </Suspense>
           </div>
 

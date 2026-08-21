@@ -361,7 +361,25 @@ export function PropertyCard({
               <div key={f.label} className={`min-w-0 ${i === 0 ? "pr-phi2" : "px-phi2"} last:pr-0`}>
                 {/* ⚠️ §8: an availability count never turns gold. A number that
                     sells itself stops being a number. */}
-                <dd className={`ledger truncate text-lg ${f.verified ? "text-canopy" : "text-ink"}`}>
+                {/* 🚨 NO `truncate` ON THE VALUE, AND A STEP SMALLER (report 12,
+                    2026-08-21: "the property card is showing values like
+                    '3.33 a…' and '26,72…' even though there is unused space
+                    below the information… reduce the font size slightly for
+                    the Extent / Plots / Available values. Allow the full
+                    information to fit within the existing card width. Do not
+                    use … when the content can fit naturally").
+
+                    The clamp was doing real work at `text-lg`: in a third of a
+                    360px card, "26,727 sqft" and "3.33 acres" both overrun, so
+                    the ellipsis was hiding the UNIT — the one part of a
+                    measurement that cannot be guessed. At `text-base` they fit,
+                    and where a future value still does not, it now WRAPS to a
+                    second line inside a cell that has the room (the card's
+                    facts strip is followed by a rule, not by content). The
+                    strip's cells are equal-width and stretch together, so one
+                    wrapped value lifts its neighbours' baselines with it
+                    rather than breaking the row. */}
+                <dd className={`ledger text-base leading-snug ${f.verified ? "text-canopy" : "text-ink"}`}>
                   {f.value}
                 </dd>
                 <dt className="ledger-label truncate">{f.label}</dt>

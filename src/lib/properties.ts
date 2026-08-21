@@ -480,12 +480,36 @@ export function formatArea(p: Property): string | null {
  * one: `26,727 sqft` groups with a comma today, but `en-IN` uses a thin space
  * for some locales and a naive `split(" ")[0]` would print "26" on that day.
  */
+/**
+ * 🚨 IT SPLITS ON THE NON-BREAKING SPACE TOO, AND THAT IS THE WHOLE FUNCTION
+ * (report 12, 2026-08-21: "the property card is showing values like '3.33 a…'
+ * and '26,72…' even though there is unused space below the information").
+ *
+ * ⚠️ A LATENT REGRESSION FROM THE NBSP ROUND, not a sizing problem. This split
+ * was written against a regular space; `formatArea` was then changed to join a
+ * figure to its unit with `&nbsp;` (the micro-detail round, so a measurement
+ * can never break across a line). `lastIndexOf(" ")` stopped matching from that
+ * day, every area fell into the `i < 0` branch, and the card got value "3.33
+ * acres" with the label "Extent" instead of value "3.33" with the label
+ * "ACRES" — which is the arrangement PropertyCard's own comment describes and
+ * the reason its facts strip is built the way it is.
+ *
+ * The visible symptom was the ellipsis: a whole "26,727 sqft" cannot fit a
+ * 63px cell at any readable size, so the clamp ate the UNIT — the one part of
+ * a measurement a reader cannot infer. Split correctly, the figure is six
+ * characters and the unit is the label, and nothing needs truncating at all.
+ *
+ * ⚠️ Match ANY whitespace rather than the NBSP literally: `lib/units.ts` and
+ * `formatArea` are two separate choke points for these strings (both recorded
+ * in the project notes), and a third formatter joining with a thin space would
+ * reopen exactly this bug. `\s` in JS does not match ` `, so it is named.
+ */
 export function areaParts(p: Property): { value: string; unit: string } | null {
   const s = formatArea(p);
   if (!s) return null;
-  const i = s.lastIndexOf(" ");
-  if (i < 0) return { value: s, unit: "" };
-  return { value: s.slice(0, i), unit: s.slice(i + 1) };
+  const m = /^(.*)[\s ]+(\S+)$/.exec(s);
+  if (!m) return { value: s, unit: "" };
+  return { value: m[1], unit: m[2] };
 }
 
 export function locationLine(p: Property): string {

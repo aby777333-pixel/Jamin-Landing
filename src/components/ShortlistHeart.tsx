@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useSyncExternalStore } from "react";
+import { browserClient } from "@/lib/supabase-browser";
 import {
   getServerShortlist,
   getShortlist,
@@ -15,21 +17,67 @@ import {
  * ⚠️ The mark is DRAWN, stroke-only, per the SurveyIcon discipline — filled
  * red when kept, outline when not. `aria-pressed` + a real label so it reads
  * as the toggle it is.
+ *
+ * 🚨 IT ASKS FOR A SIGN-IN BEFORE IT KEEPS ANYTHING (report 12, 2026-08-21:
+ * "the Shortlist action is visible and appears usable even when the user is not
+ * signed in… when an unauthenticated user clicks the heart / Shortlist button,
+ * show a clear Sign in to shortlist prompt or redirect the user to the sign-in
+ * page. After successful sign-in, return the user to the same property and
+ * allow them to shortlist it").
+ *
+ * ⚠️ THE SESSION IS CHECKED ON CLICK, NEVER ON RENDER, and that is the whole
+ * design of this gate. The obvious build wraps each card in an `AuthProvider`
+ * and reads `useAuth()` — but this component renders once PER CARD, and that
+ * provider opens an auth subscription AND fetches a profile row each time, so a
+ * six-card grid would pay six sessions and six queries to grey out a heart.
+ * `getSession()` reads the token from local storage, so the check on click is
+ * effectively instant and costs a signed-out visitor nothing until they ask for
+ * something that needs an account.
+ *
+ * ⚠️ The redirect carries the reader's CURRENT path, so the sign-in returns
+ * them where they were rather than to the account dashboard — validated on the
+ * other end by `safeNext` in the sign-in page, which accepts only same-origin
+ * paths of known shapes.
  */
 export function ShortlistHeart({ propertyId, title }: { propertyId: string; title: string }) {
   const list = useSyncExternalStore(subscribeShortlist, getShortlist, getServerShortlist);
   const on = list.includes(propertyId);
+  const router = useRouter();
+
+  async function keep() {
+    /* Removing something already kept needs no account — a reader must always
+       be able to undo what is on their own screen, and gating the way OUT of a
+       state is how a control starts feeling like a trap. */
+    if (!on) {
+      const { data } = await browserClient().auth.getSession();
+      if (!data.session) {
+        /* ⚠️ `window.location`, NOT `useSearchParams()`. Reading the search
+           params through the hook opts this subtree out of the static
+           prerender and hands a crawler a Suspense fallback instead of the
+           card — on EVERY listing page, because every card carries a heart.
+           This runs in a click handler, where `window` exists and there is no
+           render-time dependency to pay for. */
+        const here = `${window.location.pathname}${window.location.search}`;
+        router.push(`/account/sign-in?next=${encodeURIComponent(here)}`);
+        return;
+      }
+    }
+    toggleShortlist(propertyId);
+  }
 
   return (
     <button
       type="button"
       aria-pressed={on}
-      aria-label={on ? `Remove ${title} from your shortlist` : `Keep ${title} on your shortlist`}
+      aria-label={on ? `Remove ${title} from your shortlist` : `Sign in to shortlist ${title}`}
+      /* The label doubles as the hover hint, so the ask is visible before the
+         click as well as after it. */
+      title={on ? undefined : "Sign in to shortlist"}
       onClick={(e) => {
         /* The card around this is one big link — the heart must not follow it. */
         e.preventDefault();
         e.stopPropagation();
-        toggleShortlist(propertyId);
+        void keep();
       }}
       className={`inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur transition-all ${
         on

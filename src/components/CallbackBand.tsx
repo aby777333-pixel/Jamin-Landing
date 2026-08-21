@@ -46,7 +46,17 @@ export async function CallbackBand({
          margin still does its job. */
       /* Aesthetics item 1: `bg-bone-paper` — the desk sits one paper rung
          below the panels, so the band reads as its own sheet. */
-      className="rj-deboss -mb-phi4 mt-phi6 border-b border-line bg-bone-paper py-phi5 lg:-mb-phi6"
+      /* 🚨 `print:hidden` (report 12, 2026-08-21, on the Compare record: "the
+         Talk to an Executive section is printing long WhatsApp/website URLs
+         instead of clean contact information… the print output is carrying
+         over website layout elements instead of presenting a clean
+         document"). The URL walls themselves went with report 11's removal of
+         the `a[href^="http"]::after` expansion, but the band is a conversion
+         surface either way — the same family as the visit and enquiry blocks
+         already withheld from a printed property record, and a call-back form
+         on paper is a form nobody can submit. The desk's own details reach a
+         printed sheet through the document's masthead, not through this. */
+      className="rj-deboss -mb-phi4 mt-phi6 border-b border-line bg-bone-paper py-phi5 print:hidden lg:-mb-phi6"
       style={{ borderTop: "3px solid var(--color-cta)" }}
       id="desk"
     >

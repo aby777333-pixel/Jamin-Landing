@@ -441,6 +441,30 @@
   mask-image: linear-gradient(to right, transparent, #000 22%, #000 100%);
 }
 
+@utility hero-fade-soft {
+  /* 🚨 THE SHORT RAMP (report 12, 2026-08-21, on /projects: "the hero
+     currently has a strong light/white overlay effect on the left side… makes
+     the hero image look partially washed out and prevents the full image
+     composition from being clearly visible… remove or significantly reduce the
+     current light/white fade effect").
+
+     `hero-fade` dissolves the leftmost 22% of a paper hero's render, which is
+     right for a frame whose left edge is empty ground and wrong for one whose
+     composition starts there — on hero-81 the avenue and the near kerb are
+     inside that 22% and were being washed into the sand.
+
+     8% instead of 22%, with the knee at 3%: the picture reaches full strength
+     four times sooner, so 92% of the frame is untouched, and there is still a
+     soft edge rather than a hard vertical cut against the page. Removing the
+     mask outright was the other option and it is worse — a rectangle of
+     photograph butting into the copy column reads as a pasted panel, which is
+     the failure `hero-fade` exists to prevent.
+
+     ⚠️ The prefixed line first, the standard one last — see `hero-fade`. */
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.55) 3%, #000 8%, #000 100%);
+  mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.55) 3%, #000 8%, #000 100%);
+}
+
 @utility rj-burn {
   /* 🚨 THE MIRROR OF `hero-fade`, AND IT IS A SEPARATE UTILITY ON PURPOSE.
      `hero-fade` dissolves a picture that bleeds off the RIGHT of a paper hero,

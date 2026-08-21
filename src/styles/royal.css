@@ -702,13 +702,25 @@
  *
  * A soft drop shadow under the bar is what a floating layer casts; the
  * hairline stays because it is the thing that reads as engraving rather than
- * as chrome. Only once scrolled: at rest the header is over its own canvas and
- * a shadow there would be pure decoration.
+ * as chrome.
+ *
+ * 🚨 THE SHADOW IS PAIRED WITH `.glass`, THE LINE IS NOT (report 12,
+ * 2026-08-21: "the navbar/header and the page content below have no visible
+ * separation when the page is at the top… add a subtle 1px bottom
+ * border/divider to the navbar that remains visible at all times").
+ *
+ * HeaderShell now carries `rj-hairline` at EVERY scroll position, so the
+ * champagne line is always drawn; the shadow still belongs only to the
+ * scrolled state, where the bar is genuinely floating over content. At rest
+ * it is over the page's own ground and a shadow there is pure decoration —
+ * which is the reasoning the old always-on rule recorded and which survives
+ * unchanged. Selecting on `.glass` is what splits the two, because that is
+ * the class HeaderShell already toggles for exactly this state.
  */
-.rj-hairline {
+.rj-hairline.glass {
   box-shadow: 0 1px 0 rgba(41, 31, 21, 0.04), 0 10px 28px -18px rgba(41, 31, 21, 0.35);
 }
-[data-theme="vault"] .rj-hairline {
+[data-theme="vault"] .rj-hairline.glass {
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.5), 0 12px 30px -18px rgba(0, 0, 0, 0.75);
 }
 
@@ -1095,6 +1107,48 @@
  */
 .rj-console-field {
   background: rgba(18, 17, 16, 0.45);
+}
+
+/**
+ * ── THE BRANDED DISTRICT DROPDOWN (report 12, 2026-08-21) ─────────────────
+ *
+ * "The District dropdown currently appears with the browser's default dropdown
+ * styling… should have a custom, branded appearance consistent with the
+ * surrounding search controls. Remove the default blue browser selection
+ * styling."
+ *
+ * 🚨 IT STAYS A NATIVE `<select>`. HeroConsole is a server component with no
+ * JavaScript at all — that is where the homepage's LCP win comes from, and a
+ * hand-built listbox would cost it, plus keyboard support, plus the phone's
+ * native wheel. So the CONTROL is restyled here and the POPUP is coloured as
+ * far as the engine allows:
+ *
+ * - `appearance: none` removes the platform button; HeroConsole draws the
+ *   chevron itself, in champagne, so the closed control matches the fields
+ *   beside it.
+ * - `accent-color` re-tints the engine's own highlight where it honours it,
+ *   which is what turns the blue Windows selection warm.
+ * - `option` rules paint the list on the site's own paper with ink text, and
+ *   the checked row takes the red wash rather than the system blue. Chromium
+ *   on Windows honours these; a platform that draws the popup entirely
+ *   natively (Safari on iOS) keeps its own sheet, which is correct there.
+ *
+ * ⚠️ The options must stay DARK-ON-LIGHT. The control is dark and its own
+ * text is bone; painting the options to match would make the list
+ * white-on-white wherever the popup is drawn by the OS.
+ */
+.rj-console-select {
+  appearance: none;
+  accent-color: var(--color-jamin-red);
+}
+.rj-console-select option {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+.rj-console-select option:checked,
+.rj-console-select option:hover {
+  background-color: var(--color-jamin-red-soft);
+  color: var(--color-jamin-red-deep);
 }
 .rj-console::before {
   content: "";
@@ -2339,6 +2393,25 @@ header .glass,
   details::details-content {
     content-visibility: visible !important;
     display: block !important;
+  }
+
+  /* ── The page hero does not print ───────────────────────────────────────
+     🚨 Report 12 (2026-08-21), on the Compare record: "the Print Record
+     currently shows a large unnecessary black/empty area at the beginning of
+     the PDF… the print output is carrying over website layout elements
+     instead of presenting a clean document."
+
+     That black area IS this section. `rj-print-drop` already stops the
+     ARTWORK printing, but the cinematic hero's own ground is `bg-charcoal` —
+     a fixed token the print re-scope above deliberately does not touch — so
+     an empty charcoal band the height of the hero was still being stamped on
+     sheet one, with white type in it. A hero is decoration by construction on
+     every page that carries one; the printed documents that need a heading
+     draw their own masthead (PrintHeader on a property, the Compare sheet's
+     own). Hidden outright rather than re-grounded: re-grounding would still
+     spend a third of the first sheet on a picture nobody printed for. */
+  .rj-page-hero {
+    display: none !important;
   }
 
   /* ── Players and docks are screen furniture ─────────────────────────────

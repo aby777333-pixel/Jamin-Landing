@@ -448,6 +448,7 @@ export function PageHero({
   copyCenter = false,
   plateBare = false,
   eyebrowAlign = "end",
+  softFade = false,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -547,6 +548,10 @@ export function PageHero({
    *  leads and the gilt rule follows, mirroring the right-aligned order.
    *  `copyCenter` still wins: a centred plate centres its caption. */
   eyebrowAlign?: "start" | "end";
+  /** PAPER TONE ONLY — swaps `hero-fade`'s 22% dissolve for `hero-fade-soft`'s
+   *  8% one, for a frame whose composition begins at its own left edge
+   *  (report 12, 2026-08-21, /projects). See the utility in globals.css. */
+  softFade?: boolean;
 }) {
   const artwork = artSrc(art);
   const src = photo?.src ?? artwork.src;
@@ -580,7 +585,8 @@ export function PageHero({
 
   if (tone === "cinematic") {
     return (
-      <section className="relative isolate overflow-hidden bg-charcoal">
+      /* `rj-page-hero` — the print block hides it; see royal.css. */
+      <section className="rj-page-hero relative isolate overflow-hidden bg-charcoal">
         {/* 🚨 BELOW `lg` THIS IS A BAND, NOT A BACKGROUND — and it is ONE
             element that changes job at the breakpoint, not two.
 
@@ -817,7 +823,7 @@ export function PageHero({
   }
 
   return (
-    <section className="relative overflow-hidden border-b border-line bg-canvas-alt">
+    <section className="rj-page-hero relative overflow-hidden border-b border-line bg-canvas-alt">
       {/* setting-out grid, the faint texture a layout plan is drawn on */}
       <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
 
@@ -896,7 +902,7 @@ export function PageHero({
           fetchPriority={priority ? "high" : "auto"}
           loading={priority ? "eager" : "lazy"}
           decoding="async"
-          className="hero-fade h-full w-full object-cover mix-blend-multiply"
+          className={`${softFade ? "hero-fade-soft" : "hero-fade"} h-full w-full object-cover mix-blend-multiply`}
           style={{ objectPosition: artPosition ?? "left" }}
         />
       </div>

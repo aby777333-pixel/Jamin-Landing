@@ -314,12 +314,33 @@ export function Hero({
               the copy is shorter at 36rem than the old block was at 42, so
               the content-sized banner GAINS width from this change rather
               than losing it. */}
+          {/* 🚨 0.88, UP FROM 0.62 (report 12, 2026-08-21: "the hero section
+              has an overlap between the main heading text and the JAMIN
+              SOULFUL signage in the background image. The background branding
+              appears behind the heading, reducing visual clarity… ensure the
+              signage does not appear directly behind or through the
+              heading").
+
+              The crop took the signage as far right as the geometry allows
+              (LivingHeroArt's register works the arithmetic), and it is still
+              96px short of clearing this plate's right edge — the plate is
+              576px of a 1430px box and the lockup starts at 36% of the frame,
+              so no object-position can separate them. What CAN separate them
+              is the plate itself: at 0.62 the beam's lettering reads through
+              the card and lands across the headline, at 0.88 it does not.
+
+              ⚠️ This continues the owner's own 2026-08-17 direction ("increase
+              the background of the caption tab"), which is what moved it to
+              0.62 in the first place — not a reversal of the max-sheer round.
+              Both vars again, or the narrow branch snaps opaque below 1440.
+              The frame still reads: 0.88 sand over a lit gate is a card on a
+              picture, not a panel. */}
           <div
             className="gilt-light rj-gilt-light-sheer reveal max-w-xl rounded-2xl p-phi3 text-center sm:text-left"
             style={
               {
-                "--rj-sheer-alpha": 0.62,
-                "--rj-sheer-alpha-narrow": 0.62,
+                "--rj-sheer-alpha": 0.88,
+                "--rj-sheer-alpha-narrow": 0.88,
               } as React.CSSProperties
             }
           >

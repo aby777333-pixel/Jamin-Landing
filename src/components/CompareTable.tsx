@@ -172,10 +172,15 @@ export function CompareTable({ all }: { all: Property[] }) {
               >
                 {p.title}
               </Link>
+              {/* `print:hidden` — report 12 (2026-08-21): "interactive
+                  elements such as Remove, comparison controls, and other
+                  website UI are appearing in the print output". A control the
+                  reader cannot press is noise on a filed document; the column
+                  it sits in is the record. */}
               <button
                 type="button"
                 onClick={() => write(ids.filter((x) => x !== p.id))}
-                className="mt-1 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep"
+                className="mt-1 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-faint hover:text-jamin-red-deep print:hidden"
               >
                 Remove
               </button>

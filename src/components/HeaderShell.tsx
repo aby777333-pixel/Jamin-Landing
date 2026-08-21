@@ -145,13 +145,18 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
          that thickens past 80px. Drawn rather than bordered because a
          border-width change would shift the document half a pixel on every
          crossing of the threshold. */
-      className={`sticky top-0 z-40 transition-all duration-500 ${
+      /* 🚨 `rj-hairline` IS UNCONDITIONAL NOW (report 12, 2026-08-21, seen on
+         /vault: "the navbar/header and the page content below have no visible
+         separation when the page is at the top… add a subtle 1px bottom
+         border/divider to the navbar that remains visible at all times").
+         The champagne line is drawn at every scroll position; the class's
+         drop SHADOW is paired with `.glass` in royal.css, so the floating
+         treatment still belongs only to the scrolled state. */
+      className={`sticky top-0 z-40 rj-hairline transition-all duration-500 ${deep ? "is-deep" : ""} ${
         /* `rj-crystal` rides with the glass and only while it is solid — at
            scroll 0 the bar is transparent over the page's own canvas, and a
            highlight on an edge that is not there reads as a stray line. */
-        solid || panel
-          ? `glass rj-crystal rj-hairline ${deep ? "is-deep" : ""}`
-          : "bg-transparent"
+        solid || panel ? "glass rj-crystal" : "bg-transparent"
       }`}
       style={{ transitionTimingFunction: "var(--ease-silk)" }}
     >

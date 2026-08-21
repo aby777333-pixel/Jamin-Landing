@@ -91,9 +91,32 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
           className="pointer-events-none absolute -right-8 -top-4 -z-10 h-[130%] w-2/5 opacity-70"
         />
       )}
-      <h2 id="provenance-heading" className="ledger-label text-ink-muted">
-        Chain of record
-      </h2>
+      {/* 🚨 THE HEADING INTRODUCES THE SECTION (report 12, 2026-08-21: "the
+          CHAIN OF RECORD heading is too small compared with the information
+          displayed below it… the section label feels visually disconnected
+          from the main content… increase the heading size and weight so it
+          clearly introduces the section").
+
+          It was `ledger-label` — the same 10.5px caption the ROW LABELS wear
+          — so the section's title and the fields inside it were the same
+          size, and the title read as one more row that had lost its value.
+          It takes the site's own section-opening register instead: the gold
+          rule, the red station mark and a `text-tiny` label at the eyebrow's
+          weight. Deliberately NOT an `h2` at `text-2xl`: this sits inside a
+          property page whose Blocks already own that level, and a second
+          2xl heading here would outrank "Where it is" above it. */}
+      <div className="flex items-center gap-3">
+        <span className="flex items-center gap-1.5" aria-hidden="true">
+          <span className="h-px w-10 bg-jamin-gold" />
+          <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-cta" />
+        </span>
+        <h2
+          id="provenance-heading"
+          className="text-tiny font-semibold uppercase tracking-brand text-jamin-gold-ink"
+        >
+          Chain of record
+        </h2>
+      </div>
       {/* 🚨 A RECORD CARD OF ROWS, NOT A FIVE-COLUMN CHAIN (report 7,
           2026-08-19: "redesign the Chain of Record section into a structured
           record card… use consistent icon → label → value rows… increase
@@ -164,7 +187,18 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
               >
                 <SurveyIcon name={l.icon} size="h-4 w-4" />
               </span>
-              <div className="ledger-label text-ink-muted">{l.term}</div>
+              {/* 🚨 A STEP UP IN SIZE AND WEIGHT (report 12, 2026-08-21: "the
+                  field labels such as Survey, Sanction, Title, and Encumbrance
+                  are also too small, making the hierarchy weak… increase the
+                  size/weight of the field labels slightly. Keep the actual
+                  record values prominent"). `ledger-label` is 10.5px against a
+                  `text-lg` value — a 1:1.7 step, which is why the pair read as
+                  a caption beside a headline rather than as a term and its
+                  definition. `text-tiny` at 600 closes it to 1:1.3 without
+                  touching the value, which stays the prominent half. */}
+              <div className="text-tiny font-semibold uppercase tracking-[0.14em] text-ink-soft">
+                {l.term}
+              </div>
               {/* `break-words`: a survey number like "789/3B2E2A1A3C" has no
                   spaces and would otherwise set the column's minimum width and
                   push the page sideways — the `min-w-0` trap this repo has paid

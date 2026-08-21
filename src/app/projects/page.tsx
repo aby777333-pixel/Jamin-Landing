@@ -99,6 +99,18 @@ export default async function ProjectsPage() {
            0.58 for the Grand render) travel back with `tone="cinematic"` —
            recover them from git if a photograph returns via `photo`. */
         tone="paper"
+        /* 🚨 THE SHORT DISSOLVE (report 12, 2026-08-21: "the hero currently
+           has a strong light/white overlay effect on the left side… remove or
+           significantly reduce the current light/white fade"). hero-81's
+           avenue starts at its own left edge, so `hero-fade`'s 22% ramp was
+           washing out the composition rather than the empty ground it was
+           written for. 8% instead — see `hero-fade-soft`. The tone stays
+           `paper`: it is what keeps the copy off the JAMIN BAZAAR lockup, and
+           the note below records why no cinematic geometry can. */
+        softFade
+        /* Report 11's left-aligned labels, extended here — the projects index
+           carries the same eyebrow register as its four stage pages. */
+        eyebrowAlign="start"
         eyebrow="Plotted developments"
         title="Every Jamin project, by stage"
         lead="Land moves through stages, and what you can do at each one differs — from land secured and sanctioned, through roads going in, to keys handed over."

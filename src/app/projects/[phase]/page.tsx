@@ -211,6 +211,28 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
    * composition, and this number was solved against hero-65's arch. Re-measure
    * before assuming one value serves both.
    */
+  /**
+   * 🚨 TWO PHASES TOOK A HORIZONTAL ANCHOR (report 12, 2026-08-21) — the first
+   * time since hero-31/33 that one has been needed, and `ART_POSITION_BY_PHASE`
+   * above is finally cashed in as a value rather than kept as a record.
+   *
+   * · `current` (hero-82): "keep the Jamin Bazaar/project branding visible on
+   *   the right side of the hero image." Measured on the built page at
+   *   1440x900: the frame is height-bound in a 1602x857 box with 115px of
+   *   horizontal travel, and at 50% the JAMIN BAZAAR pier lands at screen
+   *   1261–1482 against a 1430 viewport — 52px of it off the edge. Anchoring
+   *   right spends the whole travel and brings it to 1203–1424, inside by 6px.
+   *
+   * · `completed` (hero-40): "the Jamin Bazaar branding on the right side is
+   *   also partially cut… do not crop important project content just to fit
+   *   the hero." Same measurement: 408px of travel, the wall at 1155–1595 at
+   *   50% — 165px off the edge. Right lands it at 951–1391, inside by 39px.
+   *   ⚠️ The report also calls this frame "cropped too aggressively at the
+   *   leftside", and a right anchor spends MORE of the left, not less. Its own
+   *   Key Requirement settles it: "adjust the image positioning so the complete
+   *   relevant composition — Jamin Bazaar branding — is visible." The left of
+   *   hero-40 is street and pavement; the right is the only mark on the frame.
+   */
   const ART_VERTICAL_BY_PHASE: Record<string, string> = {
     ongoing: "50% 14%",
     /* ⚠️ `current` IS EXPLICIT, not left to the `50% 30%` fallback, because
@@ -223,9 +245,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
        at 40-56%, and both stay inside the visible window at every size this
        hero renders at. 30% is right here for the same reason 14% was right
        there — it was measured, not inherited. */
-    current: "50% 30%",
+    current: "100% 30%",
     future: "50% 30%",
-    completed: "50% 50%",
+    completed: "100% 50%",
   };
 
   return (
@@ -299,6 +321,30 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
            was ever needed; delete it the day a hero wants one again and the
            argument can be re-read. */
         artPosition={ART_VERTICAL_BY_PHASE[phase] ?? "50% 30%"}
+        /* 🚨 THE COPY SITS AT THE FOOT OF THE FRAME (report 12, 2026-08-21,
+           on Upcoming and Future: "the large left-side dark content panel is
+           covering the Jamin Bazaar branding/signage within the hero image…
+           the important signage in the background should not sit underneath
+           the dark content panel", with "keep the hero text/content on the
+           left" stated in the same breath).
+
+           Every gate in this set carries its lettering on a beam in the upper
+           third, and the centred plate's top edge lands exactly there —
+           measured at 1440x900: hero-64's arch board runs to screen y 290
+           against a plate starting at 255, and hero-82's TRICHY'S TULIP
+           lettering spans 197–325 against a plate starting at 217. Neither is
+           reachable by a horizontal move (the plate covers x 115–723 and both
+           marks begin inside that band), and narrowing the plate does not
+           help for the same reason. Dropping the copy to the foot clears both
+           outright — plate top goes to ~453 and ~377 — and keeps the text
+           left, which is the half of the instruction a re-crop would have
+           broken.
+
+           ⚠️ ALL FOUR STAGES, not the two named. These pages are read as one
+           set and the file's own tone note is explicit that they flip
+           together; `ongoing` and `completed` carry no mark under the plate,
+           so the move costs them nothing and buys the register consistency. */
+        copyAlign="end"
         sheer
         sheerAlpha={phase === "ongoing" || phase === "current" ? 0.52 : 0.58}
         sheerEdge

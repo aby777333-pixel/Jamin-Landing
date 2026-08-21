@@ -79,17 +79,24 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
         </div>
 
         {districts.length > 0 && (
-          <div className="sm:w-60">
+          /* 🚨 BRANDED, STILL NATIVE (report 12, 2026-08-21: "the District
+              dropdown currently appears with the browser's default dropdown
+              styling… should have a custom, branded appearance consistent
+              with the surrounding search controls. Remove the default blue
+              browser selection styling"). `rj-console-select` in royal.css
+              strips the platform button and recolours the list; the chevron
+              below is ours, in champagne, matching the fields beside it.
+              The control stays a real `<select>` because this form ships with
+              no JavaScript at all — see the header. */
+          <div className="relative sm:w-60">
             <label htmlFor="hero-district" className="sr-only">
               District
             </label>
-            {/* A native select: it is the one control that already works on
-                every phone, needs no library and no script. */}
             <select
               id="hero-district"
               name="district"
               defaultValue=""
-              className="h-14 w-full rounded-full rj-console-field border border-white/15 px-5 text-base text-bone focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
+              className="rj-console-select rj-console-field h-14 w-full rounded-full border border-white/15 pl-5 pr-11 text-base text-bone focus:border-champagne-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-champagne-300"
             >
               {/* ⚠️ The options are dark-on-light because a native select's
                   popup is drawn by the OS, not by this stylesheet. Styling them
@@ -103,6 +110,23 @@ export function HeroConsole({ districts }: { districts: Suggestion[] | { label: 
                 </option>
               ))}
             </select>
+            {/* Our chevron, since `appearance: none` took the platform's.
+                `pointer-events-none` so it never eats a click meant for the
+                control underneath it. */}
+            <svg
+              viewBox="0 0 12 8"
+              aria-hidden="true"
+              className="pointer-events-none absolute right-5 top-1/2 h-2 w-3 -translate-y-1/2 text-champagne-300"
+            >
+              <path
+                d="M1 1.5 6 6.5l5-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </div>
         )}
 
