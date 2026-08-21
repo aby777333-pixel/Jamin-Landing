@@ -84,6 +84,10 @@ export default async function PropertiesPage() {
            4.46/4.57 where the audited figure is ~5.0; 0.58 restores it
            (5.40/5.52). */
         sheerAlpha={0.58}
+        /* Report 11 (2026-08-21): "Move the label to the left side and align
+           it with the main heading" — the same per-page override /about took
+           in report 10. */
+        eyebrowAlign="start"
         eyebrow="Residential plots for sale"
         title="Plots in approved layouts across Tamil Nadu"
         lead={

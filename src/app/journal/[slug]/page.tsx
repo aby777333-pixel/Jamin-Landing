@@ -258,7 +258,19 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
               see the note on it in ornament.css. Applied by hand rather than to
               every article body automatically, because a piece that opens on a
               list or a quotation must not get one. */}
-          <div className="rj-dropcap max-w-[68ch]">
+          {/* 🚨 `min-w-0` IS THE MOBILE PAGE (report 11, 2026-08-21: "Remove
+              the horizontal scrolling completely… the article content [must
+              fit] within the mobile viewport width"). This div is a GRID ITEM,
+              and a grid item's default `min-width: auto` is its content's
+              min-content — which Prose's comparison tables floor at their own
+              `min-w-[34rem]` (544px). The item overflowed 209px past a 375
+              screen and the whole page scrolled sideways; the table's own
+              `overflow-x-auto` wrapper could not help, because overflow does
+              not reset intrinsic sizing. With `min-w-0` the column takes the
+              track and the tables scroll INSIDE their wrapper, which is what
+              that wrapper was built for. The standing flex/grid min-content
+              trap — measure the rect, never the label. */}
+          <div className="rj-dropcap min-w-0 max-w-[68ch]">
             <Prose markdown={post.body ?? ""} />
 
             {post.faqs?.length > 0 && (

@@ -65,9 +65,12 @@ export function NearbyGroups({ places }: { places: NearbyPlace[] }) {
             className="group rounded-card border border-line bg-canvas-alt/60"
           >
             <summary className="flex cursor-pointer list-none items-baseline gap-2 px-phi2 py-2.5 [&::-webkit-details-marker]:hidden">
+              {/* `print:hidden` — a disclosure arrow on paper is a control
+                  that cannot be pressed; the printed sheet forces every group
+                  open (royal.css deed sheet, report 11). */}
               <span
                 aria-hidden="true"
-                className="self-center text-tiny text-jamin-red-deep transition-transform duration-300 group-open:rotate-90"
+                className="self-center text-tiny text-jamin-red-deep transition-transform duration-300 group-open:rotate-90 print:hidden"
               >
                 ▸
               </span>

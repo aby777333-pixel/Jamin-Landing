@@ -43,9 +43,25 @@ export function PropertyCard({
   p,
   priority = false,
   featured = false,
+  action,
 }: {
   p: Property;
   priority?: boolean;
+  /**
+   * 🚨 THE FOOTER'S OWN ACTION SLOT (report 11, 2026-08-21: "the Compare
+   * button is overlapping the price/details area at the bottom of the
+   * cards… reposition the Compare button so it has its own space and does
+   * not overlap Price or View details").
+   *
+   * The toggle used to be absolutely positioned over the card by
+   * PropertyExplorer — two components claiming the same corner, neither able
+   * to see the other, exactly the heart/compare collision report 8 already
+   * paid for. A slot in the footer row gives it real layout: View details |
+   * action | price, three things that can never overlap because they share
+   * one flex line. The caller's control must stop propagation (ShortlistHeart
+   * precedent) so the card's link does not fire.
+   */
+  action?: React.ReactNode;
   /**
    * 🚨 THE HORIZONTAL FORM (report 8, 2026-08-19: "1 property: display as a
    * large horizontal featured card using the available section width").
@@ -425,7 +441,10 @@ export function PropertyCard({
               →
             </span>
           </span>
-          <span className="shrink-0 text-tiny text-ink-faint">{formatPrice(p)}</span>
+          <span className="ml-auto flex shrink-0 items-center gap-3">
+            {action}
+            <span className="text-tiny text-ink-faint">{formatPrice(p)}</span>
+          </span>
         </div>
       </div>
     </Link>

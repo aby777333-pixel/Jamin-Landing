@@ -54,7 +54,34 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
 
   return (
     <>
-      <div className="grid gap-2 sm:grid-cols-[1.618fr_1fr]">
+      {/* 🚨 THE PRINTED GALLERY (report 11, 2026-08-21: "All important
+          property images should be printed as actual images. Do not show:
+          +2 more, gallery controls, wishlist icon, carousel controls"). The
+          interactive grid below is print-hidden — its "+N more" scrim and
+          button chrome with it — and this print-only grid prints EVERY image
+          as a plain figure. Plain <img>, not next/image: the optimiser
+          pipeline buys nothing on paper. `loading="lazy"` is safe here —
+          Chromium force-loads lazy images when building print preview — and
+          it keeps the hidden grid from costing every screen visitor the full
+          set. */}
+      <div className="rj-print-only">
+        <div className="grid grid-cols-2 gap-3">
+          {images.map((src) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={src}
+              src={src}
+              alt={title}
+              loading="lazy"
+              decoding="async"
+              className="aspect-[1.618/1] w-full rounded-card border border-line object-cover"
+              style={{ breakInside: "avoid" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-2 print:hidden sm:grid-cols-[1.618fr_1fr]">
         <button
           onClick={() => setOpen(0)}
           className="rj-sheen group relative aspect-[1.618/1] overflow-hidden rounded-card bg-canvas-sunken sm:aspect-auto sm:h-full"

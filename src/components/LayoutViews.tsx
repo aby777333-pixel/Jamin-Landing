@@ -143,8 +143,10 @@ export function LayoutViews({
           hasMetricFigures`, which meant a development whose only drawing is
           the sanctioned sheet had no control to reach it — the sheet option
           existed but nothing rendered the switch. */}
+      {/* `print:hidden` — view and unit switches are controls; the printed
+          sheet shows the sanctioned drawing itself (report 11 print spec). */}
       {(hasPlan || sheet || hasMetricFigures) && (
-        <div className="mb-phi3 flex flex-wrap items-center justify-between gap-phi2">
+        <div className="mb-phi3 flex flex-wrap items-center justify-between gap-phi2 print:hidden">
           {hasPlan || sheet ? (
             <Segmented
               label="Layout view"
@@ -212,10 +214,36 @@ export function LayoutViews({
         </div>
       )}
 
+      {/* 🚨 THE PRINTED RECORD ALWAYS CARRIES THE SANCTIONED SHEET (report 11,
+          2026-08-21: "The approved plot plan / printed sheet is important and
+          must be included in the PDF, [with] the heading and the plan…
+          Instead [of the website's scroller], show the actual plan as a
+          static document image"). Print-only, whatever view is active on
+          screen — the on-screen sheet window is print-hidden below so the
+          drawing never prints twice or clipped. */}
+      {sheet && (
+        <figure className="rj-print-only" style={{ breakInside: "avoid" }}>
+          <figcaption className="text-tiny font-semibold uppercase tracking-[0.14em] text-ink">
+            Sanctioned layout drawing — as issued
+          </figcaption>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={sheet.src}
+            width={sheet.width}
+            height={sheet.height}
+            alt={`${title} — the sanctioned layout drawing as issued`}
+            loading="lazy"
+            decoding="async"
+            className="mt-2 h-auto w-full rounded-card border border-line"
+          />
+        </figure>
+      )}
+
       {view === "sheet" && sheet ? (
         <>
           {/* Click to open the lightbox; the inline frame stays scrollable for
-              readers who never click. */}
+              readers who never click. `rj-sheet-window` + `print:hidden`: the
+              print form of this drawing is the static figure above. */}
           <button
             type="button"
             onClick={() => {
@@ -224,7 +252,7 @@ export function LayoutViews({
               setSheetOpen(true);
             }}
             aria-haspopup="dialog"
-            className="block w-full cursor-zoom-in overflow-auto rounded-xl border border-line bg-canvas text-left"
+            className="block w-full cursor-zoom-in overflow-auto rounded-xl border border-line bg-canvas text-left print:hidden"
             style={{ maxHeight: "min(78vh, 900px)" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

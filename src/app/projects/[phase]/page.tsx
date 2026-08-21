@@ -303,6 +303,10 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         sheerAlpha={phase === "ongoing" || phase === "current" ? 0.52 : 0.58}
         sheerEdge
         plateXl="38rem"
+        /* Report 11 (2026-08-21): "The labels is aligned too far to the
+           right… Move labels to the left and align it with the heading" —
+           named for all four stage pages. */
+        eyebrowAlign="start"
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}

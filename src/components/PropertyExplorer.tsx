@@ -865,57 +865,52 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                     re-introduce the dynamic shape without the owner naming
                     report 8's complaint again — the two reports want
                     opposite things and this file follows the newer word. */}
+                {/* 🚨 A LONE RESULT IS A FULL-WIDTH HORIZONTAL CARD (report 11,
+                    2026-08-21, Locations pages: "When a location contains only
+                    one property, do not show it as a narrow vertical card with
+                    limited information. Convert it into a full-width
+                    horizontal property card"). Keyed on the WHOLE result set,
+                    not the group — a one-development district (Tiruppur,
+                    Coimbatore) and a filter narrowed to one match both
+                    qualify; on /properties with several results every stage
+                    keeps the uniform sm:2/lg:3 grid the 2026-08-20 word
+                    demands. */}
                 <div
                   key={`${swapKey}|${g.key}`}
-                  className="rj-swap mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3"
+                  className={`rj-swap mt-phi4 grid gap-phi3 ${
+                    results.length === 1 ? "" : "sm:grid-cols-2 lg:grid-cols-3"
+                  }`}
                 >
                   {g.items.map((p, i) =>
                     g.selling ? (
-                      /* `flex` so the card inside stretches to the row height the
-                         grid gives this wrapper — without it the compare button's
-                         positioning context is full height but the card is not. */
-                      <div key={p.id} data-pid={p.id} className="relative flex">
+                      /* `flex` so the card inside stretches to the row height
+                         the grid gives this wrapper. */
+                      <div key={p.id} data-pid={p.id} className="flex">
                         {/* `priority` only in the first group: it is the LCP
                             candidate and marking every grid's first three would
                             spend the preload budget on images below the fold. */}
-                        {/* `featured` retired with the uniform grid above —
-                            the horizontal card was the full-width shape's
-                            other half. The prop stays on PropertyCard for a
-                            future surface that genuinely wants a lead card. */}
-                        <PropertyCard p={p} priority={gi === 0 && i < 3} />
-                        {/* 🚨 BOTTOM-RIGHT, NOT TOP-RIGHT (report 8,
-                            2026-08-19: "the Compare button is overlapping the
-                            Wishlist (heart) icon in the property card image
-                            area").
-
-                            It was `right-3 top-3`, and PropertyCard puts the
-                            heart in a top-right cluster at `p-4` — two
-                            absolutely-positioned controls claiming the same
-                            corner from two different components, neither able
-                            to see the other.
-
-                            ⚠️ THE TOP-LEFT CORNER IS NOT FREE, which is why
-                            this goes down rather than across: the stage and
-                            approval badges live there and they are content,
-                            not chrome. Bottom-right is the one empty corner,
-                            and it already has a scrim under it (the Docket's
-                            gradient) so a control reads cleanly on it. The
-                            heart keeps top-right on every card, so both are
-                            consistent and diagonally opposed. */}
-                        <div className="absolute bottom-3 right-3 z-10">
-                          <CompareToggle
-                            on={compared.includes(p.id)}
-                            disabled={compared.length >= MAX_COMPARE && !compared.includes(p.id)}
-                            onClick={() => toggleCompare(p.id)}
-                            floating
-                          />
-                        </div>
+                        {/* 🚨 COMPARE RIDES THE CARD'S OWN FOOTER SLOT NOW
+                            (report 11, 2026-08-21: it overlapped Price/View
+                            details as an absolute overlay). See PropertyCard's
+                            `action` note. */}
+                        <PropertyCard
+                          p={p}
+                          priority={gi === 0 && i < 3}
+                          featured={results.length === 1}
+                          action={
+                            <CompareToggle
+                              on={compared.includes(p.id)}
+                              disabled={compared.length >= MAX_COMPARE && !compared.includes(p.id)}
+                              onClick={() => toggleCompare(p.id)}
+                            />
+                          }
+                        />
                       </div>
                     ) : (
                       /* Completed and sold-out carry no compare control — there
                          is nothing to weigh up against anything. */
                       <div key={p.id} data-pid={p.id} className="flex">
-                        <PropertyCard p={p} />
+                        <PropertyCard p={p} featured={results.length === 1} />
                       </div>
                     ),
                   )}
@@ -1059,26 +1054,30 @@ function CompareToggle({
   on,
   disabled,
   onClick,
-  floating,
 }: {
   on: boolean;
   disabled?: boolean;
   onClick: () => void;
-  floating?: boolean;
 }) {
   return (
     <button
       type="button"
-      onClick={onClick}
+      /* ⚠️ preventDefault + stopPropagation, because this control now sits
+         INSIDE the card's <Link> (the footer action slot — report 11). Without
+         both, ticking Compare navigates to the property. Harmless in the list
+         view, where there is no ancestor link. The ShortlistHeart precedent. */
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
       disabled={disabled}
       aria-pressed={on}
       title={disabled ? `Compare up to ${MAX_COMPARE} at once` : undefined}
       className={`rounded-full border px-3 py-1.5 text-tiny font-medium transition-colors disabled:opacity-40 ${
         on
           ? "border-ink bg-ink text-canvas"
-          : floating
-            ? "border-canvas/60 bg-canvas/90 text-ink-soft backdrop-blur hover:border-ink-faint"
-            : "border-line bg-canvas text-ink-soft hover:border-ink-faint"
+          : "border-line bg-canvas text-ink-soft hover:border-ink-faint"
       }`}
     >
       {on ? "Comparing" : "Compare"}

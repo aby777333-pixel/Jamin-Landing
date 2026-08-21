@@ -78,7 +78,14 @@ export function SiteMap({
 
   return (
     <div>
-      <div className="rj-crosshair relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken shadow-lift sm:aspect-[2/1]">
+      {/* 🚨 THE MAP DOES NOT PRINT (report 11, 2026-08-21: "no map is visible
+          and the links overlap without any structure"). The tiles are
+          lazy-loaded from openstreetmap.org and routinely miss the print
+          snapshot, so the sheet carried an empty frame with a pin — and the
+          four Google pills each printed their full URL. On paper the record
+          is the coordinates line below (kept, with the address in the header);
+          the frame and the pills are screen affordances. */}
+      <div className="rj-crosshair relative aspect-[16/10] overflow-hidden rounded-xl border border-line bg-canvas-sunken shadow-lift print:hidden sm:aspect-[2/1]">
         <div
           className="absolute left-1/2 top-1/2"
           style={{
@@ -151,7 +158,7 @@ export function SiteMap({
           grey pills, which made them read as one control repeated; each now
           carries its own icon and its own tone so the eye can pick the one it
           wants without reading all four. */}
-      <div className="mt-phi3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-phi3 grid grid-cols-2 gap-2 print:hidden sm:grid-cols-4">
         <MapLink
           href={maps}
           label="Open in Maps"

@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container, Pane } from "@/components/ui";
-import { paneHue } from "@/lib/stones";
+import { Container } from "@/components/ui";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { CallbackBand } from "@/components/CallbackBand";
@@ -83,14 +82,10 @@ export default async function AboutPage() {
         title="Land, sold the way it should be."
         lead="Jamin Properties plans and delivers DTCP-approved residential plotted developments across Tamil Nadu — in Salem, Erode, Coimbatore and Tiruppur. We sell to families who intend to build and to investors who intend to hold, and we would rather say “not published yet” than quote a number we cannot stand behind."
       />
-      <Container className="py-phi5" hue={paneHue("/about")}>
-      {/* ⚠️ ONE pane for the page body, not one per element (owner
-          2026-08-19). Converting the bordered elements instead would have
-          tinted the CARDS too, and the cards are what has to stay on
-          `bg-canvas` so they lift off the sheet — that lift is half of
-          what the hue buys. The colour itself is stated once, on the
-          Container above, and every `.rj-pane` inside inherits it. */}
-      <Pane className="p-phi3 sm:p-phi5">
+      {/* 🚨 NO PANE (report 11, 2026-08-21: "Remove the large grey/blue outer
+          card wrapping the entire section… make the page look cleaner, more
+          spacious"). The canopy pane is what read as the grey/blue card. */}
+      <Container className="py-phi5">
 
       {/* 🚨 THE LEDGER PANEL — figures computed from the live database, never
           hand-typed, and as of 2026-08-13 no longer three loose divs.
@@ -159,19 +154,20 @@ export default async function AboutPage() {
                below `sm` would reopen exactly that. */
             <div
               key={label}
-              className="flex items-baseline gap-phi3 p-phi3 sm:block sm:p-phi5 sm:text-center"
+              /* 🚨 A STEP SMALLER EVERYWHERE (report 11, 2026-08-21: "Reduce
+                 the overall height and scale of the statistics card"). This
+                 walks back HALF of report 10's enlargement — the centred
+                 stack stays, the padding drops phi5 → phi4, the figure a
+                 step down at both widths and the chip 14 → 12. The phone
+                 ROW layout (number + label on one line) is unchanged. */
+              className="flex items-baseline gap-phi3 p-phi3 sm:block sm:p-phi4 sm:text-center"
             >
-              {/* ⚠️ `sm:text-5xl` is deliberate NOW where it was rejected in
-                  2026-08-13 — that audit measured it against the old inline
-                  icon+number+label row, where 109px at 1280 read as a hero
-                  headline. In a centred stack the figure IS the column's
-                  subject, which is what the report's reference shows. */}
-              <dd className="flex shrink-0 items-center gap-2.5 text-4xl leading-none text-jamin-red-deep sm:flex-col sm:items-center sm:gap-phi3 sm:text-5xl">
+              <dd className="flex shrink-0 items-center gap-2.5 text-3xl leading-none text-jamin-red-deep sm:flex-col sm:items-center sm:gap-phi2 sm:text-4xl">
                 <span
                   aria-hidden="true"
-                  className="hidden h-14 w-14 items-center justify-center rounded-full border border-line bg-canvas text-jamin-gold sm:flex"
+                  className="hidden h-12 w-12 items-center justify-center rounded-full border border-line bg-canvas text-jamin-gold sm:flex"
                 >
-                  <SurveyIcon name={icon} className="h-7 w-7" />
+                  <SurveyIcon name={icon} className="h-6 w-6" />
                 </span>
                 <SurveyIcon
                   name={icon}
@@ -182,7 +178,7 @@ export default async function AboutPage() {
               {/* `min-w-0` because the third label is long and this is a flex
                   item on a phone — a flex item's default minimum is its content,
                   which is the same trap the footer's district column paid for. */}
-              <dt className="ledger-label min-w-0 sm:mt-phi3 sm:block">{label}</dt>
+              <dt className="ledger-label min-w-0 sm:mt-phi2 sm:block">{label}</dt>
             </div>
           ))}
         </dl>
@@ -229,7 +225,6 @@ export default async function AboutPage() {
           See our developments
         </Link>
       </section>
-      </Pane>
       </Container>
       {/* ⚠️ THE hero-53 DIVIDER IS GONE (owner 2026-08-18 second report:
           "hide the image"). It began as a crop band, became a full-frame band

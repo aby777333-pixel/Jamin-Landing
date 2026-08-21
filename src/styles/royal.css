@@ -1220,6 +1220,13 @@
   /* The stage word, which is otherwise a gemstone tuned for ivory —
      emerald measures 3.73:1 on onyx and fails. */
   --rj-stage-ink: var(--color-champagne-300);
+  /* 🚨 THE AVAILABILITY FIGURE (report 11, 2026-08-21: "the plot availability
+     value on the dark/black property card is almost invisible… ensure values
+     such as 61 / 61 Available are clearly readable"). The card's resolved
+     fact prints in `text-canopy`, and the canopy is a deep teal tuned for
+     ivory — near-black on onyx. Same light cousin the carbon dark scope
+     already maps it to. */
+  --color-canopy: #86b8ae;
 }
 
 /**
@@ -2052,14 +2059,16 @@ header .glass,
     fill: #000 !important;
   }
 
-  /* Links stop pretending to be buttons, and print where they point — a
-     printed page cannot be clicked. Internal hrefs only: expanding every
-     mailto and tel would bury the record in noise. */
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 9pt;
-    color: #444;
-  }
+  /* 🚨 NO URL EXPANSION — REMOVED (report 11, 2026-08-21: "Do not expose
+     long Supabase/storage URLs… The Talk to an Executive section is printing
+     long WhatsApp/website URLs instead of clean contact information"). The
+     old `a[href^="http"]::after { content: " (" attr(href) ")" }` did exactly
+     what its own comment feared: a Supabase storage URL is ~140 characters,
+     so every document row, map pill and wa.me control printed a wall of
+     percent-encoding that overlapped its neighbours. A reader who saves as
+     PDF keeps the links CLICKABLE — the print renderer preserves link
+     annotations — so the label alone is the honest print form. Do not
+     reintroduce the expansion without scoping it to short internal hrefs. */
 
   /* Never split a plot's row, a figure from its label, or a heading from what
      it introduces. */
@@ -2313,11 +2322,31 @@ header .glass,
     display: block !important;
   }
 
-  /* ⚠️ Photographs are already suppressed above (`[class*="hero"] img`). The
-     GALLERY is not, and a twelve-image gallery is eleven wasted sheets of
-     colour. The first image stays — it identifies the project at a glance —
-     and the rest go. */
-  [data-gallery] img:not(:first-of-type) {
+  /* 🚨 THE GALLERY PRINTS IN FULL NOW (report 11, 2026-08-21: "All important
+     property images should be printed as actual images") — the old
+     first-image-only rule is gone with the report's words. Gallery.tsx
+     renders a `rj-print-only` grid of every image and print-hides its
+     interactive grid (which is where "+N more" lived). */
+
+  /* ── Every expandable section prints EXPANDED (report 11: "Website
+     behavior: Collapsed → click → content appears. PDF behavior: Print → all
+     relevant content appears") ─────────────────────────────────────────────
+     Native <details> keeps its content in the DOM; on Chromium the closed
+     state hides it through the ::details-content pseudo-element's
+     content-visibility, so forcing that visible is what opens every group on
+     paper. What's-nearby is the section the report names; the rule is
+     general on purpose — the print form of ANY disclosure is its content. */
+  details::details-content {
+    content-visibility: visible !important;
+    display: block !important;
+  }
+
+  /* ── Players and docks are screen furniture ─────────────────────────────
+     The video Block prints a poster + "watch online" figure instead
+     (report 11: "do not print the browser video player"); the phone dock is
+     a fixed overlay that would stamp itself over the last sheet. */
+  video,
+  .rj-mobile-dock {
     display: none !important;
   }
 }

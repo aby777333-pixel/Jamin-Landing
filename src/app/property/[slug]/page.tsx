@@ -328,6 +328,14 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       <section className="relative overflow-hidden border-b border-line bg-canvas">
         <div className="blueprint pointer-events-none absolute inset-0" aria-hidden="true" />
         <div className="relative mx-auto max-w-[1280px] px-5 pt-phi3 lg:px-10">
+          {/* 🚨 PRINT THIS RECORD SITS TOP-RIGHT OF THE HEADER (report 11,
+              2026-08-21: "Move 'Print this record' to the top-right of the
+              property header… compact secondary utility action. Do not place
+              it between the pricing section and gallery"). It shares the
+              breadcrumb's row — the one line that spans the whole header —
+              so it is genuinely top-RIGHT, not right of a 620px copy column.
+              `relative z-10` keeps it clickable above the header art burn. */}
+          <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
           <nav aria-label="Breadcrumb" className="text-tiny text-ink-faint">
             <Link href="/" className="hover:text-jamin-red-deep">
               Home
@@ -343,6 +351,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
             </span>
             <span className="text-ink-soft">{p.title}</span>
           </nav>
+          <PassportButton />
+          </div>
 
           {/* 🚨 THE HEADER IS A TWO-TRACK GRID FROM `xl`, AND THE RIGHT TRACK
               BLEEDS OFF THE PAGE.
@@ -607,23 +617,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               states the facts, the ribbon shows they link. */}
           <ProvenanceRibbon p={p} />
 
-          {/* ⚠️ The sheet a buyer takes to a lawyer. Placed AFTER the chain of
-              record rather than up beside the title on purpose — a reader who
-              has just read the evidence is the one who wants to keep it, and a
-              print control offered before the record reads as a brochure
-              download. `print:hidden` lives on the button itself.
-
-              🚨 CLOSER, AND RULED OFF (report 7, 2026-08-19: "keep Print this
-              record as a clearly separated action at the bottom"). It was
-              `mt-phi4` — the same gap the gallery below it gets — so it read as
-              a third unrelated block rather than as the record card's action.
-              `mt-phi2` plus a hairline pulls it up under the card it belongs to
-              while the rule keeps it visibly outside it, which is what
-              "separated" has to mean here: attached, not merged. */}
-          <div className="mt-phi2 border-t border-line pt-phi3">
-            <PassportButton />
-          </div>
-
+          {/* ⚠️ The Print-this-record control moved to the header's top-right
+              (report 11, 2026-08-21) — this slot between the record and the
+              gallery is exactly where that report says it must NOT sit. The
+              report-7 "separated action" note travels with it. */}
           <div className="mt-phi4">
             <Gallery images={images} title={p.title} />
           </div>
@@ -1067,7 +1064,38 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
 
           {videos.length > 0 && (
             <Block id="video" title="Video walkthrough">
-              <div className="grid gap-phi3 sm:grid-cols-2">
+              {/* 🚨 PRINT: NO BROWSER PLAYER (report 11, 2026-08-21: "the
+                  current video section should not print the browser video
+                  player… Instead, use: VIDEO WALKTHROUGH [thumbnail ▶] Watch
+                  video online →"). The <video> elements are print-hidden
+                  below; this print-only figure row prints the poster with a
+                  play mark and a clickable "Watch video online" title per
+                  clip — a print-to-PDF keeps link annotations, so the line
+                  stays actionable in the saved file. */}
+              <div className="rj-print-only">
+                <div className="grid grid-cols-2 gap-phi3">
+                  {videos.map((v, i) => (
+                    <figure key={v} style={{ breakInside: "avoid" }}>
+                      {coverImage(p) && (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img
+                          src={coverImage(p)!}
+                          alt=""
+                          aria-hidden="true"
+                          className="aspect-[1.618/1] w-full rounded-card border border-line object-cover"
+                        />
+                      )}
+                      <figcaption className="mt-2 text-tiny text-ink">
+                        ▶{" "}
+                        <a href={v} className="underline">
+                          Watch video {videos.length > 1 ? `${i + 1} ` : ""}online →
+                        </a>
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              </div>
+              <div className="grid gap-phi3 print:hidden sm:grid-cols-2">
                 {videos.map((v) => (
                   /* §68 — never autoplay, and never load the media until asked. */
                   <video
@@ -1136,7 +1164,9 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
               {p.rera_number && <Stat label="RERA" value={p.rera_number} />}
             </dl>
 
-            <div className="mt-phi3 space-y-2.5">
+            {/* `print:hidden` — the rail's FACTS above print; these controls
+                do not (report 11's print spec). */}
+            <div className="mt-phi3 space-y-2.5 print:hidden">
               {/* Straight to the booking on this page, not off to /contact where
                   the project they were reading gets lost.
                   ⚠️ A sold-out development gets no booking control at all. There
@@ -1208,7 +1238,11 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         <>
           <section
             id="visit"
-            className="mt-phi6 scroll-mt-28 rounded-xl border border-line bg-canvas p-phi4 shadow-lift lg:p-phi5"
+            /* `print:hidden` — the whole block is conversion, not record
+               (report 11's print spec: no forms, no Call/WhatsApp URLs on
+               the printed sheet; the wa.me links here printed as a wall of
+               percent-encoding). */
+            className="mt-phi6 scroll-mt-28 rounded-xl border border-line bg-canvas p-phi4 shadow-lift print:hidden lg:p-phi5"
           >
             <div className="max-w-xl">
               <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
@@ -1248,7 +1282,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       ) : (
         <section
           id="enquire"
-          className="mt-phi6 scroll-mt-28 overflow-hidden rounded-xl border border-line bg-charcoal"
+          className="mt-phi6 scroll-mt-28 overflow-hidden rounded-xl border border-line bg-charcoal print:hidden"
         >
           <div className="p-phi4 lg:p-phi5">
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-micro font-semibold uppercase tracking-[0.14em] text-white/80">
@@ -1321,7 +1355,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
       )}
 
       {related.length > 0 && (
-        <section className="mt-phi7 border-t border-line pt-phi5">
+        /* `print:hidden` — other developments are marketing on this record. */
+        <section className="mt-phi7 border-t border-line pt-phi5 print:hidden">
           <h2 className="text-2xl text-ink">Other developments</h2>
           <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((r) => (
@@ -1334,7 +1369,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
 
       {/* CARTOUCHE §4.2 — the Sweep, surface 3 of exactly 3 (home, /contact,
           and here). The property page ends on the desk. */}
-      <div className="mt-phi6">
+      <div className="mt-phi6 print:hidden">
         <Sweep lead={p.title} />
       </div>
 
