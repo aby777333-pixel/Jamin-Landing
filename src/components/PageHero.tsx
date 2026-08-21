@@ -926,14 +926,28 @@ export function PageHero({
           }
         >
           {eyebrow && (
-            /* Right-aligned (owner 2026-08-17): tabs and captions sit right. */
-            <div className="flex items-center justify-end gap-3">
-              <span className="h-px w-12 rule-gold" />
+            /* Right-aligned (owner 2026-08-17): tabs and captions sit right.
+               🚨 THE PAPER TONE READS `eyebrowAlign` NOW. It was hard-wired to
+               `justify-end`, so /projects — the one paper hero on a route
+               whose four stage pages all took left labels in report 11 — kept
+               its caption at the far right while its siblings moved. The prop
+               existed and only the cinematic branch honoured it; a per-page
+               lever that silently applies to half the component is worse than
+               no lever, because the call site says one thing and the page does
+               another. Same order as cinematic: on `start` the label leads and
+               the rule follows it. */
+            <div
+              className={`flex items-center gap-3 ${
+                eyebrowAlign === "start" ? "justify-start" : "justify-end"
+              }`}
+            >
+              {eyebrowAlign !== "start" && <span className="h-px w-12 rule-gold" />}
               {/* `gold-deep`, not `gold-ink` — this line sets the plate's
                   opacity. See the sweep recorded in `gilt-light`. */}
               <span className="text-micro font-semibold uppercase tracking-brand text-jamin-gold-deep">
                 {eyebrow}
               </span>
+              {eyebrowAlign === "start" && <span className="h-px w-12 rule-gold" />}
             </div>
           )}
           <h1 className="rj-ink-settle mt-phi3 text-balance text-4xl text-ink">{title}</h1>

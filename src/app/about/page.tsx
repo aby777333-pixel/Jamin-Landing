@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { Container } from "@/components/ui";
+import { Container, SectionLabel } from "@/components/ui";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
 import { CallbackBand } from "@/components/CallbackBand";
@@ -120,9 +120,27 @@ export default async function AboutPage() {
           section goes from about 210px of mostly-empty column to three compact
           ruled rows. Stacking only starts at `sm`, where there are three
           columns to stack inside. */}
+      {/* 🚨 THE FIGURES GET A HEADING AND A SOFTER PLATE (report 14,
+          2026-08-21: "the statistics section currently looks too empty and
+          visually unbalanced. The statistics card is placed inside a large
+          grey container, creating excessive empty space around the actual
+          content… add a small section heading such as JAMIN BY THE NUMBERS…
+          reduce or remove the excessive grey/empty space around the card…
+          use a soft premium background, subtle border, rounded corners, and
+          light shadow").
+
+          ⚠️ "The large grey container" was the canopy PANE, and report 11
+          already took it off this page — what is left is the card's own
+          `canvas-alt`, which the report reads as the same grey. It steps to
+          the parchment rung (the paper stack's top) with the gold hairline it
+          already carried and a `shadow-lift`, so it reads as a plate rather
+          than as a recess. The heading is the owner's own words. */}
+      <div className="mt-phi5">
+        <SectionLabel>Jamin by the numbers</SectionLabel>
+      </div>
       <section
         aria-labelledby="jamin-figures"
-        className="mt-phi5 overflow-hidden rounded-card border border-line bg-canvas-alt"
+        className="mt-phi3 overflow-hidden rounded-card border border-line bg-parchment shadow-lift"
       >
         <h2 id="jamin-figures" className="sr-only">
           Jamin in figures

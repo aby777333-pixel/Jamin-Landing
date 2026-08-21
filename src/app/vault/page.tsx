@@ -431,19 +431,38 @@ export default async function VaultPage() {
                   gradient glass ring on the two primaries (authored in the
                   Maharaja round, unused since). `relative` is the host's
                   duty; the class never declares position. */}
+              {/* 🚨 THE LABEL CENTRES ON A PHONE AND THE ARROW STAYS PINNED
+                  (report 14, 2026-08-21: "the text inside the CTA buttons is
+                  currently left-aligned, creating an uneven visual balance…
+                  the CTA text should be center-aligned within the button,
+                  while the arrow should remain positioned on the right side.
+                  Scope: mobile view only").
+
+                  ⚠️ THE NOTE ABOVE SAYS THESE TWO ASKS ARE MUTUALLY EXCLUSIVE,
+                  AND IT WAS RIGHT ABOUT `justify-between`. They are only
+                  exclusive while the arrow is in FLOW: a centred label then
+                  pushes it off its column. Taking the arrow out of flow
+                  (`absolute right-5`) breaks the tie — the label centres in
+                  the full button and every arrow still lands on the same x,
+                  which is what the earlier report actually asked for. From
+                  `sm` the row layout is untouched, per this report's scope. */}
               <Link
                 href="/vault/request?intent=buy"
-                className="rj-velvet rj-rim relative flex items-center justify-between gap-3 rounded-full px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90"
+                className="rj-velvet rj-rim relative flex items-center justify-center gap-3 rounded-full px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-opacity hover:opacity-90 sm:justify-between sm:text-left"
               >
                 I want to buy
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true" className="absolute right-5 sm:static">
+                  →
+                </span>
               </Link>
               <Link
                 href="/vault/request?intent=rent"
-                className="rj-rim relative flex items-center justify-between gap-3 rounded-full border border-champagne-300 px-5 py-3 text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5"
+                className="rj-rim relative flex items-center justify-center gap-3 rounded-full border border-champagne-300 px-5 py-3 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-champagne-300 transition-colors hover:bg-white/5 sm:justify-between sm:text-left"
               >
                 I want to rent
-                <span aria-hidden="true">→</span>
+                <span aria-hidden="true" className="absolute right-5 sm:static">
+                  →
+                </span>
               </Link>
               {[
                 { href: "/vault/offer?intent=sell", label: "I want to sell", tone: "text-white/80" },
@@ -462,13 +481,18 @@ export default async function VaultPage() {
                 <Link
                   key={r.href}
                   href={r.href}
-                  className={`flex items-center justify-between gap-3 rounded-full border border-champagne-500/30 px-5 py-3 text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 ${r.tone}`}
+                  /* Same phone centring as the two primaries above — see the
+                     note there for why the absolute arrow is what makes it
+                     compatible with the earlier "align all arrows" ask. */
+                  className={`relative flex items-center justify-center gap-3 rounded-full border border-champagne-500/30 px-5 py-3 text-center text-tiny uppercase tracking-[0.12em] transition-colors hover:bg-white/5 sm:justify-between sm:text-left ${r.tone}`}
                 >
                   {r.label}
                   {/* Decoration — the label already says where it goes, so the
                       arrow is hidden from the tree rather than read out six
                       times as "right arrow". */}
-                  <span aria-hidden="true">→</span>
+                  <span aria-hidden="true" className="absolute right-5 sm:static">
+                    →
+                  </span>
                 </Link>
               ))}
             </div>
@@ -948,9 +972,15 @@ export default async function VaultPage() {
                 quietly available in a district — and reports back, including when the answer is
                 that it does not exist at the price.
               </p>
+              {/* 🚨 CENTRED ON A PHONE (report 14, 2026-08-21: "the SUBMIT A
+                  PRIVATE REQUIREMENT button is currently not centered within
+                  the mobile content section"). `inline-flex` sits on the text
+                  line, and the column around it is left-aligned prose, so the
+                  pill inherited that. `w-fit mx-auto` centres the box itself
+                  and `sm:mx-0` hands it straight back from `sm`. */}
               <Link
                 href="/vault/request"
-                className="mt-phi4 inline-flex rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep"
+                className="mx-auto mt-phi4 flex w-fit rounded-full bg-jamin-red px-7 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white transition-colors hover:bg-jamin-red-deep sm:mx-0"
               >
                 Submit a private requirement
               </Link>

@@ -30,10 +30,41 @@ export default async function ContactPage() {
            a render. The no-caption rule in public/hero/README.md binds here as
            it does on /about: no caption, no location, no project name. */
         /* hero-52 — the modern slat gate, JAMIN CITY set 2026-08-17. */
-        art={52}
+        /* 🚨 hero-72 REPLACES hero-52 (report 14, 2026-08-21: "the 'Book a site
+           visit' section currently uses a hero image that does not clearly
+           relate to the purpose of the section… the image shows a generic
+           residential/gated-community entrance, while the section is
+           specifically about booking a site visit. The image does not visually
+           reinforce the action of visiting a property or walking through an
+           actual plotted development").
+
+           hero-72 is the one frame in the register whose subject IS the visit:
+           a family walking in through the gate at dusk, with the guard at the
+           post. It was the home phone band until report 13 moved that to
+           hero-83 for carrying the wordmark twice — and the second wordmark is
+           precisely what `artPosition="right"` crops away here, so the frame
+           arrives on this page without the duplication that retired it.
+
+           ⚠️ `softFade`, NOT an anchor, AND THE MEASUREMENT IS WHY. The first
+           attempt used `artPosition="right"` to push the wall lockup (source x
+           8–30%) clear of `hero-fade`'s 22% dissolve — the hero-31/33 lesson,
+           that a board inside the fade reads as a sign sliced in half. Probed
+           on the built page: the art box is 829x553 against a 1.5:1 frame, so
+           the frame is WIDTH-bound and the anchor has ZERO horizontal travel;
+           the lockup sat at screen 665–848 with the fade running to 783
+           whatever the anchor said. The dissolve is the thing that has to
+           move, so it takes the 8% ramp `hero-fade-soft` (report 12,
+           /projects): the knee lands at 667 and the lockup is solid from its
+           own left edge. The anchor stays `right` — harmless with no travel,
+           and correct the day this box stops being width-bound. */
+        art={72}
+        artPosition="right"
+        softFade
         sheer
-        /* 0.42 for hero-52 — the audited hero-40 value for a paper-tone plate
-           whose overlap strip is dark; this frame puts greenery there. */
+        /* 0.42 held for hero-52 because its overlap strip is greenery; hero-72
+           is a dusk frame and darker still under the plate, so the value is
+           carried rather than re-swept upward — a darker ground can only
+           improve ink on a light plate. */
         sheerAlpha={0.42}
         eyebrow="Talk to Jamin"
         title="Book a site visit"
@@ -106,7 +137,27 @@ export default async function ContactPage() {
             hole, and keeps the list of places visible while the form above it
             is being filled in. Offset by the header so it never docks
             underneath the navbar. */}
-        <aside className="lg:sticky lg:self-start" style={{ top: "calc(var(--header-h) + 1.25rem)" }}>
+        {/* 🚨 IT COMES FIRST ON A PHONE (report 14, 2026-08-21, priority High:
+            "the Visible Developments section is currently displayed at the
+            bottom of the site-visit flow… [readers] have to go through the
+            booking form and other details before reaching the list of
+            available developments. This makes it difficult to know which
+            developments are currently available before starting the booking
+            process… should be moved near the beginning of the site-visit page,
+            directly after the 'Book a site visit' introduction and before the
+            date/time selection").
+
+            ⚠️ `order`, NOT a move in the markup, and the reason is the desktop
+            layout: this is the RIGHT column of a two-column grid, so reordering
+            the source would put the sidebar on the left at every width above
+            `lg`. `-order-1 lg:order-none` changes only the single-column
+            stacking, which is exactly the scope the report gives. The sticky
+            behaviour is untouched — it only engages at `lg`, where the order
+            is back to normal. */}
+        <aside
+          className="-order-1 lg:order-none lg:sticky lg:self-start"
+          style={{ top: "calc(var(--header-h) + 1.25rem)" }}
+        >
           <div className="rounded-card border border-line bg-canvas p-phi3 shadow-lift">
             <h2 className="text-tiny font-semibold uppercase tracking-[0.16em] text-ink">
               Visitable developments

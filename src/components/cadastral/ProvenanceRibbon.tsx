@@ -105,15 +105,25 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
           weight. Deliberately NOT an `h2` at `text-2xl`: this sits inside a
           property page whose Blocks already own that level, and a second
           2xl heading here would outrank "Where it is" above it. */}
-      <div className="flex items-center gap-3">
+      {/* 🚨 IT IS THE SECTION'S HEADING NOW, NOT A LABEL ON IT (report 14,
+          2026-08-21: "the header is present, but it currently looks like a
+          small label rather than the actual section heading… increase its font
+          size and visual weight so it is immediately recognizable as the
+          section heading… make CHAIN OF RECORD the clear section heading at
+          the top of the section").
+
+          Report 12 took it from 10.5px to 12.6px, which fixed the ratio
+          against the row labels and left it still reading as a caption. It
+          takes the page's own section register instead: a `text-2xl` h2, the
+          size every other Block on this page opens with, over the eyebrow rule
+          — so the record announces itself the way "Where it is" and "Approvals
+          & documents" do. */}
+      <div>
         <span className="flex items-center gap-1.5" aria-hidden="true">
           <span className="h-px w-10 bg-jamin-gold" />
           <span className="h-1.5 w-1.5 rotate-45 rounded-[1px] bg-cta" />
         </span>
-        <h2
-          id="provenance-heading"
-          className="text-tiny font-semibold uppercase tracking-brand text-jamin-gold-ink"
-        >
+        <h2 id="provenance-heading" className="mt-phi2 text-2xl text-ink">
           Chain of record
         </h2>
       </div>
@@ -164,16 +174,29 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
               the rows take a step more air (`px-phi4`, `py-phi3`, wider
               gaps) so five facts occupy the card rather than huddling in
               its corner. */}
+          {/* 🚨 A BIGGER SEAL IN A WIDER, FIXED ICON TRACK, AND THE TWO LINES
+              SIT CLOSER (report 14, 2026-08-21: "increase the size of the
+              record icons for better visual balance. Maintain a consistent
+              icon column and decrease the gap between the text in line 1 and
+              line 2"). The seal goes 36px → 44px and its track 2.5rem →
+              3.25rem so the column holds it at one width on every row; below
+              `sm`, where the label and value stack, `gap-y` drops from 4px to
+              2px — that pair IS the report's "line 1 and line 2".
+
+              ⚠️ This comment sits HERE, not inside the `map` callback's
+              parentheses: a JSX comment is only legal in children position,
+              and one in expression position is a parse error. The repo has
+              paid for that once already, on the article page. */}
           {links.map((l, i) => (
             <li
               key={l.term}
-              className="grid grid-cols-[2.5rem_minmax(0,1fr)] items-start gap-x-phi3 gap-y-1 px-phi3 py-phi2 sm:grid-cols-[2.5rem_13rem_minmax(0,1fr)] sm:items-center sm:px-phi4 sm:py-phi3"
+              className="grid grid-cols-[3.25rem_minmax(0,1fr)] items-start gap-x-phi3 gap-y-0.5 px-phi3 py-phi2 sm:grid-cols-[3.25rem_13rem_minmax(0,1fr)] sm:items-center sm:px-phi4 sm:py-phi3"
             >
               {/* The FINAL link resolves in teal — the chain's payoff, the same
                   once-per-surface move the record strip and the calculators
                   make (anti-beige item 4). */}
               <span
-                className={`rj-foil-seal flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                className={`rj-foil-seal flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
                   i === links.length - 1 ? "text-white" : "text-champagne-900"
                 }`}
                 style={
@@ -185,7 +208,7 @@ export function ProvenanceRibbon({ p }: { p: PropertyDetail }) {
                     : undefined
                 }
               >
-                <SurveyIcon name={l.icon} size="h-4 w-4" />
+                <SurveyIcon name={l.icon} size="h-5 w-5" />
               </span>
               {/* 🚨 A STEP UP IN SIZE AND WEIGHT (report 12, 2026-08-21: "the
                   field labels such as Survey, Sanction, Title, and Encumbrance

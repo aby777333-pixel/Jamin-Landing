@@ -779,11 +779,32 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
           <h3 className="text-tiny font-semibold uppercase tracking-[0.18em] text-ink">
             Area statement
           </h3>
+          {/* 🚨 A TWO-TRACK GRID, NOT `justify-between` (report 14,
+              2026-08-21: "the text and values in the Area Statement section
+              are not visually aligned consistently, making the information
+              appear uneven and difficult to scan… use a consistent two-column
+              layout for all entries. Keep the field labels on the left. Align
+              all corresponding values to the right on the same vertical
+              line. Ensure multi-line labels such as 'Total extent of site'
+              and 'Open space reservation' maintain consistent spacing and
+              alignment").
+
+              `justify-between` sizes each half by its own text, so a value's
+              left edge moved with the length of the LABEL beside it — and the
+              two labels the report names are exactly the ones that wrap, which
+              is why the column looked ragged only on those rows. A fixed
+              `1fr / auto` pair puts every value on one right-hand rule
+              whatever its label does; `items-start` + `leading-snug` keeps a
+              wrapped label's first line level with its value instead of
+              hanging off the last one. */}
           <ul className="mt-phi2 divide-y divide-line border-y border-line">
             {plan.areaStatement.map((a) => (
-              <li key={a.label} className="flex items-baseline justify-between gap-4 py-2.5">
-                <span className="text-base text-ink-soft">{a.label}</span>
-                <span className="shrink-0 text-base text-ink">
+              <li
+                key={a.label}
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-2.5"
+              >
+                <span className="text-base leading-snug text-ink-soft">{a.label}</span>
+                <span className="ledger whitespace-nowrap text-right text-base leading-snug text-ink">
                   {a.areaSqm != null ? fmtArea(a.areaSqm, unit) : ""}
                   {a.percent != null ? ` · ${a.percent}%` : ""}
                 </span>

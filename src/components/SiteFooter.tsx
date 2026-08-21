@@ -44,7 +44,22 @@ export async function SiteFooter() {
       <div className="rj-royal-rule" aria-hidden="true" />
       <div className="mx-auto max-w-[1280px] px-5 py-phi6 lg:px-10">
         <div className="grid gap-phi5 lg:grid-cols-[1.618fr_1fr_1fr_1fr]">
-          <div>
+          {/* 🚨 CENTRED ON A PHONE (report 14, 2026-08-21: "footer company
+              information is not centered on mobile… the 'Property.
+              Prosperity. Legacy.' text, company description, statistics and
+              brochure button are all aligned toward the left side… on mobile
+              screens, this entire footer company-information section should be
+              center-aligned").
+
+              ⚠️ `text-center` alone does NOT centre the lockup, the rule, the
+              stats grid or the brochure pill — three of those are flex/grid
+              children and one is `max-w-sm`, all of which stay left however
+              the text aligns. Each gets its own centring below, and every one
+              of them is undone at `sm`, where the column is wide enough that
+              centred copy would read as a pull-quote rather than as a block.
+              ONLY this first column moves: the link columns beside it are
+              lists, and a centred list is harder to scan, not easier. */}
+          <div className="text-center sm:text-left">
             {/* ⚠️ THE MARK, THEN THE WORDMARK AS TEXT — not logo-full.png.
                 That file bakes the wordmark in as near-black ink, which
                 measures 1.06:1 on onyx and simply vanishes; the same finding
@@ -52,7 +67,7 @@ export async function SiteFooter() {
                 for "the emblem, then the wordmark", so here the split is free:
                 the emblem stays an image and the wordmark becomes real text,
                 which is selectable, translatable and legible by construction. */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3 sm:justify-start">
               <Image
                 src="/logo-mark.png"
                 alt=""
@@ -73,7 +88,7 @@ export async function SiteFooter() {
               Property. Prosperity. Legacy.
             </p>
 
-            <p className="mt-phi3 max-w-sm text-base leading-relaxed text-ink-muted">
+            <p className="mx-auto mt-phi3 max-w-sm text-base leading-relaxed text-ink-muted sm:mx-0">
               DTCP-approved residential plotted developments across Tamil Nadu — planned for
               families who intend to build, and for investors who intend to hold.
             </p>
@@ -87,7 +102,7 @@ export async function SiteFooter() {
                 it. As a ledger block the figures lead and the labels support,
                 and tabular figures hold the columns on a common pitch. */}
             {facets.totals.developments > 0 && (
-              <dl className="mt-phi3 grid max-w-sm grid-cols-3 gap-phi2">
+              <dl className="mx-auto mt-phi3 grid max-w-sm grid-cols-3 gap-phi2 sm:mx-0">
                 {[
                   { label: "Developments", value: facets.totals.developments },
                   { label: "Plots available", value: facets.totals.plotsAvailable },
@@ -149,6 +164,8 @@ export async function SiteFooter() {
               href="/brochure/jamin-bazaar-royal-presentation.pdf"
               download
               className="mt-phi4 inline-flex items-center gap-3 rounded-full border border-jamin-gold/55 bg-jamin-gold/[0.07] px-5 py-3 text-base text-champagne-100 transition-colors hover:border-jamin-gold hover:bg-jamin-gold/15 hover:text-champagne-50"
+              /* An `inline-flex` centres with its line box, so the parent's
+                 `text-center` carries it on a phone with nothing added here. */
             >
               <svg
                 viewBox="0 0 16 16"

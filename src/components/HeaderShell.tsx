@@ -459,11 +459,21 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           style={{ borderTop: "1px solid var(--line-onyx)" }}
           aria-label="Primary mobile"
         >
-          <MobileLink href="/">Home</MobileLink>
-          <MobileLink href="/properties">Properties</MobileLink>
-          <MobileLink href="/projects">Projects</MobileLink>
+          {/* `active` is the SAME prefix match the desktop rail uses — see
+              `section()` above — so /property/x lights Properties and
+              /journal/y lights the Journal (report 14). The sub-rows compare
+              the full path, because a district or a stage IS the leaf. */}
+          <MobileLink href="/" active={pathname === "/"}>
+            Home
+          </MobileLink>
+          <MobileLink href="/properties" active={onProperties}>
+            Properties
+          </MobileLink>
+          <MobileLink href="/projects" active={section("/projects")}>
+            Projects
+          </MobileLink>
           {facets.phases.map((f) => (
-            <MobileLink key={f.key} href={f.href} sub>
+            <MobileLink key={f.key} href={f.href} sub active={pathname === f.href}>
               {f.label} <span className="text-plat-500">({f.count})</span>
             </MobileLink>
           ))}
@@ -473,19 +483,29 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
                 Locations
               </div>
               {facets.districts.map((f) => (
-                <MobileLink key={f.key} href={f.href} sub>
+                <MobileLink key={f.key} href={f.href} sub active={pathname === f.href}>
                   {f.label} <span className="text-plat-500">({f.count})</span>
                 </MobileLink>
               ))}
             </>
           )}
-          {facets.hasJournal && <MobileLink href="/journal">Jamin Journal</MobileLink>}
+          {facets.hasJournal && (
+            <MobileLink href="/journal" active={section("/journal")}>
+              Jamin Journal
+            </MobileLink>
+          )}
           {/* "The Vault", not "The Royal Vault" — renamed 2026-08-11 with the
               division itself. The desktop rail already said "Vault"; these two
               were the last places carrying the old name. */}
-          <MobileLink href="/vault">The Vault</MobileLink>
-          <MobileLink href="/about">About</MobileLink>
-          <MobileLink href="/account">Account</MobileLink>
+          <MobileLink href="/vault" active={section("/vault")}>
+            The Vault
+          </MobileLink>
+          <MobileLink href="/about" active={section("/about")}>
+            About
+          </MobileLink>
+          <MobileLink href="/account" active={section("/account")}>
+            Account
+          </MobileLink>
           <Link
             href="/contact"
             className="mt-6 block rounded-full bg-cta px-5 py-3.5 text-center text-tiny font-semibold uppercase tracking-[0.12em] text-white"
@@ -613,33 +633,68 @@ function MobileLink({
   href,
   children,
   sub,
+  active = false,
 }: {
   href: string;
   children: React.ReactNode;
   sub?: boolean;
+  /**
+   * 🚨 THE CURRENT PAGE IS MARKED (report 14, 2026-08-21: "in the mobile
+   * navigation menu, the currently opened page is not highlighted. When I open
+   * the mobile menu, all navigation items look the same. I cannot tell which
+   * page I am currently on").
+   *
+   * The desktop rail has had `section()` prefix-matching since it shipped; the
+   * drawer simply never read it, so forty identical rows was the whole bug.
+   *
+   * ⚠️ THREE CARRIERS, NOT ONE. `aria-current="page"` is the fact (a screen
+   * reader announces it); the champagne ink and the stone's own wash are what
+   * a sighted reader sees. Colour alone would fail the same tier-5 rule the
+   * rest of this system keeps — meaning never rides on decoration.
+   */
+  active?: boolean;
 }) {
   /* Top-level links are gold foil, sub-links are bone — §6.1 asks for foil, and
      applying it to all forty rows would flatten the hierarchy the drawer needs.
      `.rj-foil-text` uses the seal ramp, whose darkest stop measures 12.4:1 on
      onyx; the full foil would put part of every glyph at 3.11:1. It works here
      only because the ground is dark — see the warning on the class. */
+  const stone = navStone(href).stone;
   return (
     <Link
       href={href}
-      className={
+      aria-current={active ? "page" : undefined}
+      className={`${
         sub
           ? "flex items-center gap-2.5 py-3 pl-4 text-base text-bone-soft"
           : "flex items-center gap-2.5 py-4 text-lg"
-      }
-      style={{ borderBottom: "1px solid var(--line-onyx)" }}
+      } ${active ? "-mx-3 rounded-lg px-3" : ""}`}
+      style={{
+        borderBottom: "1px solid var(--line-onyx)",
+        ...(active
+          ? {
+              /* The stone at a low mix, so the row lights in its own colour
+                 rather than in one shared highlight — the same key the tabs,
+                 the pills and the cards already speak. */
+              background: `color-mix(in srgb, ${stone} 22%, transparent)`,
+              boxShadow: `inset 3px 0 0 0 ${stone}`,
+            }
+          : {}),
+      }}
     >
       {/* The gem dots are retained on mobile, per §6.1. */}
       <span
         className="rj-dot is-on"
-        style={{ "--rj-stone": navStone(href).stone } as React.CSSProperties}
+        style={{ "--rj-stone": stone } as React.CSSProperties}
         aria-hidden="true"
       />
-      <span className={sub ? undefined : "rj-foil-text"}>{children}</span>
+      {/* ⚠️ The active row drops `rj-foil-text`: the foil is a gradient clipped
+          to the glyphs, so it cannot also carry an emphasis state. Champagne
+          at full strength measures 11.2:1 on onyx and reads brighter than the
+          foil, which is what "highlighted" has to mean here. */}
+      <span className={active ? "font-semibold text-champagne-300" : sub ? undefined : "rj-foil-text"}>
+        {children}
+      </span>
     </Link>
   );
 }

@@ -30,9 +30,15 @@ export function PassportButton() {
     <button
       type="button"
       onClick={() => window.print()}
-      className="rj-deboss inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-canvas-alt px-4 py-2 text-tiny font-medium text-ink-muted transition-colors hover:text-ink print:hidden"
+      /* 🚨 A STEP LARGER (report 14, 2026-08-21: "keep the Print button clearly
+         visible and increase its size slightly. Or keep it at the top of the
+         page at the right side" — it already moved to the header's top right
+         in report 11, so this is the other half of the ask). `font-semibold`
+         + `text-ink-soft` lift it off the page without turning a secondary
+         utility into a call to action; the mark grows with it. */
+      className="rj-deboss inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-canvas-alt px-5 py-2.5 text-tiny font-semibold uppercase tracking-[0.1em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink print:hidden"
     >
-      <SurveyIcon name="deed" size="h-4 w-4" className="shrink-0 text-champagne-500" />
+      <SurveyIcon name="deed" size="h-[18px] w-[18px]" className="shrink-0 text-champagne-500" />
       Print this record
       {/* Named plainly. "Download passport" would promise a file this does not
           produce, and the reader's own dialogue is where the choice between

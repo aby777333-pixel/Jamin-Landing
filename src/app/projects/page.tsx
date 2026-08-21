@@ -180,9 +180,22 @@ export default async function ProjectsPage() {
                 <h2 className="text-2xl text-ink">{g.meta.label}</h2>
                 <p className="mt-2 text-base leading-relaxed text-ink-muted">{g.meta.blurb}</p>
               </div>
+              {/* 🚨 THE LINK SITS RIGHT ON A PHONE TOO (report 14, 2026-08-21:
+                  "the section navigation links such as 'View Ongoing →' are
+                  currently left-aligned in the mobile view… move these links
+                  to the right side for the mobile view only. Right-aligning
+                  the action link creates a clearer visual separation between
+                  the section information and the action").
+
+                  ⚠️ `justify-between` on the ROW already does this — until the
+                  row wraps. At 375 the heading block takes the full width, the
+                  link drops to a second line, and a wrapped flex line starts
+                  at the container's left edge whatever the justification says.
+                  `ml-auto` is what pushes it back across on that second line;
+                  from `sm` the two share one line again and it is a no-op. */}
               <Link
                 href={`/projects/${g.phase}`}
-                className="text-tiny font-semibold uppercase tracking-[0.12em]"
+                className="ml-auto text-tiny font-semibold uppercase tracking-[0.12em]"
                 style={{ color: stone?.ink ?? "var(--color-jamin-red-deep)" }}
               >
                 View {g.meta.label.toLowerCase()} →
