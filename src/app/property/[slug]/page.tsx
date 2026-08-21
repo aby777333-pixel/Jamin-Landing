@@ -1437,17 +1437,37 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
  *  drawing as issued, per project, for LayoutViews' "Printed sheet" view.
  *  Only Edappadi has one today; a missing entry hides the view. */
 const PRINTED_SHEET: Record<string, { src: string; width: number; height: number }> = {
-  /* ⚠️ THE OFFICIAL SANCTIONED SHEET ("edpdy.png", owner-supplied
-     2026-08-18 night: "replace the printed sheet with the attached") — the
-     Tamil DTCP drawing with approval SWPD/TCPSALEM/LAYOUT NO: 161/2026,
-     replacing the illustrated plan the owner picked on 08-17 (which stays
-     on disk at /plan/edappadi-illustrated-2-* alongside the older DTCP
-     card at /plan/edappadi-sheet-*; either is a one-line swap back). New
-     filename per the cache rule. ⚠️ This sheet records 60 plots where the
-     traced plan and the catalogue record 61 — the sheet is shown AS
-     ISSUED, never edited; the discrepancy is the owner's record to
-     reconcile, not this page's to hide. */
-  "jamin-new-project-jul-2026": { src: "/plan/edappadi-official-2026-1055.webp", width: 1055, height: 1491 },
+  /* 🚨 THE FULL SANCTIONED DRAWING ("edappady new plan.pdf", owner-supplied
+     2026-08-21: "in edappadi, the approved plan should show this
+     attachment") — and it is a genuine upgrade on what it replaces, not
+     another swap of the same document.
+
+     This is the complete technical approval sheet: the title block
+     (Salem district, Edappadi taluk, Avanipereur Melmugam village, ward C
+     block 5, TS 15/16, old SF 429/3pt), file no. SLM/G0FXUG3V/56450/2025,
+     scale 1:400, the full area statement (3.98 acres / 16,106.50 sq.m;
+     roads 5,603.585; OSR required 1,050.29 = 10.00% against 1,061.44 =
+     10.10% provided; PP1 53.63; TANGEDCO PP2 54.81; EWS 1,066.33 = 10.15%
+     over plot nos 42–60), every plot dimensioned in metres, the road
+     hierarchy (7.2 / 9.0 / 10.0 / 12.0 m plus the existing 7.0 m municipal
+     tar road), the twelve printed conditions and the approval endorsement
+     **SWP/DTCP/SALEM/LAYOUT NO: 161/2026**.
+
+     ⚠️ RASTERISED FROM A VECTOR PDF, not an exported bitmap: the source is
+     2384x3370pt of vector art, so it was rendered at 2400px wide (WebP
+     q78, 465 KB) — the size the lightbox's 6x zoom can actually spend. Do
+     not regenerate it smaller; the Tamil conditions and the 4.57 m plot
+     widths are the first things to go.
+
+     ⚠️ It still records **60 plots** where the traced plan and the
+     catalogue record 61. The drawing is shown AS ISSUED and is never
+     edited; the discrepancy is the owner's record to reconcile, not this
+     page's to hide. Same finding as the sheet it replaces.
+
+     The previous renditions stay on disk — /plan/edappadi-official-2026-*,
+     /plan/edappadi-illustrated-2-*, /plan/edappadi-sheet-* — so any of
+     them is a one-line swap back. New filename per the cache rule. */
+  "jamin-new-project-jul-2026": { src: "/plan/edappadi-sanctioned-2026-2400.webp", width: 2400, height: 3393 },
   /* The sanctioned layout sheet for Trichy's Tulip. Landscape where
      Edappadi's is portrait, so it is written wider: the 120-row schedule is
      set in small type and this is the drawing a buyer opens the lightbox to

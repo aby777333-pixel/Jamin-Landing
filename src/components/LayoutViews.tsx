@@ -73,7 +73,13 @@ export function LayoutViews({
   sheet?: { src: string; width: number; height: number } | null;
 }) {
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
-  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun" | "sheet">(hasPlan ? "plan" : "blocks");
+  /* ⚠️ THE SHEET OPENS THE SECTION WHERE THERE IS ONE (owner 2026-08-21). It
+     is the "Approved plan" seat now — the first tab — and a control whose
+     first option is not the one showing reads as a bug. Falls back to the
+     traced plan, then to the schedule, exactly as before. */
+  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun" | "sheet">(
+    sheet ? "sheet" : hasPlan ? "plan" : "blocks",
+  );
 
   /**
    * ⚠️ FEET BY DEFAULT, and that is the point of the request rather than a
@@ -177,12 +183,33 @@ export function LayoutViews({
                  bundle-split imports, and restoring the two entries is
                  uncommenting two lines. Only the OPTIONS are gone, so a new
                  visitor sees plan and plot list. */
+              /* 🚨 THE FIRST TWO OPTIONS SWAPPED PLACES AND NAMES (owner,
+                 2026-08-21: "in edappadi, the approved plan should show this
+                 attachment. Rename printed sheet to 'blocks'. In plot list and
+                 blocks, when a client clicks a plot, there should be a
+                 table").
+
+                 Read together those three sentences only resolve one way. The
+                 attachment is the sanctioned DRAWING, so it has to be what
+                 "Approved plan" shows — which is the `sheet` renderer, a
+                 zoomable image. That frees the second seat for the traced
+                 interactive plan, and the second seat is the one being renamed
+                 "Blocks". And it has to be the traced plan there, because the
+                 third sentence asks for a plot to be CLICKABLE in "Blocks" —
+                 which a raster sheet can never be, and the traced plan already
+                 is.
+
+                 ⚠️ THE VALUES DID NOT MOVE, only the labels and the order.
+                 `sheet` still renders the sheet and `plan` still renders
+                 MasterPlan, so every stored view, deep link and the
+                 `jamin:open-sun-view` event still resolve to the same thing.
+                 Relabelling is not renaming: do not "tidy" the values to match
+                 the words or every existing URL changes meaning. */
               options={[
-                /* ⚠️ CONDITIONAL NOW. It was unconditional, which was safe only
-                   while the whole control was gated on `hasPlan`; with the sheet
-                   able to open the control on its own, an untraced project would
-                   otherwise be offered an Approved plan that renders nothing. */
-                ...(hasPlan ? [{ value: "plan", label: "Approved plan" }] : []),
+                /* ⚠️ CONDITIONAL. A project with no sheet must not be offered
+                   an Approved plan that renders nothing. */
+                ...(sheet ? [{ value: "sheet", label: "Approved plan" }] : []),
+                ...(hasPlan ? [{ value: "plan", label: "Blocks" }] : []),
                 // { value: "relief", label: "3D view" },
                 /* ⚠️ Sun & shadow HIDDEN AGAIN (owner 2026-08-18 night:
                    "hide the sun and shadow"), reversing the same day's
@@ -192,7 +219,6 @@ export function LayoutViews({
                    The view value, LayoutVR and the event listener all stay
                    live; restoring is uncommenting two lines. */
                 // { value: "sun", label: "Sun & shadow" },
-                ...(sheet ? [{ value: "sheet", label: "Printed sheet" }] : []),
                 { value: "blocks", label: "Plot list" },
               ]}
             />

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot, type PlotPlan } from "@/lib/properties";
 import { useCanAnimate, useInView } from "@/hooks/useInView";
+import { plotRecordRows } from "@/lib/plot-record";
 import { PlotDimensions } from "@/components/cadastral/PlotDimensions";
 import { PlanMeasure } from "@/components/cadastral/PlanMeasure";
 import {
@@ -871,14 +872,11 @@ function PlotSheet({
    * may not have noticed. `size_sqft` is stored, not derived, which is why it
    * leads: it is what the approved schedule itself says.
    */
-  const record: [string, string][] = [["Plot number", plot.plot]];
-  if (plot.block) record.push(["Block", plot.block]);
-  if (plot.size_sqft != null)
-    record.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")}\u00a0sq\u00a0ft`]);
-  if (plot.size_sqm != null) record.push(["Area (sanctioned)", `${plot.size_sqm}\u00a0m²`]);
-  if (plot.dim_m) record.push(["Dimensions", fmtDims(plot.dim_m, unit)]);
-  if (plot.facing) record.push(["Facing", plot.facing]);
-  if (plot.road_m != null) record.push(["Road width", fmtLength(plot.road_m, unit)]);
+  /* ⚠️ ONE BUILDER, SHARED WITH THE PLOT LIST'S CARD — see lib/plot-record.
+     These rows were written out here and again in PlotSchedule, and the two had
+     already drifted by a row (the grid was dropping the sanctioned metre area).
+     Do not re-inline them. */
+  const record = plotRecordRows(plot, unit);
 
   const approval: [string, string][] = [];
   if (plan.approvalNo) approval.push(["DTCP application", plan.approvalNo]);

@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot } from "@/lib/properties";
-import { dimensions as fmtDims, length as fmtLength, type Unit } from "@/lib/units";
+import { plotRecordRows } from "@/lib/plot-record";
+import { type Unit } from "@/lib/units";
 
 /**
  * The layout as a structured block of tiles.
@@ -92,30 +93,38 @@ export function PlotSchedule({ plots, unit = "ft" }: { plots: Plot[]; unit?: Uni
               {PLOT_STATUS[plotStatus(selected)].label}
             </span>
           </div>
-          {/* ⚠️ THE SAME RECORD THE PLOT SHEET SHOWS, in the space a panel
-              allows. Before the block view became a choice this was area and
-              facing only, which was right when the only projects using it had
-              nothing else recorded — Shastri Nagar has no dimensions and no
-              road widths. A traced project does, and dropping them here would
-              have made the switch a downgrade. Every row is conditional, so a
+          {/* 🚨 THE FULL RECORD, AS A RULED TABLE (owner 2026-08-21: "in plot
+              list and blocks, when a client clicks a plot, there should be a
+              table — for example, what is the square feet, facing where, what
+              all info u can pull from the sheet").
+
+              ⚠️ THE ROWS COME FROM `plotRecordRows` NOW, THE SAME BUILDER THE
+              TRACED PLAN'S PLOT SHEET USES. They were two hand-written lists
+              and they had drifted: this one was missing the SANCTIONED metre
+              area — the drawing's own figure rather than this site's
+              arithmetic — so a reader who chose the grid was quietly getting
+              less than one who chose the plan, which is the exact thing
+              LayoutViews' header promises never happens.
+
+              ⚠️ ONE COLUMN, NOT TWO. The pairs were in a `sm:grid-cols-2`,
+              which puts two label/value pairs on a line and makes the values
+              land at two different x positions — the same raggedness report 14
+              reported against the Area statement. A single ruled register
+              gives every value one right-hand rule, which is what "a table"
+              means here. Every row is conditional inside the builder, so a
               project with only a schedule still renders exactly what it did. */}
-          <dl className="mt-phi2 grid gap-x-phi3 gap-y-1.5 text-base sm:grid-cols-2">
-            {(
-              [
-                ["Area", plotArea(selected)],
-                ["Dimensions", selected.dim_m ? fmtDims(selected.dim_m, unit) : null],
-                ["Facing", selected.facing ?? null],
-                ["Road width", selected.road_m != null ? fmtLength(selected.road_m, unit) : null],
-                ["Block", selected.block ?? null],
-              ] as [string, string | null][]
-            )
-              .filter(([, v]) => v)
-              .map(([k, v]) => (
-                <div key={k} className="flex items-baseline justify-between gap-3 border-b border-line pb-1.5">
-                  <dt className="text-tiny uppercase tracking-[0.12em] text-ink-faint">{k}</dt>
-                  <dd className="text-right text-ink">{v}</dd>
-                </div>
-              ))}
+          <dl className="mt-phi2 divide-y divide-line border-y border-line text-base">
+            {plotRecordRows(selected, unit).map(([k, v]) => (
+              <div
+                key={k}
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-2"
+              >
+                <dt className="text-tiny uppercase leading-snug tracking-[0.12em] text-ink-faint">
+                  {k}
+                </dt>
+                <dd className="ledger whitespace-nowrap text-right leading-snug text-ink">{v}</dd>
+              </div>
+            ))}
           </dl>
           {!plotArea(selected) && !selected.facing && (
             <p className="mt-phi2 text-base text-ink-soft">Details on request</p>
@@ -131,8 +140,14 @@ export function PlotSchedule({ plots, unit = "ft" }: { plots: Plot[]; unit?: Uni
           </a>
         </div>
       ) : (
+        /* ⚠️ "its record", not "its extent and facing" — the older wording
+           promised two specific figures, and Edappadi's 61 traced plots carry
+           neither (they were traced for their OUTLINES; the schedule figures
+           were never entered against them). A hint that names fields the
+           record may not hold reads as a fault in the page rather than as a
+           gap in the data. */
         <p className="mt-phi3 text-base text-ink-muted">
-          Tap a plot number for its extent and facing.
+          Tap a plot number for its record.
         </p>
       )}
     </div>
