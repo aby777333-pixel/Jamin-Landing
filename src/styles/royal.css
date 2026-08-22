@@ -78,6 +78,69 @@
     #c9a884 100%
   );
 
+  /**
+   * ── THE GILT FOILS (2026-08-22) ────────────────────────────────────────
+   *
+   * ⚠️ THE TWO COMMENTS ABOVE DESCRIBED A GRADIENT THAT NO LONGER EXISTED.
+   * They say --foil-gold "ramps from #7a5a16 to #f6ebbf" and that the seal's
+   * darkest stop "is #e3cb74". Neither hex appears in either ramp — the
+   * Cartouche regrade replaced both with the bronze stops you can read above
+   * and left the prose behind. The numbers in those notes were not wrong when
+   * written and they are not wrong now: they are the numbers for THESE two
+   * ramps, which is where they have been moved to.
+   *
+   * So this is a restoration, not an invention. --foil-gold stays bronze
+   * because it is painted on sand all over the site; these are its dark-ground
+   * cousins, and `.rj-gilded` is what swaps one for the other.
+   *
+   * ⚠️ #c9a227 IS THE MUSTARD THE NOTE AT THE TOP OF THIS BLOCK WARNS ABOUT —
+   * as a flat fill. It is not one here. It sits at 22% and 58% of a six-stop
+   * ramp with a specular band sliding over it, which is the whole point that
+   * note is making: the eye decodes metal from the travelling highlight, so
+   * the mustard stop is what makes the light stop read as light.
+   */
+  --foil-gilt: linear-gradient(
+    115deg,
+    #7a5a16 0%,
+    #c9a227 22%,
+    #f6ebbf 42%,
+    #c9a227 58%,
+    #7a5a16 78%,
+    #e3cb74 100%
+  );
+  /**
+   * The word-bearing gilt, clipped to the top of the ramp for exactly the
+   * reason recorded above: #7a5a16 on onyx-900 measures 3.11:1 and fails, so a
+   * label sitting on the full foil is illegible across a third of itself.
+   *
+   * The darkest stop here is #e3cb74 (luminance 0.603) — measured 6.06:1 under
+   * --color-champagne-900, and 11.83:1 as a word on onyx-900. Every lighter
+   * stop is better. This is the ramp `.rj-foil-text` was always documented to
+   * use and, until now, never did.
+   */
+  --foil-gilt-seal: linear-gradient(
+    115deg,
+    #e3cb74 0%,
+    #f0dda0 24%,
+    #fdf6e4 46%,
+    #f0dda0 68%,
+    #e3cb74 100%
+  );
+
+  /* An honest name for the ramp above, so new code can ask for bronze on
+     purpose instead of asking for "gold" and being surprised. Same value, no
+     rename: --foil-gold has 74 live references and renaming it would be churn
+     with no pixel behind it. */
+  --foil-bronze: linear-gradient(
+    115deg,
+    #6c533b 0%,
+    #b48961 22%,
+    #ecd9c2 42%,
+    #b48961 58%,
+    #6c533b 78%,
+    #c9a884 100%
+  );
+
   --foil-plat: linear-gradient(
     115deg,
     #847b6d 0%,
@@ -315,6 +378,91 @@
     background-image: none;
     color: var(--color-champagne-700);
   }
+}
+
+/**
+ * ── THE GILDING (2026-08-22) ──────────────────────────────────────────────
+ *
+ * How the site gets gold without a single component learning the word.
+ *
+ * `.rj-gilded` re-points the bronze tokens at tier 2b. It sets NOTHING but
+ * custom properties, so it is not a restyle and it cannot fight a Tailwind
+ * utility for specificity — the trap `.rj-hairline` fell into when unlayered
+ * CSS silently beat `@layer`. Children keep every class they already have;
+ * `var()` resolves differently underneath them. This is the same mechanism
+ * `.rj-footer` below uses to descend into onyx, and the same one globals.css
+ * credits for regrading 31 routes from one block.
+ *
+ * 🚨 PUT IT ONLY ON A GROUND WHOSE DARKNESS IS KNOWN. The whole tier fails AA
+ * on sand — the table in globals.css tier 2b has the measurements. The rule is
+ * enforced by where you type the class, and every current use sits on a SOLID
+ * onyx fill: the footer, the mobile drawer, the gilt band, and the gilt chips.
+ * If a fifth appears, measure the ground first.
+ *
+ * ⚠️ NEITHER HERO PLATE GETS THIS, and the reason is not caution, it is that
+ * neither one has a knowable ground.
+ *
+ *   `.gilt-light` is a 0.78 IVORY plate. Its contrast budget is recorded at
+ *   length in globals.css and it was bought by making the gold caption DARKER
+ *   (gold-ink → gold-deep). Gilt is the opposite direction and would spend the
+ *   whole budget in one line.
+ *
+ *   `.gilt` looks like a safe dark plate at 0.52 — but the heroes pair it with
+ *   `.rj-gilt-sheer`, which drops the fill to 0.14 and hands legibility to a
+ *   halo instead. At that alpha the effective background is the PHOTOGRAPH,
+ *   and globals.css records `gold-pale` being paled twice, each time because a
+ *   brighter frame arrived rather than because anyone changed the design.
+ *   Gilt-100 is lighter again than the value that sweep landed on, so gilding
+ *   these would re-open a question that took two rounds to close — and it
+ *   would re-open it on the one surface where the answer changes every time
+ *   the artwork does. Heroes keep bronze. If they are ever to be gilded it is
+ *   a sweep against the live frames, not a token swap.
+ */
+/* ⚠️ THE OTHER TWO SELECTORS ARE SURFACES THAT BRING THEIR OWN ONYX.
+   `.rj-chip-gilt` and `.rj-medallion` both paint an onyx fill as the first
+   thing they do, so they satisfy the dark-ground rule no matter what section
+   they are dropped into — a gilt chip on a sand card is still gold-on-onyx.
+   They are listed here rather than given a duplicate token block because two
+   copies of this list is how the ramp ends up disagreeing with itself. */
+.rj-gilded,
+.rj-chip-gilt,
+.rj-medallion {
+  /* The fill gold, the light stop and the rules. */
+  --color-jamin-gold: var(--color-gilt-400);
+  --color-jamin-gold-light: var(--color-gilt-300);
+  --color-jamin-gold-soft: var(--color-gilt-100);
+  /* ⚠️ The three INK golds inherit too, and they have to. On sand they exist
+     because gold is unreadable there; on onyx the failure inverts and the dark
+     ones are what disappears — gold-ink #6c533b measures 1.85:1 on onyx-900.
+     Each maps to the stop that does the same JOB on this ground rather than to
+     the nearest hue: the reading gold, the pale gold, the deep gold. */
+  --color-jamin-gold-ink: var(--color-gilt-300); /* 11.83:1 on onyx-900 */
+  --color-jamin-gold-pale: var(--color-gilt-100); /* 14.66:1 */
+  --color-jamin-gold-deep: var(--color-gilt-500); /* 6.87:1 */
+  /* Champagne follows, because half the site's gold is spelled champagne. The
+     ramp is kept in the same order — 500 stays the fill, 700 stays the word —
+     so nothing that relied on "700 is darker than 500" inverts. */
+  --color-champagne-100: var(--color-gilt-100);
+  --color-champagne-300: var(--color-gilt-300);
+  --color-champagne-500: var(--color-gilt-500);
+  --color-champagne-700: var(--color-gilt-300);
+  /* 🚨 900 IS NOT RE-POINTED, AND THAT IS THE WHOLE CARE OF THIS BLOCK.
+     Every other rung flips because the GROUND flipped: a dark gold word
+     disappears on onyx, so it becomes a light one. 900 is the exception
+     because it is not a word on the ground — it is the word on the FOIL, and
+     the foil got LIGHTER when it turned gilt. Flipping it would move the text
+     the same direction as its background.
+     Measured on the gilt seal ramp's darkest stop (#e3cb74):
+       champagne-900 #55402a → 6.06:1  ✓ AA
+       gilt-700      #8a6414 → 3.34:1  ✗ fail
+     This was written as a re-point first and caught by measuring it. The chip
+     on PropertyCard sets `text-champagne-900` on `rj-foil-seal` at
+     `--text-micro`, so the failing version would have been small text. */
+  /* The foils, including the one `.rj-foil-text` clips to glyphs. */
+  --foil-gold: var(--foil-gilt);
+  --foil-gold-seal: var(--foil-gilt-seal);
+  /* Hairlines warm up with everything else. */
+  --line-champagne: rgba(234, 163, 23, 0.42);
 }
 
 /**
@@ -2483,10 +2631,21 @@ header .glass,
    share certificate. Crowns the footer, the velvet bands, the Sweep and the
    property page's vault band — one device, everywhere, so it reads as the
    site's signature strip. */
+/* ⚠️ THE THICK BAR IS A FOIL NOW, THE HAIRLINE IS STILL FLAT (2026-08-22).
+   A 3px flat bar of a single hex is the one shape this system says is not
+   metal — the note on the foils records that the eye decodes metal from the
+   travelling specular band, not from the hue, and at 3px there was no band to
+   decode. It is the same token either way (`--foil-gold` is bronze on paper
+   and gilt inside `rj-gilded`, exactly as `--color-jamin-gold` was), so all
+   six call sites keep the ground they were audited on.
+
+   The 1px stays flat on purpose: a gradient across one pixel of height has
+   nowhere to travel, so it would cost a paint and return a slightly muddier
+   line. Structure below, metal above. */
 .rj-royal-rule {
   height: 7px;
   background:
-    linear-gradient(var(--color-jamin-gold), var(--color-jamin-gold)) left top / 100% 3px no-repeat,
+    var(--foil-gold) left top / 200% 3px no-repeat,
     linear-gradient(var(--color-jamin-gold), var(--color-jamin-gold)) left bottom / 100% 1px no-repeat;
 }
 
@@ -2497,12 +2656,25 @@ header .glass,
 }
 
 /* Folio numerals: the section indices of a bound document, stamped in the
-   bronze foil ramp. Decoration — always aria-hidden, never a heading. */
+   foil ramp. Decoration — always aria-hidden, never a heading.
+
+   ⚠️ `var(--foil-gold)` NOW, NOT A HAND-WRITTEN RAMP (2026-08-22). This rule
+   used to carry its own copy of the bronze stops — #6c533b / #b48961 / #ecd9c2
+   — which is the same six hexes the token holds, spelled a second time at a
+   slightly different angle. That is the duplicate-source-of-truth trap four
+   files in this codebase warn about, and it had already half-sprung: the
+   regrade re-valued the token and this ramp stayed behind, so a folio could
+   never follow the metal anywhere. Through the token it is bronze on paper and
+   gilt inside `rj-gilded`, like every other gold surface.
+
+   The angle moves 105deg → 115deg with it. On a numeral two glyphs wide that
+   is a few pixels of where the highlight crosses, and matching the rest of the
+   site's metal is worth more than preserving it. */
 .rj-folio {
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
-  background: linear-gradient(105deg, #6c533b 0%, #b48961 30%, #ecd9c2 50%, #b48961 70%, #6c533b 100%);
+  background: var(--foil-gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -4095,4 +4267,286 @@ header .glass,
     line-height: 1.5;
     text-align: left;
   }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   THE GILDING, TIER B (2026-08-22) — where the gold is actually spent.
+
+   Tier A restored the metal and scoped it to dark grounds. This is the set of
+   surfaces that carry it.
+
+   🚨 THE ONE RULE EVERY CLASS BELOW OBEYS: none of them names a gilt token.
+   They all reference `--color-jamin-gold` and `--foil-gold`, which resolve to
+   BRONZE on paper and to GILT inside `.rj-gilded`. So the same ornament is
+   correct on both grounds and no component has to know which one it is on.
+   Writing `--color-gilt-400` directly in any rule here would break that and
+   put failing gold on sand the first time the class moved.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * ── THE GILT BAND ─────────────────────────────────────────────────────────
+ *
+ * A full-bleed onyx strip with a gold rule on each edge — the seam between two
+ * light sections, and the cheapest way to stop a long sand page reading as one
+ * sheet. It carries `.rj-gilded` at the call site, so anything placed inside
+ * is gold by inheritance.
+ *
+ * ⚠️ IT IS A GROUND AND NOTHING ELSE — no padding, no edges, no content rules.
+ *
+ * It had all three for a first draft and they were removed rather than tuned.
+ * The band was given a 1px gold border top and bottom plus a pair of fading
+ * inner hairlines, and then GiltSeam — its only caller — crowned it with a 6px
+ * leafed foil bar at each edge, because a foil edge is the better edge. Those
+ * two treatments do not compose: the inner hairlines were positioned 3px in
+ * and landed underneath the crown, invisible, while the borders drew a second
+ * thinner line immediately outside it.
+ *
+ * So the edge belongs to the caller, and this class is a rectangle of onyx.
+ * A future band that wants hairlines instead of crowns can have them, without
+ * first having to undo a set it did not ask for.
+ */
+.rj-band-gilt {
+  position: relative;
+  background: linear-gradient(180deg, var(--color-onyx-900) 0%, var(--color-onyx-800) 100%);
+}
+
+/**
+ * ── GOLD LEAF ─────────────────────────────────────────────────────────────
+ *
+ * The difference between a gradient and a metal is that a metal has grain.
+ * `.rj-foil` on its own is a perfectly smooth ramp, which is why it reads as
+ * a gradient at large sizes — the eye gets no surface information from it.
+ *
+ * ⚠️ NOT feTurbulence. cadastral's PaperGrain records that it is among the
+ * most expensive filters a browser can run and must be instantiated exactly
+ * once per document; a leaf on every chip and rule would be dozens. This is
+ * three repeating gradients at fractional alpha instead — the browser rasters
+ * them like any other background, and `soft-light` keeps them from lightening
+ * or darkening the foil overall, only breaking it up.
+ *
+ * ⚠️ IT REDECLARES THE FOIL as its own last background layer rather than
+ * sitting over one, because `background-blend-mode` blends layers WITHIN an
+ * element and cannot reach a foil painted on a different one. So this class
+ * replaces `.rj-foil`, it does not accompany it.
+ */
+.rj-leaf {
+  background-image:
+    repeating-linear-gradient(
+      64deg,
+      rgba(255, 255, 255, 0.06) 0px,
+      rgba(255, 255, 255, 0.06) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      -21deg,
+      rgba(0, 0, 0, 0.05) 0px,
+      rgba(0, 0, 0, 0.05) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    repeating-linear-gradient(
+      118deg,
+      rgba(255, 255, 255, 0.04) 0px,
+      rgba(255, 255, 255, 0.04) 2px,
+      transparent 2px,
+      transparent 11px
+    ),
+    var(--foil-gold);
+  background-size: auto, auto, auto, 200% 100%;
+  background-position: 0 0, 0 0, 0 0, 0% 50%;
+  background-blend-mode: soft-light, soft-light, soft-light, normal;
+}
+
+/**
+ * ── THE GILT CHIP ─────────────────────────────────────────────────────────
+ *
+ * The status pill, as a struck seal rather than as a tinted rectangle.
+ *
+ * ⚠️ IT IS ITS OWN DARK GROUND, which is the whole reason it is allowed to be
+ * gold on a sand page: the chip does not inherit the section's ground, it
+ * lays down onyx and gilds itself. That is why the call site pairs it with
+ * `.rj-gilded` on the chip itself rather than expecting one from a parent — a
+ * gilt chip dropped into a light card is still sitting on onyx.
+ *
+ * ⚠️ THE WORD ON IT IS `--color-jamin-gold-ink`, not the fill. Inside
+ * `.rj-gilded` that token resolves to gilt-300, measured 11.83:1 on onyx-900.
+ * The fill gold as a label would be 8.95:1 and also passes, but the ink token
+ * is what every other component already reaches for, so the chip stays
+ * consistent with them rather than inventing a rule.
+ */
+.rj-chip-gilt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.3em 0.85em;
+  border-radius: 999px;
+  background: var(--color-onyx-900);
+  border: 1px solid color-mix(in srgb, var(--color-jamin-gold) 55%, transparent);
+  color: var(--color-jamin-gold-ink);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-jamin-gold) 22%, transparent);
+  white-space: nowrap;
+}
+/* The dot that precedes the word, struck from the fill gold. */
+.rj-chip-gilt::before {
+  content: "";
+  width: 0.4em;
+  height: 0.4em;
+  border-radius: 999px;
+  background: var(--color-jamin-gold);
+  flex: none;
+}
+
+/**
+ * ── THE CORNER FOLD — ALREADY BUILT, DELIBERATELY NOT REBUILT HERE ────────
+ *
+ * An `.rj-fold` stood in this slot for about ten minutes on 2026-08-22 before
+ * being deleted, and the reason is worth keeping.
+ *
+ * `.cd-fold` in cadastral.css has done this since long before the gilding, and
+ * it is painted in `--jamin-gold-mark` (#fbbc15) — a TRUE gold that survived
+ * the Cartouche regrade untouched, because cadastral declares it in a plain
+ * `:root` rather than in `@theme`, and the regrade only re-valued `@theme`.
+ *
+ * ⚠️ SO THE SITE WAS NEVER ENTIRELY WITHOUT GOLD, and anyone auditing it by
+ * grepping the `@theme` block (or for #eaa317) will conclude that it was. The
+ * mark golds live at cadastral.css lines 32-33 and are reserved for the logo
+ * and the seal. `.cd-fold` on PropertyCard and SignInForm is the only place
+ * either of them is spent — one ornament on two components, which is exactly
+ * why a site with 400 gold-named usages still reads bronze.
+ *
+ * Adding a second fold class would have given this codebase two sources of
+ * truth for one ornament, which is the failure it warns about in four separate
+ * files. If the fold ever needs the gilt tier instead, re-point
+ * `--jamin-gold-mark` — do not write a new class.
+ */
+
+/**
+ * ── THE SECTION NUMERAL — ALREADY BUILT, ALSO NOT REBUILT ─────────────────
+ *
+ * An `.rj-numeral` was written here and deleted alongside `.rj-fold`, for the
+ * same reason and with one extra finding.
+ *
+ * `.rj-folio` above is the section numeral, and the homepage stamps 01–04 with
+ * it. It is not gold there and that is a DECISION, not an omission: all four
+ * call sites add `.rj-folio-red`, which re-values the numerals through
+ * vermilion into garnet. That came from the aesthetics round, and a gold
+ * numeral dropped in beside it would not be more gold on the page, it would be
+ * two chapter-numbering systems on one page.
+ *
+ * What the base class did need was the token, which it now has — see the note
+ * on `.rj-folio`. Any folio that is NOT red follows the metal from here on.
+ */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TIER C + D (2026-08-22) — motion and craft.
+
+   ⚠️ MOST OF THESE TWO TIERS WERE ALREADY BUILT, and the audit is worth
+   recording so the next round does not rebuild them either:
+
+     · the sweep            `.rj-sweep`      — existed, now has gold to cross
+     · hover underlines     `.rj-underline`  — existed, on footer + gazetteer
+     · number roll-up       `LedgerCount`    — existed, eased, in-view triggered
+     · paper grain          `PaperGrain`     — existed, one feTurbulence, root only
+     · deckled edges        `.rj-deckle`     — existed, one seam, now two
+     · drop caps            `.rj-dropcap`    — existed on the Journal, now /about
+     · the gold eyebrow     Hero             — existed, `text-jamin-gold-deep`
+
+   What is below is the remainder: the two things the site genuinely did not
+   have.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/**
+ * ── THE DRAWN RULE (Tier C, item 13) ──────────────────────────────────────
+ *
+ * A gold hairline that is DRAWN from the left as it arrives, rather than
+ * switched on with the block around it.
+ *
+ * ⚠️ TRANSFORM ONLY, on a pseudo-element. `.rj-underline` two files up animates
+ * `background-size`, and that is correct THERE because it fires on hover, one
+ * element at a time, under a cursor. This one fires on scroll and can have
+ * several instances arriving in the same frame, which is exactly the case §9's
+ * performance floor is about: a `scaleX` on a composited pseudo-element costs
+ * the compositor nothing, a `background-size` tween repaints the gradient every
+ * frame.
+ *
+ * 🚨 IT DEFAULTS TO DRAWN — `scaleX(1)`, not 0. The undrawn state is applied
+ * only by `.rj-reveal-pre`, which Reveal adds in an effect and only to elements
+ * still below the fold. So a reader with no JavaScript, a crawler, and a reader
+ * who lands mid-page all see a finished rule. This is the same guarantee
+ * Reveal's own note makes, and it is the reason the animation is not written
+ * as `from { transform: scaleX(0) }` on the bare class: that would hide the
+ * rule for everyone whose browser never runs the observer.
+ */
+.rj-rule-draw {
+  position: relative;
+  height: 1px;
+  overflow: hidden;
+}
+.rj-rule-draw::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-jamin-gold) 18%,
+    var(--color-jamin-gold) 82%,
+    transparent
+  );
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+.rj-reveal-pre .rj-rule-draw::after {
+  transform: scaleX(0);
+}
+.rj-arrive .rj-rule-draw::after {
+  animation: rj-rule-draw 900ms var(--ease-silk) var(--rj-rule-delay, 120ms) both;
+}
+@keyframes rj-rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Collapsed, not removed — the same care royal.css takes over `rj-arrive`.
+     `both` fill would otherwise leave the rule stuck at its from-frame. */
+  .rj-arrive .rj-rule-draw::after {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+/**
+ * ── THE PLATE FRAME (Tier D, item 19) ─────────────────────────────────────
+ *
+ * A hairline set just inside a photograph's edge, the way a plate is framed in
+ * a printed monograph. It is what makes photography of mixed provenance — some
+ * rendered, some shot on site, some supplied by the owner — read as one set.
+ *
+ * 🚨 THE DUOTONE THAT WAS SPECIFIED WITH IT WAS NOT BUILT, ON PURPOSE.
+ *
+ * The plan for this item was "a consistent warm duotone + inner bronze hairline
+ * frame". The frame is here; the duotone is not, and it should not be added
+ * later without the owner asking for it by name.
+ *
+ * This site sells land. Every photograph on it is either the ground a buyer is
+ * being asked to walk or a render of what will be built on it, and the whole
+ * editorial position — stated in the catalogue rules, in the "no invented
+ * address" rule, in `lib/properties.ts` restricting the columns a page may
+ * read — is that the reader is shown the real thing. Recolouring the ground
+ * warmer than it is, to make a page look more expensive, is the one decoration
+ * that trades on the thing the site is asking to be trusted about. A frame
+ * costs the photograph nothing; a duotone changes what the photograph says.
+ *
+ * ⚠️ `inset` box-shadow, NOT a border. A border would occupy layout and shift
+ * the `fill` image inside it; an inset shadow is painted over the picture and
+ * moves nothing. It also survives the `group-hover:scale-[1.025]` on the image,
+ * because the shadow belongs to the box and the transform belongs to the img.
+ */
+.rj-plate {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-jamin-gold) 30%, transparent);
 }

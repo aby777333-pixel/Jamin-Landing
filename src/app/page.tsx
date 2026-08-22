@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Hero, type Slide } from "@/components/Hero";
 import { Sweep } from "@/components/brand/Sweep";
+import { GiltSeam } from "@/components/GiltSeam";
 import { LocationExplorer } from "@/components/LocationExplorer";
 import { Reveal } from "@/components/Reveal";
 import { Tilt } from "@/components/Tilt";
@@ -435,7 +436,7 @@ export default async function HomePage() {
                     the same full-width horizontal layout… Make the layout
                     dynamic based on the number of properties").
 
-                    One development takes PropertyCard's `featured` form —
+                    One development takes PropertyCard's `wide` form (renamed from `featured`) —
                     the horizontal full-width card built for exactly this.
                     Two share the band as halves; three or more take the
                     standard 3-column shelf.
@@ -459,7 +460,7 @@ export default async function HomePage() {
                       key={p.id}
                       p={p}
                       priority={gi === 0 && i === 0}
-                      featured={g.items.length === 1}
+                      wide={g.items.length === 1}
                     />
                   ))}
                 </div>
@@ -478,7 +479,15 @@ export default async function HomePage() {
           rule, with the figures in gold (gold-light measures ~8:1 on the
           darkest stop; the labels stay white). */}
       {live.length > 0 && (
-        <section className="rj-velvet text-white">
+        /* `rj-gilded` (2026-08-22): the velvet is a solid oxblood ramp with no
+           photography behind it, so its darkness is knowable and the tier-2b
+           gold is legal on it. Measured against the band's LIGHTEST stop
+           (#a80303), which is the worst case: the brass numerals' darkest
+           pixel goes 3.31:1 → 3.44:1 and the certificate rules above and below
+           stop being bronze-on-oxblood, which was the pairing least worth
+           having on the page — two warm browns a few points apart.
+           The numerals are text-4xl extrabold, so 3:1 is their bar, not 4.5. */
+        <section className="rj-velvet rj-gilded text-white">
           <div className="rj-royal-rule" aria-hidden="true" />
           <Container className="py-phi5">
             <dl className="grid grid-cols-3 gap-phi3 text-center">
@@ -624,6 +633,13 @@ export default async function HomePage() {
           </Reveal>
         </Container>
       </section>
+
+      {/* The one seam on this page that had no paper change to carry it — the
+          bone-paper band above hands over to the location explorer's canvas
+          across a single sand hairline, so two full sections read as one
+          sheet. See GiltSeam for why it is an ornament and not a band with
+          copy in it. */}
+      <GiltSeam />
 
       {/* ---- FEATURE 2: the interactive location explorer ----
           Replaces the grid of four coloured district tiles. The interaction is
@@ -824,7 +840,7 @@ export default async function HomePage() {
               (report 10, 2026-08-21: "Convert the current small
               completed-property card into a full-width horizontal card. Use
               the layout: Project Image | Complete Project Information… remove
-              the large empty area beside the current card"). `featured` is
+              the large empty area beside the current card"). `wide` is
               PropertyCard's horizontal form — picture left, record right.
               More than one completed project falls back to the shelf. */}
           <div
@@ -833,7 +849,7 @@ export default async function HomePage() {
             }`}
           >
             {completed.map((p) => (
-              <PropertyCard key={p.id} p={p} featured={completed.length === 1} />
+              <PropertyCard key={p.id} p={p} wide={completed.length === 1} />
             ))}
           </div>
         </Container>

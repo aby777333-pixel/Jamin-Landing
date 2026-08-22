@@ -394,9 +394,9 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           <>
             {/* Cards are h3; without this the outline jumps h1 → h3. */}
             <h2 className="sr-only">{meta.label} developments</h2>
-            <div className="grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-phi3">
               {items.map((p, i) => (
-                <PropertyCard key={p.id} p={p} priority={i < 3} />
+                <PropertyCard key={p.id} p={p} wide priority={i < 3} />
               ))}
             </div>
           </>

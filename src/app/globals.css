@@ -210,10 +210,16 @@
   --color-bone-soft: #b3a48f;
 
   /* ---- tier 2 · champagne gold ----
-     ⚠️ THE IDENTITY GOLD AND THE LOGO GOLD ARE NOT THE SAME COLOUR, and that
-     is intentional. --color-jamin-gold (#eaa317) is sampled from the mark and
-     stays reserved for the mark. Champagne is the interface gold: antique,
-     desaturated, and the thing that reads as metal rather than as yellow.
+     ⚠️ THIS TIER IS BRONZE, AND THE COMMENT THAT USED TO SIT HERE LIED.
+     It claimed "--color-jamin-gold (#eaa317) is sampled from the mark and
+     stays reserved for the mark" — but the Cartouche regrade above re-valued
+     the whole gold family to the bronze ramp, so #eaa317 stopped existing on
+     2026-08-17 and survived only in this sentence. Nothing painted it for two
+     days. Corrected 2026-08-22, and the real gold is restored as tier 2b.
+
+     Champagne is the interface metal ON PAPER: antique, desaturated, and the
+     thing that reads as bronze foil against sand rather than as yellow. It is
+     correct here and it is not being changed.
 
      ⚠️ 500 IS A FILL. As text on canvas it measures 2.36:1 — worse than the
      logo gold's 2.12:1 only in that it looks like it should pass. Every gold
@@ -227,6 +233,40 @@
   --color-champagne-500: #b48961;
   --color-champagne-300: #c9a884;
   --color-champagne-100: #e8d5b8;
+
+  /* ══════════════════════════════════════════════════════════════════════
+     ---- tier 2b · GILT — THE TRUE GOLD (restored 2026-08-22) ----
+
+     🚨 THE ONE LAW: GILT IS FOR DARK GROUNDS. NOTHING ELSE.
+
+     This is not a style preference, it is arithmetic, and it is why the tier
+     was allowed back. Measured against this site's two grounds:
+
+                        on --color-canvas #f0e1d6   on --color-onyx-900 #120e0a
+       gilt-400 #eaa317          1.69:1  ✗ fail              8.95:1  ✓ AAA
+       gilt-500 #c9a227          2.20:1  ✗ fail              6.87:1  ✓ AA
+       gilt-300 #e3cb74          1.28:1  ✗ fail             11.83:1  ✓ AAA
+
+     Every one of them fails on paper by a wide margin and every one passes on
+     onyx by a wide margin. There is no tuning that changes this — a gold light
+     enough to glint is a gold too light to read on sand. So the tier does not
+     get applied by hand, it gets applied by SCOPE: `.rj-gilded` in royal.css
+     re-points the bronze tokens at these, and only dark surfaces carry it.
+     That way a component cannot accidentally put gilt on paper, because no
+     component names gilt at all.
+
+     ⚠️ DO NOT re-value --color-jamin-gold to any of these. 190 usages of it
+     sit on sand. The bronze family is what makes those legible; this family
+     is what makes onyx expensive. Both are correct, on their own ground.
+
+     400 is the logo mark's own gold, back from the comment it had been living
+     in. 500 is the fill. 300 is the seal stop — the lightest the ramp is
+     allowed to get dark, which is what lets a gilt chip carry a word. */
+  --color-gilt-700: #8a6414;
+  --color-gilt-500: #c9a227;
+  --color-gilt-400: #eaa317;
+  --color-gilt-300: #e3cb74;
+  --color-gilt-100: #f6ebbf;
 
   /* ---- tier 3 · platinum ----
      ⚠️ 800 IS NOT IN THE BRIEF. It was added because the brief's ramp has no

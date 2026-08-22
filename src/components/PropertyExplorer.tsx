@@ -909,12 +909,23 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                     qualify; on /properties with several results every stage
                     keeps the uniform sm:2/lg:3 grid the 2026-08-20 word
                     demands. */}
-                <div
-                  key={`${swapKey}|${g.key}`}
-                  className={`rj-swap mt-phi4 grid gap-phi3 ${
-                    results.length === 1 ? "" : "sm:grid-cols-2 lg:grid-cols-3"
-                  }`}
-                >
+                {/* 🚨 SINGLE COLUMN, EVERY COUNT (owner, 2026-08-22: "in all
+                    pages of the website make the cards horizontal wide. But in
+                    the phone app, it should come vertical").
+
+                    ⚠️ THIS SETTLES THE REPORT 8 / REPORT 10 ARGUMENT ABOVE
+                    RATHER THAN PICKING A SIDE OF IT. Those two notes are in
+                    tension because both were true: report 8 wanted a lone card
+                    to fill the band, report 10 wanted every card on a page to
+                    share one dimension, and a count-driven shape cannot do
+                    both. Making the wide form universal does — every card is
+                    now the same shape (report 10) AND every card fills the
+                    band (report 8), because there is no longer a narrow form
+                    to disagree with.
+
+                    The count-keyed class is therefore gone, not merely always
+                    true: `results.length === 1` no longer changes anything. */}
+                <div key={`${swapKey}|${g.key}`} className="rj-swap mt-phi4 grid gap-phi3">
                   {g.items.map((p, i) =>
                     g.selling ? (
                       /* `flex` so the card inside stretches to the row height
@@ -930,7 +941,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                         <PropertyCard
                           p={p}
                           priority={gi === 0 && i < 3}
-                          featured={results.length === 1}
+                          wide
                           action={
                             <CompareToggle
                               on={compared.includes(p.id)}
@@ -944,7 +955,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                       /* Completed and sold-out carry no compare control — there
                          is nothing to weigh up against anything. */
                       <div key={p.id} data-pid={p.id} className="flex">
-                        <PropertyCard p={p} featured={results.length === 1} />
+                        <PropertyCard p={p} wide />
                       </div>
                     ),
                   )}

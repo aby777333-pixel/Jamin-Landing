@@ -455,7 +455,12 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
              opening it sets `body { overflow: hidden }`, everything past the
              fold became unreachable on a short screen. Reported as options
              being cut off; it was a one-word regression. */
-          className="max-h-[calc(100dvh-var(--header-h))] overflow-y-auto overscroll-contain bg-onyx-900 px-5 pb-8 pt-2 xl:hidden"
+          /* `rj-gilded` (2026-08-22): solid onyx-900, so the tier-2b gold is
+             legal here by the same measurement that makes it illegal on sand.
+             The forty `rj-foil-text` rows below already clip a foil to their
+             glyphs — this is what finally makes that foil gold rather than
+             bronze, and it changes no markup to do it. */
+          className="rj-gilded max-h-[calc(100dvh-var(--header-h))] overflow-y-auto overscroll-contain bg-onyx-900 px-5 pb-8 pt-2 xl:hidden"
           style={{ borderTop: "1px solid var(--line-onyx)" }}
           aria-label="Primary mobile"
         >

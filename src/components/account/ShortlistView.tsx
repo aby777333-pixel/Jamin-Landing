@@ -64,10 +64,10 @@ export function ShortlistView({ all }: { all: Property[] }) {
             {saved.length} saved
             {missing > 0 ? ` · ${missing} no longer listed` : ""}
           </p>
-          <div className="grid gap-phi3 sm:grid-cols-2">
+          <div className="grid gap-phi3">
             {saved.map((p) => (
               <div key={p.id} className="relative">
-                <PropertyCard p={p} />
+                <PropertyCard p={p} wide />
                 <button
                   onClick={() => remove(p.id)}
                   className="absolute right-3 top-3 z-10 rounded-full border border-canvas/60 bg-canvas/90 px-3 py-1.5 text-tiny font-medium text-ink-soft backdrop-blur transition-colors hover:border-jamin-red hover:text-jamin-red-deep"

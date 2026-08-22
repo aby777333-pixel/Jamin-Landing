@@ -1425,9 +1425,9 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
         /* `print:hidden` — other developments are marketing on this record. */
         <section className="mt-phi7 border-t border-line pt-phi5 print:hidden">
           <h2 className="text-2xl text-ink">Other developments</h2>
-          <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-phi4 grid gap-phi3">
             {related.map((r) => (
-              <PropertyCard key={r.id} p={r} />
+              <PropertyCard key={r.id} p={r} wide />
             ))}
           </div>
         </section>

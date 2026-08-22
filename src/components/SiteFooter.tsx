@@ -41,7 +41,13 @@ export async function SiteFooter() {
        55px is enough separation here because the footer does not rely on the
        gap to announce itself — it changes ground colour to onyx, which is a
        harder edge than any amount of margin. */
-    <footer className="rj-footer mt-phi5 lg:mt-phi7">
+    /* `rj-gilded` (2026-08-22): the footer is the site's largest solid onyx
+       surface, which makes it the one place true gold is both legal and
+       worth spending. It re-points the bronze tokens at tier 2b for this
+       subtree only — the royal rule below, `rule-gold`, `rj-signage` and
+       every champagne word in the link columns turn gold without any of them
+       being touched, exactly as `rj-footer` already turns the page onyx. */
+    <footer className="rj-footer rj-gilded mt-phi5 lg:mt-phi7">
       {/* The certificate rule crowns the onyx (Gilded Register §2).
           ⚠️ The engraved FooterFrieze that used to sit under it was withdrawn
           at the owner's ask (2026-08-18 16:05, "no need of this design") —
@@ -83,8 +89,22 @@ export async function SiteFooter() {
                 className="h-11 w-11 object-contain"
               />
               {/* Item 10: `rj-signage` — in carbon mode the wordmark glows
-                  like the gate boards in the night renders. */}
-              <span className="rj-signage text-lg font-medium uppercase tracking-brand text-ink">
+                  like the gate boards in the night renders.
+
+                  ⚠️ `rj-foil-text` REPLACES `text-ink` here, and only here
+                  (2026-08-22). Its own note in royal.css says gold foil text
+                  is for dark grounds only and that it uses the seal ramp,
+                  whose darkest stop measures 11.83:1 on onyx — this lockup is
+                  the case that note was written for, and under `rj-gilded`
+                  the ramp is finally gold. The wordmark is the one place on
+                  the site where the brand should read as metal rather than as
+                  ink; everything else in this column stays bone.
+
+                  The two rules co-operate rather than collide: `rj-signage`
+                  is a text-shadow, which paints from the glyph outline and so
+                  survives `color: transparent`. In carbon mode the gold now
+                  sits inside the glow instead of beside it. */}
+              <span className="rj-signage rj-foil-text text-lg font-medium uppercase tracking-brand">
                 Jamin Bazaar
               </span>
             </div>

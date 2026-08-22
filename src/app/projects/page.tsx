@@ -206,9 +206,9 @@ export default async function ProjectsPage() {
                 into the page as they did on a flat sand ground. That is the
                 second half of what the tint buys and the reason the tint is on
                 the band rather than on the cards. */}
-            <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-phi4 grid gap-phi3">
               {g.items.map((p, i) => (
-                <PropertyCard key={p.id} p={p} priority={i === 0 && g.phase === PHASE_ORDER[0]} />
+                <PropertyCard key={p.id} p={p} wide priority={i === 0 && g.phase === PHASE_ORDER[0]} />
               ))}
             </div>
             </div>

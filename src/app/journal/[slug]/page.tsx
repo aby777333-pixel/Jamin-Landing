@@ -300,9 +300,9 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
               <section className="mt-phi6 border-t border-line pt-phi4">
                 <SectionLabel>Relevant right now</SectionLabel>
                 <h2 className="mt-phi2 text-2xl text-ink">Jamin developments this applies to</h2>
-                <div className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
+                <div className="mt-phi4 grid gap-phi3">
                   {related.map((r) => (
-                    <PropertyCard key={r.id} p={r} />
+                    <PropertyCard key={r.id} p={r} wide />
                   ))}
                 </div>
               </section>

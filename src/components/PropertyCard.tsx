@@ -42,7 +42,7 @@ import {
 export function PropertyCard({
   p,
   priority = false,
-  featured = false,
+  wide = false,
   action,
 }: {
   p: Property;
@@ -67,15 +67,36 @@ export function PropertyCard({
    * large horizontal featured card using the available section width").
    *
    * A stage section holding one development put a single vertical card in a
-   * three-column track and left two thirds of the pane empty. `featured` turns
-   * the SAME card on its side from `sm` — picture left, record right — so one
+   * three-column track and left two thirds of the pane empty. This turns the
+   * SAME card on its side from `sm` — picture left, record right — so one
    * property fills the band instead of hiding in the corner of it.
    *
    * ⚠️ It is a modifier on this component, not a second component. Every badge,
    * docket, gem band and tier rule below is shared; a parallel "FeaturedCard"
    * would be forty lines of duplication waiting to drift.
+   *
+   * ── RENAMED FROM `featured` (owner, 2026-08-22: "in all pages of the
+   * website make the cards horizontal wide. But in the phone app, it should
+   * come vertical", then "Leave the home page cards as it is").
+   *
+   * The shape stopped being about prominence and became about page layout, so
+   * the name had to follow. `featured` said WHY a card was on its side; every
+   * listing page now uses the form for cards that are not featured at all, and
+   * a prop that lies about its purpose is how the next reader puts it on the
+   * wrong card.
+   *
+   * ⚠️ IT STILL DEFAULTS TO FALSE, and that default is load-bearing. The
+   * homepage is explicitly excluded, so leaving the default vertical means the
+   * exclusion needs no code — the homepage simply keeps the call it already
+   * had. Flipping the default to `true` would have made the untouched page the
+   * one carrying an override, which is backwards.
+   *
+   * ⚠️ `sm:` IS THE PHONE BOUNDARY AND IT MATTERS THAT IT IS NOT `md:`. 640px
+   * is the last width at which the picture and the record can share a line
+   * without the fact strip (up to three divided cells) losing its columns.
+   * Below it they stack — the vertical phone form the owner asked to keep.
    */
-  featured?: boolean;
+  wide?: boolean;
 }) {
   const cover = coverImage(p);
   const approvals = approvalBadges(p);
@@ -132,7 +153,7 @@ export function PropertyCard({
          cadastral components this file does not own. See royal.css. */
       data-tier={tier.key}
       className={`cd-card cd-fold cd-photo rj-lift rj-lamplight group flex h-full w-full rounded-xl border border-line bg-canvas shadow-lift transition-colors duration-500 ${
-        featured ? "flex-col sm:flex-row" : "flex-col"
+        wide ? "flex-col sm:flex-row" : "flex-col"
       }`}
       /* The lift is `.rj-lift` (transform only). The shadow tint is the card's
          own stone at very low alpha, so a row lifts in slightly different
@@ -171,8 +192,12 @@ export function PropertyCard({
           an aspect ratio would fix the height instead and leave one of the two
           columns short. `self-stretch` is what makes it take the row. */}
       <div
-        className={`rj-sheen relative shrink-0 overflow-hidden bg-canvas-sunken ${
-          featured
+        /* `rj-plate` (Tier D, item 19) — the hairline set just inside the
+           picture's edge, so covers of mixed provenance read as one set. It is
+           an inset shadow rather than a border precisely so it does not move
+           the `fill` image or fight the hover scale; see royal.css. */
+        className={`rj-sheen rj-plate relative shrink-0 overflow-hidden bg-canvas-sunken ${
+          wide
             ? "aspect-[1.618/1] rounded-t-xl sm:aspect-auto sm:w-[44%] sm:self-stretch sm:rounded-l-xl sm:rounded-tr-none"
             : "aspect-[1.618/1] rounded-t-xl"
         }`}
@@ -191,7 +216,18 @@ export function PropertyCard({
             alt={p.title}
             fill
             priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            /* ⚠️ THE `wide` BRANCH IS NOT THE GRID BRANCH. A wide card is the
+               full width of a single-column band and the picture is 44% of it,
+               so it needs roughly 44vw — not the 33vw a three-up grid asked
+               for. Left at 33vw the browser would pick a source narrower than
+               the box it has to fill and the cover would render soft on every
+               listing page, which is the failure mode nobody reports because
+               it looks like the photograph rather than like a bug. */
+            sizes={
+              wide
+                ? "(max-width: 640px) 100vw, (max-width: 1400px) 44vw, 620px"
+                : "(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            }
             className="object-cover transition-transform duration-[1400ms] group-hover:scale-[1.025]"
             style={{ transitionTimingFunction: "var(--ease-silk)" }}
           />
@@ -265,7 +301,7 @@ export function PropertyCard({
           in others", and both halves of that had one cause: everything below
           the title was sized by its own content, so no two cards in a row
           agreed about where anything sat. */}
-      <div className={`flex flex-1 flex-col p-phi3 ${featured ? "sm:justify-center sm:p-phi4" : ""}`}>
+      <div className={`flex flex-1 flex-col p-phi3 ${wide ? "sm:justify-center sm:p-phi4" : ""}`}>
         {/* ── 1. status · location, title, address ────────────────────────────
             `flex-1` absorbs the difference between a one-line and a two-line
             title so everything below lands at the same height across the row. */}
@@ -489,7 +525,24 @@ export function PropertyCard({
           </span>
           <span className="ml-auto flex shrink-0 items-center gap-3">
             {action}
-            <span className="text-tiny text-ink-faint">{formatPrice(p)}</span>
+            {/* THE PRICE, STRUCK (2026-08-22).
+                It was `text-tiny text-ink-faint` — the lowest-contrast ink on
+                the card, carrying the one line a buyer came to read. As a
+                gilt chip it lays down its own onyx and gilds itself, so it is
+                gold-on-onyx at 11.83:1 rather than gold-on-sand, which is the
+                pairing that fails. `rj-chip-gilt` sets that ground itself; it
+                does not need the section to be dark.
+
+                ⚠️ ONLY WHEN SELLABLE. `formatPrice` returns "Sold out" and
+                "Not for sale" through this same call, and a struck gold seal
+                is a way of drawing the eye to something — pointing it at a
+                listing nobody can buy is worse than the grey line was. Those
+                two keep the quiet ink. */}
+            {sellable ? (
+              <span className="rj-chip-gilt text-tiny font-medium">{formatPrice(p)}</span>
+            ) : (
+              <span className="text-tiny text-ink-faint">{formatPrice(p)}</span>
+            )}
           </span>
         </div>
       </div>

@@ -286,8 +286,14 @@ body > footer {
 }
 
 /** The labels are real text, not SVG text, so they stay crisp at 10px and are
- *  never scaled by the stretched viewBox. Gold INK, not gold: #eaa317 at this
- *  size measures about 2.1:1 and fails AA outright. */
+ *  never scaled by the stretched viewBox. Gold INK, not gold — and the finding
+ *  behind that is now the governing law of tier 2b in globals.css: the true
+ *  gold #eaa317 measures 1.69:1 on this ground and fails AA outright, at any
+ *  size. (This note used to cite 2.1:1 and describe #eaa317 as a colour the
+ *  site actually painted. It was neither, between 2026-08-17 and 2026-08-22 —
+ *  the regrade had made every "gold" token bronze. The gold is real again now,
+ *  and it is scoped to dark grounds precisely so a label like this one can
+ *  never reach it.) */
 .cd-dim__label {
   position: absolute;
   font-size: 10px;

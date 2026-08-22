@@ -126,12 +126,12 @@ export function Assistant({ all }: { all: Property[] }) {
                 the reply text — a non-English reply transliterates the project
                 names and text matching would find nothing. */}
             {cards[i]?.length ? (
-              <div className="mt-phi3 grid gap-phi3 sm:grid-cols-2">
+              <div className="mt-phi3 grid gap-phi3">
                 {cards[i]
                   .map((id) => all.find((p) => p.id === id))
                   .filter(Boolean)
                   .map((p) => (
-                    <PropertyCard key={p!.id} p={p!} />
+                    <PropertyCard key={p!.id} p={p!} wide />
                   ))}
               </div>
             ) : null}
