@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
+import { ProspectusBand } from "@/components/ProspectusBand";
+import { PROSPECTUS } from "@/lib/prospectus";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { ButtonLink, Container, EmptyState, Pane } from "@/components/ui";
 import { paneHue } from "@/lib/stones";
@@ -356,10 +358,20 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
         eyebrow={`${meta.label} projects`}
         title={`${meta.label} Jamin developments`}
         lead={meta.blurb}
+        /* ⚠️ THE PLANNED COUNT IS A SEPARATE CLAUSE, NOT ADDED IN (2026-08-22).
+           `/projects/future` now carries the prospectus band as well as the
+           catalogue, and this line counts the catalogue — things with a plot
+           schedule someone can act on. Folding three announced developments
+           into the same figure would make "4 developments · 1 plot available"
+           true of nothing: three of the four have no plots to be available.
+           Stated separately, both halves stay checkable. */
         meta={
           <>
             {items.length} development{items.length === 1 ? "" : "s"}
             {plots > 0 ? ` · ${plots} plot${plots === 1 ? "" : "s"} available` : ""}
+            {phase === "future" && PROSPECTUS.length > 0
+              ? ` · ${PROSPECTUS.length} more in planning`
+              : ""}
           </>
         }
       />
@@ -377,7 +389,14 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
       </nav>
 
       <div className="mt-phi4">
-        {items.length === 0 ? (
+        {/* ⚠️ THE EMPTY STATE HAS TO KNOW ABOUT THE BAND. Its copy is "This
+            stage is empty at the moment", and /projects/future is the one
+            stage where that can be false while `items` is still empty — the
+            catalogue entry could be sold out or withdrawn tomorrow and three
+            announced developments would remain below it. Guarding on both is
+            what stops the page contradicting itself in a state nobody is
+            looking at today. */}
+        {items.length === 0 && !(phase === "future" && PROSPECTUS.length > 0) ? (
           <EmptyState
             title={`No ${meta.label.toLowerCase()} projects right now`}
             body="This stage is empty at the moment. The other stages have developments you can look at today."
@@ -401,6 +420,12 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
             </div>
           </>
         )}
+        {/* Announced-but-not-catalogued developments. `/projects/future` only:
+            every other stage describes inventory that exists, and a band of
+            things with no plot schedule would contradict those pages rather
+            than extend them. See lib/prospectus.ts for why these are a file
+            and not Supabase rows. */}
+        {phase === "future" && <ProspectusBand />}
       </div>
       </Pane>
       </Container>
