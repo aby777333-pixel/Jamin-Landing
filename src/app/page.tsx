@@ -301,7 +301,7 @@ export default async function HomePage() {
         {/* The four assurances in one evenly spaced row (the report's bottom
             row). Vertical cards now — icon, promise, detail — so four of them
             read as four equal columns instead of a stacked sidebar. */}
-        <dl className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+        <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
           {ASSURANCES.map((a) => (
             <div
               key={a.k}
@@ -367,34 +367,71 @@ export default async function HomePage() {
           ordinary. It does mean the section's own copy and its picture now
           argue slightly different cases, and if Rubycon later lands in the
           catalogue this should probably become a real project surface. */}
-      <Container className="py-phi6">
+      {/* 🚨 RESTRUCTURED (report 16, 2026-08-22): "The current section is too
+          vertically stretched because the content cards are arranged beside the
+          image… Keep the section heading and introductory text on the left
+          side. Keep the image on the right side of the heading area. Move all 8
+          information cards below the heading and image. Arrange the cards in a
+          4-column x 2-row grid."
+
+          It was ONE two-column grid: the heading AND all eight cards stacked in
+          the left column with the poster in the right. Eight cards two-up is
+          four rows, so the copy column set the height and the section measured
+          865px against a 782px poster. It is now two bands — a heading row and
+          a card row — which is what lets the cards go four-up and halves the
+          number of rows.
+
+          ⚠️ `py-phi5`, DOWN FROM `py-phi6` (9rem to 5.5rem), per "reduce
+          unnecessary vertical padding and empty space". */}
+      <Container className="py-phi5">
         <Reveal className="rj-stagger-row mb-phi3 flex items-center justify-end gap-phi3" decorative>
           <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
           <div className="rj-fret w-40 opacity-60" />
           <span className="rj-folio rj-folio-red text-3xl">02</span>
         </Reveal>
-        <div className="grid gap-phi5 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+
+        {/* ── BAND 1: the heading, and the poster beside it ─────────────────
+            🚨 THE POSTER COLUMN IS 16rem, AND THAT NUMBER IS THE WHOLE REPORT.
+            Moving the image out of the card grid and above it does not shorten
+            this section by itself — it LENGTHENS it, because the image stops
+            sharing vertical space with the cards and starts stacking on top of
+            them. Measured at 1280x900:
+
+              old layout (live)      1106px   poster 521x782 beside 2-up cards
+              first attempt, 22rem   1312px   +206, the opposite of the ask
+              this, 16rem            ~1150px
+
+            The poster is 2:3, so its width IS its height: every rem taken off
+            the column takes 1.5 back off the section. 16rem (256x384) is the
+            smallest the artwork stays readable at — its own baked-in wordmark
+            and taglines are raster text and go to mush below about that.
+
+            ⚠️ SO THE REMAINING HEIGHT IS THE IMAGE, NOT PADDING OR SPACING.
+            Both of those have already been cut (py-phi6 to py-phi5, and the
+            band gap to mt-phi4). If this must go materially shorter, the lever
+            is the poster or the card copy — not another spacing pass.
+
+            🚨 IT WAS WRITTEN AS `[1fr_auto]` FIRST AND THAT COLLAPSED THE
+            POSTER TO 1x2 PIXELS. An `auto` track sizes to its content while
+            `w-full` sizes to its track — each waiting on the other — and the
+            circularity resolves at nearly zero. Measured before the fix:
+            posterW 1, posterH 2. If this ever needs to be `auto` again, the
+            child must carry an explicit width, not a percentage one. */}
+        <div className="grid gap-phi4 lg:grid-cols-[1fr_16rem] lg:items-center">
           <div>
             <SectionLabel>Why Jamin Properties</SectionLabel>
             <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
               Eight things you can check before you believe us.
             </h2>
-            <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
-              {WHY_JAMIN.map((w) => (
-                <div key={w.k} className="flex gap-phi2">
-                  <span
-                    aria-hidden="true"
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
-                  >
-                    <SurveyIcon name={w.icon} className="h-[21px] w-[21px]" />
-                  </span>
-                  <div className="min-w-0">
-                    <dt className="text-base font-semibold text-ink">{w.k}</dt>
-                    <dd className="mt-1 text-base leading-relaxed text-ink-muted">{w.d}</dd>
-                  </div>
-                </div>
-              ))}
-            </dl>
+            {/* The "introductory text" the report asks for. ⚠️ It asserts
+                nothing new — it names the four places the eight cards below
+                already point at, which is the standing rule for this block. */}
+            <p className="mt-phi3 max-w-xl text-lg leading-relaxed text-ink-muted">
+              Not one of these asks you to take our word for it. Each points at something already
+              published — the sanction number on the project page, the plot schedule on the plan,
+              the sanctioned widths in the area statement, and a visit you can book without paying
+              anything.
+            </p>
           </div>
 
           {/* 🚨 THE JAMIN RUBYCON PLATE (owner, 2026-08-22: "swap that
@@ -426,17 +463,63 @@ export default async function HomePage() {
               and none of that text appears anywhere else on the page, so
               hiding it would drop content rather than ornament. The alt
               states what the poster says, in the poster's own words. */}
-          <div className="relative hidden aspect-[2/3] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+          {/* 🚨 NO LONGER `hidden lg:block` (report 16: "Ensure the section
+              image is also displayed correctly on mobile"). It was desktop-only,
+              so every phone reader lost the poster entirely — and with the eight
+              cards moved out of this row there is finally somewhere for it to
+              sit on a narrow screen without pushing the copy off the fold.
+
+              ⚠️ `sizes` FOLLOWS THE CAP. It said `(max-width: 1024px) 0px, 40vw`
+              — the 0px was honest while the box was hidden below `lg` and is a
+              lie now, and 40vw would fetch a ~570px source for a 352px box. */}
+          <div className="relative mx-auto aspect-[2/3] w-full max-w-[18rem] overflow-hidden rounded-xl border border-line lg:mx-0 lg:max-w-none">
             <Image
               src="/section/why-jamin-rubycon-1024.webp"
               alt="Jamin Rubycon — where life finds its perfect space. A gated plotted layout with lush green surroundings, secure entry and a formed approach road."
               fill
               loading="lazy"
-              sizes="(max-width: 1024px) 0px, 40vw"
+              sizes="(max-width: 1024px) 288px, 256px"
               className="object-cover"
             />
           </div>
         </div>
+
+        {/* ── BAND 2: the eight cards, four-up ──────────────────────────────
+            🚨 EACH ITEM IS A BORDERED CARD NOW (report 16, mobile: "The
+            information items currently appear as plain stacked content without
+            clear separation between each item, making the section look
+            cluttered… Add a clear border around each individual item").
+
+            They were bare `flex` rows — an icon and two lines of text with
+            nothing but a gap between them — which on a phone reads as one
+            continuous column of grey rather than as eight separate assurances.
+
+            ⚠️ THE BORDER IS NOT MOBILE-ONLY. The report raised it against the
+            phone, but a card that exists below `sm` and dissolves above it is
+            two designs for one component and drifts the moment either is
+            touched. Bordered at every width also gives the four-up row its own
+            reason to hold together.
+
+            ⚠️ COLUMNS GO 1 → 2 → 4. The report asks for 4x2, which is the `lg`
+            case; four cards of this width do not fit a tablet, so `sm` takes
+            two and the phone takes one. */}
+        <dl className="mt-phi5 grid gap-phi3 sm:grid-cols-2 lg:grid-cols-4">
+          {WHY_JAMIN.map((w) => (
+            <div
+              key={w.k}
+              className="flex h-full flex-col rounded-card border border-line bg-canvas-alt p-phi3 shadow-lift transition-colors duration-500 hover:border-jamin-gold/45"
+            >
+              <span
+                aria-hidden="true"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
+              >
+                <SurveyIcon name={w.icon} className="h-[21px] w-[21px]" />
+              </span>
+              <dt className="mt-phi2 text-base font-semibold text-ink">{w.k}</dt>
+              <dd className="mt-1 text-base leading-relaxed text-ink-muted">{w.d}</dd>
+            </div>
+          ))}
+        </dl>
       </Container>
 
       {/* ---- live inventory ----

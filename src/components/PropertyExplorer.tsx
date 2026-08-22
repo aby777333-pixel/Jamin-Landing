@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
@@ -505,7 +506,14 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             aria-expanded={filtersOpen}
             aria-haspopup="dialog"
             onClick={() => setFiltersOpen(true)}
-            className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-line bg-canvas px-4 py-2 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
+            /* ⚠️ `h-11`, NOT `min-h-[44px]` (report 16: the Filters bar
+               "appears visually unbalanced… spacing, button sizing, alignment").
+               The three control types in this row stood at three different
+               heights — this button 44px, the active chips 36px, the view
+               segment about 40px — which is what reads as unbalanced. They are
+               now one height. 44px rather than 40 because this is the primary
+               touch target on a phone and 44 is the floor for one. */
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-line bg-canvas px-4 text-tiny font-semibold uppercase tracking-[0.12em] text-ink-soft transition-colors hover:border-ink-faint hover:text-ink"
           >
             <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M2 4h12M4.5 8h7M7 12h2" />
@@ -535,7 +543,10 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             type="button"
             onClick={c.clear}
             aria-label={`Remove ${c.label} filter`}
-            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-ink bg-ink/85 px-3 py-1.5 text-tiny font-medium text-canvas backdrop-blur-sm transition-opacity hover:opacity-80"
+            /* `h-11` to match the Filters button and the view segment — see
+               the note on that button. `px-3.5` keeps the chip from looking
+               squat now that it is 8px taller. */
+            className="inline-flex h-11 items-center gap-1.5 rounded-full border border-ink bg-ink/85 px-3.5 text-tiny font-medium text-canvas backdrop-blur-sm transition-opacity hover:opacity-80"
           >
             {c.label}
             <svg viewBox="0 0 12 12" className="h-3 w-3 shrink-0" aria-hidden="true">
@@ -560,7 +571,12 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         {/* The view switch closes the bar on the right, as the report's
             "Search bar | FILTER | GRID | LIST | MAP" asks. */}
         <div
-          className="rj-segment ml-auto"
+          /* `min-h-[44px]` for the same reason as the button and the chips: one
+             height for every control in this bar. The segment sets its own
+             height from its buttons' padding, so it needs a floor rather than a
+             fixed height — forcing `h-11` would fight `.rj-segment`'s 3px inset
+             padding and clip the sliding pill. */
+          className="rj-segment ml-auto min-h-[44px]"
           /* Three seats. The pill's index is the view's position in the same
              order the buttons are written below — keep the two in step. */
           style={
@@ -614,7 +630,35 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
           so it is built once. Escape closes it, the scrim closes it, and the
           panel traps nothing — a reader can still scroll the page behind on a
           desktop, which is what makes it a sheet rather than a modal takeover. */}
-      {filtersOpen && (
+      {/* 🚨 PORTALLED TO <body>, AND THAT IS THE WHOLE BUG FIX (report 16,
+          2026-08-22: "After clicking the Filters button, the filters sidebar
+          opens from the right side. When the page is scrolled, the sidebar also
+          scrolls along with the page instead of remaining fixed").
+
+          The panel was ALREADY `fixed inset-0`. It scrolled anyway because
+          `position: fixed` is only viewport-relative while no ancestor creates a
+          containing block for it — and `.rj-pane`, which wraps this explorer,
+          sets `backdrop-filter`. That is one of the properties (with transform,
+          filter, perspective, will-change and contain) that makes an element the
+          containing block for its fixed descendants. Measured before the fix at
+          1280x900: the scrim reported top 892, left 41, height 3022 — the
+          pane's own scroll box, not the viewport's 0/0/1280x900.
+
+          ⚠️ SO DO NOT "FIX" THIS BY ADDING MORE POSITIONING. No combination of
+          inset, z-index or transform on the panel can escape an ancestor
+          containing block; only leaving that ancestor can. Portalling to
+          document.body is that, and it is the same remedy this codebase's
+          sibling app reached for when a pop-down rendered behind its parent.
+
+          ⚠️ Removing `backdrop-filter` from `.rj-pane` would also have worked
+          and was rejected: that class is the frosted pane on every route, and
+          un-frosting the whole site to unstick one drawer is a far larger blast
+          radius than moving one subtree.
+
+          The guard is belt-and-braces — `filtersOpen` starts false so the server
+          pass never reaches this branch — but a portal that reads `document`
+          during SSR is a hard crash rather than a visual bug, so it is stated. */}
+      {filtersOpen && typeof document !== "undefined" && createPortal(
         <div
           className="fixed inset-0 z-50 flex justify-end bg-ink/40 backdrop-blur-[2px] print:hidden"
           onClick={() => setFiltersOpen(false)}
@@ -756,7 +800,8 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {/* ---- results ---- */}
