@@ -447,7 +447,19 @@ export function Hero({
                 anchor is inline — stretching the BOX does not centre the label
                 inside it, and a full-width button with its text against the
                 left edge is worse than the narrow pill was. */}
-            <div className="mt-phi3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            {/* ⚠️ `sm:justify-center` (report 17: the two CTAs "are currently
+                positioned toward the left side of the hero content, making the
+                button area look unbalanced… Center the button group
+                horizontally relative to the hero content/card").
+
+                Only from `sm`. Below it the row is a COLUMN, and the note above
+                records why that matters: a flex column stretches its items, so
+                the buttons fill the card on a phone. Adding a horizontal
+                justification there would do nothing to full-width items, and
+                `items-center` would actively undo the full-width behaviour
+                report 2026-08-14 asked for. The centring belongs to the row
+                form only. */}
+            <div className="mt-phi3 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
               {/* Ink, not red. The header already carries the one filled red
                   control this view is allowed; a second would spend the accent. */}
               <Link

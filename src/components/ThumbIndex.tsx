@@ -86,22 +86,98 @@ export function ThumbIndex({
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  /**
+   * 🚨 IT NO LONGER SITS ON TOP OF THE PAGE (report 17: "The Districts popup is
+   * overlapping important content on the right side of the page… must not cover
+   * or interfere with any content").
+   *
+   * The rail is `fixed right-4`, so it is pinned to the VIEWPORT while the page
+   * content is a `max-w-[1280px]` column centred in it. The gutter beside that
+   * column is `(innerWidth - 1280) / 2`; the rail needs its own width plus its
+   * margins to live there. At 1440 the gutter is 80px and the rail is 192px, so
+   * 112px of it lay across the cards — which is exactly what the report shows.
+   *
+   * `roomy` is that arithmetic. When the gutter cannot hold the rail it starts
+   * COLLAPSED to a tab, which is the report's first ask ("automatically close");
+   * the toggle below is its second ("provide a clear open/close arrow toggle"),
+   * and it is always available so a reader on a narrow screen can still open the
+   * rail deliberately and close it again.
+   *
+   * ⚠️ `userOpen` OVERRIDES, IT DOES NOT INITIALISE. Deriving one from the
+   * other in an effect would fight the reader: every resize would slam the rail
+   * back to whatever the measurement said and discard their choice. `null` means
+   * "nobody has decided", so the measurement governs until they touch it.
+   *
+   * ⚠️ Starts `false` and is measured on mount for the same reason `past` does:
+   * the server render and the first client render have to agree.
+   */
+  const RAIL_W = 192; /* w-48 */
+  const RAIL_GAP = 24; /* right-4 plus a little air */
+  const CONTENT_MAX = 1280; /* the Container's max width */
+  const [roomy, setRoomy] = useState(false);
+  const [userOpen, setUserOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const measure = () => {
+      const gutter = (window.innerWidth - Math.min(CONTENT_MAX, window.innerWidth)) / 2;
+      setRoomy(gutter >= RAIL_W + RAIL_GAP);
+    };
+    measure();
+    window.addEventListener("resize", measure, { passive: true });
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const open = userOpen ?? roomy;
+
   if (districts.length < 2) return null;
 
   return (
     <nav
       aria-label="Districts"
       /* ⚠️ `print:hidden` — a fixed panel would stamp itself over the sheet. */
-      className={`fixed right-4 top-1/2 z-20 hidden w-48 -translate-y-1/2 overflow-hidden rounded-card border border-line bg-canvas/95 shadow-lift backdrop-blur transition-opacity duration-500 print:hidden xl:block ${
-        past ? "opacity-100" : "pointer-events-none opacity-0"
-      }`}
+      className={`fixed right-4 top-1/2 z-20 hidden -translate-y-1/2 overflow-hidden rounded-card border border-line bg-canvas/95 shadow-lift backdrop-blur transition-opacity duration-500 print:hidden xl:block ${
+        open ? "w-48" : "w-auto"
+      } ${past ? "opacity-100" : "pointer-events-none opacity-0"}`}
       /* The panel can never be taller than the space between the header and
          the foot of the window; past that it scrolls itself. */
       style={{ maxHeight: "calc(100vh - var(--header-h) - 4rem)" }}
     >
-      <p className="border-b border-line px-phi2 py-2 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink">
-        Districts
-      </p>
+      {/* ⚠️ THE TOGGLE IS A REAL BUTTON WITH A REAL NAME, not a bare chevron.
+          `aria-expanded` states which way it will go and the label says what it
+          controls, so a screen-reader user gets the same affordance the arrow
+          gives a sighted one. Collapsed, this button IS the whole rail — which
+          is why it keeps the 44px touch floor the rows below use. */}
+      <button
+        type="button"
+        onClick={() => setUserOpen(!open)}
+        aria-expanded={open}
+        aria-label={open ? "Collapse the districts shortcut" : "Open the districts shortcut"}
+        className={`flex min-h-[44px] w-full items-center gap-2 px-phi2 py-2 text-micro font-semibold uppercase tracking-brand text-jamin-gold-ink transition-colors hover:text-ink ${
+          open ? "justify-between border-b border-line" : "justify-center"
+        }`}
+      >
+        {open && <span>Districts</span>}
+        <svg
+          viewBox="0 0 12 12"
+          className="h-3 w-3 shrink-0"
+          aria-hidden="true"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {/* Points RIGHT to close (push the rail off to the margin) and LEFT
+              to open (pull it back onto the page) — the direction the panel
+              will actually travel, not an abstract up/down. */}
+          <path d={open ? "M4.5 2.5 8 6l-3.5 3.5" : "M7.5 2.5 4 6l3.5 3.5"} />
+        </svg>
+        {!open && <span className="sr-only">Districts</span>}
+      </button>
+      {/* Collapsed, the rail is just its tab — the rows are removed from the
+          tree rather than hidden, so nothing inside them is focusable behind a
+          closed panel. */}
+      {open && (
       <ul className="max-h-[inherit] overflow-y-auto p-1.5">
         {districts.map((d) => {
           const active = current?.toLowerCase() === d.toLowerCase();
@@ -144,6 +220,7 @@ export function ThumbIndex({
           );
         })}
       </ul>
+      )}
     </nav>
   );
 }

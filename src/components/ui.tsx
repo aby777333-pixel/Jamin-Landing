@@ -291,15 +291,54 @@ export function EmptyState({
   body: string;
   action?: ReactNode;
 }) {
+  /* ⚠️ `px-phi3` UNTIL `sm`. On a 375px phone this card sits inside a Container
+     (px-5) and a Pane (p-phi3), so `px-phi4` left its buttons just 223px to
+     live in — short of what "Tell us what you want" needs on one line at this
+     tracking. Dropping to phi3 there returns 26px. Desktop is unchanged.
+
+     ⚠️ A PLAIN COMMENT, ABOVE THE RETURN. Written as a JSX comment it sat
+     BESIDE the root div and made two sibling roots — "JSX expressions must have
+     one parent element".
+
+     ⚠️ AND DO NOT SPELL THE JSX COMMENT DELIMITERS OUT IN HERE. The first
+     attempt at this note quoted them literally, and the closing pair ended THIS
+     block comment on its own line — everything below it parsed as code.
+   */
   return (
-    <div className="rounded-xl border border-line bg-canvas-alt px-phi4 py-phi6 text-center">
+    <div className="rounded-xl border border-line bg-canvas-alt px-phi3 py-phi5 text-center sm:px-phi4 sm:py-phi6">
       <div className="mx-auto h-px w-16 rule-gold" />
       {/* h2, not h3: an empty state is usually the only thing under the page's
           h1, and jumping a level breaks the outline screen-reader users
           navigate by. The audit caught this on /journal. */}
       <h2 className="mt-phi3 text-xl text-ink">{title}</h2>
       <p className="mx-auto mt-phi2 max-w-md text-base leading-relaxed text-ink-muted">{body}</p>
-      {action ? <div className="mt-phi3 flex justify-center gap-3">{action}</div> : null}
+      {/* 🚨 STACKED UNTIL `sm` (report 17: the two buttons "are currently
+          placed side by side, but causing the buttons to look cramped and
+          poorly aligned… If the available width is insufficient, place the
+          buttons in two separate rows").
+
+          It was a bare `flex`, so on a 375px phone the two controls shared one
+          line and each shrank until its label broke — "TELL US / WHAT / YOU /
+          WANT" over four lines in the report's screenshot. A column below `sm`
+          gives each its own row; from `sm` they return to a wrapping row, which
+          is the "side by side with proper spacing" half of the same request.
+
+          ⚠️ THE COLUMN DELIBERATELY DOES *NOT* CARRY `items-center`, and that
+          was a correction. Centred, each pill shrinks to fit its own label and
+          "Tell us what you want" — 21 uppercase characters at 0.12em tracking —
+          still broke onto a second line inside a 223px pill. Left to stretch,
+          the same pill is the card's full 267px, the label has 211px to sit in,
+          and it fits on one line. Measured both ways.
+
+          It is also the pattern the hero already uses and documents: a flex
+          column stretches its items, which is what makes a phone CTA fill its
+          card rather than float in the middle of it. `sm:items-center` restores
+          centring for the row form, where the two pills differ in height. */}
+      {action ? (
+        <div className="mt-phi3 flex flex-col justify-center gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          {action}
+        </div>
+      ) : null}
     </div>
   );
 }

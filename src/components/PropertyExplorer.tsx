@@ -7,7 +7,7 @@ import { PropertyCard } from "./PropertyCard";
 import { PropertiesMap } from "./PropertiesMap";
 import { SurveyIcon } from "./cadastral/SurveyIcon";
 import { EmptyState, ButtonLink } from "./ui";
-import { DISTRICT_STONE, STAGE_STONE, STONE_FALLBACK } from "@/lib/stones";
+import { DISTRICT_STONE, STAGE_STONE, STONE_FALLBACK, stageStone } from "@/lib/stones";
 import {
   approvalBadges,
   formatArea,
@@ -400,7 +400,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      the signal red (`--rj-stone` set once on the container below). The colour
      key survives everywhere else it shipped — cards, tray, nav. */
   const chip = (on: boolean) =>
-    `group flex min-h-[44px] w-full items-center justify-between gap-2 overflow-hidden rounded-full border px-3.5 py-2 text-tiny font-medium transition-colors ${
+    `group flex min-h-[40px] w-full items-center justify-between gap-2 overflow-hidden rounded-full border px-3 py-1.5 text-tiny font-medium transition-colors ${
       on
         ? "border-ink bg-ink/85 text-canvas backdrop-blur-sm"
         : "border-line bg-canvas text-ink-soft hover:border-ink-faint hover:text-ink"
@@ -413,7 +413,18 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
      that report named. Full-width cells hold every name in the catalogue at
      every width, which also makes the panel identical on a phone and a
      desktop. */
-  const facetGridCls = "mt-2 grid grid-cols-1 gap-2";
+  /* 🚨 DISTRICTS STAY ONE PER ROW; STAGES GO TWO-UP (report 17: "Keep the
+     District and Stage options compact with minimal spacing. if need we can put
+     that in the 2 lines").
+
+     ⚠️ THE SPLIT IS NOT ARBITRARY AND THE DISTRICT COLUMN MUST NOT FOLLOW.
+     The note below this records why districts are one per row: the sheet is
+     22rem, two cells leave about 9rem each, and `truncate` then eats
+     "Tiruchirappalli" — the exact clipping report 10 filed. Stage labels are at
+     most nine characters (Completed), so they fit two-up with room to spare and
+     halve that block from four rows to two. */
+  const facetGridCls = "mt-2 grid grid-cols-1 gap-1.5";
+  const stageGridCls = "mt-2 grid grid-cols-2 gap-1.5";
 
   return (
     <>
@@ -668,7 +679,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             aria-modal="true"
             aria-label="Filter developments"
             onClick={(e) => e.stopPropagation()}
-            className="flex h-full w-full max-w-[22rem] flex-col overflow-y-auto border-l border-line bg-canvas p-phi4 shadow-raise"
+            className="flex h-full w-full max-w-[22rem] flex-col overflow-y-auto border-l border-line bg-canvas p-phi3 shadow-raise sm:p-phi4"
             style={{ "--rj-stone": "var(--color-jamin-red)" } as React.CSSProperties}
           >
             <div className="flex items-center justify-between gap-3">
@@ -688,7 +699,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             </div>
 
         {districts.length > 1 && (
-          <div className="mt-phi4">
+          <div className="mt-phi3">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               District
             </span>
@@ -717,11 +728,11 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
 
         {phases.length > 1 && (
-          <div className="mt-phi4">
+          <div className="mt-phi3">
             <span className="text-micro font-semibold uppercase tracking-brand text-ink-faint">
               Stage
             </span>
-            <div className={facetGridCls}>
+            <div className={stageGridCls}>
             {phases.map(([k, n]) => {
               const on = f.phase === k;
               return (
@@ -780,9 +791,23 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
         )}
 
             {/* The sheet's own foot: clear everything, or take the narrowed
-                list. `mt-auto` pins the pair to the bottom of the panel, which
-                is where the report's bottom-sheet sketch puts them. */}
-            <div className="mt-auto flex items-center justify-between gap-3 border-t border-line pt-phi3">
+                list.
+
+                🚨 `sticky bottom-0`, WHERE THIS WAS `mt-auto` (report 17: the
+                popup "uses more space than necessary… large empty areas… are
+                not arranged efficiently").
+
+                `mt-auto` pinned the pair to the bottom of the PANEL, so on a
+                phone whose filter list is short the reader saw the last chip,
+                then a screen of nothing, then the buttons — which is the empty
+                area the report screenshots. Sticky puts them directly under the
+                content when it is short AND keeps them on screen when it is
+                long, so "Show N results" is reachable either way without the
+                scroll the report complains about.
+
+                ⚠️ It needs its own background: a transparent sticky bar lets
+                the chips scroll through it. */}
+            <div className="sticky bottom-0 mt-phi3 flex items-center justify-between gap-3 border-t border-line bg-canvas pb-1 pt-phi2">
               <button
                 type="button"
                 onClick={() => set({ q: "", district: null, phase: null, purpose: null })}
@@ -855,9 +880,46 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
             >
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
-                    {phaseLabel(p)}
-                  </span>
+                  {/* 🚨 A STAGE PILL, NOT A GOLD MICRO-CAP (report 17: the
+                      statuses "are currently too visually subtle… do not stand
+                      out clearly from the project names").
+
+                      Every stage rendered in the same `jamin-gold-ink` at
+                      `--text-micro` — 10px — so Ongoing, Upcoming, Future and
+                      Completed were typographically identical and none of them
+                      read at a glance.
+
+                      ⚠️ THE COLOUR IS NOT NEW AND IS NOT INVENTED. `stageStone`
+                      is the same source the grid card, the map and Compare
+                      already ask, so a stage now looks the same everywhere on
+                      the site — emerald Ongoing, amethyst Upcoming, sapphire
+                      Future, platinum Completed. Every one of those inks is
+                      measured against the canvas in lib/stones.ts (5.20 to
+                      9.68:1); the wash behind it is the stone at 14%, which is
+                      the identical treatment the card uses.
+
+                      ⚠️ IT IS NOT BIGGER. The report asked for prominence
+                      "without making them oversized", so the size stays at
+                      `--text-tiny` and the work is done by colour, weight and
+                      the pill — not by scale. */}
+                  {(() => {
+                    const st = stageStone(p);
+                    return st ? (
+                      <span
+                        className="inline-flex items-center rounded-full px-2.5 py-1 text-tiny font-semibold uppercase tracking-[0.1em]"
+                        style={{
+                          color: st.ink,
+                          background: `color-mix(in srgb, ${st.stone} 14%, transparent)`,
+                        }}
+                      >
+                        {st.label}
+                      </span>
+                    ) : (
+                      <span className="text-micro font-semibold uppercase tracking-[0.14em] text-jamin-gold-ink">
+                        {phaseLabel(p)}
+                      </span>
+                    );
+                  })()}
                   {approvalBadges(p).map((a) => (
                     <span key={a} className="text-micro uppercase tracking-[0.12em] text-canopy">
                       {a}
@@ -974,8 +1036,30 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                   {g.items.map((p, i) =>
                     g.selling ? (
                       /* `flex` so the card inside stretches to the row height
-                         the grid gives this wrapper. */
-                      <div key={p.id} data-pid={p.id} className="flex">
+                         the grid gives this wrapper.
+
+                         🚨 `min-w-0` IS THE HORIZONTAL-SCROLL FIX (report 17:
+                         "the project card is extending beyond the main content
+                         container on the right side… causing unwanted
+                         horizontal page scrolling").
+
+                         A grid item defaults to `min-width: auto`, which means
+                         it may not shrink below its content's min-content
+                         width. The card is a flex row whose picture box is
+                         `shrink-0`, so its min-content width is wider than a
+                         375px phone track and the item simply grew past its
+                         cell. Measured at 375px before the fix: the grid track
+                         was 292px and the card inside it rendered 339px, right
+                         edge at 381 against a 375 viewport — the 6px of
+                         horizontal scroll, exactly.
+
+                         ⚠️ IT BELONGS ON THE WRAPPER, NOT THE CARD. The wrapper
+                         is the grid item; `min-width` on the card would be
+                         solving it one level too deep and would leave the
+                         wrapper free to blow out again the next time a card's
+                         internals change. Verified after: wrapper and card both
+                         292px, scrollWidth 375 = clientWidth. */
+                      <div key={p.id} data-pid={p.id} className="flex min-w-0">
                         {/* `priority` only in the first group: it is the LCP
                             candidate and marking every grid's first three would
                             spend the preload budget on images below the fold. */}
@@ -999,7 +1083,7 @@ export function PropertyExplorer({ all }: { all: Property[] }) {
                     ) : (
                       /* Completed and sold-out carry no compare control — there
                          is nothing to weigh up against anything. */
-                      <div key={p.id} data-pid={p.id} className="flex">
+                      <div key={p.id} data-pid={p.id} className="flex min-w-0">
                         <PropertyCard p={p} wide />
                       </div>
                     ),

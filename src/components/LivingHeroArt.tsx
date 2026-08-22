@@ -68,9 +68,37 @@ import { useSyncExternalStore } from "react";
  * needs an object-position of −45%, which does not exist. That is why the copy
  * plate's alpha moved with this change (see Hero.tsx) — the two are one fix.
  */
+/**
+ * 🚨 THE CROP BUDGET, MEASURED (report 17: "The hero image on the Home page is
+ * visibly cut off/cropped, causing parts of the original image composition to
+ * be missing").
+ *
+ * The banner is `absolute inset-0` inside a hero whose xl height is
+ * `100svh - header`. At 1440x900 that box is 1430x820 — a ratio of 1.744 — and
+ * `object-cover` fills it, so any frame wider than 1.744 loses width:
+ *
+ *   dawn / day / night   2.000   13% of the width falls outside the box
+ *   dusk                 1.589   fits the width; loses 9% of its HEIGHT
+ *   midnight             2.155   19% of the width falls outside
+ *
+ * ⚠️ `day` WAS ANCHORED AT `0%` AND THAT IS THE BUG THE REPORT PHOTOGRAPHED.
+ * A horizontal anchor of 0% pins the crop to the left edge, so the whole 13%
+ * came off ONE side — the right of the composition simply vanished, which is
+ * the same complaint filed on 2026-08-17 against a different frame. At 50% the
+ * same 13% is split into 6.5% a side, which reads as a framing choice rather
+ * than as a missing half. The vertical 70% is untouched: that one was swept
+ * for this frame's horizon and is not what was reported.
+ *
+ * ⚠️ THIS REDUCES THE CROP; IT CANNOT REMOVE IT. Showing a 2.0 frame whole
+ * inside a 1.744 box is geometrically impossible — the only two ways are
+ * `object-contain`, which letterboxes the hero with 105-156px bands and ends
+ * its full-bleed character, or shortening the hero, which walks straight back
+ * into the straddle bug Hero.tsx records at length ("the console now sits
+ * wholly BELOW the 100svh hero"). Both are owner decisions, not silent ones.
+ */
 const FRAMES = {
   dawn: { id: "78", w: 1774, pos: "50% 30%" },
-  day: { id: "75", w: 1774, pos: "0% 70%" },
+  day: { id: "75", w: 1774, pos: "50% 70%" },
   dusk: { id: "61", w: 1581, pos: "50% 0%" },
   night: { id: "59", w: 1774, pos: "50% 30%" },
   midnight: { id: "79", w: 1840, pos: "50% 40%" },
