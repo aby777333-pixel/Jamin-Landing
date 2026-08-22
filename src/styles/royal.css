@@ -4122,9 +4122,40 @@ header .glass,
    metal should look lit from above — brighter highlight, deeper shadow, same
    hue family. Ornament only: seals, folio numerals and the royal rule.
    ⚠️ `.rj-folio` clips this gradient to TEXT, so the stops must stay light
-   enough to read as metal and dark enough to keep the numeral's shape. */
-[data-mode="dark"] .rj-folio {
-  background: linear-gradient(
+   enough to read as metal and dark enough to keep the numeral's shape.
+
+   🚨 TWO BUGS FIXED HERE 2026-08-22, BOTH CAUSED BY THIS ONE RULE, and both
+   visible on the live site in carbon mode as a solid bronze RECTANGLE where
+   the section numeral should be. Reported by the owner as "fix this".
+
+   1. `background:` WAS THE SHORTHAND, AND A SHORTHAND RESETS ITS LONGHANDS.
+      `background-clip` is one of them. `.rj-folio` sets `background-clip:
+      text` at specificity 0,1,0; this rule set the shorthand at 0,2,0, so it
+      won and reset the clip to `border-box`. The numeral kept `color:
+      transparent` — invisible text on a fully painted box. Measured on the
+      live page before the fix: `backgroundClip: "border-box"`, box 46x42.
+
+      `background-image` changes ONLY the gradient and leaves the clip alone.
+      ⚠️ Never use the `background` shorthand to re-tint anything that clips
+      to text; there are three other such classes in this file
+      (`.rj-foil-text`, `.rj-folio-red`, `.rj-brass`) and the same override
+      would break any of them the same way.
+
+   2. IT ALSO OUTRANKED `.rj-folio-red` AND STOLE ITS COLOUR. At 0,2,0 this
+      beat that rule's 0,1,0, so in carbon mode the red foil folios silently
+      became bronze — and every folio the homepage stamps (01-04) is red. The
+      `[data-mode="dark"] .rj-folio-red` rule immediately below adds a warm
+      drop-shadow to those numerals, which is only coherent if they are still
+      red, so the two rules were contradicting each other. `:not()` restores
+      the intent: this re-lights the BRONZE folio, red folios keep their own
+      ramp and take the glow below.
+
+   ⚠️ NEITHER BUG CAME FROM THE GILDING. This rule is byte-identical to its
+   state before that commit, which touched no `[data-mode="dark"]` line — the
+   fault has been live since carbon mode shipped and was simply never seen,
+   because a bronze rectangle beside a bronze fret reads as ornament. */
+[data-mode="dark"] .rj-folio:not(.rj-folio-red) {
+  background-image: linear-gradient(
     105deg,
     #7a5c3f 0%,
     #c79a6d 28%,

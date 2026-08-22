@@ -19,7 +19,6 @@ import {
   locationLine,
   phaseLabel,
   propertyHref,
-  secondaryImage,
   type Property,
 } from "@/lib/properties";
 import { getNavFacets, PHASE_META, PHASE_ORDER } from "@/lib/site";
@@ -305,64 +304,106 @@ export default async function HomePage() {
           sentence under each names WHERE the reader can go and check it. No
           claim here is made for the first time.
 
-          ⚠️ THE PICTURE IS A REAL SITE, not a render — the report asks for "one
-          authentic site-development image… a real plotted layout/site
-          inspection", and `secondaryImage()` returns a photograph the admin
-          console uploaded against a real development. It renders only when
-          there is one; a missing photo drops the column rather than
-          substituting a gate render, because a render here would be exactly
-          the thing the section is arguing against. Decoration beside the
-          copy: alt="", aria-hidden, no caption. */}
-      {(() => {
-        const proof = all.map((p) => secondaryImage(p)).find(Boolean) ?? null;
-        return (
-          <Container className="py-phi6">
-            <Reveal className="rj-stagger-row mb-phi3 flex items-center justify-end gap-phi3" decorative>
-              <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
-              <div className="rj-fret w-40 opacity-60" />
-              <span className="rj-folio rj-folio-red text-3xl">02</span>
-            </Reveal>
-            <div className="grid gap-phi5 lg:grid-cols-[1fr_0.85fr] lg:items-start">
-              <div>
-                <SectionLabel>Why Jamin Properties</SectionLabel>
-                <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
-                  Six things you can check before you believe us.
-                </h2>
-                <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
-                  {WHY_JAMIN.map((w) => (
-                    <div key={w.k} className="flex gap-phi2">
-                      <span
-                        aria-hidden="true"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
-                      >
-                        <SurveyIcon name={w.icon} className="h-[21px] w-[21px]" />
-                      </span>
-                      <div className="min-w-0">
-                        <dt className="text-base font-semibold text-ink">{w.k}</dt>
-                        <dd className="mt-1 text-base leading-relaxed text-ink-muted">{w.d}</dd>
-                      </div>
-                    </div>
-                  ))}
-                </dl>
-              </div>
+          🚨 THE PICTURE IS NOW THE JAMIN RUBYCON POSTER, AND THAT REVERSES
+          WHAT THIS COMMENT USED TO SAY. It read: "THE PICTURE IS A REAL SITE,
+          not a render — the report asks for one authentic site-development
+          image… a real plotted layout/site inspection", and it explained that
+          `secondaryImage()` returned an admin-uploaded photograph of a real
+          development, that the column dropped rather than substitute a gate
+          render, "because a render here would be exactly the thing the section
+          is arguing against."
 
-              {proof && (
-                <div className="relative hidden aspect-[4/5] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={proof}
-                    alt=""
+          Owner's instruction, 2026-08-22: "swap that image with the attached".
+          It is their brand asset and their call, and the swap is made. But the
+          tension is real and is left written down rather than quietly deleted,
+          because the next person to touch this section will otherwise
+          re-derive it from scratch:
+
+            · the artwork is a RENDER with marketing copy on it, beside six
+              headings whose entire argument is "check us rather than believe
+              us";
+            · it names JAMIN RUBYCON, which is not in the catalogue — every
+              other project surface on this site is read from Supabase, so
+              this is the one picture on the homepage asserting a development
+              the rest of the site cannot show;
+            · it is a hard-coded asset, so unlike the photograph it replaced it
+              will NOT follow an admin-console change.
+
+          None of that makes it wrong — a brand poster in a brand slot is
+          ordinary. It does mean the section's own copy and its picture now
+          argue slightly different cases, and if Rubycon later lands in the
+          catalogue this should probably become a real project surface. */}
+      <Container className="py-phi6">
+        <Reveal className="rj-stagger-row mb-phi3 flex items-center justify-end gap-phi3" decorative>
+          <IsoMark name="stone" className="h-7 w-10 text-jamin-gold-ink/60" />
+          <div className="rj-fret w-40 opacity-60" />
+          <span className="rj-folio rj-folio-red text-3xl">02</span>
+        </Reveal>
+        <div className="grid gap-phi5 lg:grid-cols-[1fr_0.85fr] lg:items-start">
+          <div>
+            <SectionLabel>Why Jamin Properties</SectionLabel>
+            <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
+              Six things you can check before you believe us.
+            </h2>
+            <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
+              {WHY_JAMIN.map((w) => (
+                <div key={w.k} className="flex gap-phi2">
+                  <span
                     aria-hidden="true"
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 h-full w-full object-cover"
-                  />
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-jamin-gold-soft text-jamin-gold-ink"
+                  >
+                    <SurveyIcon name={w.icon} className="h-[21px] w-[21px]" />
+                  </span>
+                  <div className="min-w-0">
+                    <dt className="text-base font-semibold text-ink">{w.k}</dt>
+                    <dd className="mt-1 text-base leading-relaxed text-ink-muted">{w.d}</dd>
+                  </div>
                 </div>
-              )}
-            </div>
-          </Container>
-        );
-      })()}
+              ))}
+            </dl>
+          </div>
+
+          {/* 🚨 THE JAMIN RUBYCON PLATE (owner, 2026-08-22: "swap that
+              image with the attached").
+
+              ⚠️ `aspect-[2/3]`, NOT the `aspect-[4/5]` this box used to
+              carry, and that is the whole difference between a swap and a
+              ruined poster. The supplied artwork is 1024x1536 — exactly
+              2:3 — and the old box was 0.8 against its 0.667. Under
+              `object-cover` a 4/5 window crops a 2/3 source top and
+              bottom, which here would have taken the wordmark off the top
+              and "Build your dream. Live your destiny." off the bottom.
+              Matching the box to the source means `object-cover` has
+              nothing to crop and `object-contain` has nothing to
+              letterbox. Re-check this ratio if the artwork is ever
+              replaced; a fixed box makes the CONTAINER uniform, never the
+              picture.
+
+              ⚠️ `next/image`, NOT the raw `<img>` that was here. That tag
+              existed because the old source was a Supabase URL resolved at
+              request time; a local file has a known path and intrinsic
+              size, so it gets the optimiser, a real responsive set and no
+              layout shift.
+
+              ⚠️ IT HAS A REAL `alt` AND IS NOT `aria-hidden`. The photo it
+              replaces was genuinely decorative — an unlabelled site
+              photograph beside copy that said everything. This is a poster
+              carrying a project name and three claims in its own artwork,
+              and none of that text appears anywhere else on the page, so
+              hiding it would drop content rather than ornament. The alt
+              states what the poster says, in the poster's own words. */}
+          <div className="relative hidden aspect-[2/3] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
+            <Image
+              src="/section/why-jamin-rubycon-1024.webp"
+              alt="Jamin Rubycon — where life finds its perfect space. A gated plotted layout with lush green surroundings, secure entry and a formed approach road."
+              fill
+              loading="lazy"
+              sizes="(max-width: 1024px) 0px, 40vw"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      </Container>
 
       {/* ---- live inventory ----
           🚨 NO PANE, NO WASH (report 10, 2026-08-21: "Remove the large

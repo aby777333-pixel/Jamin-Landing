@@ -15,6 +15,7 @@ it and the other two exist as a source if a layout ever needs them.
 | `where-we-build-gate-*.webp` | homepage → "Find land near you" | a Jamin entrance wall, gardeners planting, a roller and a backhoe on the unmade road — owner-supplied 2026-08-13 |
 | `purpose-*.webp` | — | UNUSED. A plotted layout at golden hour, replaced 2026-08-12 |
 | `where-we-build-*.webp` | — | UNUSED. Paddy under a low sun with a house in it, replaced 2026-08-13 |
+| `why-jamin-rubycon-1024.webp` | homepage → "Six things you can check before you believe us" | the JAMIN RUBYCON poster, owner-supplied 2026-08-22 — see the note below |
 
 ## ⚠️ A REPLACEMENT GETS A NEW FILENAME, NEVER THE OLD PATH
 
@@ -59,3 +60,23 @@ with a photograph of a real project from Supabase storage — not with these.
 
 Both are `hidden lg:block`: below `lg` the copy column is full width and there
 is no empty half to fill.
+
+## ⚠️ `why-jamin-rubycon` IS THE ONLY RENDER IN THIS FOLDER, AND IT IS A POSTER
+
+Every other file here is a photograph. This one is marketing artwork with a
+wordmark, a project name and three claims baked into the pixels, and it sits
+beside the six trust points — the section whose whole argument is "check us
+rather than believe us". It replaced an admin-uploaded photograph of a real
+development on the owner's instruction, 2026-08-22 ("swap that image with the
+attached"). The reasoning, and what to reconsider if Rubycon later reaches the
+catalogue, is written at the call site in `src/app/page.tsx`.
+
+Two practical consequences:
+
+- **It is 1024x1536 (2:3) and the box is `aspect-[2/3]` to match.** The box it
+  inherited was `aspect-[4/5]`, which under `object-cover` would have cropped
+  the wordmark off the top and the closing line off the bottom. If the artwork
+  is ever replaced at a different ratio, change the box with it.
+- **It is hard-coded, so it does NOT follow the admin console.** The picture it
+  replaced came from `secondaryImage()` and changed whenever the admin uploaded
+  a new one. This will not.
