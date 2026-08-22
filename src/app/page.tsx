@@ -391,25 +391,27 @@ export default async function HomePage() {
         </Reveal>
 
         {/* ── BAND 1: the heading, and the poster beside it ─────────────────
-            🚨 THE POSTER COLUMN IS 16rem, AND THAT NUMBER IS THE WHOLE REPORT.
-            Moving the image out of the card grid and above it does not shorten
-            this section by itself — it LENGTHENS it, because the image stops
-            sharing vertical space with the cards and starts stacking on top of
-            them. Measured at 1280x900:
+            🚨 THE IMAGE COLUMN IS 1.2fr, AND A LANDSCAPE POSTER IS WHY IT CAN
+            BE. Owner, 2026-08-22: "Swap and widen the Image with the attached."
 
-              old layout (live)      1106px   poster 521x782 beside 2-up cards
-              first attempt, 22rem   1312px   +206, the opposite of the ask
-              this, 16rem            ~1150px
+            The history is worth keeping, because it is the same constraint
+            resolving three different ways. Measured at 1280x900:
 
-            The poster is 2:3, so its width IS its height: every rem taken off
-            the column takes 1.5 back off the section. 16rem (256x384) is the
-            smallest the artwork stays readable at — its own baked-in wordmark
-            and taglines are raster text and go to mush below about that.
+              original            1106px   2:3 poster 521x782, beside 2-up cards
+              report-16, 22rem    1312px   +206 — image stacked ABOVE the cards
+              report-16, 16rem    1168px   +62  — shrunk until it nearly paid
+              this, landscape     ~1090px  and the image is WIDER, not smaller
 
-            ⚠️ SO THE REMAINING HEIGHT IS THE IMAGE, NOT PADDING OR SPACING.
-            Both of those have already been cut (py-phi6 to py-phi5, and the
-            band gap to mt-phi4). If this must go materially shorter, the lever
-            is the poster or the card copy — not another spacing pass.
+            While the artwork was 2:3 its width WAS its height, so the only way
+            to shorten the section was to shrink the picture — the two goals
+            fought each other and something had to give. The owner supplying a
+            16:9 cut of the same poster dissolves that: at 1.2fr the image is
+            about 640px wide and only ~360px tall, so it is both larger than it
+            has ever been on this page and shorter than the heading beside it.
+
+            ⚠️ THE RATIO IS NOW THE HEIGHT LEVER, NOT THE WIDTH. If a portrait
+            crop of this artwork is ever swapped back in, the whole calculation
+            above returns and the column has to shrink again.
 
             🚨 IT WAS WRITTEN AS `[1fr_auto]` FIRST AND THAT COLLAPSED THE
             POSTER TO 1x2 PIXELS. An `auto` track sizes to its content while
@@ -417,7 +419,7 @@ export default async function HomePage() {
             circularity resolves at nearly zero. Measured before the fix:
             posterW 1, posterH 2. If this ever needs to be `auto` again, the
             child must carry an explicit width, not a percentage one. */}
-        <div className="grid gap-phi4 lg:grid-cols-[1fr_16rem] lg:items-center">
+        <div className="grid gap-phi4 lg:grid-cols-[1fr_1.2fr] lg:items-center">
           <div>
             <SectionLabel>Why Jamin Properties</SectionLabel>
             <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
@@ -434,21 +436,24 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* 🚨 THE JAMIN RUBYCON PLATE (owner, 2026-08-22: "swap that
-              image with the attached").
+          {/* 🚨 THE JAMIN RUBYCON PLATE — LANDSCAPE CUT (owner, 2026-08-22:
+              "Swap and widen the Image with the attached").
 
-              ⚠️ `aspect-[2/3]`, NOT the `aspect-[4/5]` this box used to
-              carry, and that is the whole difference between a swap and a
-              ruined poster. The supplied artwork is 1024x1536 — exactly
-              2:3 — and the old box was 0.8 against its 0.667. Under
-              `object-cover` a 4/5 window crops a 2/3 source top and
-              bottom, which here would have taken the wordmark off the top
-              and "Build your dream. Live your destiny." off the bottom.
-              Matching the box to the source means `object-cover` has
-              nothing to crop and `object-contain` has nothing to
-              letterbox. Re-check this ratio if the artwork is ever
-              replaced; a fixed box makes the CONTAINER uniform, never the
-              picture.
+              ⚠️ `aspect-[16/9]` BECAUSE THE FILE IS 1672x941, which is 1.777.
+              This box has now carried three ratios and the rule has been the
+              same every time: match the box to the source. It began 4:5 for an
+              admin photograph, went 2:3 for the portrait poster (a 4:5 window
+              would have cropped that one's wordmark off the top and "Build your
+              dream. Live your destiny." off the bottom), and is 16:9 now. A
+              fixed box makes the CONTAINER uniform, never the picture — so
+              re-check this the moment the artwork changes again.
+
+              ⚠️ A NEW FILENAME, NOT AN OVERWRITE. `next/image` keys its
+              optimised output by source path, so replacing
+              `why-jamin-rubycon-1024.webp` in place would let a warm build keep
+              serving the portrait from a deploy that looks correct. The
+              portrait file stays in the folder, unused, exactly as
+              public/section/README.md instructs.
 
               ⚠️ `next/image`, NOT the raw `<img>` that was here. That tag
               existed because the old source was a Supabase URL resolved at
@@ -469,16 +474,17 @@ export default async function HomePage() {
               cards moved out of this row there is finally somewhere for it to
               sit on a narrow screen without pushing the copy off the fold.
 
-              ⚠️ `sizes` FOLLOWS THE CAP. It said `(max-width: 1024px) 0px, 40vw`
-              — the 0px was honest while the box was hidden below `lg` and is a
-              lie now, and 40vw would fetch a ~570px source for a 352px box. */}
-          <div className="relative mx-auto aspect-[2/3] w-full max-w-[18rem] overflow-hidden rounded-xl border border-line lg:mx-0 lg:max-w-none">
+              ⚠️ `sizes` TRACKS THE BOX, and the box is no longer capped: the
+              18rem cap existed to stop a 2:3 portrait running away vertically,
+              and a 16:9 plate has no such problem. Full width on a phone,
+              ~55vw of the container from `lg`. */}
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-line">
             <Image
-              src="/section/why-jamin-rubycon-1024.webp"
+              src="/section/why-jamin-rubycon-wide-1672.webp"
               alt="Jamin Rubycon — where life finds its perfect space. A gated plotted layout with lush green surroundings, secure entry and a formed approach road."
               fill
               loading="lazy"
-              sizes="(max-width: 1024px) 288px, 256px"
+              sizes="(max-width: 1024px) 100vw, 55vw"
               className="object-cover"
             />
           </div>

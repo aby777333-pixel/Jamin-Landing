@@ -15,7 +15,8 @@ it and the other two exist as a source if a layout ever needs them.
 | `where-we-build-gate-*.webp` | homepage → "Find land near you" | a Jamin entrance wall, gardeners planting, a roller and a backhoe on the unmade road — owner-supplied 2026-08-13 |
 | `purpose-*.webp` | — | UNUSED. A plotted layout at golden hour, replaced 2026-08-12 |
 | `where-we-build-*.webp` | — | UNUSED. Paddy under a low sun with a house in it, replaced 2026-08-13 |
-| `why-jamin-rubycon-1024.webp` | homepage → "Six things you can check before you believe us" | the JAMIN RUBYCON poster, owner-supplied 2026-08-22 — see the note below |
+| `why-jamin-rubycon-wide-1672.webp` | homepage → "Eight things you can check before you believe us" | the JAMIN RUBYCON poster, LANDSCAPE cut, owner-supplied 2026-08-22 |
+| `why-jamin-rubycon-1024.webp` | — | UNUSED. The portrait cut of the same poster, replaced 2026-08-22 |
 
 ## ⚠️ A REPLACEMENT GETS A NEW FILENAME, NEVER THE OLD PATH
 
@@ -80,3 +81,29 @@ Two practical consequences:
 - **It is hard-coded, so it does NOT follow the admin console.** The picture it
   replaced came from `secondaryImage()` and changed whenever the admin uploaded
   a new one. This will not.
+
+## ⚠️ The Rubycon plate went portrait → landscape on the same day
+
+`why-jamin-rubycon-1024.webp` (1024x1536, 2:3) was live for a few hours and is
+kept, unused, under the new-filename rule at the top of this file. The owner
+supplied a 16:9 cut — `why-jamin-rubycon-wide-1672.webp`, 1672x941 — with the
+instruction "Swap and widen the Image".
+
+The reason this mattered for more than taste: report 16 asked for the section to
+be shorter AND for the image to sit beside the heading. While the artwork was
+2:3 its width *was* its height, so those two goals fought — the only way to
+shorten the section was to shrink the picture. Measured at 1280x900:
+
+| | section height | image |
+|---|---|---|
+| original (image beside 2-up cards) | 1106px | 521x782 |
+| report-16 first pass, 22rem column | 1312px | 352x528 |
+| report-16 shipped, 16rem column | 1168px | 256x384 |
+| landscape cut, 1.2fr column | 1158px | **631x355** |
+
+The landscape image is 2.5x wider than the one it replaced and the section is
+marginally shorter — and on a phone the plate drops from 432px tall to 188px.
+
+**The height is now set by the heading column (373px), not the image (355px).**
+Widening the column further would make the image the tallest thing in the row
+again and start adding height back. That is the ceiling.
