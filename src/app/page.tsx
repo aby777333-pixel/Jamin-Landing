@@ -102,7 +102,8 @@ const ASSURANCES = [
 ];
 
 /**
- * THE SIX TRUST POINTS (report 13, 2026-08-21) — the owner's own list, with a
+ * THE TRUST POINTS (report 13, 2026-08-21; grown from six to eight on
+ * 2026-08-22) — the owner's own list, with a
  * sentence under each naming where the reader can verify it on this site.
  *
  * ⚠️ NOTHING HERE IS A NEW CLAIM. Every line points at something already
@@ -145,6 +146,39 @@ const WHY_JAMIN = [
     k: "Straightforward buying process",
     d: "Four stages, in one order, every time: land and title, sanctioned layout, formed on the ground, registered to you.",
     icon: "ledger" as const,
+  },
+  /* ── SEVEN AND EIGHT (owner, 2026-08-22: "add two more features, so that the
+     text block matches the image height").
+
+     ⚠️ THE REASON IS LAYOUT, THE CONSTRAINT IS NOT. The list grew because six
+     points in a two-column grid left the column short beside the 2:3 poster —
+     but the rule at the top of this block still governs: nothing here may be a
+     new claim. Both additions point at a page that already exists and say only
+     what that page already does.
+
+       7 → /tools, which carries exactly three calculators: loan eligibility,
+           purchase cost and rental yield. The homepage's own tools section
+           already states "using your figures rather than ours. Jamin publishes
+           no rate, so every number is one you enter" — this repeats that, it
+           does not extend it.
+       8 → /journal, described from its actual catalogue rather than from a
+           guess: land-use conversion, right of way, hidden costs and the
+           214-point checklist are all live articles. It deliberately does NOT
+           say "patta, EC and DTCP", which was the first draft and which the
+           Journal does not in fact have articles on.
+
+     ⚠️ THE HEADING COUNTS THESE. It reads "Eight things you can check" and must
+     be changed with any further addition — a heading that says six over a list
+     of eight is the section failing its own argument. */
+  {
+    k: "Work the numbers yourself",
+    d: "Loan eligibility, purchase cost and rental yield calculators that run on the figures you enter. Jamin publishes no assumed rate for you to inherit.",
+    icon: "growth" as const,
+  },
+  {
+    k: "Learn before you commit",
+    d: "The Journal works through land-use conversion, right of way, hidden costs and a 214-point purchase checklist — written to help you judge any plot, not only ours.",
+    icon: "list" as const,
   },
 ];
 
@@ -343,7 +377,7 @@ export default async function HomePage() {
           <div>
             <SectionLabel>Why Jamin Properties</SectionLabel>
             <h2 className="mt-phi3 max-w-xl text-3xl text-ink">
-              Six things you can check before you believe us.
+              Eight things you can check before you believe us.
             </h2>
             <dl className="mt-phi4 grid gap-phi3 sm:grid-cols-2">
               {WHY_JAMIN.map((w) => (

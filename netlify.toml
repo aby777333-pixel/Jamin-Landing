@@ -12,3 +12,48 @@
 # appearing on the site without a redeploy.
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+# ══════════════════════════════════════════════════════════════════════════
+# SECURITY HEADERS (go-live checklist §32, added 2026-08-22)
+#
+# Netlify already sends HSTS and X-Content-Type-Options on this site — both
+# were verified on the live response before this block was written, and neither
+# is repeated here. What was missing is everything that governs how OTHER
+# origins may embed, read or reach this one.
+#
+# ⚠️ NO Content-Security-Policy IN THIS BLOCK, DELIBERATELY. A CSP is the one
+# header here that can white-screen a working site, and this app loads Google
+# Fonts, Supabase (REST + realtime + storage), OpenStreetMap tiles and inline
+# Next.js hydration scripts. A policy written without measuring every one of
+# those origins would break the map, the fonts or the whole page. It belongs in
+# its own change, added in Report-Only first and promoted once the report is
+# clean — not bolted onto a header pass.
+# ══════════════════════════════════════════════════════════════════════════
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Clickjacking. The site is never framed by anything of ours.
+    X-Frame-Options = "SAMEORIGIN"
+    # Send the full URL to our own origin, only the bare origin cross-site, and
+    # nothing at all when leaving HTTPS. Keeps property URLs out of third-party
+    # referer logs while leaving internal analytics intact.
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Powerful features this site does not use. Camera and microphone matter
+    # because the account area takes KYC uploads: nothing here should ever be
+    # able to open a device sensor.
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(self), payment=(), usb=(), magnetometer=(), gyroscope=(), interest-cohort=()"
+    # Legacy header, still read by some corporate proxies. Harmless where it is
+    # ignored; on old engines it stops a reflected-XSS render.
+    X-XSS-Protection = "1; mode=block"
+    # Cross-origin isolation, the conservative pair: other sites may still
+    # hotlink our images (needed for WhatsApp/social previews) but may not read
+    # documents or open windows into this origin.
+    Cross-Origin-Opener-Policy = "same-origin"
+    Cross-Origin-Resource-Policy = "cross-origin"
+
+# ⚠️ NEVER let a search engine index a generated OG card or a raw asset path as
+# if it were a page. These are files, not documents.
+[[headers]]
+  for = "/section/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

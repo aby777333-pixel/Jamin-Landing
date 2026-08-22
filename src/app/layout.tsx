@@ -81,6 +81,28 @@ export const metadata: Metadata = {
     "Jamin Bazaar",
   ],
   alternates: { canonical: "/" },
+  /* 🚨 THE SHARE CARD (go-live checklist §10, added 2026-08-22).
+
+     Until now this block had NO `images` at all, and `twitter.card` was
+     already `summary_large_image` — a card type that promises a large image
+     and had none to show. `/property/[slug]` and `/journal/[slug]` set their
+     own, so the gap was silent: the two page types anyone tested looked fine
+     while the ~25 routes that inherit these defaults — the homepage,
+     /properties, /projects, /about, /contact, /tools, /faq, /vault and every
+     /locations page — shared to WhatsApp as a bare link.
+
+     ⚠️ IT IS A BUILT FILE, NOT A HERO CROP. A 1850x850 hero pasted into a
+     1.91:1 slot is cropped differently by every platform and carries no
+     wordmark, which fails the checklist's "the logo displays correctly" and
+     "sharing an image has the correct dimensions" in one go. This is composed
+     at exactly 1200x630 with the emblem, the wordmark and the districts, and
+     the copy sits on a measured scrim: worst-case contrast over the bare
+     ground is 8.42:1 on the eyebrow, 13.54:1 on the headline, 12.73:1 and
+     8.68:1 on the two caption lines. Regenerate it with the script recorded
+     in public/README-og.md if the artwork or the district list changes.
+
+     ⚠️ ABSOLUTE-RESOLVED BY `metadataBase`, so it follows NEXT_PUBLIC_SITE_URL
+     to a real domain without being edited. */
   openGraph: {
     type: "website",
     siteName: "Jamin Properties",
@@ -89,12 +111,21 @@ export const metadata: Metadata = {
     title: "Jamin Properties — DTCP-Approved Plots & Land in Tamil Nadu",
     description:
       "DTCP-approved residential plotted layouts across Tamil Nadu, with clear title and bank loan assistance.",
+    images: [
+      {
+        url: "/og-jamin-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: "Jamin Bazaar — DTCP-approved plots in Tamil Nadu. Clear title, sanctioned layouts, formed roads. Salem, Erode, Coimbatore, Tiruppur and Trichy.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Jamin Properties — DTCP-Approved Plots & Land in Tamil Nadu",
     description:
       "DTCP-approved residential plotted layouts across Tamil Nadu, with clear title and bank loan assistance.",
+    images: ["/og-jamin-1200x630.png"],
   },
   robots: {
     index: true,
