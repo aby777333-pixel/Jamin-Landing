@@ -1,14 +1,16 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 import { SectionLabel } from "@/components/ui";
-import { PROSPECTUS, prospectusGallery, prospectusHero, prospectusLine } from "@/lib/prospectus";
+import { prospectusFor, prospectusGallery, prospectusHero, prospectusLine } from "@/lib/prospectus";
+import type { Phase } from "@/lib/site";
 
 /**
- * THE PROSPECTUS BAND — announced developments, on /projects/future only.
+ * THE PROSPECTUS BAND — announced developments, on the stage pages that have
+ * any. Built for /projects/future, generalised to /projects/current the same
+ * day when the owner sent a second, "Upcoming" list.
  *
- * Owner, 2026-08-22: "We need to add 3 more in Future products. only show
- * images and overview". That instruction is the whole specification, and the
- * restraint in it is the point: these carry a picture and a sentence and
+ * Owner, 2026-08-22: "only show images and overview". That instruction is the
+ * whole specification, and the restraint in it is the point: these carry a picture and a sentence and
  * nothing else. No plot count, no price, no availability, no "enquire about
  * this plot" — because none of those exist yet, and inventing a CTA for
  * inventory that cannot be sold is how a marketing page starts lying.
@@ -19,18 +21,40 @@ import { PROSPECTUS, prospectusGallery, prospectusHero, prospectusLine } from "@
  * prospectus it would be a card of empty cells with a corner fold on it. A
  * different kind of thing gets a different shape.
  *
- * ⚠️ HEADINGS ARE h3. The page's `h2` is its screen-reader-only "Future
+ * ⚠️ HEADINGS ARE h3. The page's `h2` is its screen-reader-only "<stage>
  * developments"; this band adds its own visible `h2` and the entries sit under
  * it, so the outline runs h1 → h2 → h3 with no jump.
  */
-export function ProspectusBand() {
-  if (PROSPECTUS.length === 0) return null;
+const COUNT_WORD = ["No", "One", "Two", "Three", "Four", "Five", "Six"];
+
+/**
+ * ⚠️ THE LEAD SENTENCE IS PER-PHASE, and that is a truthfulness decision.
+ *
+ * `PHASE_META` gives `future` the blurb "Land secured and planning under way"
+ * and `current` the blurb "Approved and about to open" — so reusing one line
+ * for both would have put the word "approved" over two developments whose
+ * approval status the owner never stated. Each phase gets the framing its own
+ * page already uses, and neither claims more than that.
+ *
+ * The second sentence is shared and is the part that matters: it says plainly
+ * that nothing here is on sale, whichever stage it sits under.
+ */
+const LEAD: Partial<Record<Phase, string>> = {
+  future: "Land secured, planning under way.",
+  current: "Announced and being prepared for release.",
+};
+
+export function ProspectusBand({ phase }: { phase: Phase }) {
+  const items = prospectusFor(phase);
+  if (items.length === 0) return null;
+
+  const count = COUNT_WORD[items.length] ?? String(items.length);
 
   return (
     <section className="mt-phi5" aria-labelledby="prospectus-heading">
       <SectionLabel>Announced</SectionLabel>
       <h2 id="prospectus-heading" className="mt-phi3 max-w-2xl text-2xl text-ink">
-        Three more developments in planning
+        {count} more development{items.length === 1 ? "" : "s"} in planning
       </h2>
       {/* ⚠️ THIS SENTENCE IS THE BAND'S HONESTY, not its marketing. The page
           header counts the CATALOGUE (developments and plots you can act on
@@ -39,13 +63,13 @@ export function ProspectusBand() {
           number is wrong. It also states plainly that there is nothing to buy
           here yet, which is the difference between announcing and selling. */}
       <p className="mt-phi2 max-w-2xl text-base leading-relaxed text-ink-muted">
-        Land secured, planning under way. These are not yet on sale and carry no plot schedule or
-        price — they are counted separately from the developments above. The desk registers
-        interest, and the sanctioned layout is published here as soon as it is approved.
+        {LEAD[phase]} These are not yet on sale and carry no plot schedule or price — they are
+        counted separately from the developments above. The desk registers interest, and the
+        sanctioned layout is published here as soon as it is approved.
       </p>
 
       <div className="mt-phi4 grid gap-phi4">
-        {PROSPECTUS.map((p, i) => {
+        {items.map((p, i) => {
           const gallery = prospectusGallery(p);
           const line = prospectusLine(p);
           return (

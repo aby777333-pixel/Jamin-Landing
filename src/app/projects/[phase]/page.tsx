@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PropertyCard } from "@/components/PropertyCard";
 import { ProspectusBand } from "@/components/ProspectusBand";
-import { PROSPECTUS } from "@/lib/prospectus";
+import { prospectusFor } from "@/lib/prospectus";
 import { PageHero, type HeroArt } from "@/components/PageHero";
 import { ButtonLink, Container, EmptyState, Pane } from "@/components/ui";
 import { paneHue } from "@/lib/stones";
@@ -56,6 +56,10 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
   const meta = PHASE_META[phase];
   const all = await getProperties();
   const items = all.filter((p) => p.project_phase === phase);
+  /* Announced-but-not-catalogued developments for THIS stage. Derived once and
+     shared by the header count, the empty-state guard and the band, so the
+     three cannot disagree about what belongs on the page. */
+  const planned = prospectusFor(phase);
   const plots = items.reduce((n, p) => n + (p.plots_available ?? 0), 0);
 
   const breadcrumbs = {
@@ -369,9 +373,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
           <>
             {items.length} development{items.length === 1 ? "" : "s"}
             {plots > 0 ? ` · ${plots} plot${plots === 1 ? "" : "s"} available` : ""}
-            {phase === "future" && PROSPECTUS.length > 0
-              ? ` · ${PROSPECTUS.length} more in planning`
-              : ""}
+            {planned.length > 0 ? ` · ${planned.length} more in planning` : ""}
           </>
         }
       />
@@ -396,7 +398,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
             announced developments would remain below it. Guarding on both is
             what stops the page contradicting itself in a state nobody is
             looking at today. */}
-        {items.length === 0 && !(phase === "future" && PROSPECTUS.length > 0) ? (
+        {items.length === 0 && planned.length === 0 ? (
           <EmptyState
             title={`No ${meta.label.toLowerCase()} projects right now`}
             body="This stage is empty at the moment. The other stages have developments you can look at today."
@@ -425,7 +427,7 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
             things with no plot schedule would contradict those pages rather
             than extend them. See lib/prospectus.ts for why these are a file
             and not Supabase rows. */}
-        {phase === "future" && <ProspectusBand />}
+        <ProspectusBand phase={phase} />
       </div>
       </Pane>
       </Container>

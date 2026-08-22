@@ -38,9 +38,37 @@
  * down, because a guessed location on a land-sales page is the exact class of
  * claim the trust section on the homepage invites the reader to check. Madurai
  * appears only because the owner wrote "madurai kallikudi".
+ *
+ * ── SECOND BRIEF, 2026-08-22 (Upcoming) ──────────────────────────────────
+ *
+ *     1. Chandrapuram — RESIDENTIAL LAYOUT PROJECT — 6.5 ACRES
+ *     2. AMMAPETTAI — 7.79 ACRES — RESIDENTIAL LAYOUT PROJECT
+ *
+ * ⚠️ THE OWNER ASKED FOR THREE AND NAMED TWO. There is no third entry below
+ * because no third development was supplied — not because one was missed. Add
+ * it here when its name, scale and artwork arrive.
+ *
+ * ⚠️ CHANDRAPURAM SHIPPED WITHOUT A HERO IMAGE. Its folder
+ * (`Downloads/1 Chandrapuram`) was empty and the six files were loose in
+ * `Downloads/`, none of them named "hero" — every other development supplied
+ * one explicitly. `chandrapuram image1.png` is used as the header because it
+ * is the same shape as the real heroes (1672x941) and is the gate render
+ * carrying the project's own name board, so it is the frame a hero would have
+ * been. The remaining five are the gallery. Swap it if a proper hero arrives.
  */
 
+import type { Phase } from "@/lib/site";
+
 export type Prospectus = {
+  /**
+   * Which stage page shows it.
+   *
+   * ⚠️ "UPCOMING" IS `current`, NOT `future` — the slug and the word differ,
+   * and `PHASE_META` in lib/site.ts is the thing that spells it out
+   * (`current: { label: "Upcoming" }`). An entry tagged "upcoming" would
+   * silently render nowhere.
+   */
+  phase: Phase;
   /** URL-safe id. Used for the anchor and the image folder name. */
   slug: string;
   /** The development, as the owner writes it. */
@@ -59,6 +87,7 @@ export type Prospectus = {
 
 export const PROSPECTUS: Prospectus[] = [
   {
+    phase: "future",
     slug: "kariyapatti",
     name: "Kariyapatti",
     place: null,
@@ -69,6 +98,7 @@ export const PROSPECTUS: Prospectus[] = [
     gallery: 6,
   },
   {
+    phase: "future",
     slug: "genguvarpatti",
     name: "Genguvarpatti",
     place: null,
@@ -79,6 +109,7 @@ export const PROSPECTUS: Prospectus[] = [
     gallery: 5,
   },
   {
+    phase: "future",
     slug: "kallikudi",
     name: "Kallikudi",
     place: "Madurai",
@@ -88,7 +119,41 @@ export const PROSPECTUS: Prospectus[] = [
       "An integrated township across 50 acres at Kallikudi, Madurai. The land is secured and planning is under way; plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
     gallery: 5,
   },
+  /* ── UPCOMING ── phase `current`, which the buyer reads as "Upcoming". */
+  {
+    phase: "current",
+    slug: "chandrapuram",
+    name: "Chandrapuram",
+    place: null,
+    scale: "6.5 acres",
+    kind: "Residential layout project",
+    overview:
+      "A residential layout development across 6.5 acres. Plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
+    gallery: 5,
+  },
+  {
+    phase: "current",
+    slug: "ammapettai",
+    name: "Ammapettai",
+    place: null,
+    scale: "7.79 acres",
+    kind: "Residential layout project",
+    overview:
+      "A residential layout development across 7.79 acres. Plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
+    gallery: 6,
+  },
 ];
+
+/**
+ * The entries for one stage page.
+ *
+ * ⚠️ Filtering happens HERE rather than at the call site so the band, the
+ * header count and the empty-state guard cannot disagree about which entries
+ * belong to a page — they all ask the same function.
+ */
+export function prospectusFor(phase: Phase) {
+  return PROSPECTUS.filter((p) => p.phase === phase);
+}
 
 /** `public/projects/<slug>/hero-1440.webp` — the gate render for the header. */
 export function prospectusHero(p: Prospectus) {
