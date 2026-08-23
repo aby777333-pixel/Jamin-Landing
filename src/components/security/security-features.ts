@@ -184,6 +184,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#6b3fa0", // amethyst
     ink: "var(--color-amethyst)", // 5.78:1
     inkDark: "#b895d8", // 7.62:1 — lilac, the same lift applied to amethyst
+    image: {
+      src: "/security-art/face-recognition-1066.webp",
+      alt: "Illustration: a woman's profile and a robot's profile back to back, joined by a field of light.",
+      width: 1066,
+      height: 1024,
+      caption: "Illustration.",
+    },
   },
   {
     key: "guests",
@@ -202,6 +209,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#3d5758", // emerald
     ink: "var(--color-emerald)", // 6.09:1
     inkDark: "#7fa8a9", // 7.39:1 — emerald raised into the carbon range
+    image: {
+      src: "/security-art/guest-reception-1199.webp",
+      alt: "Illustration: a visitor at a reception desk being greeted by a projected figure in a lit lobby.",
+      width: 1199,
+      height: 654,
+      caption: "Illustration. Not a depiction of any Jamin gate house.",
+    },
   },
   {
     key: "gates",
@@ -219,6 +233,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#8a6414", // gilt-700
     ink: "#7b5912", // 5.02:1 on sand — gilt-700 itself is 4.20 and too light for a word
     inkDark: "#d4b168", // 9.41:1 — the brass, still clearly brass
+    image: {
+      src: "/security-art/gate-kiosk-736.webp",
+      alt: "Illustration: a touchscreen access terminal on a post at the entrance to a residential street.",
+      width: 736,
+      height: 552,
+      caption: "Illustration. The terminal shown is a stock product image; the wording on its screen is not Jamin's.",
+    },
   },
   {
     key: "perimeter",
@@ -235,6 +256,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#2f4749", // canopy  ⚠ REMAPPED in carbon
     ink: "var(--color-canopy)", // 7.76:1
     inkDark: "#86b8ae", // 8.67:1 — royal.css's OWN carbon canopy, reused verbatim
+    image: {
+      src: "/security-art/perimeter-beams-1200.webp",
+      alt: "Illustration: a house behind a fence, with beam sensors on the gate posts drawn as coloured lines.",
+      width: 1200,
+      height: 1141,
+      caption: "Illustration. The distances printed on it belong to the product photographed, not to any Jamin specification.",
+    },
   },
   {
     key: "people",
@@ -252,11 +280,11 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     ink: "var(--color-jamin-red)", // 4.71:1
     inkDark: "#e8887c", // 7.54:1 — royal.css's own carbon jamin-red-deep
     image: {
-      src: "/security-art/sentry-626.webp",
-      alt: "Illustration: a figure in a dark suit and red tie, with a bullet camera in place of a head.",
-      width: 626,
-      height: 358,
-      caption: "Illustration. Real teams are considerably better company.",
+      src: "/security-art/control-room-operator-735.webp",
+      alt: "Illustration: an operator in a headset watching a wall of camera monitors at night.",
+      width: 735,
+      height: 490,
+      caption: "Illustration.",
     },
   },
   {
@@ -274,6 +302,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#5d5548", // plat-800 ⚠ REMAPPED in carbon
     ink: "var(--color-plat-800)", // 5.75:1
     inkDark: "#c6b9a6", // 9.97:1 — plat-300, which is what royal.css maps plat-800 to
+    image: {
+      src: "/security-art/delivery-management-616.webp",
+      alt: "Illustration: a parcel and a set of delivery icons drawn above a hand-held tablet.",
+      width: 616,
+      height: 462,
+      caption: "Illustration. A stock delivery graphic; the courier wording baked into it is not Jamin's.",
+    },
   },
   {
     key: "alerts",
@@ -289,6 +324,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#d3401f", // vermilion
     ink: "#ad3419", // 5.01:1 — vermilion itself is 3.64, the lightest stone in the set
     inkDark: "#f0a07f", // 8.6:1 — pushed oranger than the red above, so the two alert stones stay tellable apart
+    image: {
+      src: "/security-art/intruder-alarm-890.webp",
+      alt: "Illustration: a figure forcing a door on one side of a wall while a keypad and siren respond on the other.",
+      width: 890,
+      height: 650,
+      caption: "Illustration.",
+    },
   },
   {
     key: "children",
@@ -305,6 +347,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#587270", // jade
     ink: "#4c6361", // 5.03:1 — jade itself is 4.05, the stone stones.ts already names
     inkDark: "#a8c4bd", // 10.34:1 — the palest of the three teals, as it is in light
+    image: {
+      src: "/security-art/child-shadow-480.webp",
+      alt: "Illustration: the shadow of an adult and a child holding hands, cast on a pavement.",
+      width: 480,
+      height: 480,
+      caption: "Illustration.",
+    },
   },
   {
     key: "phone",
@@ -322,6 +371,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#6c533b", // champagne-700 ⚠ REMAPPED in carbon
     ink: "var(--color-champagne-700)", // 5.60:1
     inkDark: "#c9a884", // 8.62:1 — champagne-300, royal.css's own remap
+    image: {
+      src: "/security-art/community-on-phone-1024.webp",
+      alt: "Illustration: people in several homes reading messages and notifications on phones, tablets and laptops.",
+      width: 1024,
+      height: 1024,
+      caption: "Illustration.",
+    },
   },
   {
     key: "emergency",
@@ -339,5 +395,12 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     fill: "#7a0404", // garnet ⚠ REMAPPED in carbon
     ink: "var(--color-garnet)", // 8.91:1
     inkDark: "#c98b84", // 6.87:1 — royal.css's own carbon garnet
+    image: {
+      src: "/security-art/emergency-night-crew-1200.webp",
+      alt: "Illustration: a night crew with lit vehicles clearing a fallen tree from a coastal road.",
+      width: 1200,
+      height: 800,
+      caption: "Illustration.",
+    },
   },
 ];

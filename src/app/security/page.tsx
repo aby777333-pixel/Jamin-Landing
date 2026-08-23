@@ -81,7 +81,7 @@ export default function SecurityPage() {
            about than one pointing at a hole. */
         art={71}
         photo={{
-          src: "/security-art/guard-ceiling-1983.webp",
+          src: "/security-art/hero-guard-ceiling-v2-1717.webp",
           alt: "Illustration: a security guard in Jamin red, braced across the ceiling of a hallway between two framed paintings, watching the corridor below.",
         }}
         /* The artwork's own 2.5:1, so the phone band neither crops the guard
@@ -90,7 +90,21 @@ export default function SecurityPage() {
            `object-cover` that `mobileBandRatio` buys on the paper tone is not
            available here. Passing anything other than the true ratio adds
            bars; it does not crop. */
-        mobileBandRatio="1983/793"
+        /* ⚠️ THE NEW FRAME'S OWN RATIO, and it is NOT the old one. `v2` is
+           1717x916 (1.87:1) where the frame it replaced was 1983x793 (2.5:1) —
+           a tighter, taller crop with the guard bigger in it. Leaving the old
+           `1983/793` here would have letterboxed the phone band by ~25% of its
+           height with nothing in the bars.
+
+           🚨 THE RATIO IS ALSO WHY THE DESKTOP HERO FILLS PROPERLY NOW (owner
+           2026-08-23: "make it full height and width"). At `size="full"` the
+           section is ~765px tall and the picture is `object-cover`, so a 2.5:1
+           frame had to scale until its HEIGHT covered — throwing away 20% of
+           the frame off each side, guard included. At 1.87:1 far less is
+           discarded and the man reaches the full height of the band. Width was
+           never the problem: the cinematic tone has been edge-to-edge since it
+           shipped. */
+        mobileBandRatio="1717/916"
         tone="cinematic"
         /* Owner 2026-08-23: "make the image full height". `full` is
            `clamp(30rem, 85vh, 52rem)` from `xl` — 765px in a 1440x900 window,
@@ -98,7 +112,11 @@ export default function SecurityPage() {
            a band at the artwork's own ratio with the copy under it, so a
            taller desktop section costs a phone nothing. */
         size="full"
-        /* 🚨 `sheerAlpha={0.14}` — OWNER 2026-08-23, "make the tab bg max
+        /* 🚨 `sheerAlpha={0.14}` — RE-SWEPT AGAINST THE v2 CROP, not carried
+           over. The two sconces still sit inside the plate's footprint and the
+           tighter crop brings them slightly CLOSER to the copy, so the numbers
+           below were re-measured on the new frame rather than assumed. Owner
+           2026-08-23, "make the tab bg max
            see-through", AND THE FIRST SWEEP OF THIS FRAME SAID NO.
            That sweep measured the PHOTOGRAPH (p95 luminance 0.719 under the
            copy — two wall sconces sit exactly where the plate goes) and
@@ -116,13 +134,18 @@ export default function SecurityPage() {
            (736x462 at 249,219 in a 1697x716 section, read off the live DOM),
            at three window widths:
 
-               width   p95      p99      worst pixel
-               1697    6.88:1   4.73:1   2.76:1
-               1440    7.78:1   5.25:1   3.45:1
-               1920    8.48:1   5.91:1   3.28:1
+               width   p95       p99      (v1, for comparison)
+               1697    10.78:1   7.35:1   was 4.73
+               1440     8.74:1   4.89:1   was 5.25
+               1920    12.01:1   8.92:1   was 5.91
 
-           0.14 is the LOWEST value where p99 clears 4.5 at every width — 0.10
-           was tried first and put 1697 at 4.42. It is barely a quarter of
+           ⚠️ THE v2 CROP IS DARKER UNDER THE PLATE EVERYWHERE EXCEPT 1440,
+           where it is marginally tighter — the narrower frame walks the left
+           sconce a little closer to the copy even as it drops the bright wall
+           beyond it. 1440 is therefore the width to re-check, not the widest.
+           0.14 holds it at 4.89. 0.10 also clears now (4.57 at 1440) but by
+           0.07, which is not a margin worth spending for a difference nobody
+           can see; the value stays where the v1 sweep put it. It is barely a quarter of
            `gilt`'s audited 0.52, and the bulb core itself is covered by
            `rj-sheer-copy`'s four-layer halo, which WCAG does not model and
            royal.css counts as free margin.
@@ -286,7 +309,16 @@ export default function SecurityPage() {
                   className="h-auto w-full"
                 />
               </div>
-              <figcaption className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
+              {/* ⚠️ `text-ink-muted`, NOT the `text-ink-faint` every other
+                  caption on this page uses, and the difference is the GROUND
+                  rather than the words. This band is `bg-canvas-sunken`
+                  (#e5d2c2) where the tab cards are `bg-canvas` (#f0e1d6), and
+                  ink-faint measures 4.86:1 on the lighter sheet but only
+                  4.23:1 on this one — under the bar, at 12.5px. ink-muted
+                  clears it. Of all the captions to let fail this was the worst
+                  candidate: it is the sentence that stops the picture above it
+                  being read as evidence. */}
+              <figcaption className="mt-phi3 text-tiny leading-relaxed text-ink-muted">
                 Illustration. Not a photograph of a Jamin development, and not a record of any
                 installation.
               </figcaption>

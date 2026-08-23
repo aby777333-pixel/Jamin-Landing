@@ -87,3 +87,68 @@ old picture from a deploy that looks correct.
 Unlike `public/hero`, these are consumed by `next/image` with `sizes` set, so
 Next generates its own responsive set from the single source. There is nothing
 to hand-cut.
+
+## The tab frames, added 2026-08-23
+
+Ten more frames, one per security layer, supplied by the owner ("Add photos,
+attached by name"). Every one is a **stock or generated illustration of nowhere**
+and every one carries an `Illustration.` caption for the reason at the top of
+this file.
+
+| file | tab |
+|---|---|
+| `face-recognition-1066.webp` | Face Access |
+| `guest-reception-1199.webp` | Guests |
+| `gate-kiosk-736.webp` | Smart Gates |
+| `perimeter-beams-1200.webp` | Perimeter |
+| `control-room-operator-735.webp` | Our People |
+| `delivery-management-616.webp` | Deliveries |
+| `intruder-alarm-890.webp` | Instant Alerts |
+| `child-shadow-480.webp` | Kids Nearby |
+| `community-on-phone-1024.webp` | Your Phone |
+| `emergency-night-crew-1200.webp` | Emergency |
+
+## 🚨 THREE OF THEM CARRY BAKED-IN TEXT THAT IS NOT JAMIN'S
+
+These are the ones to replace first. The problem is not taste — it is that the
+words are printed INTO the pixels on a page that describes what Jamin provides,
+so a reader takes them for Jamin's specification:
+
+- **`perimeter-beams-1200.webp`** prints **"3000ft"** and **"300ft"**. That is a
+  RANGE SPEC for the product photographed. Jamin publishes no perimeter ranges
+  anywhere, and this page's own rule is that it describes a specification
+  without committing to numbers.
+- **`gate-kiosk-736.webp`** shows a US leasing-office terminal: *People
+  Directory, Company Directory, Door PIN, Virtual Key, Delivery, **Leasing
+  Office***, with a Range Rover on the screen. Jamin sells plots; there is no
+  leasing office.
+- **`delivery-management-616.webp`** is an e-commerce checkout graphic —
+  **"48H DELIVERY", "24H DELIVERY", "ORDER CONFIRMED", "CONTINUE SHOPPING"**.
+  The tab is about verifying a courier at a gate, not about shipping times.
+
+Each carries a caption disclaiming the baked text. **A caption is a patch, not
+a fix** — the words are still in the picture. Replace the frames.
+
+⚠️ Two of the three also read as another vendor's product marketing rather than
+licensed stock. Same standing question as `sentry-626`: if a licence cannot be
+shown, drop them.
+
+## ⚠️ FOUR ARE UNDER 900px AND ONE IS 480px
+
+`child-shadow` (480), `delivery-management` (616), `gate-kiosk` (736) and
+`control-room-operator` (735). The tab image column is capped at 390 CSS px, so
+480px is only 1.2x on a retina screen and will look soft. Nothing is upscaled —
+the cap prevents that — but a larger source would simply look better.
+
+## `sentry-626.webp` is now UNUSED
+
+`control-room-operator-735.webp` took the Our People tab: it shows the actual
+job. The joke frame stays in the folder under the new-filename rule at the top,
+unused, and its unresolved provenance no longer ships.
+
+## `hero-guard-ceiling-v2-1717.webp` replaced the hero
+
+Same scene, tighter crop, 1717x916 (1.87:1) against the old 1983x793 (2.5:1).
+⚠️ **`mobileBandRatio` on the page moved with it.** The ratio is passed
+explicitly, so swapping a hero without changing it letterboxes the phone band.
+`guard-ceiling-1983.webp` is kept, unused.

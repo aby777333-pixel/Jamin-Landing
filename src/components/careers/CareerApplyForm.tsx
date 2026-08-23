@@ -5,6 +5,14 @@ import type { CSSProperties } from "react";
 import { supabase } from "@/lib/supabase";
 import { captureAttribution, currentRef } from "@/lib/attribution";
 import { SurveyIcon } from "@/components/cadastral/SurveyIcon";
+import {
+  ACCEPT,
+  ACCEPT_HINT,
+  checkFile,
+  prettySize,
+  uploadCareerFile,
+  type Attachment,
+} from "@/lib/career-upload";
 
 /**
  * The job application (owner 2026-08-23).
@@ -51,6 +59,9 @@ export function CareerApplyForm({
   const [city, setCity] = useState("");
   const [experience, setExperience] = useState("");
   const [message, setMessage] = useState("");
+  const [file, setFile] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const [consent, setConsent] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,9 +74,23 @@ export function CareerApplyForm({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
+    if (fileError) return;
     setBusy(true);
     setError(null);
     try {
+      /* ⚠️ THE FILE GOES FIRST, and a failure here stops the submission rather
+         than quietly dropping the attachment. Somebody who chose to attach a CV
+         has said the CV matters; sending the application without it and
+         reporting success would be the worst of the three outcomes. */
+      let att: Attachment | null = null;
+      if (file) {
+        setUploading(true);
+        try {
+          att = await uploadCareerFile(file);
+        } finally {
+          setUploading(false);
+        }
+      }
       const { data, error: rpcError } = await supabase.rpc("website_career_apply", {
         p_role_key: roleKey,
         p_role_label: roleLabel,
@@ -78,6 +103,10 @@ export function CareerApplyForm({
         p_ref: currentRef(),
         p_source_url: typeof window !== "undefined" ? window.location.href : null,
         p_consent: consent,
+        p_file_path: att?.path ?? null,
+        p_file_name: att?.name ?? null,
+        p_file_type: att?.type ?? null,
+        p_file_size: att?.size ?? null,
       });
       if (rpcError) throw new Error(rpcError.message);
       const res = data as { ok: boolean; error?: string };
@@ -219,6 +248,54 @@ export function CareerApplyForm({
         />
       </div>
 
+      {/* THE ATTACHMENT — optional, and it says so in the label rather than
+          only in a hint, because an unmarked file input on a job form reads as
+          required and a missing CV is the commonest reason somebody abandons
+          one. */}
+      <div>
+        <label htmlFor={`${idPrefix}-file`} className={lab}>
+          Attach a CV or photo{" "}
+          <span className="normal-case tracking-normal">(optional)</span>
+        </label>
+        <input
+          id={`${idPrefix}-file`}
+          type="file"
+          accept={ACCEPT}
+          onChange={(e) => {
+            const f = e.target.files?.[0] ?? null;
+            if (!f) {
+              setFile(null);
+              setFileError(null);
+              return;
+            }
+            /* Checked HERE rather than on submit: the bucket and the RPC both
+               refuse the same things, but finding out after filling in the
+               whole form is a worse way to learn it. */
+            const c = checkFile(f);
+            if (!c.ok) {
+              setFile(null);
+              setFileError(c.error);
+              e.target.value = "";
+              return;
+            }
+            setFile(f);
+            setFileError(null);
+          }}
+          className="w-full rounded-card border border-line bg-canvas px-phi3 py-2.5 text-base text-ink-soft outline-none file:mr-3 file:rounded-full file:border-0 file:bg-canvas-sunken file:px-3 file:py-1.5 file:text-tiny file:font-semibold file:uppercase file:tracking-[0.1em] file:text-ink-soft focus:border-ink-faint"
+        />
+        {fileError ? (
+          <p role="alert" className="mt-1 text-tiny leading-relaxed text-jamin-red-deep">
+            {fileError}
+          </p>
+        ) : file ? (
+          <p className="mt-1 text-tiny leading-relaxed text-ink-faint">
+            {file.name} · {prettySize(file.size)}
+          </p>
+        ) : (
+          <p className="mt-1 text-tiny leading-relaxed text-ink-faint">{ACCEPT_HINT}</p>
+        )}
+      </div>
+
       <label className="flex items-start gap-2.5 text-tiny leading-relaxed text-ink-muted">
         <input
           type="checkbox"
@@ -253,7 +330,7 @@ export function CareerApplyForm({
         style={{ backgroundColor: stone }}
         className="w-full rounded-full px-5 py-3.5 text-tiny font-semibold uppercase tracking-[0.12em] text-white shadow-lift transition-all duration-300 [transition-timing-function:var(--ease-silk)] hover:-translate-y-0.5 hover:shadow-raise focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--stone)] disabled:opacity-50"
       >
-        {busy ? "Sending…" : cta}
+        {uploading ? "Uploading…" : busy ? "Sending…" : cta}
       </button>
     </form>
   );
