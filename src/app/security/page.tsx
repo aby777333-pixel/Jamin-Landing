@@ -98,12 +98,17 @@ export default function SecurityPage() {
 
            🚨 THE RATIO IS ALSO WHY THE DESKTOP HERO FILLS PROPERLY NOW (owner
            2026-08-23: "make it full height and width"). At `size="full"` the
-           section is ~765px tall and the picture is `object-cover`, so a 2.5:1
+           section was ~765px tall and the picture is `object-cover`, so a 2.5:1
            frame had to scale until its HEIGHT covered — throwing away 20% of
            the frame off each side, guard included. At 1.87:1 far less is
            discarded and the man reaches the full height of the band. Width was
            never the problem: the cinematic tone has been edge-to-edge since it
-           shipped. */
+           shipped.
+
+           ⚠️ THE SECTION IS TALLER AGAIN NOW (`size="screen"` below), so the
+           crop is tighter still — a taller box means cover discards MORE off
+           the sides. The guard survives it because he is centred; a frame with
+           its subject near an edge would not, and would need `artPosition`. */
         mobileBandRatio="1717/916"
         tone="cinematic"
         /* Owner 2026-08-23: "make the image full height". `full` is
@@ -111,7 +116,11 @@ export default function SecurityPage() {
            against `standard`'s 432px. Below `xl` nothing changes: the hero is
            a band at the artwork's own ratio with the copy under it, so a
            taller desktop section costs a phone nothing. */
-        size="full"
+        /* 🚨 `screen`, NOT `full` — owner 2026-08-23, "increase the height of
+           the hero to the max". The viewport minus the sticky header, so the
+           picture ends exactly at the fold. `full` was left alone on purpose:
+           five other pages pass it. See the note on the prop. */
+        size="screen"
         /* 🚨 `sheerAlpha={0.14}` — RE-SWEPT AGAINST THE v2 CROP, not carried
            over. The two sconces still sit inside the plate's footprint and the
            tighter crop brings them slightly CLOSER to the copy, so the numbers
@@ -134,18 +143,27 @@ export default function SecurityPage() {
            (736x462 at 249,219 in a 1697x716 section, read off the live DOM),
            at three window widths:
 
-               width   p95       p99      (v1, for comparison)
-               1697    10.78:1   7.35:1   was 4.73
-               1440     8.74:1   4.89:1   was 5.25
-               1920    12.01:1   8.92:1   was 5.91
+           Re-swept a THIRD time when the hero went to `size="screen"`, because
+           a taller section changes the cover-crop and therefore which pixels
+           end up under the copy. Section height is the window minus the 80px
+           header, so it varies by machine — all four swept at a=0.14:
 
-           ⚠️ THE v2 CROP IS DARKER UNDER THE PLATE EVERYWHERE EXCEPT 1440,
-           where it is marginally tighter — the narrower frame walks the left
-           sconce a little closer to the copy even as it drops the bright wall
-           beyond it. 1440 is therefore the width to re-check, not the widest.
-           0.14 holds it at 4.89. 0.10 also clears now (4.57 at 1440) but by
-           0.07, which is not a margin worth spending for a difference nobody
-           can see; the value stays where the v1 sweep put it. It is barely a quarter of
+               window        section    p95        p99
+               1697x898      1697x818   10.72:1    7.23:1
+               1920x1080     1920x1000  11.85:1    8.58:1
+               1440x900      1440x820    9.34:1    5.28:1
+               1366x768      1366x688    8.05:1    4.85:1   <- tightest
+
+           ⚠️ THE SHORT LAPTOP IS NOW THE CASE TO CHECK, not the widest and not
+           1440. Growing the section pulls more dark ceiling in behind the copy
+           on a tall window, so the big screens got BETTER; a 768px-high window
+           has the least room and keeps the most lit wall. It still clears at
+           4.85, so the alpha does not move.
+
+           🚨 RE-SWEEP ON ANY SIZE CHANGE, NOT JUST ON AN IMAGE CHANGE. Nothing
+           about the picture changed between the second sweep and this one —
+           only the height of the box it is drawn into — and the tightest width
+           moved from 1440 to 1366 as a result. It is barely a quarter of
            `gilt`'s audited 0.52, and the bulb core itself is covered by
            `rj-sheer-copy`'s four-layer halo, which WCAG does not model and
            royal.css counts as free margin.

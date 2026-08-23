@@ -488,9 +488,25 @@ export function PageHero({
   /** Small factual line under the copy — counts, never claims. */
   meta?: ReactNode;
   priority?: boolean;
-  /** `full` fills most of a desktop viewport — asked for on /properties
-   *  (2026-08-17, "hero does not fill the expected viewport height"). */
-  size?: "standard" | "tall" | "full";
+  /**
+   * `full` fills most of a desktop viewport — asked for on /properties
+   * (2026-08-17, "hero does not fill the expected viewport height").
+   *
+   * `screen` fills ALL of it (owner 2026-08-23, /security: "increase the
+   * height of the hero to the max"). It is the viewport MINUS the sticky
+   * header, so the picture ends exactly where the fold does rather than
+   * pushing a sliver of the next section into view.
+   *
+   * 🚨 `screen` EXISTS BECAUSE `full` IS SHARED. Six pages pass `full` —
+   * /careers, /faq, /projects/[phase], /properties, /security and /ta — so
+   * raising its clamp to satisfy one page would have made five others taller
+   * without anybody asking. A new rung costs one line and moves nothing.
+   *
+   * ⚠️ A `screen` hero leaves NOTHING below the fold on first paint. That is
+   * the point, and it is only safe here because the floating scroll-nav is
+   * always on screen; a page without one would need its own affordance.
+   */
+  size?: "standard" | "tall" | "full" | "screen";
   tone?: "paper" | "cinematic";
   /** ⚠️ A far more see-through plate, for frames where the picture is the
    *  point. It is NOT free: it needs white copy and a heavy blur to hold AA —
@@ -699,7 +715,16 @@ export function PageHero({
           className={`relative flex flex-col py-phi5 ${
             copyAlign === "end" ? "justify-end" : "justify-center"
           } ${
-            size === "full"
+            size === "screen"
+              ? /* ⚠️ `dvh`, and the subtraction is what makes it exact: the
+                   header is sticky and 80px from `lg`, so a plain 100vh hero
+                   would sit 80px taller than the space it actually has and
+                   push its own foot under the fold. The floor stops a short
+                   laptop window crushing the copy plate; the 62rem ceiling
+                   only engages above a ~1072px viewport, which is a safety
+                   valve rather than a limit anyone will meet. */
+                `xl:min-h-[clamp(34rem,calc(100dvh_-_var(--header-h)),62rem)] xl:pt-phi6 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi7"}`
+              : size === "full"
               ? `xl:min-h-[clamp(30rem,85vh,52rem)] xl:pt-phi6 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi7"}`
               : size === "tall"
                 ? `xl:min-h-[clamp(26rem,64vh,38rem)] xl:pt-phi6 ${copyAlign === "end" ? "xl:pb-phi4" : "xl:pb-phi7"}`
@@ -926,6 +951,11 @@ export function PageHero({
       </div>
 
       <Container
+        /* ⚠️ THE PAPER TONE DELIBERATELY IGNORES `screen`. Its copy sits on
+           the page's own ivory beside the artwork rather than on top of it, so
+           a viewport-tall band would be a viewport of empty paper. `screen` is
+           a cinematic-only rung and falls through to the standard rhythm here,
+           which is correct rather than an oversight. */
         className={`relative ${size === "tall" ? "py-phi6 lg:py-phi7" : "py-phi5 lg:py-phi6"}`}
       >
         {/* The paper tone gets the same plate, in its light form. Over ivory the
