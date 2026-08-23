@@ -3946,23 +3946,25 @@ header .glass,
   --color-ink-faint: var(--color-bone-soft);
 }
 
+/* 🚨 THIS BLOCK USED TO CARRY FOUR DECLARATIONS AND THREE OF THEM WERE DEAD.
+   An IDENTICAL selector — `[data-mode="dark"] .rj-pane` — appears again ~180
+   lines below, in the CARBON section. Same specificity, so the later one wins
+   every property it names: its `background-image` (the warm specular) and its
+   `border-color` (lit brass) have been the live values all along, and the two
+   written here painted nothing since the day they shipped.
+
+   Worse, `background-color` was the one property the later block did NOT set —
+   so a hard-coded `26%` here silently beat the `--rj-pane-mix: 22%` declared
+   there, and every note claiming the carbon pane sits at 22% was describing a
+   value that never rendered. Found 2026-08-23 while chasing "the gradient is
+   not right": lowering the variable changed nothing at all.
+
+   So this block is now the ONE declaration the later one does not make, and it
+   reads the VARIABLE rather than a literal — which also means a caller passing
+   `mix` (the homepage's 24%) finally works in carbon as it always has on sand.
+   ⚠️ Do not re-add a literal here. Set `--rj-pane-mix` below. */
 [data-mode="dark"] .rj-pane {
-  background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) 26%, var(--color-canvas));
-  /* The same two layers at carbon strength — a bright specular on a dark
-     ground reads as a smear, so both alphas come right down while the SHAPE
-     stays identical. */
-  background-image:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.13) 0%,
-      rgba(255, 255, 255, 0.045) 24%,
-      rgba(255, 255, 255, 0.01) 48%,
-      rgba(255, 255, 255, 0) 70%
-    ),
-    radial-gradient(125% 85% at 50% -12%, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0) 62%);
-  /* Gold holds its own on carbon and needs no remap — it is the one colour on
-     this site that was chosen to sit on both grounds. */
-  border-color: color-mix(in srgb, var(--color-jamin-gold) 58%, transparent);
+  background-color: color-mix(in srgb, var(--rj-hue, var(--color-champagne-500)) var(--rj-pane-mix, 12%), var(--color-canvas));
 }
 
 /* ── REDUCED TRANSPARENCY / PRINT ───────────────────────────────────────── */
@@ -4109,15 +4111,44 @@ header .glass,
    which comes out as sludge — the colour is present but the surface stops
    reading as glass and starts reading as paint.
 
-   22% instead: the hue is unmistakably there, the ground stays carbon, and
-   the specular gloss on top does the work of describing a surface. This is
-   also the SAFE direction — it moves the pane toward the canvas the ink was
-   audited against, so every ratio inside a pane improves.
+   That reasoning was right and the number was still too high. 22% went to 12%
+   on 2026-08-23 (owner, on /projects/future: "the gradient is not right, fix
+   it, on all pages").
+
+   🚨 THE COMPLAINT WAS COLOUR TEMPERATURE, NOT THE GRADIENT. Measured as red
+   minus blue on the mixed ground — positive is warm, and this whole palette is
+   warm carbon:
+
+       route         hue        @22% (was)        @12% (now)
+       /projects     sapphire   #141927   -19     #13141a   -7
+       /gazetteer    amethyst   #26192b    -5     #1d141c   +1
+       /careers      gilt       #2c210c   +32     #20180b  +21
+       /security     garnet     #290c09   +32     #1e0d09  +21
+       /contact      jamin-red  #3a0b08   +50     #280d09  +31
+
+   TWO of the nineteen route hues are COLD — sapphire and amethyst — and at 22%
+   sapphire put a navy slab across /projects/future, next to a warm brown
+   property card, on a page whose every other surface is carbon. It did not
+   read as "the Projects colour"; it read as a different site. Halving the mix
+   takes sapphire to within seven points of neutral, which is a whisper of the
+   route's own colour rather than a cold block, and leaves every warm route
+   still obviously tinted.
+
+   ⚠️ IT IS THE SAFE DIRECTION, WHICH IS WHY IT NEEDS NO RE-AUDIT. Lowering the
+   mix moves the ground TOWARD the canvas the ink was measured against, so
+   every ratio inside a pane can only improve — the same argument the 40 -> 22
+   change already made.
 
    ⚠️ Set on the pane itself, not on `:root`, so a caller that passes its own
-   `--rj-pane-mix` (the homepage's 24%) still wins in both modes. */
+   `--rj-pane-mix` (the homepage's 24%) still wins in both modes — an inline
+   style beats any stylesheet rule, which is what makes that work.
+
+   ⚠️ THIS VARIABLE IS NOW ACTUALLY READ. Until 2026-08-23 the earlier
+   `[data-mode="dark"] .rj-pane` block hard-coded the percentage into its own
+   `background-color` and this declaration did nothing — see the note up there
+   before changing either. */
 [data-mode="dark"] .rj-pane {
-  --rj-pane-mix: 22%;
+  --rj-pane-mix: 12%;
   /* Lit brass rather than flat ochre: the same gold, brighter, because on
      carbon a 62% gold hairline drops close to the ground it is meant to
      describe. An edge is a graphic — 3:1 — and this raises it. */

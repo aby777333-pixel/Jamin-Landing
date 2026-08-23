@@ -81,7 +81,14 @@ export type Prospectus = {
   kind: string;
   /** One sentence. Says only what the two fields above already say. */
   overview: string;
-  /** Count of gallery files in `public/projects/<slug>/NN-1200.webp`. */
+  /**
+   * Count of gallery files in `public/projects/<slug>/NN-1200.webp`.
+   *
+   * ⚠️ IT IS A COUNT, NOT A LIST, so the number and the folder have to agree.
+   * Raise it without adding the file and the gallery renders a broken image;
+   * add the file without raising it and the file is simply never shown. All
+   * five are 6 as of 2026-08-23.
+   */
   gallery: number;
 };
 
@@ -106,7 +113,7 @@ export const PROSPECTUS: Prospectus[] = [
     kind: "Township retreat villa project",
     overview:
       "A township retreat villa development across 30 acres. The land is secured and planning is under way; plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
-    gallery: 5,
+    gallery: 6,
   },
   {
     phase: "future",
@@ -117,7 +124,7 @@ export const PROSPECTUS: Prospectus[] = [
     kind: "Integrated township",
     overview:
       "An integrated township across 50 acres at Kallikudi, Madurai. The land is secured and planning is under way; plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
-    gallery: 5,
+    gallery: 6,
   },
   /* ── UPCOMING ── phase `current`, which the buyer reads as "Upcoming". */
   {
@@ -129,7 +136,7 @@ export const PROSPECTUS: Prospectus[] = [
     kind: "Residential layout project",
     overview:
       "A residential layout development across 6.5 acres. Plot sizes, pricing and the sanctioned layout will be published here once they are approved.",
-    gallery: 5,
+    gallery: 6,
   },
   {
     phase: "current",
