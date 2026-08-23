@@ -131,6 +131,18 @@ export const NAV_STONE: Record<string, { stone: string; ink: string }> = {
      serves only `stoneVar` on the mobile link. It is written now rather than
      later so that the day the tab appears, its jewellery is already correct. */
   "/security": { stone: "var(--color-garnet)", ink: "var(--color-garnet)" }, // 8.91:1
+  /* ⚠️ THE STONE AND THE INK ARE DIFFERENT HERE, and gilt-700 is the reason:
+     it is the brass this site spends on opportunity and earning, and it is the
+     right FILL for a careers tab — but it measures 4.20:1 on the canvas, under
+     the 4.5 this file sets for a word. So the label takes champagne-700
+     (5.60:1), exactly as Journal takes emerald-deep rather than the jade its
+     dot wears. Home also carries champagne-700 as its ink; the two are never a
+     collision because the STONES differ and neither tab is ever active at the
+     same time as the other.
+
+     ⚠️ Like /security, no desktop tab wears this yet — the row is full. The row
+     exists so that the day one does, its jewellery is already correct. */
+  "/careers": { stone: "var(--color-gilt-700)", ink: "var(--color-champagne-700)" }, // 5.60:1
 };
 
 export function navStone(href: string): { stone: string; ink: string } {
@@ -207,6 +219,13 @@ export const PANE_HUE: Record<string, string> = {
      individual panes is the lever the class documents; do not lighten the
      token, which is load-bearing on `sold` in STAGE_STONE. */
   "/security": "var(--color-garnet)",
+  /* Brass, the same stone the nav row above gives it. It is the one hue in this
+     map spent on opportunity rather than on a kind of land, which is what a
+     careers page is about — and it is unused by any other route, so nothing
+     reads as a repeat of somewhere the visitor has already been. At the pane's
+     40% it lands near #c7af88: a burnished gold, markedly deeper and more
+     saturated than the sand canvas it sits on rather than another wash of it. */
+  "/careers": "var(--color-gilt-700)",
 };
 
 /** The hue for a route, falling back to the identity metal. */

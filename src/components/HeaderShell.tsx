@@ -516,6 +516,9 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <MobileLink href="/security" active={section("/security")}>
             Security
           </MobileLink>
+          <MobileLink href="/careers" active={section("/careers")}>
+            Careers
+          </MobileLink>
           <MobileLink href="/about" active={section("/about")}>
             About
           </MobileLink>

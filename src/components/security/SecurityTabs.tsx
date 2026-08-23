@@ -113,11 +113,16 @@ export function SecurityTabs() {
                  shorthand resets `background-image`, and this button carries
                  one in its focus and hover states. It is the same trap that
                  turned every section numeral on this site into a solid
-                 rectangle once. */
+                 rectangle once.
+
+                 🚨 `f.fill`, NOT `f.stone` — see the note on `fill` in
+                 security-features.ts. Four of the eleven stones are re-pointed
+                 to pale pastels in carbon so they work as INK, and painting a
+                 chip with one put white type on a mint wash at 1.93:1. */
               style={
                 {
-                  "--stone": f.stone,
-                  backgroundColor: on ? f.stone : undefined,
+                  "--stone": f.fill,
+                  backgroundColor: on ? f.fill : undefined,
                 } as CSSProperties
               }
               /* ⚠️ THE PHONE PADDING IS SMALLER AND IT IS BUYING ROWS. Eleven
@@ -140,7 +145,7 @@ export function SecurityTabs() {
               <span
                 aria-hidden="true"
                 className="h-1.5 w-1.5 shrink-0 rotate-45 rounded-[1px] transition-colors duration-300"
-                style={{ backgroundColor: on ? "rgba(255,255,255,0.9)" : f.stone }}
+                style={{ backgroundColor: on ? "rgba(255,255,255,0.9)" : f.fill }}
               />
               {f.tab}
             </button>
@@ -170,7 +175,7 @@ export function SecurityTabs() {
                are deliberately not the same colour. */
             style={
               {
-                "--stone": f.stone,
+                "--stone": f.fill,
                 "--rj-sec-ink": f.ink,
                 "--rj-sec-ink-dark": f.inkDark,
               } as CSSProperties
@@ -185,7 +190,7 @@ export function SecurityTabs() {
               {/* The stone as a band across the head of the card: the colour
                   the reader just pressed, restated at the top of what it
                   opened, so the chip and the panel are visibly one object. */}
-              <div className="h-1.5 w-full" style={{ backgroundColor: f.stone }} aria-hidden="true" />
+              <div className="h-1.5 w-full" style={{ backgroundColor: f.fill }} aria-hidden="true" />
               {/* ⚠️ `lg:items-stretch`, WHERE THIS WAS `lg:items-start`
                   (owner 2026-08-23: "make the image full height"). The card's
                   height is set by whichever column is taller, and with the

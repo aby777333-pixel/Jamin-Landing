@@ -36,6 +36,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
        (the row is full — see the page), so the footer, the phone menu and this
        entry are the only ways anything reaches it. */
     { url: `${SITE_URL}/security`, changeFrequency: "monthly", priority: 0.7 },
+    /* Added with the route. Careers is the one page here people actively
+       search for by name, and it is not in the desktop nav either — so this
+       entry and the footer link are how it is found at all. */
+    { url: `${SITE_URL}/careers`, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   try {

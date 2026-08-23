@@ -76,6 +76,32 @@ export type SecurityFeature = {
    */
   stone: string;
   /**
+   * 🚨 THE PAINT, AND IT IS A LITERAL HEX WHERE EVERYTHING ELSE HERE IS A
+   * `var()`. THAT IS THE BUG FIX, NOT AN OVERSIGHT.
+   *
+   * `royal.css` re-points four colour tokens under `[data-mode="dark"]` so they
+   * stay legible as INK on carbon: canopy → #86b8ae, plat-800 → plat-300,
+   * champagne-700 → champagne-300, garnet → #c98b84. Every one of those is a
+   * pale pastel, which is exactly right for a word on a dark ground and exactly
+   * wrong underneath one. Painting a chip with `var(--color-canopy)` and
+   * setting white on it therefore measured 9.91:1 in light mode and 2.21:1 in
+   * dark — white type on a mint wash.
+   *
+   * Measured on the four, dark mode, white label: canopy 2.21, garnet 2.80,
+   * champagne-700 2.23, plat-800 1.93. All four shipped that way on /security
+   * for part of a day; the first sweep only sampled the one chip that happened
+   * to be selected (sapphire, which is not remapped) and passed.
+   *
+   * So the FILL is pinned to the light value and cannot follow a remap. `ink`
+   * and `inkDark` still do the mode switching, which is where mode switching
+   * belongs — on the word, never on the ground beneath it.
+   *
+   * ⚠️ DO NOT "TIDY" THIS BACK INTO A TOKEN. A token that is correct as ink and
+   * a colour that is correct as a fill are two different facts about the same
+   * hue, and this file needs both.
+   */
+  fill: string;
+  /**
    * THE WORD, on sand.
    *
    * ⚠️ `stone` AND `ink` ARE THE SAME VALUE FOR EIGHT OF THE ELEVEN, AND THAT
@@ -131,6 +157,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "360° Smart Surveillance",
     body: "Strategically positioned cameras monitor entrances, exits, streets and important common areas around the clock, supported by intelligent monitoring and recording.",
     stone: "var(--color-sapphire)",
+    fill: "#1b3e8c", // sapphire
     ink: "var(--color-sapphire)", // 7.78:1 on sand
     inkDark: "#8fa8e0", // 8.09:1 on onyx-900 — a soft periwinkle lift of sapphire
     image: {
@@ -154,6 +181,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Smart Facial Recognition Access",
     body: "Where enabled and consented to, residents and authorized personnel can use secure facial recognition for fast, contactless entry. Recognized users can be verified automatically and permitted gates opened without keys or access cards.",
     stone: "var(--color-amethyst)",
+    fill: "#6b3fa0", // amethyst
     ink: "var(--color-amethyst)", // 5.78:1
     inkDark: "#b895d8", // 7.62:1 — lilac, the same lift applied to amethyst
   },
@@ -171,6 +199,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     body: "Residents can authorize expected guests and visitors in advance. Once their identity and access are approved, the entrance system can recognize them, permit entry according to their authorization and instantly notify the resident that their guest has arrived.",
     note: "Unknown or unauthorized visitors are not automatically admitted and can be directed through the normal security verification process.",
     stone: "var(--color-emerald)",
+    fill: "#3d5758", // emerald
     ink: "var(--color-emerald)", // 6.09:1
     inkDark: "#7fa8a9", // 7.39:1 — emerald raised into the carbon range
   },
@@ -187,6 +216,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Smart Gates & Number-Plate Recognition",
     body: "Authorized resident and approved visitor vehicles can be identified at designated entrances, enabling controlled gate access while maintaining an entry and exit record.",
     stone: "var(--color-gilt-700)",
+    fill: "#8a6414", // gilt-700
     ink: "#7b5912", // 5.02:1 on sand — gilt-700 itself is 4.20 and too light for a word
     inkDark: "#d4b168", // 9.41:1 — the brass, still clearly brass
   },
@@ -202,6 +232,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Smart Perimeter Protection",
     body: "Protected boundaries can incorporate intrusion detection, smart sensors, beam-based perimeter systems and automated alarms to identify unusual access or movement.",
     stone: "var(--color-canopy)",
+    fill: "#2f4749", // canopy  ⚠ REMAPPED in carbon
     ink: "var(--color-canopy)", // 7.76:1
     inkDark: "#86b8ae", // 8.67:1 — royal.css's OWN carbon canopy, reused verbatim
   },
@@ -217,6 +248,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Trained Security Personnel",
     body: "Technology supports people, not replaces them. Trained security teams manage entrances, patrol common areas and respond when attention is required.",
     stone: "var(--color-jamin-red)",
+    fill: "#c90202", // jamin-red
     ink: "var(--color-jamin-red)", // 4.71:1
     inkDark: "#e8887c", // 7.54:1 — royal.css's own carbon jamin-red-deep
     image: {
@@ -239,6 +271,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Controlled Visitor & Delivery Management",
     body: "Visitors, deliveries and service personnel can be verified, authorized and logged before entering the community.",
     stone: "var(--color-plat-800)",
+    fill: "#5d5548", // plat-800 ⚠ REMAPPED in carbon
     ink: "var(--color-plat-800)", // 5.75:1
     inkDark: "#c6b9a6", // 9.97:1 — plat-300, which is what royal.css maps plat-800 to
   },
@@ -253,6 +286,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Instant Intruder & Emergency Alerts",
     body: "Potential security incidents can trigger immediate alerts to designated security personnel and authorized residents.",
     stone: "var(--color-vermilion)",
+    fill: "#d3401f", // vermilion
     ink: "#ad3419", // 5.01:1 — vermilion itself is 3.64, the lightest stone in the set
     inkDark: "#f0a07f", // 8.6:1 — pushed oranger than the red above, so the two alert stones stay tellable apart
   },
@@ -268,6 +302,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Your Child. Within Reach.",
     body: "Where supported, family safety features can help parents keep track of children within designated community areas and receive relevant safety notifications directly on their phones.",
     stone: "var(--color-jade)",
+    fill: "#587270", // jade
     ink: "#4c6361", // 5.03:1 — jade itself is 4.05, the stone stones.ts already names
     inkDark: "#a8c4bd", // 10.34:1 — the palest of the three teals, as it is in light
   },
@@ -284,6 +319,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Your Community. On Your Phone.",
     body: "Guest arrivals, visitor requests, security notifications, emergency messages and important community alerts can reach residents directly through the Jamin ecosystem.",
     stone: "var(--color-champagne-700)",
+    fill: "#6c533b", // champagne-700 ⚠ REMAPPED in carbon
     ink: "var(--color-champagne-700)", // 5.60:1
     inkDark: "#c9a884", // 8.62:1 — champagne-300, royal.css's own remap
   },
@@ -300,6 +336,7 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
     title: "Emergency Response Ready",
     body: "SOS assistance, emergency contacts, fire-safety provisions, backup power for critical security systems and defined response procedures add further layers of protection.",
     stone: "var(--color-garnet)",
+    fill: "#7a0404", // garnet ⚠ REMAPPED in carbon
     ink: "var(--color-garnet)", // 8.91:1
     inkDark: "#c98b84", // 6.87:1 — royal.css's own carbon garnet
   },

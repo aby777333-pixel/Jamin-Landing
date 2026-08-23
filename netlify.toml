@@ -70,3 +70,13 @@
   for = "/security-art/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+# The careers hero, same rule. ⚠️ `careers-art` and not `careers` for exactly
+# the reason spelled out above: there is a page at /careers, and a glob one
+# character away from a real route is a noindex waiting to land on the wrong
+# thing. See public/careers-art/README.md — it shipped in `public/careers/`
+# first and was moved before it reached production.
+[[headers]]
+  for = "/careers-art/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

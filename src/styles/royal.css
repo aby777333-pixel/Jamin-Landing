@@ -2875,10 +2875,15 @@ header .glass,
   color: var(--color-champagne-300);
 }
 
-/* ── THE SECURITY PANEL'S INK, RE-SCOPED FOR CARBON (2026-08-23) ─────────
+/* ── THE TAB PANEL'S INK, RE-SCOPED FOR CARBON (2026-08-23) ──────────────
+   ⚠️ TWO PAGES USE THIS, NOT ONE. /security's eleven security layers and
+   /careers' eleven role families are the same object twice, so they share
+   one rule rather than each shipping an answer to the same contrast
+   problem. Change it and check both.
+
    The same problem `.rj-tab-on` above solves, one component along, and it
-   was found the same way — by measuring rather than by looking. /security
-   paints each of its eleven panel headings in that layer's stone, which is
+   was found the same way — by measuring rather than by looking. Each page
+   paints its panel heading in that layer's stone, which is
    correct on the sand canvas and collapses in the dark: sapphire measured
    1.93:1 on the carbon card and garnet 1.69:1. The heading of the layer you
    had just opened was the one word on the page you could not read.

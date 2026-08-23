@@ -281,6 +281,7 @@ export async function SiteFooter() {
                   the scrollbar back. If this link is ever removed, the page
                   becomes reachable on a desktop only from the sitemap. */}
               <FooterLink href="/security">Security at Jamin</FooterLink>
+              <FooterLink href="/careers">Careers</FooterLink>
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/vault">The Vault</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>
