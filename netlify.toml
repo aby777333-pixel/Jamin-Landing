@@ -57,3 +57,16 @@
   for = "/section/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+# The security page's four renders, same rule.
+#
+# ⚠️ THE FOLDER IS `security-art`, NOT `security`, AND THAT IS WHY. There IS a
+# page at /security, and naming the asset folder after it would have put a
+# noindex rule one glob away from the document it is meant to protect — plus a
+# `public/security/` directory shadowing a route is a collision waiting for the
+# first person who adds `public/security/index.html`. The suffix keeps the two
+# namespaces apart permanently.
+[[headers]]
+  for = "/security-art/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"

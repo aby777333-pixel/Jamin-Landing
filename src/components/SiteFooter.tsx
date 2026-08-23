@@ -274,6 +274,13 @@ export async function SiteFooter() {
               <FooterLink href="/ta">தமிழில்</FooterLink>
               <FooterLink href="/tools">Tools &amp; calculators</FooterLink>
               <FooterLink href="/faq">Questions, answered</FooterLink>
+              {/* ⚠️ THIS ROW AND THE PHONE MENU ARE THE ONLY WAYS IN. /security
+                  is not in the desktop nav — HeaderShell's own note records
+                  that the primary row overflowed 1280 by ~47px and had to have
+                  its gaps cut to fit the tabs already there, so a ninth puts
+                  the scrollbar back. If this link is ever removed, the page
+                  becomes reachable on a desktop only from the sitemap. */}
+              <FooterLink href="/security">Security at Jamin</FooterLink>
               <FooterLink href="/about">About Jamin</FooterLink>
               <FooterLink href="/vault">The Vault</FooterLink>
               <FooterLink href="/contact">Book a site visit</FooterLink>

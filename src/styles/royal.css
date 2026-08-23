@@ -2875,6 +2875,43 @@ header .glass,
   color: var(--color-champagne-300);
 }
 
+/* ── THE SECURITY PANEL'S INK, RE-SCOPED FOR CARBON (2026-08-23) ─────────
+   The same problem `.rj-tab-on` above solves, one component along, and it
+   was found the same way — by measuring rather than by looking. /security
+   paints each of its eleven panel headings in that layer's stone, which is
+   correct on the sand canvas and collapses in the dark: sapphire measured
+   1.93:1 on the carbon card and garnet 1.69:1. The heading of the layer you
+   had just opened was the one word on the page you could not read.
+
+   ⚠️ THIS DIVERGES FROM `.rj-tab-on` ON PURPOSE. That rule sends every
+   active nav label to one champagne, because the nav's colour lives in a dot
+   and an inlay that sit right beside the word. Here the colour IS the
+   navigation — eleven layers told apart by eleven stones — so each keeps its
+   own hue and is lifted into the carbon range instead of flattened. The
+   values are per-feature in `security-features.ts`, measured there, and the
+   worst of them clears 6.38:1 against BOTH dark grounds (onyx-900 for the
+   card, onyx-800 for the pane behind it).
+
+   ⚠️ UNLAYERED, SO IT BEATS EVERY TAILWIND `text-*` UTILITY — the trap this
+   file already records for `.rj-hairline`. Do not also put a text colour on
+   an element carrying `.rj-sec-title`: it will not win, and the next person
+   will read the class list and believe it did.
+
+   The fallbacks are the reason a missing var degrades to plain ink rather
+   than to nothing. */
+.rj-sec-title {
+  color: var(--rj-sec-ink, var(--color-ink));
+}
+.rj-sec-rule {
+  border-color: var(--rj-sec-ink, var(--color-line));
+}
+[data-mode="dark"] .rj-sec-title {
+  color: var(--rj-sec-ink-dark, var(--color-champagne-300));
+}
+[data-mode="dark"] .rj-sec-rule {
+  border-color: var(--rj-sec-ink-dark, var(--color-line));
+}
+
 /* ── THE REVEAL'S WAITING STATE (2026-08-18) ──────────────────────────────
    Applied ONLY by Reveal.tsx's effect, never in server markup — see the
    component for why that ordering is the whole safety argument. Matches

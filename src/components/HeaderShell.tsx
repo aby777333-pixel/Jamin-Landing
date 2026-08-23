@@ -505,6 +505,17 @@ export function HeaderShell({ facets }: { facets: NavFacets }) {
           <MobileLink href="/vault" active={section("/vault")}>
             The Vault
           </MobileLink>
+          {/* ⚠️ THE PHONE MENU CARRIES A ROW THE DESKTOP RAIL DOES NOT, and
+              that asymmetry is deliberate rather than an oversight. This
+              column scrolls, so a ninth entry costs it nothing; the desktop
+              rail is width-bound — see the `gap-4` note above, where the same
+              tabs already overflowed 1280 by ~47px and had to be tightened to
+              fit. Adding Security up there means taking something else out,
+              which is a decision about the menu and not about the page. The
+              desktop route in is the footer. */}
+          <MobileLink href="/security" active={section("/security")}>
+            Security
+          </MobileLink>
           <MobileLink href="/about" active={section("/about")}>
             About
           </MobileLink>

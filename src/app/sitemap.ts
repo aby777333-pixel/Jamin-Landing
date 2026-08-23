@@ -31,6 +31,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/faq`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/visit-checklist`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/ta`, changeFrequency: "monthly", priority: 0.6 },
+    /* ⚠️ Added with the route, not after it — the standing rule above. It
+       matters more here than for most: /security is NOT in the desktop nav
+       (the row is full — see the page), so the footer, the phone menu and this
+       entry are the only ways anything reaches it. */
+    { url: `${SITE_URL}/security`, changeFrequency: "monthly", priority: 0.7 },
   ];
 
   try {

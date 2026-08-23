@@ -116,6 +116,21 @@ export const NAV_STONE: Record<string, { stone: string; ink: string }> = {
   "/vault": { stone: "var(--color-champagne-500)", ink: "var(--color-champagne-300)" }, // 12.3:1 on onyx
   "/about": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
   "/account": { stone: "var(--color-plat-500)", ink: "var(--color-plat-800)" }, // 6.14:1
+  /* ⚠️ GARNET, AND IT IS THE FIRST ROUTE TO SPEND IT. The note on `sold` above
+     records that this token shipped with zero call sites and was nearly a dead
+     colour; the security page is the second place where spending it changes
+     meaning rather than adding a shade. Every stone left unspent was wrong for
+     a different reason — sapphire, amethyst and emerald-deep are Projects,
+     Locations and the site-visit checklist, and platinum is what §2 assigns to
+     a deliberately QUIET surface, which this page is not. Garnet is the brand
+     red at its deepest and it is the colour of every frame the page carries.
+     8.91:1 on the canvas, the most legible red in the file.
+
+     ⚠️ NO DESKTOP TAB WEARS THIS YET. `/security` is reached from the footer
+     and the phone menu — see the note in the page — so this row currently
+     serves only `stoneVar` on the mobile link. It is written now rather than
+     later so that the day the tab appears, its jewellery is already correct. */
+  "/security": { stone: "var(--color-garnet)", ink: "var(--color-garnet)" }, // 8.91:1
 };
 
 export function navStone(href: string): { stone: string; ink: string } {
@@ -184,6 +199,14 @@ export const PANE_HUE: Record<string, string> = {
   "/gazetteer": "var(--color-amethyst)",
   "/tools": "var(--color-ruby)",
   "/visit-checklist": "var(--color-emerald-deep)",
+  /* The same garnet as the nav stone, per this file's own rule that a route's
+     pane hue and its nav stone agree. ⚠️ It is the DEEPEST hue in this map and
+     therefore the strongest 40% ground on the site after `/contact`'s
+     jamin-red — deliberately, because the page's whole subject is the last
+     line rather than the quiet one. If it ever reads as too much, `mix` on the
+     individual panes is the lever the class documents; do not lighten the
+     token, which is load-bearing on `sold` in STAGE_STONE. */
+  "/security": "var(--color-garnet)",
 };
 
 /** The hue for a route, falling back to the identity metal. */
