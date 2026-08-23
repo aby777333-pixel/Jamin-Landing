@@ -45,6 +45,29 @@ export type SecurityFeature = {
   /** The second paragraph, where he wrote one. */
   note?: string;
   /**
+   * The layer as a scannable list (owner 2026-08-23: "add some bullet points
+   * to fill the space").
+   *
+   * 🚨 EVERY ITEM IS LIFTED OUT OF `body`. Not one of them is a new capability,
+   * and that is not a stylistic preference — it is the rule at the top of this
+   * file and the one the page is built on. A bullet reads as a specification
+   * line, so a bullet invented to fill a column is a promise nobody made,
+   * published on the page a buyer is most likely to quote back. If a layer has
+   * only two things to say, it gets two bullets.
+   *
+   * ⚠️ SIX OF THE ELEVEN THEREFORE RESTATE THEIR OWN PARAGRAPH almost word for
+   * word, because the owner wrote those six AS lists — "SOS assistance,
+   * emergency contacts, fire-safety provisions…". That repetition is the
+   * honest cost of the rule above. The alternative is inventing content or
+   * cutting his sentence, and both are worse.
+   *
+   * ⚠️ The verbs are not redistributed. "Visitors, deliveries and service
+   * personnel can be verified, authorized and logged" applies all three verbs
+   * to all three nouns, so the bullets keep them together rather than pairing
+   * them off — pairing would be a new and narrower claim.
+   */
+  points: string[];
+  /**
    * THE FILL — the chip's ground and the band across the head of the panel.
    *
    * A token reference, never a hex, so globals.css stays the source of truth.
@@ -97,6 +120,13 @@ export type SecurityFeature = {
 export const SECURITY_FEATURES: SecurityFeature[] = [
   {
     key: "surveillance",
+    points: [
+      "Entrances and exits",
+      "Streets",
+      "Important common areas",
+      "Around the clock",
+      "Intelligent monitoring and recording",
+    ],
     tab: "360° Cameras",
     title: "360° Smart Surveillance",
     body: "Strategically positioned cameras monitor entrances, exits, streets and important common areas around the clock, supported by intelligent monitoring and recording.",
@@ -113,6 +143,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "face",
+    points: [
+      "Residents and authorized personnel",
+      "Fast, contactless entry",
+      "Automatic verification",
+      "Permitted gates open without keys or access cards",
+      "Where enabled and consented to",
+    ],
     tab: "Face Access",
     title: "Smart Facial Recognition Access",
     body: "Where enabled and consented to, residents and authorized personnel can use secure facial recognition for fast, contactless entry. Recognized users can be verified automatically and permitted gates opened without keys or access cards.",
@@ -122,6 +159,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "guests",
+    points: [
+      "Guests and visitors authorized in advance",
+      "Identity and access approved beforehand",
+      "Recognised by the entrance system",
+      "Entry according to their authorization",
+      "The resident notified the moment they arrive",
+    ],
     tab: "Guests",
     title: "Pre-Approved Guest & Visitor Recognition",
     body: "Residents can authorize expected guests and visitors in advance. Once their identity and access are approved, the entrance system can recognize them, permit entry according to their authorization and instantly notify the resident that their guest has arrived.",
@@ -132,6 +176,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "gates",
+    points: [
+      "Authorized resident vehicles",
+      "Approved visitor vehicles",
+      "Identified at designated entrances",
+      "Controlled gate access",
+      "An entry and exit record",
+    ],
     tab: "Gates",
     title: "Smart Gates & Number-Plate Recognition",
     body: "Authorized resident and approved visitor vehicles can be identified at designated entrances, enabling controlled gate access while maintaining an entry and exit record.",
@@ -141,6 +192,12 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "perimeter",
+    points: [
+      "Intrusion detection",
+      "Smart sensors",
+      "Beam-based perimeter systems",
+      "Automated alarms",
+    ],
     tab: "Perimeter",
     title: "Smart Perimeter Protection",
     body: "Protected boundaries can incorporate intrusion detection, smart sensors, beam-based perimeter systems and automated alarms to identify unusual access or movement.",
@@ -150,6 +207,12 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "people",
+    points: [
+      "Entrances managed",
+      "Common areas patrolled",
+      "A response when attention is required",
+      "Technology supporting people, not replacing them",
+    ],
     tab: "Our People",
     title: "Trained Security Personnel",
     body: "Technology supports people, not replaces them. Trained security teams manage entrances, patrol common areas and respond when attention is required.",
@@ -166,6 +229,12 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "deliveries",
+    points: [
+      "Visitors",
+      "Deliveries",
+      "Service personnel",
+      "Verified, authorized and logged before entering",
+    ],
     tab: "Deliveries",
     title: "Controlled Visitor & Delivery Management",
     body: "Visitors, deliveries and service personnel can be verified, authorized and logged before entering the community.",
@@ -175,6 +244,11 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "alerts",
+    points: [
+      "A potential incident triggers an immediate alert",
+      "Designated security personnel",
+      "Authorized residents",
+    ],
     tab: "Alerts",
     title: "Instant Intruder & Emergency Alerts",
     body: "Potential security incidents can trigger immediate alerts to designated security personnel and authorized residents.",
@@ -184,6 +258,12 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "children",
+    points: [
+      "Children kept track of within designated community areas",
+      "Relevant safety notifications",
+      "Straight to a parent's phone",
+      "Where supported",
+    ],
     tab: "Kids Nearby",
     title: "Your Child. Within Reach.",
     body: "Where supported, family safety features can help parents keep track of children within designated community areas and receive relevant safety notifications directly on their phones.",
@@ -193,6 +273,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "phone",
+    points: [
+      "Guest arrivals",
+      "Visitor requests",
+      "Security notifications",
+      "Emergency messages",
+      "Important community alerts",
+    ],
     tab: "Your Phone",
     title: "Your Community. On Your Phone.",
     body: "Guest arrivals, visitor requests, security notifications, emergency messages and important community alerts can reach residents directly through the Jamin ecosystem.",
@@ -202,6 +289,13 @@ export const SECURITY_FEATURES: SecurityFeature[] = [
   },
   {
     key: "emergency",
+    points: [
+      "SOS assistance",
+      "Emergency contacts",
+      "Fire-safety provisions",
+      "Backup power for critical security systems",
+      "Defined response procedures",
+    ],
     tab: "Emergency",
     title: "Emergency Response Ready",
     body: "SOS assistance, emergency contacts, fire-safety provisions, backup power for critical security systems and defined response procedures add further layers of protection.",

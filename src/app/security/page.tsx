@@ -92,18 +92,58 @@ export default function SecurityPage() {
            bars; it does not crop. */
         mobileBandRatio="1983/793"
         tone="cinematic"
-        /* ⚠️ NO `sheer`, AND THAT IS A MEASURED DECISION. The frame is lit by
-           two wall sconces sitting exactly where a centred plate would go:
-           swept at this geometry the centre-left region reads p95 luminance
-           0.632 and the bottom-left 0.719, against the 0.604 of hero-38, which
-           is the brightest frame on the site currently trusted to a 0.52
-           plate. A see-through plate over either region would put white type
-           on lamplight. The solid plate needs no per-frame sweep, which is why
-           it is the default.
+        /* Owner 2026-08-23: "make the image full height". `full` is
+           `clamp(30rem, 85vh, 52rem)` from `xl` — 765px in a 1440x900 window,
+           against `standard`'s 432px. Below `xl` nothing changes: the hero is
+           a band at the artwork's own ratio with the copy under it, so a
+           taller desktop section costs a phone nothing. */
+        size="full"
+        /* 🚨 `sheerAlpha={0.14}` — OWNER 2026-08-23, "make the tab bg max
+           see-through", AND THE FIRST SWEEP OF THIS FRAME SAID NO.
+           That sweep measured the PHOTOGRAPH (p95 luminance 0.719 under the
+           copy — two wall sconces sit exactly where the plate goes) and
+           concluded a sheer plate would put white type on lamplight. It was
+           measuring the wrong stack. `veil` is drawn between the picture and
+           the plate at `xl`, and it is not subtle where this copy sits: its
+           two gradients reach ~0.69 of near-black in the bottom-left corner.
+           Modelling the real composite — cover-crop, both veil gradients, then
+           the plate — the same region reads p95 0.113 BEFORE the plate does
+           anything at all.
+
+           So the alpha is set by the brightest 1% — the LEFT SCONCE, whose
+           bulb sits inside the plate's footprint — and not by the 95th. Swept
+           against the plate's real measured box rather than an estimate of it
+           (736x462 at 249,219 in a 1697x716 section, read off the live DOM),
+           at three window widths:
+
+               width   p95      p99      worst pixel
+               1697    6.88:1   4.73:1   2.76:1
+               1440    7.78:1   5.25:1   3.45:1
+               1920    8.48:1   5.91:1   3.28:1
+
+           0.14 is the LOWEST value where p99 clears 4.5 at every width — 0.10
+           was tried first and put 1697 at 4.42. It is barely a quarter of
+           `gilt`'s audited 0.52, and the bulb core itself is covered by
+           `rj-sheer-copy`'s four-layer halo, which WCAG does not model and
+           royal.css counts as free margin.
+
+           ⚠️ 1697 IS THE TIGHTEST OF THE THREE, NOT THE WIDEST-IS-SAFEST YOU
+           MIGHT ASSUME. A wider window crops less off the sides, which walks
+           MORE of the lit wall in under the plate. Sweep the widest window you
+           support, not the narrowest.
+
+           ⚠️ THE FLOOR IS THE VEIL, SO IT MOVES IF THE VEIL MOVES. globals.css
+           already records lightening `veil` once by ~35%; do that again and
+           this number has to be re-swept, not merely reviewed. Re-run the
+           composite sweep — the photograph's own p95 is 0.412 here and will
+           happily read as "fine" while the copy is failing.
 
            `copyAlign="end"` for the composition rather than for legibility:
            the guard is pinned to the TOP of the frame, so copy at the foot
-           leaves him whole. */
+           leaves him whole — and at `full` there is a great deal more frame
+           between his boots and the words. */
+        sheer
+        sheerAlpha={0.14}
         copyAlign="end"
         eyebrow="Jamin Bazaar Security"
         title="Life inside. Worry outside."
@@ -207,6 +247,50 @@ export default function SecurityPage() {
               While they make memories outside, an intelligent network of people and technology
               quietly looks out for the community.
             </p>
+          </Reveal>
+
+          {/* 🚨 THE ONE FRAME ON THIS PAGE THAT COULD BE MISTAKEN FOR EVIDENCE
+              (owner 2026-08-23: "add image to the section").
+
+              Everything else in public/security-art/ is safe because it is
+              impossible — a guard on a ceiling, an officer with a camera for a
+              head. This is a photoreal render of a gate house with the JAMIN
+              BAZAAR lockup on the wall AND on the arch, a uniformed guard at a
+              live monitor wall, and children playing thirty feet away. It is
+              the exact composition a reader would take for a photograph of a
+              development they could go and visit, and it sits on the page that
+              describes what the cameras do.
+
+              So it follows public/section/README.md's rule rather than this
+              folder's: it names itself an illustration in BOTH the alt text
+              and a caption, and it is never given a project name, a location
+              or a claim. The caption is also the one on this page that is not
+              a joke — a wink here would read as winking at the evidence.
+
+              ⚠️ It earns its place because it IS the sentence above it: the
+              children are outside, the guard is watching the screens, and
+              neither is looking at the other. Do not move it to a section
+              whose words it does not illustrate. */}
+          <Reveal className="mt-phi5">
+            <figure>
+              <div className="overflow-hidden rounded-xl border border-jamin-gold/40 shadow-lift">
+                <Image
+                  src="/security-art/gatehouse-dusk-1774.webp"
+                  alt="Illustration: a Jamin Bazaar community at dusk. Children run on a lawn beside a lit entrance arch, while a guard in the gate house watches a bank of camera monitors."
+                  width={1774}
+                  height={887}
+                  /* The container is 1280 with a 40px gutter each side, so
+                     1200px is what it actually occupies from `xl`; below that
+                     it is the viewport less the gutters. */
+                  sizes="(min-width: 1280px) 1200px, 100vw"
+                  className="h-auto w-full"
+                />
+              </div>
+              <figcaption className="mt-phi3 text-tiny leading-relaxed text-ink-faint">
+                Illustration. Not a photograph of a Jamin development, and not a record of any
+                installation.
+              </figcaption>
+            </figure>
           </Reveal>
         </Container>
       </section>

@@ -1,8 +1,11 @@
 # Security imagery
 
-Supplied by the owner 2026-08-23 with the copy for `/security`. Four frames,
+Supplied by the owner 2026-08-23 with the copy for `/security`. Five frames,
 all of them **renders** — not one is a photograph of a Jamin development, a
 Jamin employee or a Jamin installation.
+
+⚠️ Four of the five are impossible and one is not. Read both rules below: the
+first covers the four jokes, the second covers `gatehouse-dusk` alone.
 
 | file | where | what it is |
 |---|---|---|
@@ -10,8 +13,13 @@ Jamin employee or a Jamin installation.
 | `camera-night-1080.webp` | `/security` → the 360° Surveillance tab | a bullet camera at night, its ring lit red |
 | `sentry-626.webp` | `/security` → the Our People tab | a figure in a dark suit and red tie with a bullet camera for a head |
 | `lockup-officer-1981.webp` | `/security` → the closing signature band | the same conceit in Jamin red and yellow, with the JAMIN BAZAAR lockup beside it |
+| `gatehouse-dusk-1774.webp` | `/security` → "Let them play" | 🚨 **the exception below.** A photoreal gate house at dusk: children on the lawn, the lit arch, a guard at a monitor wall |
 
 ## 🚨 THEY ARE JOKES, AND THAT IS WHAT MAKES THEM SAFE HERE
+
+*(This section is about the four jokes — `guard-ceiling`, `camera-night`,
+`sentry` and `lockup-officer`. `gatehouse-dusk` is governed by the section
+after it.)*
 
 `public/section/README.md` carries a hard rule: a render that could be mistaken
 for evidence gets `alt=""`, `aria-hidden` and **never a caption**. Two of these
@@ -31,6 +39,30 @@ is ever swapped for something that could be true, the caption has to go with it.
 
 Every caption on the page names the frame as an illustration for the same
 reason.
+
+## 🚨 `gatehouse-dusk-1774.webp` IS THE EXCEPTION AND IT PROVES THE RULE
+
+Added 2026-08-23 on the owner's "add image to the section". It is the frame the
+section above warns about: **it could be true.** A gate house with the lockup on
+the wall and again on the arch, a uniformed guard at a live monitor wall, and
+children playing thirty feet away — the exact composition a reader takes for a
+photograph of a development they could drive to, on the page that describes what
+those cameras do.
+
+So it does **not** get this folder's licence to be captioned freely. It follows
+`public/section/README.md` instead:
+
+- it names itself an illustration in the **alt text**,
+- it carries the page's **only unfunny caption** — "Illustration. Not a
+  photograph of a Jamin development, and not a record of any installation" — and
+- it is never given a project name, a location, an approval number or a claim.
+
+**A joke in this caption would read as winking at the evidence.** If the caption
+is ever edited, that is the sentence to leave alone.
+
+It earns its place by being the sentence it sits under: the children are
+outside, the guard is watching the screens, and neither is looking at the other.
+Do not move it to a section whose words it does not illustrate.
 
 ## ⚠️ `sentry-626.webp` IS 626px WIDE AND THAT IS THE WHOLE BUDGET
 

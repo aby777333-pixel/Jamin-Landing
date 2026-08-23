@@ -186,7 +186,14 @@ export function SecurityTabs() {
                   the reader just pressed, restated at the top of what it
                   opened, so the chip and the panel are visibly one object. */}
               <div className="h-1.5 w-full" style={{ backgroundColor: f.stone }} aria-hidden="true" />
-              <div className="grid gap-phi4 p-phi3 sm:p-phi5 lg:grid-cols-[1.4fr_1fr] lg:items-start">
+              {/* ⚠️ `lg:items-stretch`, WHERE THIS WAS `lg:items-start`
+                  (owner 2026-08-23: "make the image full height"). The card's
+                  height is set by whichever column is taller, and with the
+                  bullets in place that is now the words — so a top-aligned
+                  picture left a slab of empty ground beneath itself, which is
+                  the same complaint one column over. Stretched, the figure
+                  fills whatever the copy asks for. */}
+              <div className="grid gap-phi4 p-phi3 sm:p-phi5 lg:grid-cols-[1.4fr_1fr] lg:items-stretch">
                 <div>
                   <p className="ledger-label">
                     Layer {String(i + 1).padStart(2, "0")} of{" "}
@@ -204,6 +211,32 @@ export function SecurityTabs() {
                       while looking like it had won. */}
                   <h3 className="rj-sec-title mt-phi2 text-2xl">{f.title}</h3>
                   <p className="mt-phi3 text-lg leading-relaxed text-ink-soft">{f.body}</p>
+
+                  {/* THE LAYER AS A LIST. Every item is lifted out of the
+                      paragraph above it — see the note on `points`.
+
+                      ⚠️ TWO COLUMNS ONLY FROM `sm`. Several of these run to
+                      five items and the longest ("Permitted gates open without
+                      keys or access cards") is 48 characters; on a 375px phone
+                      a two-up would give each about 150px and break every one
+                      of them over three lines. */}
+                  <ul className="mt-phi3 grid gap-x-phi3 gap-y-2 sm:grid-cols-2">
+                    {f.points.map((pt) => (
+                      <li key={pt} className="flex items-start gap-2.5">
+                        {/* The same rotated lozenge `SectionLabel` terminates
+                            its rule with, in this layer's own stone — so a
+                            bullet and a section opening are visibly the same
+                            hand. It takes `stone` rather than `ink`: it is a
+                            fill, and a 6px mark carries no ratio. */}
+                        <span
+                          aria-hidden="true"
+                          className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rotate-45 rounded-[1px]"
+                          style={{ backgroundColor: f.stone }}
+                        />
+                        <span className="text-base leading-relaxed text-ink-soft">{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
                   {f.note ? (
                     /* The second paragraph is always a LIMIT — what the system
                        will not do — so it is set apart as a rule-led aside
@@ -229,8 +262,14 @@ export function SecurityTabs() {
                     `sizes` can state honestly fixes it at both ends: change one
                     and change the other. */}
                 {f.image ? (
-                  <figure className="mx-auto w-full max-w-[320px] lg:mx-0 lg:max-w-[390px]">
-                    <div className="overflow-hidden rounded-card border border-line bg-canvas-sunken">
+                  <figure className="mx-auto flex w-full max-w-[320px] flex-col lg:mx-0 lg:h-full lg:max-w-[390px]">
+                    {/* ⚠️ `lg:min-h-0` IS LOAD-BEARING ON THE FLEX CHILD. A
+                        flex item's default `min-height: auto` floors it at its
+                        content's intrinsic height, so without this the box
+                        refuses to be shorter than the un-cropped picture and
+                        the caption is pushed out of the card instead of the
+                        image being cropped to fit. */}
+                    <div className="overflow-hidden rounded-card border border-line bg-canvas-sunken lg:min-h-0 lg:flex-1">
                       <Image
                         src={f.image.src}
                         alt={f.image.alt}
@@ -241,7 +280,15 @@ export function SecurityTabs() {
                            cap above it still has 1.6x in hand for a retina
                            screen; a wider box would upscale it. */
                         sizes="(min-width: 1024px) 390px, 320px"
-                        className="h-auto w-full object-cover"
+                        /* ⚠️ `lg:h-full` TURNS THIS INTO A CROP, which is the
+                           point: below `lg` the picture keeps its own ratio and
+                           from `lg` it fills whatever height the words ask for.
+                           `object-center` is what makes that safe for both
+                           frames — the camera is centred and the sentry's head
+                           and tie sit in the middle 50% that a tall box keeps.
+                           A frame whose subject is off-centre would need its
+                           own object-position before it could go in here. */
+                        className="h-auto w-full object-cover object-center lg:h-full"
                       />
                     </div>
                     {f.image.caption ? (
