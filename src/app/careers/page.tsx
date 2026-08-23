@@ -49,7 +49,10 @@ export const metadata: Metadata = {
  * already there. Footer, phone menu and sitemap instead.
  */
 
-/** His five reasons, as data so the row and the heading cannot drift apart. */
+/** His reasons, as data so the row and the heading cannot drift apart.
+ *  ⚠️ SIX, and the grid is `md:grid-cols-2 lg:grid-cols-3` — so six fills both
+ *  breakpoints exactly (2x3 and 3x2) where five left a hole at every width but
+ *  the phone. A seventh would open the same hole again. */
 const WHY: { title: string; body: string }[] = [
   {
     title: "Build something real",
@@ -70,6 +73,26 @@ const WHY: { title: string; body: string }[] = [
   {
     title: "Local knowledge matters here",
     body: "Knowing a town, its roads, its people and how business actually gets done isn't a footnote. It's an advantage.",
+  },
+  /* ⚠️ THE SIXTH IS THE ONLY ONE THE OWNER DID NOT WRITE AS A REASON, AND IT
+     IS STILL ENTIRELY HIS WORDS. He asked for a sixth card (2026-08-23) to
+     close the 3x2 grid, and the honest way to find one was to look for a
+     genuine reason already in his copy rather than invent a new claim about
+     working here. "Don't see your job?" is exactly that: it says the door
+     opens without a vacancy, which none of the five above says.
+
+     ⚠️ IT IS NOT A DUPLICATE OF "Grow beyond your job title", which is about
+     what happens AFTER you are in. This is about getting in at all — and the
+     titles were deliberately pulled apart, because "job title" and "job
+     description" sitting two cards from each other read as one idea said
+     twice. The heading is his own closing sentence, verbatim.
+
+     ⚠️ Nor is it a duplicate of the "Something Else" TAB, which most readers
+     never open — only one of the eleven panels is visible at a time. The tab
+     is how you apply; this is why it is worth doing. */
+  {
+    title: "We'll listen",
+    body: "If you can bring something valuable to Jamin Bazaar, don't wait for us to write the perfect job description. Tell us what you're good at — what you can build, sell, improve, protect, create or grow.",
   },
 ];
 
