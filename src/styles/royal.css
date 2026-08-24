@@ -4910,6 +4910,23 @@ header .glass,
   }
 }
 
+/* ── THE GROVE VELVET (owner 2026-08-24: "when in green mode change the red
+   to dark green") ──────────────────────────────────────────────────────────
+   `.rj-velvet` is the one red surface the token re-scope could not reach —
+   its oxblood is three HAND-WRITTEN literals in the gradient, not a token
+   (the grove block re-points `--color-burgundy`, and this device never read
+   it). Same structure, same angle, same stop positions; the ramp becomes
+   forest velvet — deepest at the entry edge, lifting past the far corner.
+   Carries every velvet surface at once: the Sweep ("Speak to the desk"),
+   the home stat band and the Vault buy panel.
+   ⚠️ Ink check, not assumed: white on the darkest stop #142c1c is 15.5:1
+   and on the lightest visible ~#2e4a38 is 10.4:1; the grove's gold-light
+   #c3a45e (the hairline + stat figures) reads 5.8:1 on the mid stop —
+   everything the red velvet promised its type, the green one keeps. */
+[data-mode="nature"] .rj-velvet {
+  background: linear-gradient(115deg, #142c1c 0%, #1f3527 55%, #2e4a38 120%);
+}
+
 /* ── THE GROVE PLATE ALPHA ─────────────────────────────────────────────────
    A page whose FRAME changes with the mode needs a plate that changes with
    it: /security's red-guard frame runs sheer at 0.14 because its walls are
