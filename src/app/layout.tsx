@@ -198,13 +198,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        {/* CARBON boot (dark mode): applies the stored choice before first
-            paint so a dark reader never sees a flash of sand. Inline and
-            three lines on purpose — a component would run after hydration. */}
+        {/* CARBON/GROVE boot (dark + nature modes): applies the stored choice
+            before first paint so a dark or grove reader never sees a flash of
+            sand. Inline on purpose — a component would run after hydration. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'try{if(localStorage.getItem("jp-mode")==="dark")document.documentElement.dataset.mode="dark"}catch(e){}',
+              'try{var m=localStorage.getItem("jp-mode");if(m==="dark"||m==="nature")document.documentElement.dataset.mode=m}catch(e){}',
           }}
         />
         {/* Once for the document. Never per section — see the component. */}

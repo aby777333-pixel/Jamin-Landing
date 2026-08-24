@@ -4654,3 +4654,197 @@ header .glass,
 .rj-plate {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-jamin-gold) 30%, transparent);
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GROVE — the nature mode (owner 2026-08-24: a third theme beside light and
+   dark, "a South Indian landscape after the rains"). The SAME token re-scope
+   CARBON uses, via [data-mode="nature"] on <html> — one attribute, zero
+   component churn, and the other two modes untouched by construction: only
+   one data-mode value is ever set, so these declarations and CARBON's can
+   never both apply.
+
+   ⚠️ LIGHT POLARITY, ON PURPOSE. This is a LIGHT theme (ivory→cream→sage
+   grounds, charcoal-green inks), so every light-mode component decision —
+   gilt-light plates, the ink halo, mix-blend-multiply heroes, .rj-tab-on's
+   sand-audited inks — is already correct here and none of CARBON's ~40
+   scoped component fixes are needed or duplicated. If a future retune ever
+   makes these grounds DARKER than the sand they replace, that assumption
+   breaks and this block inherits CARBON's homework.
+
+   ⚠️ SAFE BY LUMINANCE. Every ground below sits at or above the luminance of
+   the sand token it replaces, and every ink at or below its cousin, so no
+   audited contrast pair on the ledger can drop. The four pairs this palette
+   CHANGES were measured, not assumed:
+     · white on heritage green #2e5a3c    7.9:1  (was 4.78 on the signal red)
+     · heritage green as text on canvas   6.9:1  (was 5.9)
+     · gold-ink #665626 on canvas         6.2:1  (was 5.29)
+     · champagne-300 on forest-900        7.5:1  (was ~8.9 on onyx — still AA+)
+
+   🚨 THE GEMSTONES AND THE PLOT STATES ARE DELIBERATELY NOT RE-SCOPED.
+   Ruby/garnet carry "Sold out", sapphire/amethyst carry district identity,
+   and cadastral.css's plot-status fills are semantic. A palette may restyle
+   atmosphere; it may not recolour a meaning.
+   ══════════════════════════════════════════════════════════════════════════ */
+[data-mode="nature"] {
+  /* ---- grounds: warm ivory → soft cream → pale sage. The page reads as
+     paper that has taken a faint green from the landscape around it. */
+  --color-canvas: #f2efe1;
+  --color-canvas-alt: #f7f4e9;
+  --color-canvas-sunken: #e6e5d2;
+  --color-line: #cfccae;
+  --color-parchment: #f5f2e4;
+  --color-bone-paper: #ece9d5;
+  --color-kraft: #d8d2b2;
+  /* The blueprint grid and the hairline structure lines go from clay to
+     moss — the surveyor's field grid instead of the drafting office's. */
+  --color-line-red: #dde0c6;
+
+  /* ---- inks: never pure black — deep charcoal green down to olive-grey.
+     Ramp order preserved (ink darkest, faint lightest), all four ≥ their
+     sand cousins' measured ratios on the new canvas. */
+  --color-ink: #1e2419;
+  --color-ink-soft: #272e1e;
+  --color-ink-muted: #4f5545;
+  --color-ink-faint: #616753;
+
+  /* ---- the deep grounding surfaces. Charcoal takes a green undertone;
+     burgundy — the velvet band's oxblood — becomes forest velvet, which is
+     the "dark forest sections as dramatic anchors" of the brief with the
+     gold figures it already carries. */
+  --color-charcoal: #232a1d;
+  --color-graphite: #4a5140;
+  --color-burgundy: #223c2c;
+
+  /* ---- THE ONYX RAMP BECOMES THE FOREST RAMP. This one move is most of
+     the theme: the footer, the Vault, the dark property cards and every
+     cinematic band resolve their grounds through var(--color-onyx-*), so
+     re-valuing the ramp here turns all of them deep forest with no second
+     rule. Same order, same steps, each rung as dark as the onyx it replaces. */
+  --color-onyx-900: #101a12;
+  --color-onyx-800: #17241a;
+  --color-onyx-700: #1e2f22;
+  --color-onyx-600: #273b2b;
+  /* Text on forest — warm ivory rather than warm bone. */
+  --color-bone: #ece9d8;
+  --color-bone-soft: #a9ac93;
+
+  --color-ivory-50: #f6f4ea;
+  --color-ivory-100: #f0ecdc;
+  --color-ivory-200: #e0ddc6;
+
+  /* ---- platinum → lichen stone. plat-800 stays the text rung (6.1:1 on
+     the new canvas — 'Completed' keeps reading). */
+  --color-plat-800: #575c4b;
+  --color-plat-700: #6a6f5b;
+  --color-plat-500: #868b74;
+  --color-plat-300: #c3c2a7;
+  --color-plat-100: #eae8d7;
+
+  /* ---- the gold family: bronze → antique gold, honey and wheat. Sunlight
+     catching the edge of a leaf, not jewellery — fills and rules keep the
+     same alpha discipline, and the INK golds stay the dark reading rungs. */
+  --color-jamin-gold: #a98a4a;
+  --color-jamin-gold-light: #c3a45e;
+  --color-jamin-gold-soft: #e7dcb4;
+  --color-jamin-gold-ink: #665626;
+  --color-jamin-gold-pale: #e9dca8;
+  --color-jamin-gold-deep: #4b3f1c;
+  --color-champagne-50: #fbf6e3;
+  --color-champagne-100: #e8dcb0;
+  --color-champagne-300: #c3a45e;
+  --color-champagne-500: #a98a4a;
+  --color-champagne-700: #665626;
+  --color-champagne-900: #514418;
+
+  /* ---- THE PRIMARY ACTION GOES HERITAGE GREEN. `bg-jamin-red` is the
+     site's primary control (91 call sites) and every one compiles to
+     var(--color-jamin-red), so the brief's "rich heritage green with warm
+     ivory text" lands here. White measures 7.9:1 on it — stronger than the
+     4.78 the signal red gave. The deep rung is the hover; the soft rung is
+     the wash the chips ride. Vermilion — the sindoor thread and the folio
+     numerals — becomes warm ochre, the brief's restrained sunlight. */
+  --color-cta: #2e5a3c;
+  --color-cta-deep: #22452e;
+  --color-jamin-red: #2e5a3c;
+  --color-jamin-red-deep: #22452e;
+  --color-jamin-red-soft: #e3ecdd;
+  --color-vermilion: #a4711f;
+
+  /* ---- the resolved fact leans from teal to leaf. */
+  --color-canopy: #31543c;
+  --color-canopy-soft: #e2ead6;
+
+  /* ---- Cartouche aliases follow their parents. */
+  --color-jp-red-600: #2e5a3c;
+  --color-jp-red-700: #22452e;
+  --color-jp-red-800: #1a3623;
+  --color-jp-red-900: #142c1c;
+  --color-jp-red-100: #e3ecdd;
+  --color-jp-sand-050: #f6f4ea;
+  --color-jp-sand-100: #f7f4e9;
+  --color-jp-sand-200: #f2efe1;
+  --color-jp-sand-300: #e6e5d2;
+  --color-jp-sand-400: #cfccae;
+  --color-jp-sand-500: #b1ae8e;
+  --color-jp-bronze-700: #665626;
+  --color-jp-bronze-500: #8f7a3e;
+  --color-jp-bronze-400: #a98a4a;
+  --color-jp-bronze-300: #c3a45e;
+  --color-jp-teal-700: #2c4a37;
+  --color-jp-teal-600: #375944;
+  --color-jp-ink-900: #1e2419;
+  --color-jp-ink-800: #272e1e;
+  --color-jp-ink-600: #4f5545;
+
+  /* ---- frosted surfaces: warm ivory glass and smoky forest glass. Alphas
+     are the audited ones — 0.90 light (the contrast decision on the token)
+     and the dark tint's shipped value — only the hue under them moves. */
+  --glass-tint: rgba(245, 243, 231, 0.9);
+  --glass-tint-dark: rgba(18, 26, 19, 0.42);
+
+  /* ---- elevation keeps its warmth but the undertone goes to the forest
+     floor: same stops, same alphas, green-brown instead of red-brown. */
+  --shadow-lift: 0 1px 2px rgba(30, 38, 26, 0.05), 0 8px 24px -8px rgba(30, 38, 26, 0.12);
+  --shadow-raise:
+    0 1px 2px rgba(30, 38, 26, 0.05),
+    0 4px 10px -3px rgba(30, 38, 26, 0.09),
+    0 28px 60px -18px rgba(30, 38, 26, 0.28);
+  --shadow-hero: 0 40px 120px -40px rgba(30, 38, 26, 0.45);
+
+  /* ---- the foils re-strike in antique gold (the :root pair is bronze
+     literals, so they need their own re-point — .rj-gilded already does
+     exactly this for the dark gilt). */
+  --foil-gold: linear-gradient(
+    115deg,
+    #665626 0%,
+    #a98a4a 22%,
+    #ecdfb3 42%,
+    #a98a4a 58%,
+    #665626 78%,
+    #c3a45e 100%
+  );
+  --foil-gold-seal: linear-gradient(
+    115deg,
+    #c3a45e 0%,
+    #e5d9a9 24%,
+    #f3ecce 46%,
+    #e5d9a9 68%,
+    #c3a45e 100%
+  );
+  --line-champagne: rgba(169, 138, 74, 0.48);
+
+  transition:
+    background-color 600ms var(--ease-silk),
+    color 600ms var(--ease-silk);
+}
+
+/* 🚨 AN INVALID FIELD MAY NEVER TURN GREEN. globals.css borders
+   `input:user-invalid` in var(--color-jamin-red), which this scope has just
+   re-pointed at heritage green — the one place where the re-point would
+   invert a meaning. Muted terracotta keeps the error read while staying
+   inside the earth family. Attribute + element beats the unlayered base
+   rule on specificity. */
+[data-mode="nature"] input:user-invalid,
+[data-mode="nature"] textarea:user-invalid {
+  border-color: #a3512c;
+}
