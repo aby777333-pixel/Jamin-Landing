@@ -14,6 +14,13 @@ on:
 
 jobs:
   trigger-netlify:
+    # ⚠️ CANONICAL REPO ONLY. Jamin-Landing mirrors every push (owner
+    # 2026-08-24) and carries this workflow with it, but it has no
+    # NETLIFY_BUILD_HOOK secret — curl got an empty URL and the mirror
+    # wore a red X on every push. It must not gain the secret either:
+    # mirror pushes land seconds after origin pushes, so a hook there
+    # would double-build the site on Netlify every round.
+    if: github.repository == 'aby777333-pixel/jamin-website'
     runs-on: ubuntu-latest
     steps:
       - name: Fire Netlify build hook
@@ -23,5 +30,11 @@ jobs:
           HOOK_URL: ${{ secrets.NETLIFY_BUILD_HOOK }}
         run: |
           set -euo pipefail
+          # Belt over the braces above: a fork or a rename lands here with
+          # no secret; skipping is correct there, failing is just noise.
+          if [ -z "${HOOK_URL}" ]; then
+            echo "::notice::NETLIFY_BUILD_HOOK not set in this repository — skipping."
+            exit 0
+          fi
           URL="${HOOK_URL}?trigger_title=push%3A%20${GITHUB_SHA:0:7}"
           curl --silent --show-error --fail -X POST "${URL}"
