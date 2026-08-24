@@ -467,6 +467,8 @@ export function PageHero({
   plateBare = false,
   eyebrowAlign = "end",
   softFade = false,
+  grovePhoto,
+  groveSheerAlpha,
 }: {
   eyebrow?: string;
   title: ReactNode;
@@ -484,6 +486,24 @@ export function PageHero({
    * /contact, which is how every remaining page ends up with its own image.
    */
   photo?: { src: string; alt: string };
+  /**
+   * The frame the GROVE mode shows instead of `photo` (owner 2026-08-24 —
+   * /security's guard turns green with the palette). Rendered as a SECOND
+   * `<Image>` toggled by `.rj-grove-only` / `.rj-grove-hide` in royal.css:
+   * `display` plus `loading="lazy"` means no mode ever fetches the other
+   * mode's frame. Cinematic tone only — a paper page has no business here.
+   * ⚠️ Same-ratio frames only: the twin inherits `mobileBandRatio`, so a
+   * different shape would letterbox the phone band in the grove.
+   */
+  grovePhoto?: { src: string; alt: string };
+  /**
+   * The sheer plate's alpha INSIDE THE GROVE, when `grovePhoto` is a brighter
+   * frame than the one `sheerAlpha` was swept against. Feeds
+   * `--rj-grove-sheer-alpha`, consumed only under `[data-mode="nature"]`
+   * (royal.css); unset, the grove keeps the page's normal swept value.
+   * Sweep the grove frame before setting it, exactly as for `sheerAlpha`.
+   */
+  groveSheerAlpha?: number;
   actions?: ReactNode;
   /** Small factual line under the copy — counts, never claims. */
   meta?: ReactNode;
@@ -674,13 +694,32 @@ export function PageHero({
               /* `rj-print-drop` — hero art is decoration and does not print. On
                  the Image rather than on ParallaxLayer, which hard-codes its
                  own className. See the print block in royal.css. */
-              className="rj-print-drop object-contain object-center xl:object-cover"
+              /* `rj-grove-hide` only when a grove twin exists — the pair swap
+                 by `display` under [data-mode="nature"]; see royal.css. */
+              className={`rj-print-drop object-contain object-center xl:object-cover ${grovePhoto ? "rj-grove-hide" : ""}`}
               /* ⚠️ Only bites from `xl`, where the picture is `cover` and there
                  is a crop to steer. Below that it is `contain` in a box cut to the
                  artwork’s own ratio, so the whole frame is on screen and an
                  object-position has nothing to choose between. */
               style={artPosition ? { objectPosition: artPosition } : undefined}
             />
+            {grovePhoto ? (
+              /* THE GROVE TWIN. `loading="lazy"` + the default `display: none`
+                 means readers outside the grove never fetch it (no box → no
+                 intersection → no load). Grove readers do still preload the
+                 `priority` twin — that one wasted fetch is the cost the swap
+                 accepts. Same wrapper, same classes, same artPosition — only
+                 the frame changes with the mode. */
+              <Image
+                src={grovePhoto.src}
+                alt={grovePhoto.alt}
+                fill
+                loading="lazy"
+                sizes="100vw"
+                className="rj-grove-only rj-print-drop object-contain object-center xl:object-cover"
+                style={artPosition ? { objectPosition: artPosition } : undefined}
+              />
+            ) : null}
           </ParallaxLayer>
           {/* The veil is a legibility device for type sitting ON the picture.
               Below `lg` nothing sits on it, so darkening it there would spend
@@ -790,6 +829,8 @@ export function PageHero({
                 ? ({
                     ...(sheerAlpha != null ? { "--rj-sheer-alpha": sheerAlpha } : {}),
                     ...(sheerBlur != null ? { "--rj-sheer-blur": `${sheerBlur}px` } : {}),
+                    /* Read only under [data-mode="nature"] — see royal.css. */
+                    ...(groveSheerAlpha != null ? { "--rj-grove-sheer-alpha": groveSheerAlpha } : {}),
                   } as React.CSSProperties)
                 : undefined
             }

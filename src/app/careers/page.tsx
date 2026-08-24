@@ -115,28 +115,36 @@ export default function CareersPage() {
            prop pointing at a real file is easier to reason about than one
            pointing at a hole. Same note as /security. */
         art={71}
+        /* THE GREEN OFFICE (owner 2026-08-24): the robots-and-red-tie
+           illustration gave way to the living-wall headquarters render — the
+           swap is UNCONDITIONAL, all three modes, unlike /security's
+           mode-scoped twin. hero-red-tie-1983.webp stays on disk as a spare. */
         photo={{
-          src: "/careers-art/hero-red-tie-1983.webp",
-          alt: "Illustration: a column of identical grey robots marching with briefcases, and one man in a red suit and tie walking the other way, out of the shadow into the light.",
+          src: "/careers-art/hero-green-office-1914.webp",
+          alt: "Concept render: a glass office building wrapped in living green walls and planted balconies, the Jamin Bazaar mark on its façade, in morning light.",
         }}
-        mobileBandRatio="1983/793"
+        mobileBandRatio="1914/822"
         tone="cinematic"
         size="full"
-        /* 🚨 SWEPT, NOT COPIED FROM /security. The two heroes are the same shape
-           and nothing else: this frame's left half — where the copy plate sits
-           — is a flat dark concrete wall, the darkest ground any hero on this
-           site puts under its words, while the guard hero had two lit sconces
-           there. `veil` plus a wall that dark leaves the plate almost nothing
-           to do, so it is thinner here than anywhere: 0.10 against
-           /security's 0.14 and `gilt`'s audited 0.52.
+        /* 🚨 RE-SWEPT FOR THE NEW FRAME — 0.8, NOT THE 0.10 THE RED-TIE FRAME
+           RAN. That value belonged to a flat dark concrete wall, the darkest
+           ground any hero on this site put under its words. This frame is the
+           OPPOSITE extreme: the plate's footprint holds bright sky and sunlit
+           lawn — p95 luminance 0.59–0.61 through the veil (max 0.79–0.82),
+           measured at 1440 and 1730 boxes. White type at 0.10 there reads
+           under 2:1. 0.8 clears AA on the brightest feature (4.8:1) and holds
+           ≥5.8:1 at the 99th percentile. The plate goes from a whisper to a
+           card, and that is the frame's own arithmetic: a gold light enough
+           to glint cannot be read on sand, and a sky bright enough to feel
+           like morning cannot sit behind white type.
 
-           ⚠️ THE SUBJECT IS ON THE RIGHT AND MUST STAY CLEAR. The man in red is
-           the whole point of the picture and the plate is left-anchored, so
-           they do not collide at any width — but a future crop or an
-           `artPosition` that walks him leftward would put the plate over him.
-           Re-check the frame before touching either. */
+           ⚠️ THE SUBJECT IS ON THE RIGHT AND MUST STAY CLEAR — as true of the
+           building as it was of the man in red: the living-wall façade and
+           the mark run 55–95% of the frame, the plate is left-anchored, and
+           they do not collide at any width. A future crop or `artPosition`
+           that walks the building leftward puts the plate over it. */
         sheer
-        sheerAlpha={0.1}
+        sheerAlpha={0.8}
         eyebrow="Careers at Jamin Bazaar"
         title={
           <>
@@ -146,7 +154,9 @@ export default function CareersPage() {
           </>
         }
         lead="Some people see an empty piece of land. We see the road that will run through it, the trees that will grow beside it, the homes that will rise around it — and the families that will eventually call it theirs."
-        meta="Illustration. The dress code is, in practice, negotiable."
+        /* The old line captioned the red-tie illustration and made no sense
+           over a building. Same register — a wink that stays factual. */
+        meta="Concept render. The plants are aspirational; the careers are not."
       />
 
       {/* ── The invitation ─────────────────────────────────────────────── */}

@@ -4848,3 +4848,76 @@ header .glass,
 [data-mode="nature"] textarea:user-invalid {
   border-color: #a3512c;
 }
+
+/* ── GROVE'S OWN ARTWORK (owner 2026-08-24) ────────────────────────────────
+   Three pages carry frames that exist only in the grove: the home hero
+   becomes a slideshow of the five green gate renders, and /security swaps
+   its red guard for the green one. The mechanism is a display toggle, not a
+   second component: `.rj-grove-only` markup is in the tree on every mode and
+   costs nothing outside the grove — `display: none` plus `loading="lazy"`
+   means the browser never fetches it (no box → no intersection → no load,
+   the same behaviour this repo catalogued for the hidden preview pane).
+
+   ⚠️ UNLAYERED, so these beat Tailwind display utilities — put no `hidden`
+   or `block` utility on an element carrying either class. */
+.rj-grove-only {
+  display: none;
+}
+[data-mode="nature"] .rj-grove-only {
+  display: block;
+}
+[data-mode="nature"] .rj-grove-hide {
+  display: none;
+}
+
+/* ── THE GROVE SLIDER — five gates, three seconds each ─────────────────────
+   Pure CSS: a 15s loop, five slides, each staggered 3s behind the last by an
+   inline animation-delay. A slide holds full opacity for its 3s window
+   (2.5%→20% of the cycle) with a soft fade either side; the fades overlap so
+   combined coverage never drops, and the living-day frame stays UNDERNEATH
+   as the ground — which is also what covers the first slide's lazy-load and
+   the moment before a delayed slide's first cycle begins.
+
+   ⚠️ REDUCED MOTION: the global collapse rule finishes these animations
+   instantly and they run once, leaving every slide at its BASE state — all
+   transparent, so a reduced-motion grove reader sees the living-day frame,
+   still and legible. That is the designed fallback, not a bug.
+
+   ⚠️ The home copy plate needs NO re-sweep for these frames: it is the sand
+   plate at 0.62 both vars, so its effective ground is ≥ 0.62·sand whatever
+   slide sits behind — the same invariant LivingHeroArt records. */
+.rj-grove-slide {
+  opacity: 0;
+}
+[data-mode="nature"] .rj-grove-slide {
+  animation: rj-grove-cycle 15s linear infinite;
+}
+@keyframes rj-grove-cycle {
+  0% {
+    opacity: 0;
+  }
+  2.5% {
+    opacity: 1;
+  }
+  20% {
+    opacity: 1;
+  }
+  24% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ── THE GROVE PLATE ALPHA ─────────────────────────────────────────────────
+   A page whose FRAME changes with the mode needs a plate that changes with
+   it: /security's red-guard frame runs sheer at 0.14 because its walls are
+   dark, and the green-guard frame that replaces it in the grove has WHITE
+   walls — measured through the veil at p95 0.53 / max 0.82 under the plate,
+   which no sheer alpha survives. The page passes `groveSheerAlpha` and this
+   rule consumes it only inside the grove; every page that does not set the
+   var falls straight through to its normal swept value. */
+[data-mode="nature"] .rj-gilt-sheer {
+  background: rgba(16, 14, 12, var(--rj-grove-sheer-alpha, var(--rj-sheer-alpha, 0.14)));
+}

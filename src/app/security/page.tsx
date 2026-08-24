@@ -84,6 +84,20 @@ export default function SecurityPage() {
           src: "/security-art/hero-guard-ceiling-v2-1717.webp",
           alt: "Illustration: a security guard in Jamin red, braced across the ceiling of a hallway between two framed paintings, watching the corridor below.",
         }}
+        /* THE GROVE GUARD (owner 2026-08-24): in the nature mode the same man
+           holds the same ceiling in the green uniform. Same 1717x916 frame, so
+           `mobileBandRatio` serves both and no second ratio is needed.
+           🚨 `groveSheerAlpha` IS NOT OPTIONAL HERE. The red frame's walls are
+           dark and its plate runs sheer at 0.14; the green frame's walls are
+           WHITE — measured through the veil at p95 0.53 / brightest feature
+           0.82 under the plate's own footprint, where white type at 0.14
+           reads ~2.5:1. 0.8 clears AA on the brightest 1% (4.8:1) and holds
+           5.8:1 at the 99th. Swept at 1440 and 1730 boxes, not assumed. */
+        grovePhoto={{
+          src: "/security-art/hero-guard-ceiling-grove-1717.webp",
+          alt: "Illustration: a security guard in Jamin Bazaar green, braced across the ceiling of a bright hallway between two framed paintings, watching the corridor below.",
+        }}
+        groveSheerAlpha={0.8}
         /* The artwork's own 2.5:1, so the phone band neither crops the guard
            nor letterboxes him. ⚠️ In the CINEMATIC tone this changes the BOX
            only — the image stays `object-contain` below `xl`, and the

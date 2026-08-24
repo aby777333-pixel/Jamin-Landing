@@ -218,8 +218,26 @@ export function Hero({
           fill
           sizes="100vw"
           priority
-          className="object-cover"
+          /* `rj-grove-hide`: in the nature mode the band swaps to the gate
+             render below — a display toggle, same device as the desktop
+             backdrop's slider. See royal.css. */
+          className="rj-grove-hide object-cover"
           style={{ objectPosition: "50% 50%" }}
+        />
+        {/* THE GROVE BAND — hero-88, the daylight palm gate with the green
+            sign wall. ONE static frame, not the slider: a 192px phone strip
+            is no place for a slideshow, and the desktop precedent for this
+            band (hero-83) is likewise a single stable frame. `loading="lazy"`
+            + default display:none = phones outside the grove never fetch it. */}
+        <Image
+          src="/hero/hero-88-1672.webp"
+          alt=""
+          aria-hidden="true"
+          fill
+          loading="lazy"
+          sizes="100vw"
+          className="rj-grove-only object-cover"
+          style={{ objectPosition: "50% 45%" }}
         />
       </div>
 
@@ -245,6 +263,40 @@ export function Hero({
               LivingHeroArt's register — a hero and its crop are ONE change,
               so the crop travels with the frame. */}
           <LivingHeroArt />
+          {/* ── THE GROVE GATES (owner 2026-08-24) ──────────────────────────
+              In the nature mode the backdrop becomes a slideshow of the five
+              green gate renders, three seconds a frame. Pure CSS: the
+              container is `.rj-grove-only` (display-toggled by the mode, so
+              light/dark readers never fetch a byte of it — lazy images with
+              no box never load), each slide runs the 15s `rj-grove-cycle`
+              staggered 3s by inline delay, and LivingHeroArt stays rendered
+              UNDERNEATH as the ground that covers loads, fade troughs and
+              the reduced-motion fallback. See royal.css for the device.
+              ⚠️ The copy plate needs no re-sweep — the ≥0.62·sand invariant
+              on LivingHeroArt covers any frame behind it, these included.
+              Brand renders, so alt="" under the standing rule; the register
+              entries are hero-87..91 in public/hero/README.md. */}
+          <div className="rj-grove-only absolute inset-0">
+            {[
+              { src: "/hero/hero-87-1774.webp", pos: "50% 55%" },
+              { src: "/hero/hero-88-1672.webp", pos: "50% 50%" },
+              { src: "/hero/hero-89-1672.webp", pos: "50% 50%" },
+              { src: "/hero/hero-90-1942.webp", pos: "50% 55%" },
+              { src: "/hero/hero-91-1983.webp", pos: "50% 60%" },
+            ].map((g, i) => (
+              <Image
+                key={g.src}
+                src={g.src}
+                alt=""
+                aria-hidden="true"
+                fill
+                loading="lazy"
+                sizes="100vw"
+                className="rj-grove-slide object-cover"
+                style={{ objectPosition: g.pos, animationDelay: `${i * 3}s` }}
+              />
+            ))}
+          </div>
           {/* The mirror of `hero-fade`: instead of a dark scrim the page
               dissolves the image into its own canvas from the left. Over the
               artwork's own white panel this is very nearly invisible — it only

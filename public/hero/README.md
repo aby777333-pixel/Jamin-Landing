@@ -1390,3 +1390,24 @@ several entries per line, so a `^`-anchored regex sees only the first of each
 and reports 59 phantom faults; and the union spans five lines, so it must be
 sliced to its terminating semicolon rather than to the end of the first line.
 
+
+## hero-87..91 — THE GROVE GATES (home slider, nature mode, 2026-08-24)
+
+Five green-identity gate renders, supplied with the owner's grove round: 87 the
+misty roundabout gate (1774x887), 88 the daylight palm gate with the green sign
+wall (1672x941), 89 the golden-hour palm gate (1672x941), 90 the suburban
+community gate (1942x809), 91 the topiary map-pin gate with gold lattice piers
+(1983x793). Renditions at 768 / 1280 / native, q82.
+
+⚠️ **They are LIVE ONLY INSIDE `[data-mode="nature"]`** — the home desktop
+backdrop cycles all five (3s a frame, `rj-grove-cycle` in royal.css, inline
+delays in Hero.tsx) and the phone band swaps to a static hero-88. They are NOT
+in the `HeroArt` union on purpose: nothing reaches them through `artSrc()`, so
+the audit reports them as spares, which is correct — a mode-scoped frame is a
+spare to every reader outside the mode.
+
+⚠️ **No scrim sweep is recorded for them, and none is needed where they live**:
+the home plate's ≥0.62·sand invariant (LivingHeroArt) covers any frame behind
+it. Putting one of these under a CINEMATIC white-type plate is a new sweep —
+their skies are bright; expect gilt-level alphas (the /careers green-office
+entry in careers-art is the precedent: 0.8).
