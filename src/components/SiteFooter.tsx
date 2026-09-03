@@ -5,6 +5,7 @@ import { getAppDownload, type AppDownload } from "@/lib/app-download";
 import { TitleBlock } from "@/components/cadastral/TitleBlock";
 import { LedgerCount } from "@/components/cadastral/LedgerCount";
 import { SurveyIcon, type SurveyIconName } from "@/components/cadastral/SurveyIcon";
+import { LegalDocs } from "@/components/LegalDocs";
 
 /**
  * §59 — the footer is a discovery layer, and §75 — its contact details must be
@@ -302,6 +303,14 @@ export async function SiteFooter() {
           <p className="text-tiny text-ink-faint">
             Plot availability and pricing are confirmed by our sales desk at the time of booking.
           </p>
+        </div>
+
+        {/* The legal documents (owner, 2026-09-03) — Privacy Policy, Booking &
+            Refund Policy and Terms of Use, each opening in a popup with a
+            close button. A client island; the footer itself stays a server
+            component. */}
+        <div className="mt-3">
+          <LegalDocs />
         </div>
 
         {/* Owner's ask (2026-08-18 16:05): "add a disclaimer somewhere that
