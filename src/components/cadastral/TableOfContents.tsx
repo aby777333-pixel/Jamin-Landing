@@ -24,6 +24,44 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
   /* One answer, shared with the running head — see the hook. */
   const active = useActiveHeading(headings);
   const listRef = useRef<HTMLUListElement>(null);
+  /**
+   * 🚨 THE HEADING THE READER JUST CLICKED (report 18, 2026-09-03: "sometimes
+   * it works correctly, while sometimes it jumps"). A click on an entry starts
+   * a SMOOTH page scroll (`html { scroll-behavior: smooth }`), and on the way
+   * to the target the page passes every intervening heading. `useActiveHeading`
+   * reports each one in turn, and the follow effect below wrote `scrollTop` for
+   * each — so the list hunted up and down while the article glided, and where
+   * it came to rest depended on how many headings lay between. While a click
+   * is in flight the follow is suspended; the clicked entry is scrolled into
+   * the list's view ONCE, and the follow resumes when the target becomes the
+   * active heading — or after a timeout, for a target near the foot of the
+   * page that can never reach the reading line.
+   */
+  const pinned = useRef<string | null>(null);
+  const pinTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const reveal = (id: string) => {
+    const list = listRef.current;
+    if (!list) return;
+    const el = list.querySelector<HTMLElement>(`[data-toc="${CSS.escape(id)}"]`);
+    if (!el) return;
+    const pad = 24;
+    const top = el.offsetTop - list.offsetTop;
+    const bottom = top + el.offsetHeight;
+    if (top < list.scrollTop + pad) list.scrollTop = Math.max(0, top - pad);
+    else if (bottom > list.scrollTop + list.clientHeight - pad) {
+      list.scrollTop = bottom - list.clientHeight + pad;
+    }
+  };
+
+  const pin = (id: string) => {
+    pinned.current = id;
+    if (pinTimer.current) clearTimeout(pinTimer.current);
+    pinTimer.current = setTimeout(() => {
+      pinned.current = null;
+    }, 1500);
+    reveal(id);
+  };
 
   /**
    * Keep the current entry visible inside the list's OWN scroller.
@@ -37,19 +75,17 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
    * has scrolled the list by hand is not fought for control of it.
    */
   useEffect(() => {
-    const list = listRef.current;
-    if (!list || !active) return;
-    const el = list.querySelector<HTMLElement>(`[data-toc="${CSS.escape(active)}"]`);
-    if (!el) return;
-
-    const pad = 24;
-    const top = el.offsetTop - list.offsetTop;
-    const bottom = top + el.offsetHeight;
-    if (top < list.scrollTop + pad) list.scrollTop = Math.max(0, top - pad);
-    else if (bottom > list.scrollTop + list.clientHeight - pad) {
-      list.scrollTop = bottom - list.clientHeight + pad;
+    if (!active) return;
+    if (pinned.current) {
+      // A click is in flight: ignore the headings the page is gliding past.
+      if (active !== pinned.current) return;
+      pinned.current = null;
+      if (pinTimer.current) clearTimeout(pinTimer.current);
     }
+    reveal(active);
   }, [active]);
+
+  useEffect(() => () => { if (pinTimer.current) clearTimeout(pinTimer.current); }, []);
 
 
   return (
@@ -88,6 +124,7 @@ export function TableOfContents({ headings }: { headings: Heading[] }) {
             >
               <a
                 href={`#${h.id}`}
+                onClick={() => pin(h.id)}
                 aria-current={on ? "location" : undefined}
                 className={`block text-base leading-snug transition-colors ${
                   on ? "font-medium text-ink" : "text-ink-muted hover:text-jamin-red-deep"

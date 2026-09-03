@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { browserClient } from "./supabase-browser";
+import { clearShortlist } from "./local-shortlist";
 
 /**
  * Session state for the account area.
@@ -104,6 +105,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = useCallback(async () => {
     await browserClient().auth.signOut();
+    /* The browser shortlist was filled by the person signing out — the hearts
+       are session-gated — so it leaves with them (report 18). */
+    clearShortlist();
     setSession(null);
     setProfile(null);
   }, []);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PLOT_STATUS, plotArea, plotStatus, plotStatusKey, type Plot } from "@/lib/properties";
 import { plotRecordRows } from "@/lib/plot-record";
 import { PlotVisitForm } from "@/components/PlotVisitForm";
@@ -41,6 +41,23 @@ export function PlotSchedule({
 }) {
   const [selected, setSelected] = useState<Plot | null>(null);
   const key = useMemo(() => plotStatusKey(plots), [plots]);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const selectedPlot = selected?.plot ?? null;
+
+  /**
+   * 🚨 BRING THE RECORD INTO VIEW (report 18, 2026-09-03: "when clicking a
+   * plot number… the popup/card does not appear within the currently visible
+   * screen area… the popup is unexpectedly found further down the page").
+   * The card renders AFTER the whole grid, and Trichy's 120 tiles are fifteen
+   * rows deep — a tap on row three opened a card two screens below it, with
+   * nothing on screen to say anything had happened. `nearest` scrolls only
+   * as far as it must: a card already on screen does not move the page.
+   * Keyed on the plot number so re-selecting the same tile does not re-scroll.
+   */
+  useEffect(() => {
+    if (!selectedPlot) return;
+    cardRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selectedPlot]);
 
   return (
     <div>
@@ -85,9 +102,15 @@ export function PlotSchedule({
               <span className="block text-base font-semibold" style={{ color: s.text }}>
                 {p.plot}
               </span>
+              {/* The tile's figure follows the Feet / Metres switch (report
+                  18) — it was hard-wired to sq ft and read as a toggle that
+                  did nothing. Bare number: the unit is stated once, in the
+                  switch itself. */}
               {p.size_sqft ? (
                 <span className="mt-0.5 block text-micro" style={{ color: s.text }}>
-                  {Math.round(p.size_sqft).toLocaleString("en-IN")}
+                  {unit === "m"
+                    ? Math.round(p.size_sqm ?? p.size_sqft / 10.7639).toLocaleString("en-IN")
+                    : Math.round(p.size_sqft).toLocaleString("en-IN")}
                 </span>
               ) : null}
             </button>
@@ -96,7 +119,7 @@ export function PlotSchedule({
       </div>
 
       {selected ? (
-        <div className="mt-phi3 rounded-card border border-line bg-canvas p-phi3">
+        <div ref={cardRef} className="mt-phi3 scroll-mt-28 rounded-card border border-line bg-canvas p-phi3">
           <div className="flex flex-wrap items-baseline justify-between gap-3">
             <span className="text-xl text-ink">Plot {selected.plot}</span>
             <span

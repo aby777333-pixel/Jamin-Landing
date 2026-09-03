@@ -22,7 +22,11 @@ import { isPartner } from "@/lib/partner";
  *   stripLeft  the horizontal menu's scroll position, restored into the new
  *              <nav> element on mount.
  */
-const navState = { navigated: false, scrollY: 0, stripLeft: 0 };
+/* `sideTop` (report 18, 2026-09-03): the DESKTOP sidebar is its own vertical
+   scroller (`lg:overflow-y-auto`), and it remounts with the shell like the
+   strip does — so it opened at the top on every section pick. Same cure as
+   `stripLeft`: capture as it scrolls, restore into the new element on mount. */
+const navState = { navigated: false, scrollY: 0, stripLeft: 0, sideTop: 0 };
 
 /** `useLayoutEffect` warns when React renders this on the server, and the
  *  scroll must be set before paint or the jump is visible. */
@@ -130,6 +134,7 @@ export function AccountShell({ title, children }: { title: string; children: Rea
    */
   const gridRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLElement>(null);
+  const sideRef = useRef<HTMLDivElement>(null);
 
   /**
    * 🚨 THIS RUNS ON MOUNT, NOT ON A PATHNAME CHANGE, AND THE STATE THAT DRIVES
@@ -172,6 +177,8 @@ export function AccountShell({ title, children }: { title: string; children: Rea
   useIsoLayoutEffect(() => {
     const strip = stripRef.current;
     if (strip) strip.scrollLeft = navState.stripLeft;
+    const side = sideRef.current;
+    if (side) side.scrollTop = navState.sideTop;
 
     if (!navState.navigated) {
       navState.navigated = true;
@@ -316,6 +323,10 @@ export function AccountShell({ title, children }: { title: string; children: Rea
             for exactly this reason. Two items, one rule — a grid is only as
             narrow as its widest un-pinned item. */}
         <div
+          ref={sideRef}
+          onScroll={(e) => {
+            navState.sideTop = e.currentTarget.scrollTop;
+          }}
           className="flex min-w-0 flex-col gap-phi3 lg:sticky lg:z-10 lg:max-h-[calc(100dvh-var(--header-h)-2.5rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
           style={{ top: "calc(var(--header-h) + 1.25rem)" }}
         >

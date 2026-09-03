@@ -3,6 +3,7 @@ import { PageHero } from "@/components/PageHero";
 import { Container, Pane } from "@/components/ui";
 import { paneHue } from "@/lib/stones";
 import { PassportButton } from "@/components/PassportButton";
+import { PrintDate } from "@/components/PrintDate";
 import { CallbackBand } from "@/components/CallbackBand";
 
 export const revalidate = 3600;
@@ -70,12 +71,15 @@ const SECTIONS: { title: string; items: string[] }[] = [
 ];
 
 export default function VisitChecklistPage() {
-  const taken = new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "Asia/Kolkata",
-  }).format(new Date());
+  /* 🚨 THE DATE IS NO LONGER TAKEN HERE (report 18, 2026-09-03: "the 'Sheet
+     taken' date displays 25 Aug 2026 even though the checklist is generated
+     on 29 Aug 2026"). This is a server component under `revalidate = 3600`
+     with no dynamic read, so `new Date()` ran at BUILD time and the day it
+     was built was baked into the static HTML for everyone thereafter. The
+     property sheets do the same on purpose — their "taken" date is the date
+     of the record — but this checklist has no record behind it: the honest
+     date is the day the reader prints it, which only the browser knows. See
+     `PrintDate`. */
 
   return (
     <>
@@ -88,6 +92,13 @@ export default function VisitChecklistPage() {
              darker, so it holds 0.52 like hero-49. */
           art={71}
           tone="cinematic"
+          /* ⚠️ Anchored near the TOP (report 18, 2026-09-03: "the Jamin Bazaar
+             logo and company name on the property entrance are visibly cut
+             off by the top edge"). The standard box crops a 3:2 frame
+             vertically at xl and the default centre anchor took the arch
+             lockup with it; the family walking in sits low enough to survive
+             a top-weighted crop. Same lever /projects/ongoing uses (50% 14%). */
+          artPosition="50% 8%"
           sheer
           sheerAlpha={0.52}
           eyebrow="Site visits"
@@ -111,7 +122,7 @@ export default function VisitChecklistPage() {
             Not legal advice.
           </div>
         </div>
-        <div className="mt-2 text-[9pt]">Sheet taken {taken}</div>
+        <div className="mt-2 text-[9pt]">Sheet taken <PrintDate /></div>
       </div>
 
       <Container className="py-phi5 print:py-0" hue={paneHue("/visit-checklist")}>
@@ -129,7 +140,12 @@ export default function VisitChecklistPage() {
           <PassportButton />
         </div>
 
-        <div className="mx-auto max-w-3xl">
+        {/* `print:max-w-none` (report 18: "the main checklist container is too
+            narrow, causing the content to appear cramped and too close to the
+            left border"). 48rem is a reading measure for a screen; on A4 with
+            its 14mm margins it left the list hugging the left edge with a
+            blank column beside it. On paper the sheet IS the measure. */}
+        <div className="mx-auto max-w-3xl print:max-w-none">
           {SECTIONS.map((s) => (
             <section key={s.title} className="mt-phi4 break-inside-avoid first:mt-phi3 print:mt-5">
               <h2 className="border-b border-line pb-2 text-2xl text-ink print:border-black print:text-[13pt]">

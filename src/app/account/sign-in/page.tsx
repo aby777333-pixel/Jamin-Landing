@@ -196,6 +196,16 @@ export default async function SignInPage({ searchParams }: PageProps<"/account/s
                    complaint one level down. Below `lg` there is nothing to
                    match, so it keeps its own height and is never cropped. */
                 className="h-auto w-full lg:h-full lg:object-cover"
+                /* ⚠️ `40% 50%` (report 18, 2026-09-03: "the Jamin Properties
+                   branding positioned on the left side of the image… should
+                   appear directly on the entrance/gate area"). The cell is
+                   taller than 16:9 at lg, so the frame is height-bound and
+                   only ~70% of its width shows; hero-76's lockup sits at
+                   x≈41%, which a centred window put a third of the way in.
+                   Anchoring the window at 40% puts the lockup on the cell's
+                   centre line, over the gate it is painted on. Inert below
+                   lg, where the image is `h-auto` and nothing is cropped. */
+                style={{ objectPosition: "40% 50%" }}
               />
           </div>
 

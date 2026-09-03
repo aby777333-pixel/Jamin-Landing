@@ -2577,6 +2577,24 @@ header .glass,
     display: none !important;
   }
 
+  /* ── A section's heading stays with its body ───────────────────────────
+     Report 18 (2026-09-03), on the Trichy record: "the heading appears at
+     the bottom/end or in the middle of one page, while the corresponding
+     content… starts on the next page". The `h2 { break-after: avoid }`
+     above never bit on the property page: its h2 is wrapped in a
+     SurveyReveal div with no sibling, so the break the rule forbids falls
+     after the WRAPPER. The wrapper is the section's first child; forbid the
+     break there, and ask the section to stay whole — which the engine
+     honours where the section fits on a sheet and ignores where it cannot,
+     so a gallery taller than a page still flows. */
+  .rj-print-section {
+    break-inside: avoid;
+  }
+  .rj-print-section > :first-child {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
   /* ── Players and docks are screen furniture ─────────────────────────────
      The video Block prints a poster + "watch online" figure instead
      (report 11: "do not print the browser video player"); the phone dock is
@@ -2752,6 +2770,15 @@ header .glass,
    scope's own lesson: dark-tuned inks must invert too, or they vanish).
    ══════════════════════════════════════════════════════════════════════════ */
 [data-mode="dark"] {
+  /* 🚨 `--glass-ivory` INVERTS WITH THE INKS (report 18, 2026-09-03: "in
+     the dark theme… the 'YOUR SHORTLIST' popup displays the property names
+     with very low contrast"). `.rj-glass` panels take this token, and it
+     was declared once, in :root, at a 0.9 ivory — so in carbon mode the
+     tray was a near-white panel carrying the bone ink ramp. Same class of
+     gap as the vault/grove collision: a token with one definition on a
+     page with two grounds. Onyx at the same opacity keeps the panel's
+     legibility argument (a knowable backdrop) on the dark ground. */
+  --glass-ivory: rgba(27, 23, 18, 0.9);
   /* ⚠️ THE GROUNDS ARE NOW THE ONYX RAMP ITSELF (do-all round, 2026-08-19
      — menu item 5), not three hand-mixed near-neighbours of it. The old
      values were #161310 / #1e1a15 / #272119 against onyx-900 / 800 / 700
@@ -4837,6 +4864,35 @@ header .glass,
     background-color 600ms var(--ease-silk),
     color 600ms var(--ease-silk);
 }
+
+/**
+ * 🚨 THE VAULT WINS OVER THE GROVE (report 18, 2026-09-03: "when the green
+ * theme is applied and navigates to the Vault page… the navigation text
+ * becomes difficult to see").
+ *
+ * `[data-theme="vault"]` and `[data-mode="nature"]` are both single-attribute
+ * selectors on <html> — equal specificity — and the grove block sits three
+ * thousand lines after the vault's. So on /vault in grove mode the cascade
+ * handed the ink ramp back to charcoal-green while the ground stayed onyx
+ * and the header's glass stayed near-black: dark type on a dark bar. The
+ * pair below has specificity (0,2,0) and re-states the vault's tokens, so
+ * the page that owns its own ground keeps it whatever mode the reader is in.
+ * Values are the vault block's own — change them there, then here.
+ */
+[data-theme="vault"][data-mode="nature"] {
+  --color-canvas: var(--color-onyx-800);
+  --color-canvas-alt: var(--color-onyx-700);
+  --color-canvas-sunken: var(--color-onyx-600);
+  --color-ink: var(--color-bone);
+  --color-ink-soft: var(--color-bone-soft);
+  --color-ink-muted: var(--color-bone-soft);
+  --color-ink-faint: var(--color-plat-500);
+  --color-line: var(--line-onyx);
+  --color-champagne-700: var(--color-champagne-300);
+  --color-cta-deep: var(--color-champagne-300);
+  --rj-stage-ink: var(--color-champagne-300);
+}
+
 
 /* 🚨 AN INVALID FIELD MAY NEVER TURN GREEN. globals.css borders
    `input:user-invalid` in var(--color-jamin-red), which this scope has just

@@ -72,3 +72,15 @@ export function toggleShortlist(id: string) {
   const cur = read();
   write(cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]);
 }
+
+/**
+ * Empty the browser list. Called on SIGN-OUT (report 18, 2026-09-03: "after
+ * signing out, the 'SHORTLIST 2' popup is still visible… the previous
+ * shortlist state is being retained for the signed-out user"). Adding to the
+ * list is gated on a session (ShortlistHeart), so a list that outlives the
+ * session is the signed-in person's, and it must not be shown to whoever
+ * uses the browser next.
+ */
+export function clearShortlist() {
+  write([]);
+}

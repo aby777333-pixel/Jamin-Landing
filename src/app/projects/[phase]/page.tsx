@@ -294,6 +294,11 @@ export default async function PhasePage({ params }: PageProps<"/projects/[phase]
            for — leaving it would wash the new frame out, which is exactly
            what the Upcoming page looked like before the swap. */
         tone="cinematic"
+        /* ⚠️ `current` SETS ITS PLATE RIGHT (report 18, 2026-09-03: the
+           gate's own Jamin Bazaar sign on hero-82's left pier was under the
+           headline). The other three stages keep the left plate: their
+           signs ride the arch, which `copyAlign="end"` already clears. */
+        copySide={phase === "current" ? "end" : "start"}
         /* 🚨 FULL HEIGHT (owner, 2026-08-19 evening: "increase the height of the
            hero image to full"). `PageHero` already carries the three sizes;
            `full` is `xl:min-h-[clamp(30rem,85vh,52rem)]` against the default's

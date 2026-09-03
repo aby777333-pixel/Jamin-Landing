@@ -463,6 +463,7 @@ export function PageHero({
   sheerEdge = false,
   plateXl = "46rem",
   copyAlign = "center",
+  copySide = "start",
   copyCenter = false,
   plateBare = false,
   eyebrowAlign = "end",
@@ -568,6 +569,16 @@ export function PageHero({
    *  all of them. Pair it with an artPosition that keeps the board in the
    *  visible crop's upper third. */
   copyAlign?: "center" | "end";
+  /** ⚠️ Where the plate sits HORIZONTALLY from `xl`, cinematic only
+   *  (report 18, 2026-09-03, /projects/current: "the Jamin Bazaar logo…
+   *  overlaps the hero content on the left side… move the logo to the
+   *  right side of the gate so no overlapping with the hero text").
+   *  hero-82's lockup is painted on the LEFT pier at mid-height — exactly
+   *  where a left-set plate lands, and no crop can move a 2:1 frame far
+   *  enough sideways in a 2:1 box. `end` sets the plate against the right
+   *  edge instead, so the copy sits over the right pier and the sign on the
+   *  left reads clear. Below `xl` the copy is under the band, not on it. */
+  copySide?: "start" | "end";
   /** Centre the copy INSIDE the plate (owner 2026-08-18, /ta: "align
    *  center… all the way from left to right") — pairs with
    *  `plateXl="full"`, where a left rag on a container-wide card reads as
@@ -815,6 +826,8 @@ export function PageHero({
                 ? "rj-sheer-copy"
                 : `gilt ${sheer ? `rj-gilt-sheer ${sheerEdge ? "rj-gilt-sheer-edge" : ""} rj-sheer-copy` : ""}`
             } rise rounded-2xl p-phi3 sm:p-phi4 ${copyCenter ? "text-center" : ""} ${
+              copySide === "end" ? "xl:ml-auto" : ""
+            } ${
               {
                 "38rem": "max-w-[42rem] xl:max-w-[38rem]",
                 "42rem": "max-w-[42rem] xl:max-w-[42rem]",

@@ -1,5 +1,7 @@
 import type { Plot } from "@/lib/properties";
-import { dimensions as fmtDims, length as fmtLength, type Unit } from "@/lib/units";
+import { area as fmtArea, dimensions as fmtDims, length as fmtLength, type Unit } from "@/lib/units";
+
+const SQFT_PER_SQM = 10.7639;
 
 /**
  * THE PLOT RECORD — one list of facts, read by every surface that shows a plot.
@@ -21,7 +23,7 @@ import { dimensions as fmtDims, length as fmtLength, type Unit } from "@/lib/uni
  * than an inferred one. `size_sqft` leads because it is STORED — it is what the
  * sanctioned schedule itself states — and `size_sqm` follows as the drawing's
  * own value, which is why both appear even though one converts into the other.
- * The units switch converts `dim_m` and `road_m`; it never touches the areas.
+ * The units switch converts `dim_m`, `road_m` AND both areas (report 18).
  *
  * ⚠️ `price` is deliberately absent. The standing rule on this site is that a
  * rate is confirmed by the desk and never published as an estimate, and a
@@ -35,8 +37,16 @@ export function plotRecordRows(plot: Plot, unit: Unit): [string, string][] {
      character — there are zero literal NBSPs in `src` and the standing rule
      keeps it that way, because an invisible character is an unreviewable one.
      A figure must never break away from its unit across a line. */
+  /* 🚨 THE AREAS FOLLOW THE UNIT SWITCH NOW (report 18, 2026-09-03: "the
+     Feet / Metres toggle is available, but changing between the two units
+     does not appear to update the plot measurements"). The header once said
+     the switch "never touches the areas" — which left the two most prominent
+     figures on the card fixed while only dimensions and road width moved,
+     and read as a toggle that does nothing. The stored sq ft figure prints
+     in the reader's unit; so does the drawing's own metre figure, still
+     labelled as sanctioned so the reader knows which is which. */
   if (plot.size_sqft != null)
-    rows.push(["Area", `${Math.round(plot.size_sqft).toLocaleString("en-IN")}\u00a0sq\u00a0ft`]);
+    rows.push(["Area", fmtArea(plot.size_sqft / SQFT_PER_SQM, unit)]);
 
   /* ⚠️ THE METRE ROW RENAMES ITSELF WHEN IT IS THE ONLY AREA THERE IS. Both are
      pushed on a traced project — the stored sq ft and the drawing's own metre
@@ -46,7 +56,7 @@ export function plotRecordRows(plot: Plot, unit: Unit): [string, string][] {
   if (plot.size_sqm != null)
     rows.push([
       plot.size_sqft != null ? "Area (sanctioned)" : "Area",
-      `${plot.size_sqm}\u00a0m²`,
+      fmtArea(plot.size_sqm, unit),
     ]);
 
   if (plot.dim_m) rows.push(["Dimensions", fmtDims(plot.dim_m, unit)]);

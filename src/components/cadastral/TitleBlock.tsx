@@ -59,7 +59,12 @@ function Cell({ term, value }: { term: string; value: string }) {
     /* The 1px grid is drawn by the parent's `gap-px` over its own background,
        so each cell only has to be opaque — no per-cell borders to keep in step,
        and no double hairline where two cells meet. */
-    <div className="bg-onyx-800 px-3 py-2.5">
+    /* `text-center` (report 18, 2026-09-03: "the labels and their values are
+       positioned toward the left instead of being centered within their
+       respective sections"). The cells are equal columns; the value inside
+       is a path or a date of unpredictable length, so a left rag read as a
+       different alignment in every box. */
+    <div className="bg-onyx-800 px-3 py-2.5 text-center">
       <dt className="ledger-label text-bone-soft">{term}</dt>
       {/* `ledger` gives tabular figures, so the dates and the paths line up
           across the row the way they would on a real sheet. `break-all` because

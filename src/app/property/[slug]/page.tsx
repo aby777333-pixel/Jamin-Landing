@@ -134,7 +134,15 @@ function Block({
   centerTitle?: boolean;
 }) {
   return (
-    <section id={id} className={`${flush ? "" : "mt-phi5"} scroll-mt-28 ${className}`}>
+    /* `rj-print-section` (report 18, 2026-09-03: "some headings and their
+       related content are being split across different pages… the heading
+       appears at the bottom of one page while the content starts on the
+       next"). The print sheet already says `h2 { break-after: avoid }`, but
+       the h2 here is wrapped in SurveyReveal and has no sibling — the break
+       the rule was meant to forbid falls AFTER the wrapper. The class keys a
+       rule in royal.css that keeps the wrapper with what follows and asks
+       the section to stay whole where it fits. */
+    <section id={id} className={`${flush ? "" : "mt-phi5"} scroll-mt-28 rj-print-section ${className}`}>
       {/* The gold rule now rules ITSELF across, the way a guide line is drawn
           before the words — see SurveyReveal. On a page this long the sections
           otherwise run into one another as an undifferentiated column. */}
@@ -1698,7 +1706,9 @@ function StatusCard({ p }: { p: Property }) {
           ],
         }
       : {
-          icon: "deed" as const,
+          /* `rupee`, not `deed` (report 18): a rate that is available on
+             asking is still a rate — the mark should say money, not paperwork. */
+          icon: "rupee" as const,
           tone: "border-jamin-gold/30 bg-jamin-gold-soft",
           markTone: "bg-white/70 text-jamin-gold-ink",
           title: "Price on request",

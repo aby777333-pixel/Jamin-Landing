@@ -56,7 +56,13 @@ export type SurveyIconName =
   /* The account statistics (2026-08-17 report) asked for a price-tag mark on
      "Selling now". Drawn as the label a registry ties to a parcel — a deed
      tag with its eyelet — not a shopping pictogram. */
-  | "tag";
+  | "tag"
+  /* The rupee (report 18, 2026-09-03: the "Price on request" card "uses a
+     document/file icon, which does not clearly represent pricing"). Drawn
+     as the ₹ glyph in the set's own stroke — two rules and the descending
+     stem — so it still reads as a mark from a ledger rather than a coin
+     from a shopping app. */
+  | "rupee";
 
 const STROKE = {
   fill: "none",
@@ -91,6 +97,15 @@ export function SurveyIcon({
           <path d="M12.6 3.8h6.6a1 1 0 0 1 1 1v6.6a1 1 0 0 1-.3.7l-9 9a1 1 0 0 1-1.4 0l-6.6-6.6a1 1 0 0 1 0-1.4l9-9a1 1 0 0 1 .7-.3Z" />
           <circle cx="16.4" cy="7.6" r="1.4" />
           <path d="M8.4 13.2l3.4 3.4" />
+        </g>
+      )}
+
+      {name === "rupee" && (
+        /* ₹ — the two rules at the top, the bowl, and the stem that falls to
+           the baseline. A rate written in the register, not a coin. */
+        <g {...STROKE}>
+          <path d="M6.5 4.5h11M6.5 8.5h11" />
+          <path d="M9.5 4.5c3.8 0 5.6 1.6 5.6 4s-1.8 4-5.6 4H6.5l7.5 7.5" />
         </g>
       )}
 

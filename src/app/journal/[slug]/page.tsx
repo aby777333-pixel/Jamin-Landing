@@ -371,13 +371,19 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
                   {newer.title}
                 </span>
               </Link>
-            ) : (
-              <span aria-hidden="true" />
-            )}
+            ) : null}
+            {/* ⚠️ NO SPACER WHEN THERE IS NO NEWER POST (report 18, 2026-09-03:
+                "when only one navigation card is available… the card is
+                displayed on the right side, leaving a large empty space on
+                the left"). An empty first cell was pushing the lone Older
+                card into column two; with nothing before it the grid places
+                it first, and its copy sets left to match. */}
             {older && (
               <Link
                 href={journalHref(older)}
-                className="group rounded-card border border-line p-phi3 text-right transition-colors hover:border-ink-faint"
+                className={`group rounded-card border border-line p-phi3 transition-colors hover:border-ink-faint ${
+                  newer ? "text-right" : ""
+                }`}
               >
                 <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
                   Older →
@@ -406,10 +412,13 @@ export default async function JournalArticle({ params }: PageProps<"/journal/[sl
                   href={journalHref(m)}
                   className="flex h-full w-full flex-col rounded-card border border-line bg-canvas p-phi3 transition-colors hover:border-ink-faint"
                 >
-                  <span className="text-micro uppercase tracking-[0.14em] text-ink-faint">
-                    {KIND_LABEL[m.kind] ?? m.kind}
+                  {/* The same gold pill the index, the category page and this
+                      article's own header use (report 18: "labels are not
+                      consistently highlighted"). */}
+                  <span className="self-start">
+                    <Badge tone="gold">{KIND_LABEL[m.kind] ?? m.kind}</Badge>
                   </span>
-                  <span className="mt-1 block text-lg text-ink">{m.title}</span>
+                  <span className="mt-2 block text-lg text-ink">{m.title}</span>
                 </Link>
               </li>
             ))}

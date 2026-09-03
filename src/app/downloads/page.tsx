@@ -47,6 +47,13 @@ export default async function DownloadsPage() {
            the arch lockup above, the family walking in. Replaces 71 within
            the hour (71 → spare). */
         art={72}
+        /* ⚠️ `right` (report 18, 2026-09-03: "important parts of the property
+           entrance/signage are cut off at the right edge"). The paper tone's
+           fallback is `left`, which in the 58%-wide render box discards the
+           right of the frame — where hero-72's arch lockup sits. The left of
+           the frame dissolves into the page under `hero-fade` anyway, so that
+           is the side that can afford to give. */
+        artPosition="right"
         eyebrow="Brochures & plans"
         title="Read the paperwork before you talk to anyone."
         lead="Every brochure, sanctioned layout plan and approval document we publish, in one place. No form to fill in, no sign-in, and no agent's card attached to the file."
