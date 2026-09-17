@@ -59,6 +59,19 @@ export function plotRecordRows(plot: Plot, unit: Unit): [string, string][] {
       fmtArea(plot.size_sqm, unit),
     ]);
 
+  /* Cents (owner's brief 2026-09-17: "total area in sq. ft., sq. m., and cents,
+     where applicable") — the unit Tamil Nadu land is spoken in. A pure
+     conversion of the STORED area (1 cent = 40.468564224 m², exact), preferring
+     the sanctioned metre figure, so it never introduces a number the record
+     does not already hold. */
+  const sqmForCents =
+    plot.size_sqm != null ? plot.size_sqm : plot.size_sqft != null ? plot.size_sqft / SQFT_PER_SQM : null;
+  if (sqmForCents != null && sqmForCents > 0)
+    rows.push([
+      "Area in cents",
+      `${(sqmForCents / 40.468564224).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} cents`,
+    ]);
+
   if (plot.dim_m) rows.push(["Dimensions", fmtDims(plot.dim_m, unit)]);
   if (plot.facing) rows.push(["Facing", plot.facing]);
   if (plot.road_m != null) rows.push(["Road width", fmtLength(plot.road_m, unit)]);

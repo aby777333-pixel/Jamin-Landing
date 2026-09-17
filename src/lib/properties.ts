@@ -33,6 +33,55 @@ export type Plot = {
   at?: [number, number];
   clipped?: boolean;
   price?: number | null;
+  /** Stable internal id (migration 0097), independent of the displayed
+   *  number. Assigned by the database; never shown. */
+  uid?: string;
+};
+
+/**
+ * 🚨 THE PUBLISHED ORIGINAL LAYOUT IMAGE (migration 0097, 2026-09-17).
+ *
+ * Owner's brief: stop drawing plots as generated blocks and show the approved
+ * layout image itself, with every plot interactive through a separate,
+ * precisely aligned overlay. The admin console's Layout mapper publishes a
+ * version into `properties.plan_image`; the website and the app both read this
+ * one snapshot, so the two can never show different plans.
+ *
+ * ⚠️ POINTS ARE NORMALISED (0..1 on both axes of the image), so the overlay is
+ * resolution-independent: multiply by `w`/`h` to land in the image's own pixel
+ * space, which is what the viewer's SVG viewBox is. The image is never
+ * redrawn, stretched or annotated — only overlaid.
+ */
+export type PlanImageShape = {
+  k: "plot" | "road" | "open_space" | "reserved" | "boundary";
+  plot?: string;
+  uid?: string;
+  label?: string;
+  pts: [number, number][];
+};
+export type PlanImageStatusStyle = { color?: string; opacity?: number; visible?: boolean };
+export type PlanImage = {
+  version_id: string;
+  version_no: number;
+  published_at?: string;
+  /** Display rendition (sRGB, web-sized). */
+  src: string;
+  /** Full-resolution rendition, swapped in once the reader zooms in. */
+  hi?: string | null;
+  w: number;
+  h: number;
+  /** Calibrated scale; absent → the Measure tool is not offered. */
+  metres_per_px?: number | null;
+  scale_note?: string | null;
+  /** Admin-configured overlay colours per status, plus roads/open space. */
+  style?: {
+    status?: Partial<Record<string, PlanImageStatusStyle>>;
+    road?: PlanImageStatusStyle;
+    open_space?: PlanImageStatusStyle;
+  } | null;
+  /** Plots whose record is flagged for review against the image. */
+  review_plots?: string[] | null;
+  shapes: PlanImageShape[];
 };
 
 /** The DTCP drawing itself, when it has been traced (`plot_plan`). */
@@ -138,6 +187,8 @@ export type Property = {
 export type PropertyDetail = Property & {
   plot_layout: Plot[] | null;
   plot_plan: PlotPlan | null;
+  /** The published original layout image and its overlay — see PlanImage. */
+  plan_image: PlanImage | null;
   documents: PropertyDoc[] | null;
   legal: Record<string, string> | null;
   investment: Record<string, string> | null;
@@ -176,7 +227,7 @@ const PUBLIC_COLUMNS = [
  *  Still an allow-list, so a new admin-only column cannot leak by accident. */
 const DETAIL_COLUMNS = [
   PUBLIC_COLUMNS,
-  "plot_layout", "plot_plan", "documents", "legal", "investment", "utilities",
+  "plot_layout", "plot_plan", "plan_image", "documents", "legal", "investment", "utilities",
   "street_view_url", "google_earth_url", "road_frontage", "before_images",
   "title_status", "encumbrance_status",
 ].join(",");
@@ -365,7 +416,7 @@ export async function getProperty(slugOrId: string): Promise<PropertyDetail | nu
 
 /* ---------- plots ---------- */
 
-export type PlotStatus = "available" | "reserved" | "booked" | "sold" | "blocked";
+export type PlotStatus = "available" | "reserved" | "booked" | "sold" | "blocked" | "not_released";
 
 /** Live values today are `available` and `reserved`; the rest are the states the
  *  app's own admin can set, so the key is ready for them rather than falling
@@ -419,11 +470,22 @@ export const PLOT_STATUS: Record<
     text: "var(--plot-sold-ink)",
     hatch: null,
   },
+  /* ⚠️ `blocked` AND `not_released` ARE TWO STATES SINCE 2026-09-17 (migration
+     0097, owner's brief lists Blocked and Not released separately). `blocked`
+     used to be labelled "Not released"; no live plot carried it when the two
+     were split, so nothing on the site changed its wording. */
   blocked: {
-    label: "Not released",
+    label: "Blocked",
     fill: "var(--plot-blocked-fill)",
     stroke: "var(--plot-blocked-line)",
     text: "var(--plot-blocked-ink)",
+    hatch: "cross",
+  },
+  not_released: {
+    label: "Not released",
+    fill: "var(--plot-unreleased-fill)",
+    stroke: "var(--plot-unreleased-line)",
+    text: "var(--plot-unreleased-ink)",
     hatch: "dot",
   },
 };

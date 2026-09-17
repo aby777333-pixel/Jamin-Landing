@@ -44,12 +44,21 @@ export function PlanMeasure({
   metresPerUnit,
   unit,
   scale,
+  glyphScale = 1,
+  source = "traced drawing",
 }: {
   metresPerUnit?: number;
   unit: Unit;
   /** The drawing's stated scale, e.g. "1:1000" — shown so the reader can see
    *  what the figure was derived from. */
   scale?: string;
+  /** Multiplies the marker radius, readout size and offset. 1 on the traced
+   *  plans (their viewBox is already near screen size); the image-backed plan
+   *  passes the inverse of its zoom so the readout stays a constant ~11px on a
+   *  3,545-pixel-wide drawing. Geometry is unaffected — only glyph sizes. */
+  glyphScale?: number;
+  /** What the distance is scaled from, for the screen-reader caption. */
+  source?: string;
 }) {
   const ref = useRef<SVGRectElement>(null);
   const [from, setFrom] = useState<{ x: number; y: number } | null>(null);
@@ -124,7 +133,7 @@ export function PlanMeasure({
               key={i}
               cx={p.x}
               cy={p.y}
-              r="2.5"
+              r={2.5 * glyphScale}
               fill="none"
               stroke="currentColor"
               strokeWidth="1.2"
@@ -135,13 +144,13 @@ export function PlanMeasure({
               under the glyphs so the figure stays legible over hatching. */}
           <text
             x={(from.x + to.x) / 2}
-            y={(from.y + to.y) / 2 - 6}
+            y={(from.y + to.y) / 2 - 6 * glyphScale}
             textAnchor="middle"
-            fontSize="11"
+            fontSize={11 * glyphScale}
             className="ledger"
             fill="currentColor"
             stroke="var(--color-canvas)"
-            strokeWidth="3"
+            strokeWidth={3 * glyphScale}
             paintOrder="stroke"
           >
             {`≈ ${shown}`}
@@ -157,8 +166,8 @@ export function PlanMeasure({
       )}
       <desc>
         {scale
-          ? `Distances are scaled from the traced drawing at ${scale} and are approximate.`
-          : "Distances are scaled from the traced drawing and are approximate."}
+          ? `Distances are scaled from the ${source} at ${scale} and are approximate.`
+          : `Distances are scaled from the ${source} and are approximate.`}
       </desc>
     </>
   );

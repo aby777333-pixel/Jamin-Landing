@@ -750,6 +750,10 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                    keyed by slug like HEADER_ART; a project without one simply
                    never shows the view. */
                 sheet={PRINTED_SHEET[p.slug ?? p.id] ?? null}
+                /* The published original layout image, mapped in the admin
+                   console's Layout mapper (0097). Null keeps every view as it
+                   was. */
+                planImage={p.plan_image ?? null}
               />
 
               {p.master_plan_url && (

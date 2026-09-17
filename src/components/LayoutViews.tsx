@@ -5,8 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { LayoutRelief } from "@/components/LayoutRelief";
 import { MasterPlan, PlanParticulars } from "@/components/MasterPlan";
+import { ImagePlan } from "@/components/ImagePlan";
 import { PlotSchedule } from "@/components/PlotSchedule";
-import type { Plot, PlotPlan } from "@/lib/properties";
+import type { PlanImage, Plot, PlotPlan } from "@/lib/properties";
 import { unitWord, type Unit } from "@/lib/units";
 
 /**
@@ -58,6 +59,7 @@ export function LayoutViews({
   lng = null,
   sheet = null,
   propertyId = null,
+  planImage = null,
 }: {
   plots: Plot[];
   /** Absent when the drawing was never traced — then there is only one view. */
@@ -76,14 +78,23 @@ export function LayoutViews({
    *  request straight to the desk with the plot number attached. Null hides
    *  the control rather than posting a request with nothing to attach it to. */
   propertyId?: string | null;
+  /** The published ORIGINAL layout image with its plot overlay (0097). Where
+   *  it exists it REPLACES the traced "Blocks" drawing — owner 2026-09-17:
+   *  "move away from artificial rectangular plot blocks and use the actual
+   *  property layout JPG as an interactive map". */
+  planImage?: PlanImage | null;
 }) {
+  const hasImage = !!planImage?.src && (planImage.shapes ?? []).some((s) => s.k === "plot");
   const hasPlan = !!plan?.viewBox && plots.some((p) => p.poly);
   /* ⚠️ THE SHEET OPENS THE SECTION WHERE THERE IS ONE (owner 2026-08-21). It
      is the "Approved plan" seat now — the first tab — and a control whose
      first option is not the one showing reads as a bug. Falls back to the
      traced plan, then to the schedule, exactly as before. */
-  const [view, setView] = useState<"plan" | "relief" | "blocks" | "sun" | "sheet">(
-    sheet ? "sheet" : hasPlan ? "plan" : "blocks",
+  /* 🚨 THE INTERACTIVE ORIGINAL LEADS WHERE ONE IS PUBLISHED (2026-09-17):
+     the brief makes the approved image "the visual centre of the experience".
+     Everything else falls back exactly as before. */
+  const [view, setView] = useState<"image" | "plan" | "relief" | "blocks" | "sun" | "sheet">(
+    hasImage ? "image" : sheet ? "sheet" : hasPlan ? "plan" : "blocks",
   );
 
   /**
@@ -156,13 +167,13 @@ export function LayoutViews({
           existed but nothing rendered the switch. */}
       {/* `print:hidden` — view and unit switches are controls; the printed
           sheet shows the sanctioned drawing itself (report 11 print spec). */}
-      {(hasPlan || sheet || hasMetricFigures) && (
+      {(hasImage || hasPlan || sheet || hasMetricFigures) && (
         <div className="mb-phi3 flex flex-wrap items-center justify-between gap-phi2 print:hidden">
-          {hasPlan || sheet ? (
+          {hasImage || hasPlan || sheet ? (
             <Segmented
               label="Layout view"
               value={view}
-              onChange={(v) => setView(v as "plan" | "relief" | "blocks" | "sun" | "sheet")}
+              onChange={(v) => setView(v as "image" | "plan" | "relief" | "blocks" | "sun" | "sheet")}
               /* ⚠️ Relief sits BETWEEN the two, because that is the order of
                  abstraction: the drawing, the drawing tilted, then the list. It
                  is offered on exactly the same condition as the plan — traced
@@ -211,10 +222,15 @@ export function LayoutViews({
                  Relabelling is not renaming: do not "tidy" the values to match
                  the words or every existing URL changes meaning. */
               options={[
+                /* The original layout image, interactive (0097). */
+                ...(hasImage ? [{ value: "image", label: "Interactive plan" }] : []),
                 /* ⚠️ CONDITIONAL. A project with no sheet must not be offered
                    an Approved plan that renders nothing. */
                 ...(sheet ? [{ value: "sheet", label: "Approved plan" }] : []),
-                ...(hasPlan ? [{ value: "plan", label: "Blocks" }] : []),
+                /* ⚠️ The generated "Blocks" drawing steps aside once the real
+                   image is mapped — it is what the image replaces. Projects
+                   without a published image keep it exactly as before. */
+                ...(hasPlan && !hasImage ? [{ value: "plan", label: "Blocks" }] : []),
                 // { value: "relief", label: "3D view" },
                 /* ⚠️ Sun & shadow HIDDEN AGAIN (owner 2026-08-18 night:
                    "hide the sun and shadow"), reversing the same day's
@@ -386,6 +402,15 @@ export function LayoutViews({
               document.body,
             )}
         </>
+      ) : view === "image" && hasImage && planImage ? (
+        <ImagePlan
+          image={planImage}
+          plots={plots}
+          plotPlan={plan}
+          title={title}
+          unit={unit}
+          propertyId={propertyId}
+        />
       ) : view === "plan" && plan ? (
         <MasterPlan plots={plots} plan={plan} title={title} unit={unit} propertyId={propertyId} />
       ) : view === "relief" && plan ? (

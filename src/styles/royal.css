@@ -936,6 +936,12 @@
   --plot-blocked-line: var(--color-plat-500);
   --plot-blocked-ink: var(--color-plat-800);
 
+  /* Not released (0097): a cooler slate than blocked, so the two withheld
+     states are distinguishable at a glance as well as by their textures. */
+  --plot-unreleased-fill: color-mix(in srgb, #5b6b7a 20%, white);
+  --plot-unreleased-line: #5b6b7a;
+  --plot-unreleased-ink: #34404b;
+
   /* Interaction, §6.5: gold on hover, champagne fill when chosen. */
   --plot-hover-line: var(--color-champagne-500);
   --plot-selected-fill: color-mix(in srgb, var(--color-champagne-500) 42%, white);

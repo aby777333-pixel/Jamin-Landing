@@ -915,7 +915,7 @@ export function PlanParticulars({ plan, unit }: { plan: PlotPlan; unit: Unit }) 
  * because a buyer who has seen one should recognise the other. Every row is
  * read from the traced drawing; nothing here is computed or estimated.
  */
-function PlotSheet({
+export function PlotSheet({
   plot,
   plan,
   title,
@@ -923,6 +923,7 @@ function PlotSheet({
   propertyId = null,
   closeRef,
   onClose,
+  underReview = false,
 }: {
   plot: Plot;
   plan: PlotPlan;
@@ -931,8 +932,15 @@ function PlotSheet({
   propertyId?: string | null;
   closeRef: React.RefObject<HTMLButtonElement | null>;
   onClose: () => void;
+  /** Set by the image-backed plan (0097) when the layout mapper flagged this
+   *  plot's record as not yet reconciled with the published image. */
+  underReview?: boolean;
 }) {
   const s = PLOT_STATUS[plotStatus(plot)];
+  /* A per-plot price is shown ONLY when the admin has actually entered one on
+     the record — the standing rule (no estimates, rates confirmed by the desk)
+     is unchanged for every plot without it, which today is every plot. */
+  const price = typeof plot.price === "number" && plot.price > 0 ? plot.price : null;
   const available = plotStatus(plot) === "available";
 
   /**
@@ -1001,7 +1009,20 @@ function PlotSheet({
         </div>
       </div>
 
-      <p className="mt-phi2 text-lg text-ink-muted">Pricing on request</p>
+      <p className="mt-phi2 text-lg text-ink-muted">
+        {price ? (
+          <span className="ledger font-semibold text-ink">₹{price.toLocaleString("en-IN")}</span>
+        ) : (
+          "Pricing on request"
+        )}
+      </p>
+
+      {underReview && (
+        <p className="mt-phi2 rounded-card border border-jamin-gold bg-jamin-gold-soft/60 px-phi2 py-2 text-tiny leading-relaxed text-ink-soft">
+          This plot&rsquo;s recorded figures are being re-checked against the approved layout. The
+          sales desk will confirm its dimensions and area before booking.
+        </p>
+      )}
 
       <SheetSection label="Plot record">
         <dl className="divide-y divide-line">
@@ -1032,11 +1053,15 @@ function PlotSheet({
             would be far worse than a blank. */}
         <div className="rounded-card border border-line bg-canvas-alt p-phi3">
           <p className="text-base font-medium text-ink">
-            Pricing for this layout is not published yet.
+            {price
+              ? `Listed at ₹${price.toLocaleString("en-IN")}.`
+              : "Pricing for this layout is not published yet."}
           </p>
           <p className="mt-phi2 text-base leading-relaxed text-ink-muted">
-            Every measurement above is confirmed against the sanctioned drawing. Talk to the sales
-            desk for the current rate and charges on plot {plot.plot}.
+            {underReview
+              ? "Talk to the sales desk"
+              : "Every measurement above is confirmed against the sanctioned drawing. Talk to the sales desk"}{" "}
+            for the current rate and charges on plot {plot.plot}.
           </p>
         </div>
 
