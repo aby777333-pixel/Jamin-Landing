@@ -132,6 +132,21 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  /* Site-ownership tags (added 2026-09-24). Pulse is proven three ways: this
+     meta tag, public/.well-known/pulse-verify.txt and a DNS TXT record at
+     _pulse-verify.jaminbazaar.in. Google and Bing read their codes from the
+     environment and emit nothing while unset, so no placeholder tag ships. */
+  verification: {
+    ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+      ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+      : {}),
+    other: {
+      "pulse-site-verification": "c2c5335fd51e45f6996f4f4a167659da",
+      ...(process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION
+        ? { "msvalidate.01": process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION }
+        : {}),
+    },
+  },
 };
 
 /**
