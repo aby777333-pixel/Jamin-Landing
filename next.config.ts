@@ -61,6 +61,15 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    /* ⚠️ OPTIMISER ON NETLIFY ONLY. jaminbazaar.in is a self-hosted `next start`
+       behind nginx, and there Next's optimiser answers every Supabase image
+       with 400 `"url" parameter is not allowed` (Next 16's SSRF guard rejects
+       what that server's DNS returns), so every journal and property photo
+       rendered as a broken image while the same URLs worked on Netlify. Off
+       Netlify the browser loads the public Storage URL directly, which that
+       server cannot block. Netlify sets NETLIFY=true at build, so the Netlify
+       build is byte-for-byte what it was. */
+    unoptimized: process.env.NETLIFY !== "true",
   },
   async headers() {
     return [{ source: "/:path*", headers: SECURITY_HEADERS }];
