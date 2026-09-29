@@ -23,7 +23,7 @@ import {
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "The Vault — Private Real Estate & Exceptional Assets | Jamin Bazaar",
+  title: { absolute: "The Vault — Private Real Estate | Jamin Bazaar" },
   description:
     "Jamin Bazaar's private property desk. Acquisition, rental, sale and leasing of exceptional properties — estates, heritage residences, plantations and rare assets — handled personally and privately.",
   alternates: { canonical: "/vault" },

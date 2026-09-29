@@ -8,7 +8,7 @@ import { CallbackBand } from "@/components/CallbackBand";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Questions, Answered — Buying a Plot with Jamin",
+  title: "Buying a Plot with Jamin — FAQ",
   description:
     "Plain answers on DTCP approval, title checks, site visits, pricing and how buying a plot from Jamin Properties actually works.",
   alternates: { canonical: "/faq" },

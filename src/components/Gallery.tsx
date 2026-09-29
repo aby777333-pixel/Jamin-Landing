@@ -108,7 +108,7 @@ export function Gallery({ images, title }: { images: string[]; title: string }) 
               >
                 <Image
                   src={src}
-                  alt=""
+                  alt={`${title} — image ${i + 2} of ${images.length}`}
                   fill
                   sizes="(max-width: 640px) 50vw, 38vw"
                   className="object-cover transition-transform duration-[1200ms] group-hover:scale-105"

@@ -23,6 +23,7 @@ import {
 } from "@/lib/journal";
 import { getProperties } from "@/lib/properties";
 import { SITE_URL } from "@/lib/supabase";
+import { fitTitle } from "@/lib/seo";
 
 /** 60s — see the note in journal/page.tsx. An edited article should not need a
  *  redeploy to appear. */
@@ -45,7 +46,8 @@ export async function generateMetadata({
   const image = p.seo?.og_image ?? p.cover_url ?? undefined;
 
   return {
-    title,
+    // The <title> only — Open Graph and Twitter below keep the full headline.
+    title: fitTitle(title),
     description,
     /* ⚠️ `canonicalFor`, not `seo.canonical ?? journalHref` — 27 of 39 stored
        canonicals point at a dead `/blog/` URL and were telling crawlers the

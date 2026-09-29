@@ -14,7 +14,11 @@ export const metadata: Metadata = {
     "Put two or three Jamin developments side by side — location, stage, extent, plot availability and approvals.",
   // A working view, not a destination for search results.
   robots: { index: false, follow: true },
-  alternates: { canonical: "/compare" },
+  // ⚠️ NO CANONICAL on a noindex page. The root layout's canonical ("/") would
+  // otherwise be inherited, and a self-canonical only sends every `?…` variant
+  // to a URL that is itself noindex — a chain crawlers flag as inconsistent.
+  // An empty `alternates` replaces the inherited block outright.
+  alternates: {},
 };
 
 /**

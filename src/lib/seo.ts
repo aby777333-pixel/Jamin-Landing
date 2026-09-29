@@ -28,3 +28,18 @@ function clamp(text: string, max: number): string {
 
 export const seoTitle = (t: string) => clamp(t, TITLE_MAX);
 export const seoDescription = (d: string) => clamp(d, DESC_MAX);
+
+/**
+ * A page `title` for copy the admin writes (journal posts), fitted to the line.
+ *
+ * ⚠️ BRAND_SUFFIX MUST MATCH the root layout's `title.template`. The template
+ * adds 19 characters to every title, so a 54-character headline shipped as 73.
+ * Short enough → the plain string, template applies. Too long → `absolute`,
+ * the suffix is dropped and the headline clamped. Only the <title> changes;
+ * callers keep the full text for Open Graph and the on-page heading.
+ */
+const BRAND_SUFFIX = " | Jamin Properties";
+export function fitTitle(t: string): string | { absolute: string } {
+  const s = t.replace(/\s+/g, " ").trim();
+  return s.length + BRAND_SUFFIX.length <= TITLE_MAX ? s : { absolute: seoTitle(s) };
+}

@@ -8,10 +8,14 @@ import { getVaultSettings, VAULT_FALLBACK } from "@/lib/vault";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Submit a Private Requirement — The Vault | Jamin Bazaar",
+  title: { absolute: "Private Requirement — The Vault | Jamin Bazaar" },
   description:
     "Tell The Vault what you are looking for. Some of the finest properties never reach the open market. Private enquiries, handled personally.",
-  alternates: { canonical: "/vault/request" },
+  // ⚠️ NO CANONICAL on a noindex page. The root layout's canonical ("/") would
+  // otherwise be inherited, and a self-canonical only sends every `?…` variant
+  // to a URL that is itself noindex — a chain crawlers flag as inconsistent.
+  // An empty `alternates` replaces the inherited block outright.
+  alternates: {},
   // ⚠️ A form page has nothing to rank for and everything to lose by being
   // indexed: it would compete with /vault for the same intent and give a
   // searcher a wall of fields instead of the argument for filling them in.

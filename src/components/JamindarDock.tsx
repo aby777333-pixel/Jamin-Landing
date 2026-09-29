@@ -599,7 +599,7 @@ export function JamindarDock({ properties }: { properties: JamindarProperty[] })
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/jamindar-avatar.webp"
-          alt=""
+          alt="Jamindar, the Jamin assistant"
           aria-hidden="true"
           className="h-9 w-9 rounded-full bg-white object-cover"
         />

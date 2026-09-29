@@ -9,7 +9,7 @@ import { CallbackBand } from "@/components/CallbackBand";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Plan Your Property Investment — EMI, Eligibility, Cost & Yield",
+  title: "Property Calculators — EMI, Cost & Yield",
   description:
     "Four calculators for buying land in Tamil Nadu: monthly EMI, indicative loan eligibility, the full purchase cost once statutory charges are added, and rental yield.",
   alternates: { canonical: "/tools" },

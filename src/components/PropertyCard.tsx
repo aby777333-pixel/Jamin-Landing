@@ -494,7 +494,7 @@ export function PropertyCard({
                  it is 18px of decoration on every card in a grid, and the
                  optimiser pipeline costs more than the file. */
               // eslint-disable-next-line @next/next/no-img-element
-              <img src="/logo-mark.png" alt="" aria-hidden="true" className="rj-crest" />
+              <img src="/logo-mark.png" alt="Jamin crest" aria-hidden="true" className="rj-crest" />
             )}
             {tier.label}
           </span>

@@ -82,7 +82,7 @@ export async function SiteFooter() {
             <div className="flex items-center justify-center gap-3 sm:justify-start">
               <Image
                 src="/logo-mark.png"
-                alt=""
+                alt="Jamin Properties emblem"
                 aria-hidden="true"
                 width={256}
                 height={256}
@@ -234,6 +234,7 @@ export async function SiteFooter() {
                   {f.label}
                 </FooterLink>
               ))}
+              <FooterLink href="/gazetteer">Every place, A to Z</FooterLink>
             </ul>
           </div>
 

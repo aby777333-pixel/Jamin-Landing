@@ -11,7 +11,7 @@ import { SecurityTabs } from "@/components/security/SecurityTabs";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Jamin Bazaar Security — Life Inside. Worry Outside.",
+  title: { absolute: "Jamin Bazaar Security — Life Inside. Worry Outside." },
   description:
     "How security is designed at Jamin Bazaar communities: 360° surveillance, smart gates, controlled visitor management, trained personnel and instant alerts — a protective ecosystem of people, technology and communication.",
   alternates: { canonical: "/security" },

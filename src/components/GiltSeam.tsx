@@ -57,7 +57,8 @@ export function GiltSeam() {
         <div className="rj-rule-draw max-w-[18rem] flex-1" />
         <Image
           src="/logo-mark.png"
-          alt=""
+          alt="Jamin Properties emblem"
+          aria-hidden="true"
           width={256}
           height={256}
           sizes="28px"

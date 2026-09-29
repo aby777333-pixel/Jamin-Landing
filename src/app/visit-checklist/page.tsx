@@ -9,7 +9,7 @@ import { CallbackBand } from "@/components/CallbackBand";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Site-Visit Checklist — What to Verify on the Ground",
+  title: "Site-Visit Checklist — What to Verify",
   description:
     "A printable checklist for visiting a plotted development: what to check at the gate, on the plot and in the paperwork before you decide.",
   alternates: { canonical: "/visit-checklist" },

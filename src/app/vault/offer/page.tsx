@@ -8,10 +8,14 @@ import { getVaultSettings } from "@/lib/vault";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Offer a Property to The Vault — Jamin Bazaar",
+  title: { absolute: "Offer a Property to The Vault — Jamin Bazaar" },
   description:
     "Offer your property privately to The Vault for sale or lease. Keep it off-market and it never appears in the public catalogue.",
-  alternates: { canonical: "/vault/offer" },
+  // ⚠️ NO CANONICAL on a noindex page. The root layout's canonical ("/") would
+  // otherwise be inherited, and a self-canonical only sends every `?…` variant
+  // to a URL that is itself noindex — a chain crawlers flag as inconsistent.
+  // An empty `alternates` replaces the inherited block outright.
+  alternates: {},
   robots: { index: false, follow: true },
 };
 

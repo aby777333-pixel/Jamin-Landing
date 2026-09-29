@@ -12,7 +12,7 @@ import { districtSlug } from "@/lib/site";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Gazetteer",
+  title: "Gazetteer — Every Place, A to Z",
   description:
     "Every district, taluk, town, village and locality where Jamin Properties holds land in Tamil Nadu, listed A to Z with the projects that sit in each.",
   alternates: { canonical: "/gazetteer" },

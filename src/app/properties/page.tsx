@@ -9,7 +9,7 @@ import { getProperties, isSellable } from "@/lib/properties";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Properties — DTCP-Approved Plots Across Tamil Nadu",
+  title: "DTCP-Approved Plots in Tamil Nadu",
   description:
     "Every Jamin development: DTCP-approved residential plots in Salem, Erode, Tiruppur and Coimbatore, with live plot availability.",
   alternates: { canonical: "/properties" },

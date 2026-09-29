@@ -61,7 +61,9 @@ export function PrintCover({ p, taken }: { p: PropertyDetail; taken: string }) {
 
         <div className="text-[9pt] uppercase tracking-[0.22em]">Record of a published listing</div>
 
-        <h1 className="rj-print-cover-title">{p.project_name ?? p.title}</h1>
+        {/* ⚠️ `h2`, not `h1`: this cover is in the DOM on screen too (print-only
+            by CSS), and the page's hero already owns the one h1. */}
+        <h2 className="rj-print-cover-title">{p.project_name ?? p.title}</h2>
 
         <dl className="rj-print-cover-rows">
           {rows.map(([k, v]) => (

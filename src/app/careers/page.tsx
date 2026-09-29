@@ -10,7 +10,7 @@ import { CareerTabs } from "@/components/careers/CareerTabs";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Careers at Jamin Bazaar — We're Developing Careers",
+  title: { absolute: "Careers at Jamin Bazaar — We're Developing Careers" },
   description:
     "Promoters, brokers, business development, customer relationships, sales, site teams, security, marketing, design and technology. Eleven ways to build a career with Jamin Bazaar across Tamil Nadu.",
   alternates: { canonical: "/careers" },
