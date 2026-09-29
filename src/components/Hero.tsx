@@ -213,7 +213,7 @@ export function Hero({
       <div className="relative h-48 w-full sm:h-64 xl:hidden">
         <Image
           src="/hero/hero-83-1672.webp"
-          alt=""
+          alt="Illustrative render"
           aria-hidden="true"
           fill
           sizes="100vw"
@@ -231,7 +231,7 @@ export function Hero({
             + default display:none = phones outside the grove never fetch it. */}
         <Image
           src="/hero/hero-88-1672.webp"
-          alt=""
+          alt="Illustrative render"
           aria-hidden="true"
           fill
           loading="lazy"
@@ -287,7 +287,7 @@ export function Hero({
               <Image
                 key={g.src}
                 src={g.src}
-                alt=""
+                alt="Illustrative render"
                 aria-hidden="true"
                 fill
                 loading="lazy"
@@ -632,7 +632,7 @@ export function Hero({
                       `sizes` follows it or the browser keeps fetching the old
                       rendition. */}
                   <span className="rj-sheen relative h-16 w-24 shrink-0 overflow-hidden rounded-[10px] bg-canvas-sunken">
-                    <Image src={s.image} alt="" fill sizes="96px" className="object-cover" />
+                    <Image src={s.image} alt="Project image" aria-hidden="true" fill sizes="96px" className="object-cover" />
                   </span>
                   {/* 🚨 THE NAME SETS ON TWO LINES (report 13, 2026-08-21:
                       "the current shortcut cards are too short, causing

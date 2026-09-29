@@ -258,7 +258,7 @@ export function AccountShell({ title, children }: { title: string; children: Rea
       <div className="relative mb-phi4 aspect-[2/1] w-full overflow-hidden rounded-card border border-line bg-canvas-sunken">
         <Image
           src="/section/account-home-2-1773.webp"
-          alt=""
+          alt="Illustrative render"
           aria-hidden="true"
           fill
           priority

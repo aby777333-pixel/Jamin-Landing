@@ -379,7 +379,7 @@ export function LayoutViews({
                   src={sheet.src}
                   width={sheet.width}
                   height={sheet.height}
-                  alt=""
+                  alt="Layout plan sheet"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSheetZoom((z) => (z >= 6 ? 1 : Math.min(6, z * 1.4)));

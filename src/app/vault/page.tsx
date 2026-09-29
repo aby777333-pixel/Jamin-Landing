@@ -314,7 +314,7 @@ export default async function VaultPage() {
         <div className="relative aspect-[1916/821] w-full lg:absolute lg:inset-0 lg:aspect-auto">
           <Image
             src="/hero/hero-30-1916.webp"
-            alt=""
+            alt="Illustrative render"
             aria-hidden="true"
             fill
             priority
@@ -702,7 +702,8 @@ export default async function VaultPage() {
               <div className="relative w-full overflow-hidden rounded-xl border border-line bg-canvas-sunken">
                 <Image
                   src="/vault/humble-beginnings-1774.webp"
-                  alt=""
+                  alt="Illustrative render"
+                  aria-hidden="true"
                   fill
                   sizes="(min-width: 1024px) 66vw, 0px"
                   className="object-cover object-center"

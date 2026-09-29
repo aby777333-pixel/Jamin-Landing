@@ -152,7 +152,8 @@ export function LivingHeroArt() {
     <Image
       key={f.id}
       src={`/hero/hero-${f.id}-${f.w}.webp`}
-      alt=""
+      alt="Illustrative render"
+      aria-hidden="true"
       fill
       priority
       sizes="100vw"

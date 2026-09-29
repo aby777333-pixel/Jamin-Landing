@@ -697,7 +697,7 @@ export function PageHero({
           <ParallaxLayer>
             <Image
               src={src}
-              alt={photo?.alt ?? ""}
+              alt={photo ? photo.alt || "Project photograph" : "Illustrative render"}
               aria-hidden={photo ? undefined : "true"}
               fill
               priority={priority}
@@ -969,7 +969,7 @@ export function PageHero({
       >
         <Image
           src={src}
-          alt=""
+          alt="Illustrative render"
           aria-hidden="true"
           fill
           sizes="100vw"
@@ -995,7 +995,7 @@ export function PageHero({
           srcSet={srcSet}
           sizes="58vw"
           /* A render is decoration; a photograph of a real project is content. */
-          alt={photo?.alt ?? ""}
+          alt={photo ? photo.alt || "Project photograph" : "Illustrative render"}
           fetchPriority={priority ? "high" : "auto"}
           loading={priority ? "eager" : "lazy"}
           decoding="async"

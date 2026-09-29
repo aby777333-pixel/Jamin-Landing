@@ -581,7 +581,8 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                 <source media="(min-width: 1280px)" srcSet={headerArt.srcSet} sizes="46vw" />
               <img
                 src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-                alt=""
+                alt="Illustrative render"
+                aria-hidden="true"
                 decoding="async"
                 fetchPriority="high"
                 /* ⚠️ THE WIDTH IS AN INLINE STYLE, NOT A TAILWIND ARBITRARY
@@ -1049,7 +1050,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={images[0]}
-                          alt=""
+                          alt="Property photograph"
                           aria-hidden="true"
                           loading="lazy"
                           decoding="async"
@@ -1129,7 +1130,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                     src="/hero/hero-80-768.webp"
                     srcSet="/hero/hero-80-768.webp 768w, /hero/hero-80-1280.webp 1280w"
                     sizes="18rem"
-                    alt=""
+                    alt="Illustrative render"
                     aria-hidden="true"
                     loading="lazy"
                     decoding="async"
@@ -1159,7 +1160,7 @@ export default async function PropertyPage({ params }: PageProps<"/property/[slu
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
                           src={coverImage(p)!}
-                          alt=""
+                          alt="Property photograph"
                           aria-hidden="true"
                           className="aspect-[1.618/1] w-full rounded-card border border-line object-cover"
                         />

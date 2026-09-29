@@ -289,7 +289,7 @@ export default async function HomePage() {
           <div className="relative aspect-[16/10] min-w-0 overflow-hidden rounded-xl border border-line">
             <Image
               src="/hero/hero-37-1916.webp"
-              alt=""
+              alt="Illustrative render"
               aria-hidden="true"
               fill
               sizes="(max-width: 1024px) 100vw, 45vw"
@@ -741,7 +741,7 @@ export default async function HomePage() {
                    it existed to protect. New filename per the next/image
                    cache rule. */
                 src="/section/family-keeps-1536.webp"
-                alt=""
+                alt="Illustrative render"
                 aria-hidden="true"
                 fill
                 sizes="(max-width: 1024px) 100vw, 55vw"
@@ -871,7 +871,7 @@ export default async function HomePage() {
             <div className="relative hidden aspect-[16/9] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
               <Image
                 src="/section/where-we-build-gate-1881.webp"
-                alt=""
+                alt="Illustrative render"
                 aria-hidden="true"
                 fill
                 sizes="45vw"
@@ -992,7 +992,7 @@ export default async function HomePage() {
             <div className="relative hidden aspect-[16/8] min-w-0 overflow-hidden rounded-xl border border-line lg:block">
               <Image
                 src="/hero/hero-67-1672.webp"
-                alt=""
+                alt="Illustrative render"
                 aria-hidden="true"
                 fill
                 sizes="(max-width: 1280px) 50vw, 640px"

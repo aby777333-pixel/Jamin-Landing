@@ -62,7 +62,7 @@ export function PurposeExplorer({ all }: { all: Property[] }) {
               picture from a correct-looking deploy. */}
           <Image
             src="/section/purpose-gate-1440.webp"
-            alt=""
+            alt="Illustrative render"
             aria-hidden="true"
             fill
             sizes="45vw"

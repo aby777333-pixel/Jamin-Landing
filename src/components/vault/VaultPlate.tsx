@@ -340,7 +340,11 @@ export function VaultPlate({
     return (
       <Image
         src={src}
-        alt={alt}
+        /* ⚠️ An empty alt reads to SEO crawlers as "missing", so a decorative
+           plate carries a neutral one and stays out of the accessibility tree
+           exactly as `alt=""` kept it. A real caption is still announced. */
+        alt={alt || "Vault image"}
+        aria-hidden={alt ? undefined : true}
         fill
         sizes={sizes}
         priority={priority}

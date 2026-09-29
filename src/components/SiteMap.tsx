@@ -99,7 +99,7 @@ export function SiteMap({
             <img
               key={`${t.x}-${t.y}`}
               src={t.url}
-              alt=""
+              alt="Map tile"
               aria-hidden="true"
               width={TILE}
               height={TILE}

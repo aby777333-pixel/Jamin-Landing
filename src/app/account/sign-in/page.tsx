@@ -185,7 +185,7 @@ export default async function SignInPage({ searchParams }: PageProps<"/account/s
                    and upscale it. A `sizes` that no longer matches the box is
                    invisible in review and obvious on a retina screen. */
                 sizes="(max-width: 1024px) 100vw, 46vw"
-                alt=""
+                alt="Illustrative render"
                 aria-hidden="true"
                 loading="lazy"
                 decoding="async"

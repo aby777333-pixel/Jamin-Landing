@@ -242,7 +242,7 @@ export function PropertiesMap({
             <img
               key={`${t.c}-${t.r}`}
               src={t.url}
-              alt=""
+              alt="Map tile"
               aria-hidden="true"
               width={TILE}
               height={TILE}
