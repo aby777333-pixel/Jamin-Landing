@@ -81,6 +81,7 @@ export const metadata: Metadata = {
     "Jamin Bazaar",
   ],
   alternates: { canonical: "/" },
+  verification: { google: "TVyoN7j8wT-mXGUFkogXjB_zs882mw_dNwuksWmvhl4" },
   /* 🚨 THE SHARE CARD (go-live checklist §10, added 2026-08-22).
 
      Until now this block had NO `images` at all, and `twitter.card` was
